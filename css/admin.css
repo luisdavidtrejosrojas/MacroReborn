@@ -1,0 +1,503 @@
+/* ==========================================================================
+   MACRO REBORN — PANEL DE ADMINISTRACIÓN
+   Usa los mismos tokens de css/inicio.css y reutiliza componentes ya
+   existentes (css/perfil.css: .menu-perfil / .contenido-tab / .estadisticas,
+   css/comunidad.css: tarjetas y estados). Solo agrega lo específico del
+   panel para no crear un lenguaje visual aparte.
+   ========================================================================== */
+
+.admin-main {
+  max-width: 1180px;
+}
+
+/* ---------- ACCESO DENEGADO ---------- */
+
+.admin-denegado {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.admin-denegado-caja {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  padding: 46px 40px;
+  text-align: center;
+  max-width: 420px;
+}
+
+.admin-denegado-icono {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.admin-denegado-caja h1 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  margin: 0 0 10px;
+  color: var(--gold-bright);
+}
+
+.admin-denegado-caja p {
+  color: var(--text-muted);
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.btn-admin-primario {
+  display: inline-block;
+  background: var(--gold);
+  color: #1a1204;
+  font-weight: 700;
+  padding: 11px 22px;
+  border-radius: 10px;
+}
+
+.btn-admin-primario:hover {
+  background: var(--gold-bright);
+}
+
+/* ---------- ENCABEZADO ---------- */
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  padding: 26px 28px;
+  margin-bottom: 24px;
+}
+
+.admin-header h1 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  margin: 0 0 6px;
+  color: var(--text-main);
+}
+
+.admin-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+
+.admin-rol-badge {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--gold-deep);
+  color: var(--gold-bright);
+  white-space: nowrap;
+}
+
+/* ---------- CONTROLES / DESCRIPCIÓN ---------- */
+
+.admin-controles {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 14px 0 20px;
+}
+
+.admin-controles .buscador {
+  flex: 1;
+  min-width: 220px;
+}
+
+.admin-descripcion {
+  color: var(--text-muted);
+  font-size: 13.5px;
+  margin: 6px 0 20px;
+}
+
+/* ---------- LISTA DE USUARIOS ---------- */
+
+.admin-lista-usuarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.admin-tarjeta-usuario {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.admin-tarjeta-usuario:hover {
+  border-color: var(--gold-deep);
+  transform: translateY(-2px);
+}
+
+.admin-tarjeta-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-tarjeta-cabecera h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-main);
+}
+
+.admin-tarjeta-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.admin-tarjeta-insignias-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-tarjeta-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* ---------- CHIP DE ESTADO DE CUENTA ---------- */
+
+.chip-estado {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.chip-activo {
+  background: #16341f;
+  color: var(--green);
+  border: 1px solid #1f5a30;
+}
+
+.chip-suspendido {
+  background: #3a0f14;
+  color: #ff8a8a;
+  border: 1px solid #7a1f27;
+}
+
+/* ---------- BOTONES DE ACCIÓN ---------- */
+
+.btn-insignia-toggle,
+.btn-suspender,
+.btn-reactivar,
+.btn-ignorar-reporte,
+.btn-eliminar-reporte {
+  background: var(--bg-panel-alt);
+  color: var(--text-main);
+  border: 1px solid var(--line);
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-insignia-toggle:hover,
+.btn-ignorar-reporte:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  transform: translateY(-1px);
+}
+
+.btn-insignia-toggle.activa-insignia {
+  background: var(--gold);
+  color: #1a1204;
+  border-color: var(--gold);
+}
+
+.btn-suspender,
+.btn-eliminar-reporte {
+  border-color: #7a1f27;
+  color: #ff8a8a;
+}
+
+.btn-suspender:hover:not(:disabled),
+.btn-eliminar-reporte:hover {
+  background: #3a0f14;
+  transform: translateY(-1px);
+}
+
+.btn-suspender:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-reactivar {
+  border-color: #1f5a30;
+  color: var(--green);
+}
+
+.btn-reactivar:hover {
+  background: #16341f;
+  transform: translateY(-1px);
+}
+
+/* ---------- LISTA DE REPORTES ---------- */
+
+.admin-lista-reportes {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-tarjeta-reporte {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold-deep);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.admin-reporte-origen {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.admin-reporte-texto {
+  color: var(--text-main);
+  font-style: italic;
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+.admin-reporte-datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.admin-reporte-datos b {
+  color: var(--text-main);
+}
+
+/* ---------- ESTADÍSTICAS ---------- */
+
+.admin-estadisticas {
+  margin-top: 10px;
+}
+
+.contenido-tab > h3.admin-stats-titulo {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  color: var(--gold-bright);
+  text-transform: none;
+  margin: 32px 0 6px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.contenido-tab > h3.admin-stats-titulo:first-of-type {
+  margin-top: 26px;
+}
+
+.admin-stats-columnas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.admin-top-caja {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+
+.admin-top-caja h4 {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.admin-top-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-top-lista li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 13px;
+}
+
+.admin-top-lista li:last-child {
+  border-bottom: none;
+}
+
+.admin-top-nombre {
+  color: var(--text-main);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-top-valor {
+  color: var(--gold-bright);
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.admin-top-vacio {
+  color: var(--text-muted);
+  font-size: 13px;
+  list-style: none;
+  text-align: center;
+  padding: 10px 0;
+}
+
+/* ---------- CHIP DE ADVERTENCIAS ---------- */
+
+.chip-advertencias {
+  background: #3a2a0f;
+  color: #ffc266;
+  border: 1px solid #7a5a1f;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.btn-advertir {
+  background: var(--bg-panel-alt);
+  color: #ffc266;
+  border: 1px solid #7a5a1f;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-advertir:hover:not(:disabled) {
+  background: #3a2a0f;
+  transform: translateY(-1px);
+}
+
+.btn-advertir:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- REGISTRO DE ACCIONES DE MODERACIÓN ---------- */
+
+.admin-historial-filtros select.buscador {
+  flex: none;
+  min-width: 180px;
+  cursor: pointer;
+}
+
+.admin-lista-historial {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-tarjeta-historial {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold-deep);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.admin-historial-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.admin-historial-accion {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.chip-rol {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.chip-rol-admin {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--gold-deep);
+  color: var(--gold-bright);
+}
+
+.chip-rol-moderador {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--line-hover);
+  color: var(--text-muted);
+}
+
+.admin-historial-datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.admin-historial-datos b {
+  color: var(--text-main);
+}
+
+@media (max-width: 640px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

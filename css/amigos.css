@@ -1,0 +1,351 @@
+/* ==========================================================================
+   MACRO REBORN — AMIGOS
+   Usa los tokens de css/inicio.css y los componentes de css/perfil.css
+   (ambos ya enlazados en amigos.html). Todas las clases de acá son las
+   mismas que ya genera js/amigos.js: no se agregó, quitó ni renombró
+   ninguna.
+   ========================================================================== */
+
+.mr-root {
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+.amigos-main {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 44px 24px 70px;
+}
+
+.amigos-titulo {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3.6vw, 30px);
+  margin: 0 0 28px;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 60%, var(--gold-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---- AVISO SIN SESIÓN ---- */
+
+.panel-aviso {
+  background: var(--bg-panel);
+  border: 1px solid rgba(240, 180, 41, 0.35);
+  border-radius: 14px;
+  padding: 40px 28px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.panel-aviso a {
+  color: var(--gold-bright);
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(240, 180, 41, 0.4);
+}
+
+/* ==========================================================================
+   PESTAÑAS
+   ========================================================================== */
+
+.amigos-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 26px;
+  padding: 8px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.atab {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  padding: 11px 16px;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.atab:hover {
+  color: var(--text-main);
+  background: var(--bg-panel-alt);
+}
+
+.atab.activa-tab {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  border-color: transparent;
+}
+
+.atab.activa-tab .badge {
+  background: #241804;
+  color: var(--gold-bright);
+}
+
+/* ---- Badges de contador ---- */
+
+.badge {
+  background: var(--gold);
+  color: #241804;
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-rojo {
+  background: #ef4444;
+  color: white;
+}
+
+/* ==========================================================================
+   CONTENIDO DE PESTAÑAS
+   ========================================================================== */
+
+.atab-contenido {
+  display: none;
+}
+
+.atab-contenido.activo-tab {
+  display: block;
+  animation: aparecerAmigos 0.25s ease;
+}
+
+@keyframes aparecerAmigos {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.atab-contenido h2 {
+  font-family: var(--font-display);
+  color: var(--gold-bright);
+  font-size: 17px;
+  margin: 0 0 18px;
+}
+
+.lista-vacia {
+  color: var(--text-muted);
+  font-size: 14px;
+  background: var(--bg-panel);
+  border: 1px dashed var(--line);
+  padding: 26px 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   AVATAR MINI (capas superpuestas)
+   ========================================================================== */
+
+.amigo-avatar {
+  width: 72px;
+  height: 110px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(240, 180, 41, 0.14), transparent 65%),
+    var(--bg-deep);
+  border: 2px solid var(--gold);
+  flex-shrink: 0;
+}
+
+.amigo-avatar img,
+.amigo-avatar .capa-amigo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   TARJETAS (amigos / solicitudes / enviadas)
+   ========================================================================== */
+
+.amigo-card,
+.solicitud-card,
+.enviada-card {
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-deep));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.amigo-card:hover {
+  border-color: var(--gold-deep);
+  transform: translateY(-2px);
+}
+
+.solicitud-card {
+  justify-content: space-between;
+}
+
+.solicitud-card > div:first-child {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-main);
+}
+
+.amigo-info,
+.solicitud-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.amigo-nombre,
+.solicitud-nombre {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  margin-bottom: 4px;
+}
+
+.amigo-estado-online {
+  color: var(--green);
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.enviada-estado {
+  color: var(--gold-bright);
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.amigo-acciones,
+.solicitud-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ==========================================================================
+   BOTONES
+   ========================================================================== */
+
+.btn-ver-perfil {
+  display: inline-block;
+  background: var(--bg-panel);
+  color: var(--gold-bright);
+  border: 1px solid var(--gold);
+  padding: 9px 18px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-ver-perfil:hover {
+  background: rgba(240, 180, 41, 0.14);
+  transform: translateY(-2px);
+}
+
+.btn-eliminar-amigo,
+.btn-rechazar,
+.btn-cancelar-solicitud {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 9px 18px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-eliminar-amigo:hover,
+.btn-rechazar:hover,
+.btn-cancelar-solicitud:hover {
+  background: #ef4444;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-aceptar {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  padding: 9px 18px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-aceptar:hover {
+  background: var(--green);
+  color: #052e13;
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   INDICADOR DE PÁGINA ACTUAL EN LA NAVBAR (solo esta página)
+   ========================================================================== */
+
+.nav-links a.activo,
+.nav-links a.activa-nav {
+  color: var(--gold-bright);
+  background: var(--bg-panel-alt);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .amigos-main {
+    padding: 30px 16px 50px;
+  }
+
+  .amigo-card,
+  .solicitud-card,
+  .enviada-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .solicitud-card {
+    align-items: center;
+  }
+
+  .amigo-acciones,
+  .solicitud-acciones {
+    justify-content: center;
+  }
+
+  .amigos-tabs {
+    flex-direction: column;
+  }
+}

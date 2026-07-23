@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<script src="js/tema.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de administración | MacroReborn</title>
+
+<!-- SEO -->
+<meta name="description" content="Panel privado de administración y moderación de MacroReborn.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://www.macroreborn.com/admin.html">
+<meta name="theme-color" content="#0f172a">
+<link rel="icon" href="imagenes/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="imagenes/logo.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MacroReborn">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Panel de administración | MacroReborn">
+<meta property="og:description" content="Panel privado de administración y moderación de MacroReborn.">
+<meta property="og:url" content="https://www.macroreborn.com/admin.html">
+<meta property="og:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MacroReborn - Comunidad y catálogo de juegos gratis online">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Panel de administración | MacroReborn">
+<meta name="twitter:description" content="Panel privado de administración y moderación de MacroReborn.">
+<meta name="twitter:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/inicio.css">
+<link rel="stylesheet" href="css/perfil.css">
+<link rel="stylesheet" href="css/comunidad.css">
+<link rel="stylesheet" href="css/insignias.css">
+<link rel="stylesheet" href="css/buscador.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+
+
+<body class="mr-root">
+
+
+<nav class="navbar">
+
+<a href="index.html" class="nav-logo">
+<img src="imagenes/logo.png" alt="MacroReborn">
+MacroReborn
+</a>
+
+<div class="nav-links">
+
+<a href="index.html">🏠 Inicio</a>
+
+<a href="comunidad.html">🌐 Comunidad</a>
+
+<a href="perfil.html">👤 Perfil</a>
+
+<a href="juegos.html">🎮 Juegos</a>
+
+<a href="ranking.html">🏆 Ranking</a>
+
+<a href="amigos.html">👥 Amigos</a>
+
+<a href="chat.html">💬 Chat</a>
+
+<a href="noticias.html">📰 Noticias</a>
+
+</div>
+
+
+</nav>
+
+<!-- ACCESO DENEGADO (se muestra si no es admin/moderador) -->
+<div id="accesoDenegado" class="admin-denegado" style="display:none;">
+  <div class="admin-denegado-caja mr-notched">
+    <span class="admin-denegado-icono">🚫</span>
+    <h2>Acceso restringido</h2>
+    <p>Esta sección es solo para administradores y moderadores de MacroReborn.</p>
+    <a href="index.html" class="btn-admin-primario">Volver al inicio</a>
+  </div>
+</div>
+
+<main class="perfil admin-main" id="panelAdmin" style="display:none;">
+
+  <div class="admin-header mr-notched">
+    <div>
+      <h1 id="adminTitulo">🛠️ Panel de Administración</h1>
+      <p id="adminSubtitulo">Gestión de usuarios, insignias y reportes de MacroReborn.</p>
+    </div>
+    <span id="adminRolBadge" class="admin-rol-badge"></span>
+  </div>
+
+  <!-- MENÚ DE PESTAÑAS (mismo componente visual que perfil.html) -->
+  <div class="menu-perfil">
+    <button class="tab activa" data-tab="tabUsuarios" id="botonTabUsuarios">👥 Usuarios</button>
+    <button class="tab" data-tab="tabReportes" id="botonTabReportes">🚩 Reportes</button>
+    <button class="tab" data-tab="tabEstadisticas" id="botonTabEstadisticas">📊 Estadísticas</button>
+    <button class="tab" data-tab="tabRegistro" id="botonTabRegistro">🛡️ Registro</button>
+  </div>
+
+  <!-- USUARIOS -->
+  <section id="tabUsuarios" class="contenido-tab activo">
+    <h2>👥 Usuarios registrados</h2>
+
+    <div class="admin-controles">
+      <input type="text" id="buscadorUsuariosAdmin" class="buscador" placeholder="🔍 Buscar usuario por nombre...">
+      <p id="contadorUsuariosAdmin" class="contador-usuarios"></p>
+    </div>
+
+    <div id="listaUsuariosAdmin" class="admin-lista-usuarios"></div>
+  </section>
+
+  <!-- REPORTES -->
+  <section id="tabReportes" class="contenido-tab">
+    <h2>🚩 Reportes de comentarios y mensajes</h2>
+    <p class="admin-descripcion">Comentarios y mensajes del chat reportados por la comunidad, pendientes de revisión.</p>
+    <div id="listaReportesAdmin" class="admin-lista-reportes"></div>
+  </section>
+
+  <!-- ESTADÍSTICAS (solo administrador) -->
+  <section id="tabEstadisticas" class="contenido-tab">
+    <h2>📊 Estadísticas generales</h2>
+    <p class="admin-descripcion">Panel privado con el pulso general de la comunidad. Solo lo ve el administrador.</p>
+
+    <!-- ROLES / MODERACIÓN -->
+    <div class="estadisticas admin-estadisticas">
+      <div><h3>Usuarios totales</h3><p id="statUsuarios">0</p></div>
+      <div><h3>Suspendidos</h3><p id="statSuspendidos">0</p></div>
+      <div><h3>👑 Administradores</h3><p id="statAdmins">0</p></div>
+      <div><h3>🛡️ Moderadores</h3><p id="statModeradores">0</p></div>
+      <div><h3>❤️ Colaboradores</h3><p id="statColaboradores">0</p></div>
+      <div><h3>Reportes pendientes</h3><p id="statReportesPendientes">0</p></div>
+    </div>
+
+    <!-- 👥 USUARIOS -->
+    <h3 class="admin-stats-titulo">👥 Usuarios</h3>
+    <div class="estadisticas admin-estadisticas">
+      <div><h3>Registrados</h3><p id="statUsuariosTotal">0</p></div>
+      <div><h3>Activos (7 días)</h3><p id="statUsuariosActivos">0</p></div>
+      <div><h3>Nuevos (30 días)</h3><p id="statUsuariosNuevos">0</p></div>
+      <div><h3>Conectados ahora</h3><p id="statUsuariosConectados">0</p></div>
+    </div>
+
+    <!-- 🎮 JUEGOS -->
+    <h3 class="admin-stats-titulo">🎮 Juegos</h3>
+    <div class="estadisticas admin-estadisticas">
+      <div><h3>Juegos disponibles</h3><p id="statJuegosTotal">0</p></div>
+    </div>
+    <div class="admin-stats-columnas">
+      <div class="admin-top-caja">
+        <h4>🔥 Más jugados</h4>
+        <ol id="listaJuegosMasJugados" class="admin-top-lista"></ol>
+      </div>
+      <div class="admin-top-caja">
+        <h4>⭐ Favoritos</h4>
+        <ol id="listaJuegosFavoritos" class="admin-top-lista"></ol>
+      </div>
+    </div>
+
+    <!-- 💬 COMUNIDAD -->
+    <h3 class="admin-stats-titulo">💬 Comunidad</h3>
+    <div class="estadisticas admin-estadisticas">
+      <div><h3>Comentarios totales</h3><p id="statComentarios">0</p></div>
+      <div><h3>Mensajes en el chat</h3><p id="statMensajesChat">0</p></div>
+      <div><h3>Amigos agregados</h3><p id="statAmigos">0</p></div>
+      <div><h3>Reportes realizados</h3><p id="statReportesTotales">0</p></div>
+    </div>
+
+    <!-- 🏆 PROGRESO -->
+    <h3 class="admin-stats-titulo">🏆 Progreso</h3>
+    <div class="admin-stats-columnas">
+      <div class="admin-top-caja">
+        <h4>⭐ Más nivel</h4>
+        <ol id="listaTopNivel" class="admin-top-lista"></ol>
+      </div>
+      <div class="admin-top-caja">
+        <h4>⚡ Más XP</h4>
+        <ol id="listaTopXP" class="admin-top-lista"></ol>
+      </div>
+      <div class="admin-top-caja">
+        <h4>🏅 Logros más desbloqueados</h4>
+        <ol id="listaTopLogros" class="admin-top-lista"></ol>
+      </div>
+      <div class="admin-top-caja">
+        <h4>🎖️ Insignias otorgadas</h4>
+        <ol id="listaTopInsignias" class="admin-top-lista"></ol>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- REGISTRO DE ACCIONES DE MODERADORES (solo administrador) -->
+  <section id="tabRegistro" class="contenido-tab">
+    <h2>🛡️ Registro de acciones de moderadores</h2>
+    <p class="admin-descripcion">Historial de las acciones importantes hechas por administradores y moderadores desde este panel.</p>
+
+    <div class="admin-controles admin-historial-filtros">
+      <input type="text" id="buscadorHistorial" class="buscador" placeholder="🔍 Buscar por usuario o motivo...">
+      <select id="filtroRolHistorial" class="buscador">
+        <option value="">Todos los roles</option>
+        <option value="Administrador">👑 Administrador</option>
+        <option value="Moderador">🛡️ Moderador</option>
+      </select>
+      <select id="filtroAccionHistorial" class="buscador">
+        <option value="">Todas las acciones</option>
+      </select>
+      <p id="contadorHistorial" class="contador-usuarios"></p>
+    </div>
+
+    <div id="listaHistorialModeracion" class="admin-lista-historial"></div>
+  </section>
+
+</main>
+
+<!-- FOOTER (mismo componente que el resto de MacroReborn) -->
+<footer class="pie-footer">
+  <div class="pie-contenido">
+    <div class="pie-marca">
+      <a href="index.html" class="nav-logo">
+        <img src="imagenes/logo.png" alt="MacroReborn">
+        MacroReborn
+      </a>
+      <p>Una comunidad de juegos con nostalgia de portal clásico y alma moderna.</p>
+      <p class="estado-servidor"><span class="punto"></span> Servidor en línea</p>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Plataforma</h4>
+      <a href="juegos.html">Juegos</a>
+      <a href="ranking.html">Ranking</a>
+      <a href="comunidad.html">Comunidad</a>
+      <a href="noticias.html">Noticias</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Cuenta</h4>
+      <a href="login.html">Iniciar sesión</a>
+      <a href="registro.html">Registrarse</a>
+      <a href="perfil.html">Mi perfil</a>
+      <a href="notificaciones.html">Notificaciones</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Social</h4>
+      <a href="amigos.html">Amigos</a>
+      <a href="chat.html">Chat</a>
+    </div>
+  </div>
+
+  <div class="pie-inferior">
+    <span>© 2026 MacroReborn. Todos los derechos reservados.</span>
+    <span>Hecho con 💛 para la vieja escuela de los juegos web.</span>
+  </div>
+</footer>
+
+<script src="js/core.js"></script>
+
+<script src="js/datos-juegos.js"></script>
+<script src="js/motor/permisos.js"></script>
+<script src="js/motor/insignias.js"></script>
+<script src="js/motor/reportes.js"></script>
+<script src="js/motor/logros.js"></script>
+<script src="js/motor/historial.js"></script>
+<script src="js/motor/panelEstadisticas.js"></script>
+<script src="js/ranking.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/buscador.js"></script>
+<script src="js/nav-toggle.js"></script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+/* ==========================================================================
+   MACRO REBORN — NOTICIAS
+   Usa los tokens de css/inicio.css (:root, .navbar, .pie-footer, etc).
+   La página no tiene JS propio (js/navbar.js y js/notificaciones.js solo
+   dependen de .nav-links), así que todas las clases de acá son nuevas y
+   puramente visuales: no rompen ninguna referencia existente.
+   ========================================================================== */
+
+.mr-root {
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+.contenido-principal {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px 90px;
+}
+
+/* ==========================================================================
+   ENCABEZADO
+   ========================================================================== */
+
+.noticias-header {
+  position: relative;
+  text-align: center;
+  padding: 56px 24px 44px;
+  margin: 0 -24px 46px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 800px 420px at 50% -15%, rgba(240, 180, 41, 0.16), transparent 60%),
+    linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-base) 100%);
+  border-bottom: 1px solid var(--line);
+}
+
+.noticias-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(240, 180, 41, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 180, 41, 0.05) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 0%, black 40%, transparent 90%);
+  pointer-events: none;
+}
+
+.noticias-eyebrow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  background: rgba(240, 180, 41, 0.08);
+  border: 1px solid rgba(240, 180, 41, 0.35);
+  padding: 7px 15px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+
+.noticias-eyebrow .punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: parpadeo-noticias 2s ease-in-out infinite;
+}
+
+@keyframes parpadeo-noticias {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.noticias-header h1 {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4.5vw, 38px);
+  margin: 0 0 12px;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 60%, var(--gold-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitulo-noticias {
+  position: relative;
+  color: var(--text-muted);
+  font-size: 15px;
+  margin: 0;
+}
+
+/* ==========================================================================
+   CONTENEDOR GENERAL
+   ========================================================================== */
+
+.noticias {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   "SOBRE MACROREBORN" — panel especial y emocional
+   ========================================================================== */
+
+.origen-panel {
+  position: relative;
+  background:
+    radial-gradient(ellipse 520px 260px at 85% -10%, rgba(240, 180, 41, 0.14), transparent 65%),
+    linear-gradient(165deg, var(--bg-panel) 0%, var(--bg-deep) 100%);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  border-radius: 20px;
+  padding: 44px 40px 48px;
+  margin-bottom: 56px;
+  overflow: hidden;
+  box-shadow: 0 20px 46px rgba(0, 0, 0, 0.35);
+}
+
+.origen-decor {
+  position: absolute;
+  top: -18px;
+  right: 6px;
+  font-size: 150px;
+  line-height: 1;
+  opacity: 0.06;
+  filter: blur(0.5px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.origen-etiqueta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  background: rgba(240, 180, 41, 0.1);
+  border: 1px solid rgba(240, 180, 41, 0.3);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+
+.origen-panel h3 {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3.6vw, 30px);
+  color: var(--text-main);
+  margin: 0 0 8px;
+}
+
+.origen-pregunta {
+  position: relative;
+  color: var(--cyan);
+  font-weight: 700;
+  font-size: 16.5px;
+  margin: 0 0 26px;
+  letter-spacing: 0.2px;
+}
+
+.origen-separador {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 30px 0;
+  color: var(--gold);
+}
+
+.origen-separador span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line) 50%, transparent);
+}
+
+.origen-separador i {
+  font-style: normal;
+  font-size: 13px;
+  color: var(--gold);
+  filter: drop-shadow(0 0 6px rgba(240, 180, 41, 0.5));
+}
+
+.origen-separador-chica {
+  margin: 26px 0;
+  opacity: 0.85;
+}
+
+.origen-texto {
+  position: relative;
+}
+
+.origen-texto p {
+  color: var(--text-muted);
+  font-size: 15.5px;
+  margin: 0 0 20px;
+}
+
+.origen-texto p:last-child {
+  margin-bottom: 0;
+}
+
+.origen-destacado {
+  color: var(--text-main) !important;
+  font-size: 19px !important;
+  font-weight: 600;
+  line-height: 1.55;
+  padding-left: 18px;
+  border-left: 3px solid var(--gold);
+}
+
+.origen-agradecimiento {
+  position: relative;
+  margin: 0 0 20px;
+  padding: 22px 26px 22px 54px;
+  background: rgba(240, 180, 41, 0.06);
+  border: 1px solid rgba(240, 180, 41, 0.25);
+  border-radius: 14px;
+}
+
+.origen-agradecimiento::before {
+  content: "❝";
+  position: absolute;
+  top: 8px;
+  left: 18px;
+  font-family: Georgia, serif;
+  font-size: 34px;
+  color: var(--gold);
+  opacity: 0.7;
+  line-height: 1;
+}
+
+.origen-agradecimiento p {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 15.5px;
+  font-style: italic;
+}
+
+.origen-cierre {
+  color: var(--gold-bright) !important;
+  font-weight: 700;
+  font-size: 17px !important;
+  text-align: center;
+  padding: 4px 10px 0;
+}
+
+/* ==========================================================================
+   CABECERA DE "ÚLTIMAS NOVEDADES"
+   ========================================================================== */
+
+.novedades-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 24px;
+}
+
+.novedades-cabecera h3 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--gold-bright);
+  white-space: nowrap;
+  margin: 0;
+}
+
+.novedades-linea {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line), transparent);
+}
+
+/* ==========================================================================
+   GRILLA DE NOTICIAS
+   ========================================================================== */
+
+.grid-noticias {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.noticia {
+  position: relative;
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-deep));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 26px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.noticia:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold-deep);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4);
+}
+
+.noticia-icono {
+  font-size: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: rgba(240, 180, 41, 0.1);
+  border: 1px solid rgba(240, 180, 41, 0.25);
+  margin-bottom: 14px;
+}
+
+.noticia-tag {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 6px;
+}
+
+.noticia h3 {
+  color: var(--text-main);
+  font-size: 17.5px;
+  margin: 0 0 10px;
+}
+
+.noticia p {
+  color: var(--text-muted);
+  font-size: 14.5px;
+  margin: 0 0 18px;
+  flex: 1;
+}
+
+.noticia-enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gold-bright);
+  font-weight: 700;
+  font-size: 13.5px;
+  text-decoration: none;
+  transition: gap 0.15s ease, color 0.15s ease;
+}
+
+.noticia-enlace:hover {
+  gap: 10px;
+  color: var(--gold);
+}
+
+/* ---- Noticia destacada: sobresale visualmente del resto ---- */
+
+.noticia-destacada {
+  border: 2px solid var(--gold);
+  background: linear-gradient(180deg, rgba(240, 180, 41, 0.1), var(--bg-deep) 65%);
+  box-shadow: 0 16px 36px rgba(240, 180, 41, 0.16), 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.noticia-destacada:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 42px rgba(240, 180, 41, 0.24), 0 14px 30px rgba(0, 0, 0, 0.4);
+}
+
+.noticia-destacada .noticia-icono {
+  background: rgba(240, 180, 41, 0.18);
+  border-color: rgba(240, 180, 41, 0.4);
+}
+
+.noticia-destacada-cinta {
+  position: absolute;
+  top: -12px;
+  right: 18px;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  box-shadow: 0 6px 16px rgba(240, 180, 41, 0.35);
+}
+
+/* ==========================================================================
+   INDICADOR DE PÁGINA ACTUAL EN LA NAVBAR (solo esta página)
+   ========================================================================== */
+
+.nav-links a.activo,
+.nav-links a.activa-nav {
+  color: var(--gold-bright);
+  background: var(--bg-panel-alt);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 760px) {
+  .contenido-principal {
+    padding: 0 16px 60px;
+  }
+
+  .noticias-header {
+    padding: 44px 18px 36px;
+    margin: 0 -16px 34px;
+  }
+
+  .origen-panel {
+    padding: 32px 22px 34px;
+    border-radius: 16px;
+  }
+
+  .origen-decor {
+    font-size: 100px;
+  }
+
+  .origen-destacado {
+    font-size: 17px !important;
+  }
+
+  .origen-agradecimiento {
+    padding: 20px 18px 20px 44px;
+  }
+
+  .origen-agradecimiento::before {
+    left: 12px;
+    font-size: 28px;
+  }
+
+  .grid-noticias {
+    grid-template-columns: 1fr;
+  }
+
+  .novedades-cabecera h3 {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 420px) {
+  .noticia {
+    padding: 22px 18px 20px;
+  }
+
+  .origen-panel {
+    padding: 28px 16px 30px;
+  }
+}

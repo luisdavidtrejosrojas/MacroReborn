@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<script src="js/tema.js"></script>
+<script src="js/seo.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de juego | MacroReborn</title>
+
+<!-- SEO -->
+<meta name="description" content="Mirá la ficha del juego, leé y dejá reseñas de otros jugadores, y jugá gratis online sin instalar nada en MacroReborn.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.macroreborn.com/juego.html">
+<meta name="theme-color" content="#0f172a">
+<link rel="icon" href="imagenes/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="imagenes/logo.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MacroReborn">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Ficha de juego | MacroReborn">
+<meta property="og:description" content="Mirá la ficha del juego, leé y dejá reseñas de otros jugadores, y jugá gratis online sin instalar nada en MacroReborn.">
+<meta property="og:url" content="https://www.macroreborn.com/juego.html">
+<meta property="og:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MacroReborn - Comunidad y catálogo de juegos gratis online">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ficha de juego | MacroReborn">
+<meta name="twitter:description" content="Mirá la ficha del juego, leé y dejá reseñas de otros jugadores, y jugá gratis online sin instalar nada en MacroReborn.">
+<meta name="twitter:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/inicio.css">
+<link rel="stylesheet" href="css/juego.css">
+<link rel="stylesheet" href="css/buscador.css">
+</head>
+
+<body class="mr-root">
+
+<!-- NAVBAR (misma identidad que el resto de MacroReborn) -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <img src="imagenes/logo.png" alt="MacroReborn">
+    MacroReborn
+  </a>
+  <div class="nav-links">
+    <a href="index.html">🏠 Inicio</a>
+    <a href="comunidad.html">🌐 Comunidad</a>
+    <a href="perfil.html">👤 Perfil</a>
+    <a href="juegos.html">🎮 Juegos</a>
+    <a href="ranking.html">🏆 Ranking</a>
+    <a href="amigos.html">👥 Amigos</a>
+    <a href="chat.html">💬 Chat</a>
+    <a href="noticias.html">📰 Noticias</a>
+  </div>
+</nav>
+
+<main class="contenido-principal">
+
+  <p class="migas">
+    <a href="juegos.html">🎮 Juegos</a> · Ficha del juego
+  </p>
+
+  <div class="detalle-juego">
+
+    <div class="juego-grande">🎮</div>
+
+    <div class="detalle-juego-info">
+
+      <h1 class="nombre-juego">Cargando...</h1>
+
+      <div class="detalle-badges">
+        <p class="categoria-juego"></p>
+        <p class="estado-juego"></p>
+      </div>
+
+      <p class="jugadores-juego"></p>
+
+      <p class="descripcion-juego"></p>
+
+      <div class="detalle-acciones">
+        <button class="boton-jugar">🎮 Jugar</button>
+        <button class="boton-favorito">☆ Agregar favorito</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ⭐ CALIFICACIÓN + ❤️ LIKE/NO ME GUSTA -->
+  <section class="panel-valoracion mr-notched">
+
+    <div class="valoracion-bloque">
+      <h3 class="panel-subtitulo">⭐ Calificación</h3>
+
+      <div class="valoracion-promedio">
+        <div class="estrellas-promedio">
+          <div class="estrellas-fondo">★★★★★</div>
+          <div class="estrellas-relleno" id="estrellasRelleno">★★★★★</div>
+        </div>
+        <span class="valoracion-numero" id="calificacionPromedio">0.0/5</span>
+        <span class="valoracion-cantidad" id="calificacionVotos">(0 votos)</span>
+      </div>
+
+      <div class="valoracion-usuario">
+        <span class="valoracion-usuario-label">Tu calificación:</span>
+        <div class="calificacion-estrellas" id="calificacionEstrellas">
+          <button type="button" class="estrella" data-valor="1" aria-label="1 estrella">★</button>
+          <button type="button" class="estrella" data-valor="2" aria-label="2 estrellas">★</button>
+          <button type="button" class="estrella" data-valor="3" aria-label="3 estrellas">★</button>
+          <button type="button" class="estrella" data-valor="4" aria-label="4 estrellas">★</button>
+          <button type="button" class="estrella" data-valor="5" aria-label="5 estrellas">★</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="reacciones-bloque">
+      <h3 class="panel-subtitulo">¿Te gustó este juego?</h3>
+      <div class="reacciones-juego">
+        <button type="button" class="boton-reaccion boton-like" id="botonLike">
+          👍 Me gusta <span class="reaccion-contador" id="contadorLikes">0</span>
+        </button>
+        <button type="button" class="boton-reaccion boton-dislike" id="botonDislike">
+          👎 No me gusta <span class="reaccion-contador" id="contadorDislikes">0</span>
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- 📝 RESEÑAS -->
+  <section class="panel-resenas mr-notched">
+
+    <h3 class="panel-subtitulo">📝 Reseñas de jugadores</h3>
+
+    <div class="form-resena" id="formResena">
+      <p class="form-resena-label">Tu reseña:</p>
+
+      <div class="calificacion-estrellas" id="formResenaEstrellas">
+        <button type="button" class="estrella" data-valor="1" aria-label="1 estrella">★</button>
+        <button type="button" class="estrella" data-valor="2" aria-label="2 estrellas">★</button>
+        <button type="button" class="estrella" data-valor="3" aria-label="3 estrellas">★</button>
+        <button type="button" class="estrella" data-valor="4" aria-label="4 estrellas">★</button>
+        <button type="button" class="estrella" data-valor="5" aria-label="5 estrellas">★</button>
+      </div>
+
+      <textarea id="resenaTexto" class="resena-textarea" maxlength="500" placeholder="Contá qué te pareció este juego..."></textarea>
+
+      <div class="form-resena-acciones">
+        <button type="button" class="boton-publicar-resena" id="botonPublicarResena">Publicar reseña</button>
+        <button type="button" class="boton-eliminar-resena" id="botonEliminarResena">🗑️ Eliminar mi reseña</button>
+      </div>
+    </div>
+
+    <p class="resena-aviso" id="resenaAviso">Iniciá sesión para dejar tu reseña.</p>
+
+    <div class="lista-resenas" id="listaResenas"></div>
+
+  </section>
+
+</main>
+
+<!-- FOOTER (mismo componente que el resto de MacroReborn) -->
+<footer class="pie-footer">
+  <div class="pie-contenido">
+    <div class="pie-marca">
+      <a href="index.html" class="nav-logo">
+        <img src="imagenes/logo.png" alt="MacroReborn">
+        MacroReborn
+      </a>
+      <p>Una comunidad de juegos con nostalgia de portal clásico y alma moderna.</p>
+      <p class="estado-servidor"><span class="punto"></span> Servidor en línea</p>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Plataforma</h4>
+      <a href="juegos.html">Juegos</a>
+      <a href="ranking.html">Ranking</a>
+      <a href="comunidad.html">Comunidad</a>
+      <a href="noticias.html">Noticias</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Cuenta</h4>
+      <a href="login.html">Iniciar sesión</a>
+      <a href="registro.html">Registrarse</a>
+      <a href="perfil.html">Mi perfil</a>
+      <a href="notificaciones.html">Notificaciones</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Social</h4>
+      <a href="amigos.html">Amigos</a>
+      <a href="chat.html">Chat</a>
+    </div>
+  </div>
+
+  <div class="pie-inferior">
+    <span>© 2026 MacroReborn. Todos los derechos reservados.</span>
+    <span>Hecho con 💛 para la vieja escuela de los juegos web.</span>
+  </div>
+</footer>
+
+<script src="js/core.js"></script>
+
+<script src="js/motor/permisos.js"></script>
+<script src="js/notificaciones.js"></script>
+
+<script src="js/navbar.js"></script>
+
+<script src="js/motor/actividad.js"></script>
+<script src="js/datos-juegos.js"></script>
+
+<script src="js/motor/logros.js"></script>
+
+<script src="js/juego.js"></script>
+
+
+<script src="js/favoritos.js"></script>
+
+<script src="js/valoraciones.js"></script>
+
+<script src="js/motor/likes.js"></script>
+
+<script src="js/resenas.js"></script>
+
+<script src="js/buscador.js"></script>
+<script src="js/nav-toggle.js"></script>
+
+</body>
+
+</html>

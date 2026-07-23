@@ -1,0 +1,505 @@
+/* ==========================================================================
+   MACRO REBORN — COMUNIDAD
+   Usa los tokens de css/inicio.css (:root, .navbar, .pie-footer, etc).
+   Todas las clases de acá son las mismas que ya genera js/comunidad.js:
+   no se agregó, quitó ni renombró ninguna.
+   ========================================================================== */
+
+.mr-root {
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   MAIN / ENCABEZADO
+   ========================================================================== */
+
+.comunidad-main {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 24px 70px;
+}
+
+.comunidad-header {
+  position: relative;
+  text-align: center;
+  padding: 56px 24px 44px;
+  margin: 0 0 36px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 800px 420px at 50% -15%, rgba(240, 180, 41, 0.16), transparent 60%),
+    linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-base) 100%);
+  border-bottom: 1px solid var(--line);
+}
+
+.comunidad-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(240, 180, 41, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 180, 41, 0.05) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 0%, black 40%, transparent 90%);
+  pointer-events: none;
+}
+
+.comunidad-header h1 {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4.5vw, 38px);
+  margin: 0 0 10px;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 60%, var(--gold-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.comunidad-subtitulo {
+  position: relative;
+  color: var(--text-muted);
+  font-size: 15px;
+  margin: 0;
+}
+
+/* ==========================================================================
+   CONTROLES / BUSCADOR
+   ========================================================================== */
+
+.comunidad-controles {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.buscador {
+  flex: 1;
+  min-width: 220px;
+  padding: 13px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg-panel);
+  color: var(--text-main);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.buscador:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(240, 180, 41, 0.12);
+}
+
+.buscador::placeholder {
+  color: var(--text-muted);
+}
+
+.filtros {
+  display: flex;
+  gap: 8px;
+}
+
+.filtro-btn {
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  border: 1px solid var(--line);
+  padding: 10px 16px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.filtro-btn:hover {
+  border-color: rgba(240, 180, 41, 0.4);
+  color: var(--text-main);
+}
+
+.filtro-btn.activo-filtro {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  border-color: transparent;
+}
+
+/* ==========================================================================
+   SECCIONES
+   ========================================================================== */
+
+.seccion-titulo {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--gold-bright);
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.seccion-conectados {
+  margin-bottom: 50px;
+}
+
+.seccion-todos {
+  margin-bottom: 20px;
+}
+
+.contador-usuarios {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: -12px 0 18px;
+}
+
+/* ==========================================================================
+   USUARIOS CONECTADOS (fila horizontal)
+   ========================================================================== */
+
+.grid-conectados {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.tarjeta-mini {
+  background: var(--bg-panel);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 12px;
+  padding: 12px 18px 12px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  min-width: 190px;
+}
+
+.tarjeta-mini:hover {
+  border-color: var(--green);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-mini-conectado {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 2px solid var(--green);
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-deep);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.14);
+}
+
+.avatar-mini-conectado img,
+.avatar-mini-conectado .capa-mini {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+}
+
+.mini-info .mini-nombre {
+  font-weight: 800;
+  font-size: 13.5px;
+  color: var(--text-main);
+  margin: 0 0 2px;
+}
+
+.mini-info .mini-estado {
+  font-size: 12px;
+  color: var(--green);
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   TODOS LOS USUARIOS (tarjetas grandes)
+   ========================================================================== */
+
+.grid-usuarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.tarjeta-usuario {
+  position: relative;
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-deep));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 26px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarjeta-usuario:hover {
+  border-color: var(--gold-deep);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4);
+}
+
+/* Indicador de estado arriba a la derecha */
+.badge-estado {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.4px;
+}
+
+.badge-estado.online {
+  background: rgba(34, 197, 94, 0.14);
+  color: var(--green);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.badge-estado.offline {
+  background: var(--bg-panel-alt);
+  color: var(--text-muted);
+  border: 1px solid var(--line);
+}
+
+/* Avatar en tarjeta grande */
+.avatar-tarjeta {
+  width: 104px;
+  height: 160px;
+  position: relative;
+  border: 3px solid var(--gold);
+  border-radius: 12px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(240, 180, 41, 0.14), transparent 65%),
+    var(--bg-deep);
+  flex-shrink: 0;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.avatar-tarjeta .capa-tarjeta {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  top: 0;
+  left: 0;
+}
+
+.avatar-tarjeta .avatar-default {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Info del usuario */
+.usuario-nombre {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  margin: 0;
+  text-align: center;
+}
+
+.usuario-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.stat-item {
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 7px 12px;
+  text-align: center;
+  min-width: 58px;
+}
+
+.stat-item .stat-valor {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  display: block;
+  line-height: 1.2;
+}
+
+.stat-item .stat-label {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  display: block;
+}
+
+/* Bio corta */
+.usuario-bio {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0;
+  line-height: 1.45;
+  max-width: 220px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Botón ver perfil */
+.btn-ver-perfil {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  font-weight: 800;
+  font-size: 13.5px;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin-top: 4px;
+}
+
+.btn-ver-perfil:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(240, 180, 41, 0.3);
+}
+
+/* ==========================================================================
+   BADGES DE RELACIÓN DE AMISTAD
+   ========================================================================== */
+
+.rel-amigos,
+.rel-pendiente,
+.rel-recibida {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 4px 11px;
+  border-radius: 999px;
+}
+
+.rel-amigos {
+  background: rgba(34, 197, 94, 0.14);
+  color: var(--green);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.rel-pendiente {
+  background: rgba(240, 180, 41, 0.14);
+  color: var(--gold-bright);
+  border: 1px solid rgba(240, 180, 41, 0.4);
+}
+
+.rel-recibida {
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--cyan);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+/* ==========================================================================
+   ESTADOS VACÍOS
+   ========================================================================== */
+
+.sin-datos {
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 20px 4px;
+}
+
+.estado-vacio {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 54px 20px;
+  color: var(--text-muted);
+  background: var(--bg-panel);
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+}
+
+.estado-vacio .icono-vacio {
+  font-size: 46px;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.estado-vacio p {
+  margin: 0;
+  font-size: 15px;
+}
+
+/* ==========================================================================
+   INDICADOR DE PÁGINA ACTUAL EN LA NAVBAR (solo esta página)
+   ========================================================================== */
+
+.nav-links a.activo,
+.nav-links a.activa-nav {
+  color: var(--gold-bright);
+  background: var(--bg-panel-alt);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .comunidad-main {
+    padding: 0 16px 50px;
+  }
+
+  .comunidad-header {
+    padding: 44px 18px 36px;
+    margin: 0 0 28px;
+  }
+
+  .comunidad-controles {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .buscador {
+    min-width: unset;
+  }
+
+  .grid-usuarios {
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 14px;
+  }
+
+  .tarjeta-mini {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-usuarios {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .avatar-tarjeta {
+    width: 78px;
+    height: 120px;
+  }
+
+  .usuario-nombre {
+    font-size: 15px;
+  }
+}

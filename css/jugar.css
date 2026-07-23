@@ -1,0 +1,193 @@
+/* ==========================================================================
+   MACRO REBORN — JUGANDO
+   Usa los tokens de css/inicio.css (:root, .navbar, etc). Pensada para una
+   experiencia inmersiva, centrada en el juego.
+   ========================================================================== */
+
+.mr-root {
+  background: var(--bg-deep);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+.contenido-principal {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 28px 24px 50px;
+}
+
+.zona-juego {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ---- Barra superior: título + acciones ---- */
+
+.zona-juego-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+#tituloJuego {
+  font-family: var(--font-display);
+  font-size: clamp(19px, 3vw, 26px);
+  margin: 0;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 60%, var(--gold-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.zona-juego-acciones {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.boton-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-main);
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  padding: 9px 16px;
+  border-radius: 9px;
+  transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.boton-volver:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
+/* ---- "Gabinete" que envuelve el juego ---- */
+
+.pantalla-juego {
+  position: relative;
+  border-radius: 20px;
+  padding: 14px;
+  background: linear-gradient(180deg, #1b2740, #0a0f1c);
+  border: 1px solid var(--line);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(240, 180, 41, 0.08);
+}
+
+.pantalla-juego::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.85;
+  border-radius: 0 0 6px 6px;
+}
+
+#contenedorJuego {
+  position: relative;
+  height: min(76vh, 820px);
+  min-height: 380px;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#contenedorJuego iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+#contenedorJuego h2 {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 18px;
+}
+
+/* ---- Overlay de carga ---- */
+
+.overlay-carga {
+  position: absolute;
+  inset: 14px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: #05070d;
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  transition: opacity 0.35s ease;
+}
+
+.overlay-carga.oculto {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.spinner-carga {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 3px solid rgba(240, 180, 41, 0.2);
+  border-top-color: var(--gold);
+  animation: girar 0.9s linear infinite;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner-carga {
+    animation-duration: 2.4s;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .contenido-principal {
+    padding: 18px 12px 36px;
+  }
+
+  .pantalla-juego {
+    padding: 8px;
+    border-radius: 16px;
+  }
+
+  #contenedorJuego {
+    height: min(60vh, 560px);
+    min-height: 300px;
+    border-radius: 10px;
+  }
+
+  .overlay-carga {
+    inset: 8px;
+  }
+}

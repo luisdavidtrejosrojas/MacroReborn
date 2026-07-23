@@ -1,0 +1,46 @@
+/* ==============================
+   INSIGNIAS OFICIALES - MacroReborn
+   Usa las variables de css/inicio.css, así que mantiene la estética
+   general del sitio (mismos colores, tipografía y bordes).
+   ============================== */
+
+.insignias-usuario {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 10px;
+}
+
+.insignias-usuario:empty {
+  display: none;
+  margin: 0;
+}
+
+.insignia-oficial {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  color: var(--gold-bright);
+  white-space: nowrap;
+}
+
+/* Versión compacta: solo ícono, para comentarios y listados */
+
+.insignias-usuario.compactas {
+  gap: 3px;
+  margin: 2px 0 6px;
+}
+
+.insignia-oficial.compacta {
+  font-size: 13px;
+  padding: 1px 6px;
+}

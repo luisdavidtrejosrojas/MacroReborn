@@ -1,0 +1,292 @@
+/* ==========================================================================
+   MACRO REBORN — CATÁLOGO DE JUEGOS
+   Usa los mismos tokens y componentes (:root, .navbar, .eyebrow,
+   .titulo-principal, .pie-footer, etc.) definidos en css/inicio.css.
+   Este archivo cubre lo específico de la página de Juegos.
+   ========================================================================== */
+
+.mr-root {
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   ENCABEZADO DEL CATÁLOGO
+   ========================================================================== */
+
+.catalogo-header {
+  position: relative;
+  overflow: hidden;
+  padding: 64px 24px 56px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 800px 420px at 50% -15%, rgba(240, 180, 41, 0.16), transparent 60%),
+    linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-base) 100%);
+  border-bottom: 1px solid var(--line);
+}
+
+.catalogo-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(240, 180, 41, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 180, 41, 0.05) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 0%, black 40%, transparent 90%);
+  pointer-events: none;
+}
+
+.catalogo-header-contenido {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.catalogo-header .titulo-principal {
+  font-size: clamp(30px, 5.5vw, 48px);
+  margin: 18px 0 0;
+}
+
+.catalogo-header .descripcion {
+  margin: 16px auto 0;
+}
+
+.catalogo-stats {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 26px;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.stat-pill b {
+  color: var(--gold-bright);
+}
+
+/* ==========================================================================
+   SECCIONES DE JUEGOS
+   ========================================================================== */
+
+.seccion-juegos {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 24px 10px;
+}
+
+/* Oculta por completo una sección si su grilla está vacía              */
+/* (ej: "Nuevos" mientras ningún juego tenga tipo "nuevo" en los datos), */
+/* sin tocar la lógica de js/juegos.js: es puramente una regla CSS.      */
+.seccion-juegos:has(.lista-juegos:empty) {
+  display: none;
+}
+
+.seccion-titulo-fila {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.seccion-titulo-fila h2 {
+  font-family: var(--font-display);
+  font-size: clamp(19px, 3vw, 24px);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.seccion-titulo-fila .seccion-linea {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line), transparent);
+  min-width: 40px;
+}
+
+.seccion-conteo {
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Distintivo por sección: Destacados en dorado, Nuevos en cyan */
+#seccionDestacados .seccion-titulo-fila h2 { color: var(--gold-bright); }
+#seccionNuevos .seccion-titulo-fila h2 { color: var(--cyan); }
+
+/* ==========================================================================
+   GRILLA Y TARJETAS DE JUEGOS
+   ========================================================================== */
+
+.lista-juegos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 22px;
+}
+
+.juego-card {
+  position: relative;
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-base));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.juego-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--gold-deep);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(240, 180, 41, 0.15);
+}
+
+.juego-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.badge-categoria,
+.badge-estado {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge-categoria {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  max-width: 60%;
+}
+
+.badge-estado {
+  background: rgba(240, 180, 41, 0.14);
+  color: var(--gold-bright);
+  border: 1px solid rgba(240, 180, 41, 0.35);
+}
+
+.juego-imagen {
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52px;
+  background: radial-gradient(circle at 50% 40%, rgba(240, 180, 41, 0.12), rgba(0, 0, 0, 0.25) 70%);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+
+.juego-card h3 {
+  font-size: 17px;
+  margin: 0 0 8px;
+  color: var(--text-main);
+}
+
+.juego-descripcion-corta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 34px;
+}
+
+.juego-card > a {
+  margin-top: auto;
+  display: block;
+}
+
+.juego-card button {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13.5px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.juego-card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(240, 180, 41, 0.3);
+}
+
+/* Toque de detalle "cartucho" clásico en la primera fila de Destacados */
+#juegosDestacados .juego-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 14px;
+  right: 14px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  border-radius: 0 0 4px 4px;
+  opacity: 0.8;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .catalogo-header {
+    padding: 48px 18px 40px;
+  }
+
+  .seccion-juegos {
+    padding: 40px 18px 0;
+  }
+
+  .lista-juegos {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+  }
+
+  .juego-imagen {
+    height: 90px;
+    font-size: 42px;
+  }
+}
+
+@media (max-width: 420px) {
+  .lista-juegos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

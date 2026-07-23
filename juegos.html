@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<script src="js/tema.js"></script>
+<script src="js/seo.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juegos gratis online - Catálogo completo | MacroReborn</title>
+
+<!-- SEO -->
+<meta name="description" content="Explorá el catálogo de MacroReborn: más de 40 juegos gratis para jugar online sin descargas, entre plataformas, acción, RPG y clásicos como Mario y Pokémon.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.macroreborn.com/juegos.html">
+<meta name="theme-color" content="#0f172a">
+<link rel="icon" href="imagenes/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="imagenes/logo.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MacroReborn">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Juegos gratis online - Catálogo completo | MacroReborn">
+<meta property="og:description" content="Explorá el catálogo de MacroReborn: más de 40 juegos gratis para jugar online sin descargas, entre plataformas, acción, RPG y clásicos como Mario y Pokémon.">
+<meta property="og:url" content="https://www.macroreborn.com/juegos.html">
+<meta property="og:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MacroReborn - Comunidad y catálogo de juegos gratis online">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Juegos gratis online - Catálogo completo | MacroReborn">
+<meta name="twitter:description" content="Explorá el catálogo de MacroReborn: más de 40 juegos gratis para jugar online sin descargas, entre plataformas, acción, RPG y clásicos como Mario y Pokémon.">
+<meta name="twitter:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/inicio.css">
+<link rel="stylesheet" href="css/juegos.css">
+<link rel="stylesheet" href="css/buscador.css">
+</head>
+
+<body class="mr-root">
+
+<!-- NAVBAR (misma identidad que index.html) -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <img src="imagenes/logo.png" alt="MacroReborn">
+    MacroReborn
+  </a>
+  <div class="nav-links">
+    <a href="index.html">🏠 Inicio</a>
+    <a href="comunidad.html">🌐 Comunidad</a>
+    <a href="perfil.html">👤 Perfil</a>
+    <a href="juegos.html">🎮 Juegos</a>
+    <a href="ranking.html">🏆 Ranking</a>
+    <a href="amigos.html">👥 Amigos</a>
+    <a href="chat.html">💬 Chat</a>
+    <a href="noticias.html">📰 Noticias</a>
+  </div>
+</nav>
+
+<!-- ENCABEZADO DEL CATÁLOGO -->
+<header class="catalogo-header">
+  <div class="catalogo-header-contenido">
+    <span class="eyebrow"><span class="punto"></span> Catálogo de la comunidad</span>
+
+    <h1 class="titulo-principal">🎮 Juegos MacroReborn</h1>
+
+    <p class="descripcion">
+      Elegí entre el catálogo completo y saltá directo a la acción, sin instalar nada.
+    </p>
+
+    <div class="catalogo-stats">
+      <span class="stat-pill">🕹️ <b id="statTotalJuegos">—</b> juegos en el catálogo</span>
+      <span class="stat-pill">⭐ Actualizado por la comunidad</span>
+    </div>
+  </div>
+</header>
+
+<main class="contenido-principal">
+
+  <section class="seccion-juegos" id="seccionDestacados">
+    <div class="seccion-titulo-fila">
+      <h2>⭐ Destacados</h2>
+      <span class="seccion-linea"></span>
+    </div>
+    <div class="lista-juegos" id="juegosDestacados"></div>
+  </section>
+
+  <section class="seccion-juegos" id="seccionNuevos">
+    <div class="seccion-titulo-fila">
+      <h2>🔥 Nuevos</h2>
+      <span class="seccion-linea"></span>
+    </div>
+    <div class="lista-juegos" id="juegosNuevos"></div>
+  </section>
+
+  <section class="seccion-juegos" id="seccionTodos">
+    <div class="seccion-titulo-fila">
+      <h2>🕹️ Todos los juegos</h2>
+      <span class="seccion-linea"></span>
+    </div>
+    <div class="lista-juegos" id="listaJuegos"></div>
+  </section>
+
+</main>
+
+<!-- FOOTER (mismo componente que index.html) -->
+<footer class="pie-footer">
+  <div class="pie-contenido">
+    <div class="pie-marca">
+      <a href="index.html" class="nav-logo">
+        <img src="imagenes/logo.png" alt="MacroReborn">
+        MacroReborn
+      </a>
+      <p>Una comunidad de juegos con nostalgia de portal clásico y alma moderna.</p>
+      <p class="estado-servidor"><span class="punto"></span> Servidor en línea</p>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Plataforma</h4>
+      <a href="juegos.html">Juegos</a>
+      <a href="ranking.html">Ranking</a>
+      <a href="comunidad.html">Comunidad</a>
+      <a href="noticias.html">Noticias</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Cuenta</h4>
+      <a href="login.html">Iniciar sesión</a>
+      <a href="registro.html">Registrarse</a>
+      <a href="perfil.html">Mi perfil</a>
+      <a href="notificaciones.html">Notificaciones</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Social</h4>
+      <a href="amigos.html">Amigos</a>
+      <a href="chat.html">Chat</a>
+    </div>
+  </div>
+
+  <div class="pie-inferior">
+    <span>© 2026 MacroReborn. Todos los derechos reservados.</span>
+    <span>Hecho con 💛 para la vieja escuela de los juegos web.</span>
+  </div>
+</footer>
+
+<script src="js/core.js"></script>
+
+<script src="js/motor/permisos.js"></script>
+<script src="js/datos-juegos.js"></script>
+
+<script src="js/juegos.js"></script>
+
+<script src="js/notificaciones.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/buscador.js"></script>
+<script src="js/nav-toggle.js"></script>
+
+<script>
+// ==============================================================
+// Contador del catálogo — puramente visual / de solo lectura.
+// Usa el arreglo "juegos" ya cargado por datos-juegos.js (datos
+// reales existentes) para mostrar cuántos juegos hay. No agrega
+// ni modifica ningún juego ni ningún dato.
+// ==============================================================
+(function () {
+  try {
+    var el = document.getElementById("statTotalJuegos");
+    if (el && typeof juegos !== "undefined") {
+      el.textContent = juegos.length;
+    }
+  } catch (e) {}
+})();
+</script>
+
+</body>
+</html>

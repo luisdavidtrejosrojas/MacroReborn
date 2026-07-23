@@ -1,0 +1,412 @@
+// ==============================
+// RANKING - MacroReborn
+// ==============================
+
+
+const podioRanking = document.getElementById("podioRanking");
+const contenedorRanking = document.getElementById("listaRanking");
+const buscador = document.getElementById("buscarJugador");
+
+// Usuario con sesión iniciada en este navegador — se usa únicamente
+// para resaltar visualmente su propia fila/tarjeta en el ranking.
+// No participa del cálculo ni del orden del ranking.
+const activoRanking = leerJSON(localStorage.getItem("usuarioActivo") || "null");
+
+
+// ==============================
+// OBTENER PUNTOS DE LOGROS
+// ==============================
+// La suma de puntos de logros la calcula calcularPuntosLogros(nombre),
+// definida en js/motor/logros.js, para que ranking.html, perfil.html
+// y usuario.html usen siempre el mismo cálculo.
+
+
+
+/// ==============================
+// OBTENER AVATAR
+// ==============================
+
+function obtenerAvatar(nombre){
+
+
+    const avatar = leerJSON(
+        localStorage.getItem("avatar_" + nombre) || "null"
+    );
+
+
+    if(!avatar){
+
+        return `
+        <div class="avatar-mini-ranking">
+            <img src="imagenes/avatar.png" alt="" loading="lazy">
+        </div>
+        `;
+
+    }
+
+
+
+    const capas = [
+
+        "fondo",
+        "espalda",
+        "modelo",
+        "piel",
+        "ojos",
+        "boca",
+        "pantalon",
+        "botas",
+        "remera",
+        "guantes",
+        "accesorio",
+        "cara",
+        "pelo",
+        "mascota",
+        "borde"
+
+    ];
+
+
+
+    let html = "";
+
+
+
+    capas.forEach(tipo=>{
+
+
+        let valor = avatar[tipo];
+
+
+        if(valor && valor !== "ninguno"){
+
+
+            let ruta;
+
+
+            if(valor.includes("_")){
+
+
+                let partes = valor.split("_");
+
+                ruta =
+                "imagenes/" +
+                partes[0] +
+                "/" +
+                partes.slice(1).join("_") +
+                ".png";
+
+
+            }else{
+
+
+                ruta =
+                "imagenes/" +
+                valor +
+                ".png";
+
+
+            }
+
+
+            html += `
+            <img 
+            class="capa-ranking"
+            src="${ruta}" alt="" loading="lazy">
+            `;
+
+        }
+
+
+    });
+
+
+
+    return `
+
+    <div class="avatar-mini-ranking">
+
+        ${html}
+
+    </div>
+
+    `;
+
+
+}
+
+
+
+// ==============================
+// LISTA DE RANKING (ordenada)
+// ==============================
+// Calcula la lista completa de usuarios ordenada por puntuación.
+// La usan cargarRanking() acá abajo y también obtenerPosicionRanking(),
+// para que el podio, la lista y la posición individual salgan siempre
+// de los mismos datos.
+
+function obtenerListaRanking(){
+
+    let usuarios =
+    leerJSON(
+        localStorage.getItem("usuariosMacro") || "[]"
+    );
+
+    let ranking = usuarios.map(usuario=>{
+
+        return{
+
+            ...usuario,
+
+            puntosLogros:
+            calcularPuntosLogros(usuario.nombre),
+
+            puntuacion:
+
+            (Number(usuario.nivel)||1) * 100000
+
+            +
+
+            (Number(usuario.xp)||0)
+
+            +
+
+            calcularPuntosLogros(usuario.nombre)
+
+        };
+
+    });
+
+    ranking.sort((a,b)=>{
+
+        return b.puntuacion - a.puntuacion;
+
+    });
+
+    return ranking;
+
+}
+
+
+
+// ==============================
+// POSICIÓN DE UN USUARIO EN EL RANKING
+// ==============================
+// Devuelve la posición real (1, 2, 3...) de un usuario dentro del
+// ranking general, o null si todavía no aparece en él. La usan
+// perfil.html (perfil.js) y usuario.html (usuario.js).
+
+function obtenerPosicionRanking(nombre){
+
+    const ranking = obtenerListaRanking();
+
+    const indice = ranking.findIndex(u=>u.nombre===nombre);
+
+    return indice === -1 ? null : indice + 1;
+
+}
+
+
+
+// ==============================
+// LOGROS DE RANKING
+// ==============================
+// Cada vez que se calcula el ranking (ranking.html, perfil.html o
+// usuario.html, que también cargan este archivo) se revisa la posición
+// de todos los usuarios y se desbloquean los logros correspondientes.
+// desbloquearLogro() ya evita duplicados, así que es seguro llamarla
+// repetidamente.
+
+function revisarLogrosRanking(){
+
+    if(typeof desbloquearLogro !== "function") return;
+
+    const ranking = obtenerListaRanking();
+
+    ranking.forEach((usuario,index)=>{
+
+        const puesto = index + 1;
+
+        if(puesto <= 100) desbloquearLogro(usuario.nombre,"top100");
+        if(puesto <= 50) desbloquearLogro(usuario.nombre,"top50");
+        if(puesto <= 10) desbloquearLogro(usuario.nombre,"top10");
+        if(puesto <= 3) desbloquearLogro(usuario.nombre,"top3");
+        if(puesto === 2) desbloquearLogro(usuario.nombre,"subcampeon");
+        if(puesto === 1) desbloquearLogro(usuario.nombre,"numeroUno");
+
+    });
+
+}
+
+
+
+
+// ==============================
+// CARGAR RANKING
+// ==============================
+
+function cargarRanking(filtro=""){
+
+    // Esta función pinta el podio y la lista de ranking.html. Si el
+    // script se incluye en otra página solo para reutilizar
+    // obtenerListaRanking()/obtenerPosicionRanking(), esos contenedores
+    // no existen y no hay nada que dibujar acá.
+    if(!podioRanking || !contenedorRanking) return;
+
+    let ranking = obtenerListaRanking();
+
+    if(filtro){
+
+        ranking =
+        ranking.filter(u=>
+
+            u.nombre
+            .toLowerCase()
+            .includes(
+                filtro.toLowerCase()
+            )
+
+        );
+
+    }
+
+    const top3 = ranking.slice(0,3);
+    const resto = ranking.slice(3,50);
+
+    // ==========================
+    // PODIO
+    // ==========================
+
+    podioRanking.innerHTML = "";
+
+    const posiciones = [
+        top3[1],
+        top3[0],
+        top3[2]
+    ];
+
+    const clases = [
+        "segundo",
+        "primero",
+        "tercero"
+    ];
+
+    posiciones.forEach((usuario,i)=>{
+
+        if(!usuario) return;
+
+        podioRanking.innerHTML += `
+
+        <div class="podio-card ${clases[i]} ${activoRanking && activoRanking.nombre === usuario.nombre ? "es-actual" : ""}">
+
+            ${clases[i]=="primero"
+            ? "<div class='corona'>👑</div>"
+            : ""}
+
+            ${obtenerAvatar(usuario.nombre)}
+
+            <h2>${usuario.nombre}</h2>
+
+            ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(usuario.nombre, true) : ""}
+
+            <p>⭐ Nivel ${usuario.nivel || 1}</p>
+
+            <p>⚡ ${usuario.xp || 0} XP</p>
+
+            <p>🏅 ${usuario.puntosLogros} puntos</p>
+
+            <a
+            href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}"
+            class="boton-ranking">
+
+            👤 Ver perfil
+
+            </a>
+
+        </div>
+
+        `;
+
+    });
+
+    // ==========================
+    // RESTO DEL RANKING
+    // ==========================
+
+    contenedorRanking.innerHTML="";
+
+    resto.forEach((usuario,index)=>{
+
+        let puesto = index + 4;
+
+        let medalla = puesto + "️⃣";
+
+        contenedorRanking.innerHTML += `
+
+        <div class="jugador ${activoRanking && activoRanking.nombre === usuario.nombre ? "es-actual" : ""}">
+
+            <div class="puesto">
+
+            ${medalla}
+
+            </div>
+
+            ${obtenerAvatar(usuario.nombre)}
+
+            <div class="datos-ranking">
+
+                <h3>${usuario.nombre}</h3>
+
+                ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(usuario.nombre, true) : ""}
+
+                <p>⭐ Nivel ${usuario.nivel || 1}</p>
+
+                <p>⚡ ${usuario.xp || 0} XP</p>
+
+                <p>🏅 ${usuario.puntosLogros} puntos</p>
+
+            </div>
+
+            <a
+            href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}"
+            class="boton-ranking">
+
+            👤 Ver perfil
+
+            </a>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+
+
+
+// ==============================
+// BUSCADOR
+// ==============================
+
+
+buscador?.addEventListener(
+"input",
+()=>{
+
+
+    cargarRanking(
+        buscador.value
+    );
+
+
+});
+
+
+
+
+// INICIO
+
+cargarRanking();
+revisarLogrosRanking();

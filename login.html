@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <script src="js/tema.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión | MacroReborn</title>
+
+<!-- SEO -->
+<meta name="description" content="Iniciá sesión en tu cuenta de MacroReborn para jugar, chatear y conectar con la comunidad.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://www.macroreborn.com/login.html">
+<meta name="theme-color" content="#0f172a">
+<link rel="icon" href="imagenes/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="imagenes/logo.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MacroReborn">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Iniciar sesión | MacroReborn">
+<meta property="og:description" content="Iniciá sesión en tu cuenta de MacroReborn para jugar, chatear y conectar con la comunidad.">
+<meta property="og:url" content="https://www.macroreborn.com/login.html">
+<meta property="og:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MacroReborn - Comunidad y catálogo de juegos gratis online">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Iniciar sesión | MacroReborn">
+<meta name="twitter:description" content="Iniciá sesión en tu cuenta de MacroReborn para jugar, chatear y conectar con la comunidad.">
+<meta name="twitter:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/inicio.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="mr-root auth-page">
+
+<div class="auth-shell">
+
+    <!-- PANEL DE IDENTIDAD -->
+    <div class="auth-brand">
+        <div class="orbe orbe-1"></div>
+        <div class="orbe orbe-2"></div>
+
+        <a href="index.html" class="auth-volver">← Volver al inicio</a>
+
+        <div class="auth-brand-main">
+            <div class="logo-wrapper">
+                <img src="imagenes/logo.png" alt="Logo MacroReborn">
+            </div>
+
+            <span class="eyebrow"><span class="punto"></span> Plataforma de juegos y comunidad</span>
+
+            <h2 class="auth-brand-nombre">Bienvenido de nuevo</h2>
+            <p class="auth-brand-frase">Tu perfil, tus amigos y tus partidas siguen justo donde los dejaste. Iniciá sesión para volver a jugar.</p>
+
+            <ul class="auth-features">
+                <li><span class="icono">🎮</span> Catálogo de juegos directo desde el navegador</li>
+                <li><span class="icono">👥</span> Comunidad activa y sistema de amigos</li>
+                <li><span class="icono">🏆</span> Ranking, XP y niveles para tu perfil</li>
+            </ul>
+        </div>
+
+        <p class="estado-servidor"><span class="punto"></span> Servidor en línea</p>
+    </div>
+
+    <!-- PANEL DE ACCESO -->
+    <div class="auth-form-panel">
+        <div class="login-box auth-card mr-notched" id="cardLogin">
+
+            <h1>MacroReborn</h1>
+            <p>Iniciá sesión para continuar</p>
+
+            <form id="formLogin">
+
+                <div class="campo">
+                    <label>👤 Nombre de usuario</label>
+                    <input type="text" id="usuario" placeholder="Usuario">
+                </div>
+
+                <div class="campo">
+                    <label>🔒 Contraseña</label>
+                    <input type="password" id="password" placeholder="Contraseña">
+                </div>
+
+                <div id="mensajeLogin" class="auth-mensaje" role="alert"></div>
+
+                <button type="submit">
+                    Iniciar sesión
+                </button>
+
+            </form>
+
+            <p class="registro">
+                ¿No tenés una cuenta?
+                <a href="registro.html">Registrate</a>
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="js/core.js"></script>
+
+<script src="js/login.js"></script>
+
+</body>
+</html>
