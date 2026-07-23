@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<script src="js/tema.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat en vivo | MacroReborn</title>
+
+<!-- SEO -->
+<meta name="description" content="Chateá en tiempo real con la comunidad de MacroReborn.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://www.macroreborn.com/chat.html">
+<meta name="theme-color" content="#0f172a">
+<link rel="icon" href="imagenes/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="imagenes/logo.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MacroReborn">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Chat en vivo | MacroReborn">
+<meta property="og:description" content="Chateá en tiempo real con la comunidad de MacroReborn.">
+<meta property="og:url" content="https://www.macroreborn.com/chat.html">
+<meta property="og:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MacroReborn - Comunidad y catálogo de juegos gratis online">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Chat en vivo | MacroReborn">
+<meta name="twitter:description" content="Chateá en tiempo real con la comunidad de MacroReborn.">
+<meta name="twitter:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/inicio.css">
+<link rel="stylesheet" href="css/chat.css">
+<link rel="stylesheet" href="css/buscador.css">
+</head>
+
+<body class="mr-root">
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <img src="imagenes/logo.png" alt="MacroReborn">
+    MacroReborn
+  </a>
+  <div class="nav-links">
+    <a href="index.html">🏠 Inicio</a>
+    <a href="comunidad.html">🌐 Comunidad</a>
+    <a href="perfil.html">👤 Perfil</a>
+    <a href="juegos.html">🎮 Juegos</a>
+    <a href="ranking.html">🏆 Ranking</a>
+    <a href="amigos.html">👥 Amigos</a>
+    <a href="chat.html" class="activa-nav">💬 Chat</a>
+    <a href="noticias.html">📰 Noticias</a>
+  </div>
+</nav>
+
+<main class="contenido-principal">
+
+  <div class="chat-container">
+
+    <div class="chat-header">
+
+      <div>
+        <h1>💬 Chat General</h1>
+        <p class="subtitulo-chat">Bienvenido al chat de la comunidad de MacroReborn.</p>
+      </div>
+
+      <div class="chat-info">
+        <span class="online-indicador">🟢 En línea</span>
+      </div>
+
+    </div>
+
+    <div id="mensajesChat" class="mensajes-chat">
+      <!-- chat.js cargará los mensajes -->
+    </div>
+
+    <div class="escribir">
+      <input
+        id="mensajeInput"
+        type="text"
+        maxlength="300"
+        autocomplete="off"
+        placeholder="Escribí un mensaje...">
+
+      <button id="botonEnviar">📨 Enviar</button>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- FOOTER (mismo componente que el resto de MacroReborn) -->
+<footer class="pie-footer">
+  <div class="pie-contenido">
+    <div class="pie-marca">
+      <a href="index.html" class="nav-logo">
+        <img src="imagenes/logo.png" alt="MacroReborn">
+        MacroReborn
+      </a>
+      <p>Una comunidad de juegos con nostalgia de portal clásico y alma moderna.</p>
+      <p class="estado-servidor"><span class="punto"></span> Servidor en línea</p>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Plataforma</h4>
+      <a href="juegos.html">Juegos</a>
+      <a href="ranking.html">Ranking</a>
+      <a href="comunidad.html">Comunidad</a>
+      <a href="noticias.html">Noticias</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Cuenta</h4>
+      <a href="login.html">Iniciar sesión</a>
+      <a href="registro.html">Registrarse</a>
+      <a href="perfil.html">Mi perfil</a>
+      <a href="notificaciones.html">Notificaciones</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Social</h4>
+      <a href="amigos.html">Amigos</a>
+      <a href="chat.html">Chat</a>
+    </div>
+  </div>
+
+  <div class="pie-inferior">
+    <span>© 2026 MacroReborn. Todos los derechos reservados.</span>
+    <span>Hecho con 💛 para la vieja escuela de los juegos web.</span>
+  </div>
+</footer>
+
+<script src="js/core.js"></script>
+
+<script src="js/motor/permisos.js"></script>
+<script src="js/motor/reportes.js"></script>
+<script src="js/motor/likes.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/datos-juegos.js"></script>
+<script src="js/buscador.js"></script>
+<script src="js/nav-toggle.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+# robots.txt - MacroReborn
+# Referencia: https://www.robotstxt.org/
+
+User-agent: *
+
+# admin.html no está enlazado desde ninguna otra página (no aparece en
+# ningún navbar ni link interno), así que bloquearlo acá es seguro y
+# evita que un bot le dedique tiempo de rastreo.
+Disallow: /admin.html
+
+# El resto de las páginas privadas/utilitarias (chat, perfil, amigos,
+# notificaciones, login, registro, jugar) usan <meta name="robots"
+# content="noindex..."> en su propio <head> en vez de Disallow acá a
+# propósito: están enlazadas desde el navbar de TODAS las páginas, y
+# bloquearlas por robots.txt le impediría a Google rastrearlas y ver
+# esa etiqueta noindex — puede terminar dejando la URL "pelada" (sin
+# título ni descripción) en los resultados en vez de excluirla del
+# todo. Dejar que las rastree y respete el noindex es lo correcto.
+
+# Nota: a propósito tampoco se bloquean /js/ ni /css/. Google renderiza
+# las páginas como un navegador para evaluar diseño responsive y Core
+# Web Vitals; bloquear esos recursos perjudica el rastreo en vez de
+# ayudarlo.
+
+# El resto del sitio (home, catálogo, fichas de juego, comunidad,
+# ranking, noticias, perfiles públicos) queda permitido explícitamente.
+Allow: /
+
+Sitemap: https://www.macroreborn.com/sitemap.xml

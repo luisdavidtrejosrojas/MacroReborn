@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<script src="js/tema.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi perfil | MacroReborn</title>
+
+<!-- SEO -->
+<meta name="description" content="Personalizá tu avatar, mirá tus estadísticas, tus logros y tu actividad reciente en tu perfil de MacroReborn.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://www.macroreborn.com/perfil.html">
+<meta name="theme-color" content="#0f172a">
+<link rel="icon" href="imagenes/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="imagenes/logo.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MacroReborn">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Mi perfil | MacroReborn">
+<meta property="og:description" content="Personalizá tu avatar, mirá tus estadísticas, tus logros y tu actividad reciente en tu perfil de MacroReborn.">
+<meta property="og:url" content="https://www.macroreborn.com/perfil.html">
+<meta property="og:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MacroReborn - Comunidad y catálogo de juegos gratis online">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mi perfil | MacroReborn">
+<meta name="twitter:description" content="Personalizá tu avatar, mirá tus estadísticas, tus logros y tu actividad reciente en tu perfil de MacroReborn.">
+<meta name="twitter:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/inicio.css">
+<link rel="stylesheet" href="css/perfil.css">
+<link rel="stylesheet" href="css/insignias.css">
+<link rel="stylesheet" href="css/buscador.css">
+</head>
+
+
+<body class="mr-root">
+
+
+<nav class="navbar">
+
+<a href="index.html" class="nav-logo">
+<img src="imagenes/logo.png" alt="MacroReborn">
+MacroReborn
+</a>
+
+<div class="nav-links">
+
+<a href="index.html">🏠 Inicio</a>
+
+<a href="comunidad.html">🌐 Comunidad</a>
+
+<a href="perfil.html">👤 Perfil</a>
+
+<a href="juegos.html">🎮 Juegos</a>
+
+<a href="ranking.html">🏆 Ranking</a>
+
+<a href="amigos.html">👥 Amigos</a>
+
+<a href="chat.html">💬 Chat</a>
+
+<a href="noticias.html">📰 Noticias</a>
+
+</div>
+
+
+</nav>
+
+<main class="perfil">
+
+  <!-- PERFIL SUPERIOR -->
+  <div class="perfil-superior">
+
+    <div class="avatar">
+      <img src="imagenes/avatar.png" id="avatarPrincipal" alt="Tu avatar en MacroReborn">
+    </div>
+
+    <div class="datos">
+      <h1 id="nombreUsuario">Usuario</h1>
+
+      <div class="insignias-usuario" id="insigniasPerfil"></div>
+
+      <div class="perfil-badges">
+        <p class="estado">🟢 En línea</p>
+        <p class="nivel">⭐ Nivel 1</p>
+      </div>
+
+      <p class="biografia" id="biografia">Todavía no escribió una biografía.</p>
+
+      <button>✏️ Editar descripción</button>
+    </div>
+
+  </div>
+
+  <!-- ESTADÍSTICAS -->
+  <div class="estadisticas">
+    <div><h3>Registrado</h3><p id="fechaRegistro">27/06/2026</p></div>
+    <div><h3>Última conexión</h3><p id="ultimaConexion">Hace unos segundos</p></div>
+    <div>
+      <h3>Experiencia</h3>
+      <p id="xp">0 XP</p>
+      <div class="barra-xp"><div id="progresoXP"></div></div>
+      <p id="textoXP"></p>
+    </div>
+    <div><h3>Ranking</h3><p id="ranking">Sin clasificar</p></div>
+    <div><h3>Logros</h3><p id="puntosLogros">0 puntos</p></div>
+  </div>
+
+  <!-- MENÚ DE PESTAÑAS -->
+  <div class="menu-perfil">
+    <button class="tab activa" data-tab="inicio">🏠 Inicio</button>
+    <button class="tab" data-tab="actividad-amigos">👥 Actividad de amigos</button>
+    <button class="tab" data-tab="actividad">📜 Actividad reciente</button>
+    <button class="tab" data-tab="comentarios">💬 Comentarios</button>
+    <button class="tab" data-tab="favoritos">❤️ Juegos favoritos</button>
+    <button class="tab" data-tab="ultimos">🎮 Últimos jugados</button>
+    <button class="tab" data-tab="amigos">🤝 Amigos</button>
+    <button class="tab" data-tab="avatares">👤 Avatar</button>
+    <button class="tab" data-tab="logros">🏅 Logros</button>
+    <button class="tab" data-tab="config-cuenta">⚙️ Configuración</button>
+  </div>
+
+  <!-- INICIO -->
+  <section id="inicio" class="contenido-tab activo">
+    <h2>Información general</h2>
+    <p id="bienvenidaPerfil">Bienvenido al perfil de MacroReborn.</p>
+    <h3>Descripción</h3>
+    <p id="descripcionInicio">Todavía no hay descripción.</p>
+    <h3>Últimos comentarios</h3>
+    <div id="ultimosComentariosInicio"></div>
+  </section>
+
+  <!-- ACTIVIDAD AMIGOS -->
+  <section id="actividad-amigos" class="contenido-tab">
+    <h2>👥 Actividad de amigos</h2>
+    <div id="listaActividadAmigos"></div>
+  </section>
+
+  <!-- ACTIVIDAD RECIENTE -->
+  <section id="actividad" class="contenido-tab">
+    <h2>📜 Actividad reciente</h2>
+    <div id="listaActividadReciente"></div>
+  </section>
+
+  <!-- COMENTARIOS -->
+  <section id="comentarios" class="contenido-tab">
+    <h2>💬 Comentarios</h2>
+    <div id="listaComentarios"></div>
+    <div class="nuevo-comentario">
+      <input id="comentarioTexto" placeholder="Escribe un comentario...">
+      <button id="botonComentar">Comentar</button>
+    </div>
+  </section>
+
+  <!-- FAVORITOS -->
+  <section id="favoritos" class="contenido-tab">
+    <h2>❤️ Juegos favoritos</h2>
+    <div class="juegos-favoritos"></div>
+  </section>
+
+  <!-- ÚLTIMOS JUGADOS -->
+  <section id="ultimos" class="contenido-tab">
+    <h2>🎮 Últimos juegos jugados</h2>
+    <p>Todavía no jugaste ningún juego.</p>
+  </section>
+
+  <!-- AMIGOS -->
+  <section id="amigos" class="contenido-tab">
+    <h2>🤝 Amigos</h2>
+    <div id="listaAmigosPerfil"></div>
+  </section>
+
+  <!-- AVATAR -->
+  <section id="avatares" class="contenido-tab">
+
+    <h2>👤 Mi avatar</h2>
+    <p class="subtitulo-avatares">Creá y editá tu avatar personal.</p>
+
+    <button id="botonCrearAvatar">✨ Crear / Editar avatar</button>
+
+    <div id="editorAvatar" class="editor-avatar" style="display:none;">
+
+      <h3>✏️ Editor de avatar</h3>
+
+      <!-- BARRA DE CATEGORÍAS -->
+      <div class="editor-categorias">
+        <button class="cat-btn activa-cat" data-cat="modelo">🧍 Modelo</button>
+        <button class="cat-btn" data-cat="fondo">🌄 Fondo</button>
+        <button class="cat-btn" data-cat="piel">🎨 Piel</button>
+        <button class="cat-btn" data-cat="ojos">👀 Ojos</button>
+        <button class="cat-btn" data-cat="boca">👄 Boca</button>
+        <button class="cat-btn" data-cat="pelo">💇 Pelo</button>
+        <button class="cat-btn" data-cat="remera">👕 Remera</button>
+        <button class="cat-btn" data-cat="pantalon">👖 Pantalón</button>
+        <button class="cat-btn" data-cat="botas">👢 Botas</button>
+        <button class="cat-btn" data-cat="guantes">🧤 Guantes</button>
+        <button class="cat-btn" data-cat="accesorio">💍 Accesorios</button>
+        <button class="cat-btn" data-cat="espalda">🎒 Espalda</button>
+        <button class="cat-btn" data-cat="cara">😎 Cara</button>
+        <button class="cat-btn" data-cat="mascota">🐾 Mascota</button>
+        <button class="cat-btn" data-cat="borde">⭐ Borde</button>
+      </div>
+
+      <!-- ÁREA PRINCIPAL: PREVIEW + OPCIONES -->
+      <div class="preview-container">
+
+        <!-- PREVIEW -->
+        <div class="preview-wrapper">
+          <p class="preview-label">Vista previa</p>
+          <div class="preview-capas" id="previewAvatar"></div>
+        </div>
+
+        <!-- PANEL DE OPCIONES POR CATEGORÍA -->
+        <div class="opciones-editor">
+
+          <!-- MODELO -->
+          <div class="grupo-opcion" data-grupo="modelo">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="modelo" data-valor="tora"><img src="imagenes/tora.png" alt="">Tora</div>
+              <div class="opcion-item" data-capa="modelo" data-valor="cereza"><img src="imagenes/cereza.png" alt="">Cereza</div>
+              <div class="opcion-item" data-capa="modelo" data-valor="fiora"><img src="imagenes/fiora.png" alt="">Fiora</div>
+              <div class="opcion-item" data-capa="modelo" data-valor="max"><img src="imagenes/max.png" alt="">Max</div>
+              <div class="opcion-item" data-capa="modelo" data-valor="fenglei"><img src="imagenes/fenglei.png" alt="">Fenglei</div>
+              <div class="opcion-item" data-capa="modelo" data-valor="fengchao"><img src="imagenes/fengchao.png" alt="">Fengchao</div>
+            </div>
+          </div>
+
+          <!-- FONDO -->
+          <div class="grupo-opcion" data-grupo="fondo" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="fondo" data-valor="tora_fondo1" data-modelo="tora"><img src="imagenes/tora/fondo1.png" alt="">Fondo 1</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="tora_fondo2" data-modelo="tora"><img src="imagenes/tora/fondo2.png" alt="">Fondo 2</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="tora_fondo3" data-modelo="tora"><img src="imagenes/tora/fondo3.png" alt="">Fondo 3</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="tora_fondo4" data-modelo="tora"><img src="imagenes/tora/fondo4.png" alt="">Fondo 4</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="tora_fondo5" data-modelo="tora"><img src="imagenes/tora/fondo5.png" alt="">Fondo 5</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="tora_fondo6" data-modelo="tora"><img src="imagenes/tora/fondo6.png" alt="">Fondo 6</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="tora_fondo7" data-modelo="tora"><img src="imagenes/tora/fondo7.png" alt="">Fondo 7</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="tora_fondo8" data-modelo="tora"><img src="imagenes/tora/fondo8.png" alt="">Fondo 8</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="tora_fondo9" data-modelo="tora"><img src="imagenes/tora/fondo9.png" alt="">Fondo 9</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="cereza_fondo1" data-modelo="cereza"><img src="imagenes/cereza/fondo1.png" alt="">Fondo 1</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="cereza_fondo2" data-modelo="cereza"><img src="imagenes/cereza/fondo2.png" alt="">Fondo 2</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="cereza_fondo3" data-modelo="cereza"><img src="imagenes/cereza/fondo3.png" alt="">Fondo 3</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="cereza_fondo4" data-modelo="cereza"><img src="imagenes/cereza/fondo4.png" alt="">Fondo 4</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="cereza_fondo5" data-modelo="cereza"><img src="imagenes/cereza/fondo5.png" alt="">Fondo 5</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="cereza_fondo6" data-modelo="cereza"><img src="imagenes/cereza/fondo6.png" alt="">Fondo 6</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="cereza_fondo7" data-modelo="cereza"><img src="imagenes/cereza/fondo7.png" alt="">Fondo 7</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="cereza_fondo8" data-modelo="cereza"><img src="imagenes/cereza/fondo8.png" alt="">Fondo 8</div>
+              <div class="opcion-item" data-capa="fondo" data-valor="cereza_fondo9" data-modelo="cereza"><img src="imagenes/cereza/fondo9.png" alt="">Fondo 9</div>
+            </div>
+          </div>
+
+          <!-- PIEL -->
+          <div class="grupo-opcion" data-grupo="piel" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="piel" data-valor="tora_piel1" data-modelo="tora"><img src="imagenes/tora/piel1.png" alt="">Piel 1</div>
+              <div class="opcion-item" data-capa="piel" data-valor="tora_piel2" data-modelo="tora"><img src="imagenes/tora/piel2.png" alt="">Piel 2</div>
+              <div class="opcion-item" data-capa="piel" data-valor="tora_piel3" data-modelo="tora"><img src="imagenes/tora/piel3.png" alt="">Piel 3</div>
+              <div class="opcion-item" data-capa="piel" data-valor="cereza_piel1" data-modelo="cereza"><img src="imagenes/cereza/piel1.png" alt="">Piel 1</div>
+              <div class="opcion-item" data-capa="piel" data-valor="cereza_piel2" data-modelo="cereza"><img src="imagenes/cereza/piel2.png" alt="">Piel 2</div>
+            </div>
+          </div>
+
+          <!-- OJOS -->
+          <div class="grupo-opcion" data-grupo="ojos" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="ojos" data-valor="tora_ojos1" data-modelo="tora"><img src="imagenes/tora/ojos1.png" alt="">Ojos 1</div>
+              <div class="opcion-item" data-capa="ojos" data-valor="tora_ojos2" data-modelo="tora"><img src="imagenes/tora/ojos2.png" alt="">Ojos 2</div>
+              <div class="opcion-item" data-capa="ojos" data-valor="tora_ojos3" data-modelo="tora"><img src="imagenes/tora/ojos3.png" alt="">Ojos 3</div>
+              <div class="opcion-item" data-capa="ojos" data-valor="tora_ojos4" data-modelo="tora"><img src="imagenes/tora/ojos4.png" alt="">Ojos 4</div>
+              <div class="opcion-item" data-capa="ojos" data-valor="cereza_ojos1" data-modelo="cereza"><img src="imagenes/cereza/ojos1.png" alt="">Ojos 1</div>
+              <div class="opcion-item" data-capa="ojos" data-valor="cereza_ojos2" data-modelo="cereza"><img src="imagenes/cereza/ojos2.png" alt="">Ojos 2</div>
+            </div>
+          </div>
+
+          <!-- BOCA -->
+          <div class="grupo-opcion" data-grupo="boca" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="boca" data-valor="tora_boca1" data-modelo="tora"><img src="imagenes/tora/boca1.png" alt="">Boca 1</div>
+              <div class="opcion-item" data-capa="boca" data-valor="tora_boca2" data-modelo="tora"><img src="imagenes/tora/boca2.png" alt="">Boca 2</div>
+              <div class="opcion-item" data-capa="boca" data-valor="tora_boca3" data-modelo="tora"><img src="imagenes/tora/boca3.png" alt="">Boca 3</div>
+              <div class="opcion-item" data-capa="boca" data-valor="cereza_boca1" data-modelo="cereza"><img src="imagenes/cereza/boca1.png" alt="">Boca 1</div>
+              <div class="opcion-item" data-capa="boca" data-valor="cereza_boca2" data-modelo="cereza"><img src="imagenes/cereza/boca2.png" alt="">Boca 2</div>
+            </div>
+          </div>
+
+          <!-- PELO -->
+          <div class="grupo-opcion" data-grupo="pelo" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="pelo" data-valor="tora_pelo1" data-modelo="tora"><img src="imagenes/tora/pelo1.png" alt="">Pelo 1</div>
+              <div class="opcion-item" data-capa="pelo" data-valor="tora_pelo2" data-modelo="tora"><img src="imagenes/tora/pelo2.png" alt="">Pelo 2</div>
+              <div class="opcion-item" data-capa="pelo" data-valor="tora_pelo3" data-modelo="tora"><img src="imagenes/tora/pelo3.png" alt="">Pelo 3</div>
+              <div class="opcion-item" data-capa="pelo" data-valor="tora_pelo4" data-modelo="tora"><img src="imagenes/tora/pelo4.png" alt="">Pelo 4</div>
+              <div class="opcion-item" data-capa="pelo" data-valor="cereza_pelo1" data-modelo="cereza"><img src="imagenes/cereza/pelo1.png" alt="">Pelo 1</div>
+              <div class="opcion-item" data-capa="pelo" data-valor="cereza_pelo2" data-modelo="cereza"><img src="imagenes/cereza/pelo2.png" alt="">Pelo 2</div>
+              <div class="opcion-item" data-capa="pelo" data-valor="cereza_pelo3" data-modelo="cereza"><img src="imagenes/cereza/pelo3.png" alt="">Pelo 3</div>
+              <div class="opcion-item" data-capa="pelo" data-valor="cereza_pelo4" data-modelo="cereza"><img src="imagenes/cereza/pelo4.png" alt="">Pelo 4</div>
+            </div>
+          </div>
+
+          <!-- REMERA -->
+          <div class="grupo-opcion" data-grupo="remera" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="remera" data-valor="tora_remera1" data-modelo="tora"><img src="imagenes/tora/remera1.png" alt="">Remera 1</div>
+              <div class="opcion-item" data-capa="remera" data-valor="tora_remera2" data-modelo="tora"><img src="imagenes/tora/remera2.png" alt="">Remera 2</div>
+              <div class="opcion-item" data-capa="remera" data-valor="tora_remera3" data-modelo="tora"><img src="imagenes/tora/remera3.png" alt="">Remera 3</div>
+              <div class="opcion-item" data-capa="remera" data-valor="tora_remera4" data-modelo="tora"><img src="imagenes/tora/remera4.png" alt="">Remera 4</div>
+              <div class="opcion-item" data-capa="remera" data-valor="cereza_remera1" data-modelo="cereza"><img src="imagenes/cereza/remera1.png" alt="">Remera 1</div>
+              <div class="opcion-item" data-capa="remera" data-valor="cereza_remera2" data-modelo="cereza"><img src="imagenes/cereza/remera2.png" alt="">Remera 2</div>
+            </div>
+          </div>
+
+          <!-- BOTAS -->
+          <div class="grupo-opcion" data-grupo="botas" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="botas" data-valor="tora_botas1" data-modelo="tora"><img src="imagenes/tora/botas1.png" alt="">Botas 1</div>
+              <div class="opcion-item" data-capa="botas" data-valor="tora_botas2" data-modelo="tora"><img src="imagenes/tora/botas2.png" alt="">Botas 2</div>
+              <div class="opcion-item" data-capa="botas" data-valor="tora_botas3" data-modelo="tora"><img src="imagenes/tora/botas3.png" alt="">Botas 3</div>
+              <div class="opcion-item" data-capa="botas" data-valor="tora_botas4" data-modelo="tora"><img src="imagenes/tora/botas4.png" alt="">Botas 4</div>
+              <div class="opcion-item" data-capa="botas" data-valor="cereza_botas1" data-modelo="cereza"><img src="imagenes/cereza/botas1.png" alt="">Botas 1</div>
+              <div class="opcion-item" data-capa="botas" data-valor="cereza_botas2" data-modelo="cereza"><img src="imagenes/cereza/botas2.png" alt="">Botas 2</div>
+            </div>
+          </div>
+
+          <!-- PANTALÓN -->
+          <div class="grupo-opcion" data-grupo="pantalon" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="pantalon" data-valor="tora_pantalon1" data-modelo="tora"><img src="imagenes/tora/pantalon1.png" alt="">Pantalón 1</div>
+              <div class="opcion-item" data-capa="pantalon" data-valor="tora_pantalon2" data-modelo="tora"><img src="imagenes/tora/pantalon2.png" alt="">Pantalón 2</div>
+              <div class="opcion-item" data-capa="pantalon" data-valor="tora_pantalon3" data-modelo="tora"><img src="imagenes/tora/pantalon3.png" alt="">Pantalón 3</div>
+              <div class="opcion-item" data-capa="pantalon" data-valor="tora_pantalon4" data-modelo="tora"><img src="imagenes/tora/pantalon4.png" alt="">Pantalón 4</div>
+              <div class="opcion-item" data-capa="pantalon" data-valor="cereza_pantalon1" data-modelo="cereza"><img src="imagenes/cereza/pantalon1.png" alt="">Pantalón 1</div>
+              <div class="opcion-item" data-capa="pantalon" data-valor="cereza_pantalon2" data-modelo="cereza"><img src="imagenes/cereza/pantalon2.png" alt="">Pantalón 2</div>
+            </div>
+          </div>
+
+          <!-- GUANTES -->
+          <div class="grupo-opcion" data-grupo="guantes" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="guantes" data-valor="tora_guantes1" data-modelo="tora"><img src="imagenes/tora/guantes1.png" alt="">Guantes 1</div>
+              <div class="opcion-item" data-capa="guantes" data-valor="tora_guantes2" data-modelo="tora"><img src="imagenes/tora/guantes2.png" alt="">Guantes 2</div>
+              <div class="opcion-item" data-capa="guantes" data-valor="tora_guantes3" data-modelo="tora"><img src="imagenes/tora/guantes3.png" alt="">Guantes 3</div>
+              <div class="opcion-item" data-capa="guantes" data-valor="tora_guantes4" data-modelo="tora"><img src="imagenes/tora/guantes4.png" alt="">Guantes 4</div>
+              <div class="opcion-item" data-capa="guantes" data-valor="cereza_guantes1" data-modelo="cereza"><img src="imagenes/cereza/guantes1.png" alt="">Guantes 1</div>
+              <div class="opcion-item" data-capa="guantes" data-valor="cereza_guantes2" data-modelo="cereza"><img src="imagenes/cereza/guantes2.png" alt="">Guantes 2</div>
+            </div>
+          </div>
+
+          <!-- ACCESORIOS -->
+          <div class="grupo-opcion" data-grupo="accesorio" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="accesorio" data-valor="tora_accesorio1" data-modelo="tora"><img src="imagenes/tora/accesorio1.png" alt="">Accesorio 1</div>
+              <div class="opcion-item" data-capa="accesorio" data-valor="tora_accesorio2" data-modelo="tora"><img src="imagenes/tora/accesorio2.png" alt="">Accesorio 2</div>
+              <div class="opcion-item" data-capa="accesorio" data-valor="cereza_accesorio1" data-modelo="cereza"><img src="imagenes/cereza/accesorio1.png" alt="">Accesorio 1</div>
+              <div class="opcion-item" data-capa="accesorio" data-valor="cereza_accesorio2" data-modelo="cereza"><img src="imagenes/cereza/accesorio2.png" alt="">Accesorio 2</div>
+            </div>
+          </div>
+
+          <!-- ESPALDA -->
+          <div class="grupo-opcion" data-grupo="espalda" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="espalda" data-valor="tora_espalda1" data-modelo="tora"><img src="imagenes/tora/espalda1.png" alt="">Espalda 1</div>
+              <div class="opcion-item" data-capa="espalda" data-valor="tora_espalda2" data-modelo="tora"><img src="imagenes/tora/espalda2.png" alt="">Espalda 2</div>
+              <div class="opcion-item" data-capa="espalda" data-valor="cereza_espalda1" data-modelo="cereza"><img src="imagenes/cereza/espalda1.png" alt="">Espalda 1</div>
+              <div class="opcion-item" data-capa="espalda" data-valor="cereza_espalda2" data-modelo="cereza"><img src="imagenes/cereza/espalda2.png" alt="">Espalda 2</div>
+            </div>
+          </div>
+
+          <!-- CARA -->
+          <div class="grupo-opcion" data-grupo="cara" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="cara" data-valor="tora_cara1" data-modelo="tora"><img src="imagenes/tora/cara1.png" alt="">Cara 1</div>
+              <div class="opcion-item" data-capa="cara" data-valor="tora_cara2" data-modelo="tora"><img src="imagenes/tora/cara2.png" alt="">Cara 2</div>
+              <div class="opcion-item" data-capa="cara" data-valor="cereza_cara1" data-modelo="cereza"><img src="imagenes/cereza/cara1.png" alt="">Cara 1</div>
+              <div class="opcion-item" data-capa="cara" data-valor="cereza_cara2" data-modelo="cereza"><img src="imagenes/cereza/cara2.png" alt="">Cara 2</div>
+              <div class="opcion-item" data-capa="cara" data-valor="cereza_cara3" data-modelo="cereza"><img src="imagenes/cereza/cara3.png" alt="">Cara 3</div>
+              <div class="opcion-item" data-capa="cara" data-valor="cereza_cara4" data-modelo="cereza"><img src="imagenes/cereza/cara4.png" alt="">Cara 4</div>
+            </div>
+          </div>
+
+          <!-- MASCOTA -->
+          <div class="grupo-opcion" data-grupo="mascota" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="mascota" data-valor="tora_mascota1" data-modelo="tora"><img src="imagenes/tora/mascota1.png" alt="">Mascota 1</div>
+              <div class="opcion-item" data-capa="mascota" data-valor="tora_mascota2" data-modelo="tora"><img src="imagenes/tora/mascota2.png" alt="">Mascota 2</div>
+              <div class="opcion-item" data-capa="mascota" data-valor="cereza_mascota1" data-modelo="cereza"><img src="imagenes/cereza/mascota1.png" alt="">Mascota 1</div>
+              <div class="opcion-item" data-capa="mascota" data-valor="cereza_mascota2" data-modelo="cereza"><img src="imagenes/cereza/mascota2.png" alt="">Mascota 2</div>
+            </div>
+          </div>
+
+          <!-- BORDE -->
+          <div class="grupo-opcion" data-grupo="borde" style="display:none;">
+            <div class="fila-opciones">
+              <div class="opcion-item" data-capa="borde" data-valor="tora_borde1" data-modelo="tora"><img src="imagenes/tora/borde1.png" alt="">Borde 1</div>
+              <div class="opcion-item" data-capa="borde" data-valor="tora_borde2" data-modelo="tora"><img src="imagenes/tora/borde2.png" alt="">Borde 2</div>
+              <div class="opcion-item" data-capa="borde" data-valor="tora_borde3" data-modelo="tora"><img src="imagenes/tora/borde3.png" alt="">Borde 3</div>
+              <div class="opcion-item" data-capa="borde" data-valor="tora_borde4" data-modelo="tora"><img src="imagenes/tora/borde4.png" alt="">Borde 4</div>
+              <div class="opcion-item" data-capa="borde" data-valor="cereza_borde1" data-modelo="cereza"><img src="imagenes/cereza/borde1.png" alt="">Borde 1</div>
+              <div class="opcion-item" data-capa="borde" data-valor="cereza_borde2" data-modelo="cereza"><img src="imagenes/cereza/borde2.png" alt="">Borde 2</div>
+              <div class="opcion-item" data-capa="borde" data-valor="cereza_borde3" data-modelo="cereza"><img src="imagenes/cereza/borde3.png" alt="">Borde 3</div>
+              <div class="opcion-item" data-capa="borde" data-valor="cereza_borde4" data-modelo="cereza"><img src="imagenes/cereza/borde4.png" alt="">Borde 4</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="editor-acciones">
+        <button id="avatarAleatorio">🎲 Aleatorio</button>
+        <button id="guardarAvatar">💾 Guardar avatar</button>
+        <button id="cancelarEditor">❌ Cancelar</button>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- LOGROS -->
+  <section id="logros" class="contenido-tab">
+    <h2>🏅 Logros</h2>
+    <div id="listaLogros"></div>
+  </section>
+
+  <!-- CONFIGURACIÓN DE CUENTA -->
+  <!-- Esta sección es exclusiva de perfil.html (perfil propio). -->
+  <!-- No debe replicarse en usuario.html (perfil público de otros usuarios). -->
+  <section id="config-cuenta" class="contenido-tab">
+    <h2>⚙️ Configuración de cuenta</h2>
+    <p class="config-subtitulo">Administrá las opciones privadas de tu cuenta.</p>
+
+    <div class="config-bloque">
+      <h3>🔒 Seguridad</h3>
+
+      <div class="config-tarjeta" id="tarjetaCambiarPassword">
+        <h4>Cambiar contraseña</h4>
+
+        <form id="formCambiarPassword" class="config-form" autocomplete="off">
+
+          <div class="campo-config">
+            <label for="passActual">Contraseña actual</label>
+            <input type="password" id="passActual" name="passActual" placeholder="Ingresá tu contraseña actual" autocomplete="current-password" required>
+          </div>
+
+          <div class="campo-config">
+            <label for="passNueva">Nueva contraseña</label>
+            <input type="password" id="passNueva" name="passNueva" placeholder="Mínimo 6 caracteres" autocomplete="new-password" required>
+          </div>
+
+          <div class="campo-config">
+            <label for="passConfirmar">Confirmar nueva contraseña</label>
+            <input type="password" id="passConfirmar" name="passConfirmar" placeholder="Repetí la nueva contraseña" autocomplete="new-password" required>
+          </div>
+
+          <div id="mensajeConfigPassword" class="config-mensaje"></div>
+
+          <button type="submit" id="botonGuardarPassword">💾 Guardar cambios</button>
+
+        </form>
+      </div>
+    </div>
+
+    <div class="config-bloque config-bloque-peligro">
+      <h3>⚠️ Zona peligrosa</h3>
+
+      <div class="config-tarjeta config-tarjeta-peligro" id="zonaPeligrosaCuenta">
+        <h4>Eliminar cuenta</h4>
+
+        <p class="config-aviso-peligro">
+          Esta acción es <strong>permanente</strong>: se eliminará tu cuenta junto con
+          todos los datos asociados (perfil, avatar, amigos, comentarios, favoritos,
+          historial y demás información vinculada) y no podrá deshacerse.
+        </p>
+
+        <button type="button" id="botonEliminarCuenta" class="boton-peligro">🗑️ Eliminar cuenta</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER (mismo componente que el resto de MacroReborn) -->
+<footer class="pie-footer">
+  <div class="pie-contenido">
+    <div class="pie-marca">
+      <a href="index.html" class="nav-logo">
+        <img src="imagenes/logo.png" alt="MacroReborn">
+        MacroReborn
+      </a>
+      <p>Una comunidad de juegos con nostalgia de portal clásico y alma moderna.</p>
+      <p class="estado-servidor"><span class="punto"></span> Servidor en línea</p>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Plataforma</h4>
+      <a href="juegos.html">Juegos</a>
+      <a href="ranking.html">Ranking</a>
+      <a href="comunidad.html">Comunidad</a>
+      <a href="noticias.html">Noticias</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Cuenta</h4>
+      <a href="login.html">Iniciar sesión</a>
+      <a href="registro.html">Registrarse</a>
+      <a href="perfil.html">Mi perfil</a>
+      <a href="notificaciones.html">Notificaciones</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Social</h4>
+      <a href="amigos.html">Amigos</a>
+      <a href="chat.html">Chat</a>
+    </div>
+  </div>
+
+  <div class="pie-inferior">
+    <span>© 2026 MacroReborn. Todos los derechos reservados.</span>
+    <span>Hecho con 💛 para la vieja escuela de los juegos web.</span>
+  </div>
+</footer>
+
+<script src="js/core.js"></script>
+
+<script src="js/motor/permisos.js"></script>
+<script src="js/motor/actividad.js"></script>
+<script src="js/motor/logros.js"></script>
+<script src="js/motor/insignias.js"></script>
+<script src="js/motor/reportes.js"></script>
+<script src="js/motor/likes.js"></script>
+<script src="js/notificaciones.js"></script>
+<script src="js/datos-juegos.js"></script>
+<script src="js/ranking.js"></script>
+<script src="js/perfil.js"></script>
+
+<script src="js/perfil-favoritos.js"></script>
+
+<script src="js/perfil-historial.js"></script>
+
+<script src="js/perfil-actividad.js"></script>
+
+<script src="js/perfil-config.js"></script>
+
+<script src="js/perfil-eliminar-cuenta.js"></script>
+
+<script src="js/navbar.js"></script>
+<script src="js/buscador.js"></script>
+<script src="js/nav-toggle.js"></script>
+</body>
+</html>
