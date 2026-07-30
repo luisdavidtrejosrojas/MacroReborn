@@ -28,13 +28,20 @@ let datosUsuario = leerJSON(
   localStorage.getItem("usuarioActivo") || "null"
 );
 
-
+// GUARDIA DE SESIÓN
+// Sin esto, cualquiera podía entrar a perfil.html sin haber iniciado
+// sesión: perfil.js rellenaba un usuario "falso" (nombre:"Usuario")
+// solo para poder pintar la página, pero como el resto del archivo
+// sigue usando esa misma variable "datosUsuario" para guardar (bio,
+// avatar, comentarios...), terminaba escribiendo esos datos falsos
+// en "usuarioActivo" de localStorage la primera vez que se guardaba
+// algo — lo que además dejaba al navbar creyendo que había una sesión
+// iniciada. Si no hay sesión real, mandamos directo a login.html y
+// no seguimos ejecutando el resto del script.
 if(!datosUsuario){
 
-  datosUsuario = {
-    nombre:"Usuario",
-    email:"",
-  };
+  window.location.href = "login.html";
+  throw new Error("MacroReborn: acceso a perfil.html sin sesión iniciada. Redirigiendo a login.");
 
 }
 
