@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
     const user = await sql`
       INSERT INTO users (username, password)
       VALUES (${username}, ${password})
-      RETURNING id, username, level, xp;
+      RETURNING id, username, level, xp, bio;
     `;
 
     res.status(200).json({

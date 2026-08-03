@@ -580,69 +580,189 @@ actualizarAvatarPrincipal();
 // ==============================
 
 const botonEditar = document.querySelector(".datos button");
-if(botonEditar) botonEditar.textContent = "✏️ Editar descripción";
+
+if(botonEditar)
+  botonEditar.textContent = "✏️ Editar descripción";
+
 
 botonEditar?.addEventListener("click", ()=>{
+
   const bio = document.getElementById("biografia");
   const descripcionInicio = document.getElementById("descripcionInicio");
+
   if(document.getElementById("inputBio")) return;
 
+
   const actual = bio.textContent.trim();
+
+
   const textarea = document.createElement("textarea");
+
   textarea.id = "inputBio";
-  textarea.value = actual === "Todavía no escribió una biografía." ? "" : actual;
-  textarea.style.cssText = "width:100%;padding:8px;border-radius:8px;border:2px solid #f0b429;background:#0f172a;color:white;font-size:14px;resize:vertical;min-height:70px;margin-top:8px;";
+
+  textarea.value =
+    actual === "Todavía no escribió una biografía."
+      ? ""
+      : actual;
+
+
+  textarea.style.cssText =
+    "width:100%;padding:8px;border-radius:8px;border:2px solid #f0b429;background:#0f172a;color:white;font-size:14px;resize:vertical;min-height:70px;margin-top:8px;";
+
+
   textarea.placeholder = "Escribí tu descripción...";
 
+
   const btnGuardar = document.createElement("button");
+
   btnGuardar.textContent = "💾 Guardar";
-  btnGuardar.style.cssText = "margin-top:8px;background:#f0b429;border:none;padding:8px 18px;border-radius:8px;font-weight:bold;cursor:pointer;";
+
+  btnGuardar.style.cssText =
+    "margin-top:8px;background:#f0b429;border:none;padding:8px 18px;border-radius:8px;font-weight:bold;cursor:pointer;";
+
 
   const btnCancelar = document.createElement("button");
+
   btnCancelar.textContent = "Cancelar";
-  btnCancelar.style.cssText = "margin-top:8px;margin-left:8px;background:#555;color:white;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;";
+
+  btnCancelar.style.cssText =
+    "margin-top:8px;margin-left:8px;background:#555;color:white;border:none;padding:8px 14px;border-radius:8px;";
+
 
   bio.style.display = "none";
-  bio.parentElement.insertBefore(textarea, bio.nextSibling);
-  bio.parentElement.insertBefore(btnGuardar, textarea.nextSibling);
-  bio.parentElement.insertBefore(btnCancelar, btnGuardar.nextSibling);
+
+
+  bio.parentElement.insertBefore(
+    textarea,
+    bio.nextSibling
+  );
+
+  bio.parentElement.insertBefore(
+    btnGuardar,
+    textarea.nextSibling
+  );
+
+  bio.parentElement.insertBefore(
+    btnCancelar,
+    btnGuardar.nextSibling
+  );
+
+
   textarea.focus();
 
-  btnGuardar.addEventListener("click", ()=>{
-    const nuevo = textarea.value.trim() || "Todavía no escribió una biografía.";
-    bio.textContent = nuevo;
-    if(descripcionInicio) descripcionInicio.textContent = nuevo;
-    localStorage.setItem(
-      "bio_" + datosUsuario.nombre,
-      nuevo
-    );
 
-    // Guardamos también en usuariosMacro y usuarioActivo para que el
-    // perfil público (usuario.html) y la comunidad vean la bio actualizada.
-    datosUsuario.biografia = nuevo;
-    localStorage.setItem("usuarioActivo", JSON.stringify(datosUsuario));
-    const usuariosActualizadosBio = usuarios.map(u =>
-      u.nombre === datosUsuario.nombre ? { ...u, biografia: nuevo } : u
-    );
-    localStorage.setItem("usuariosMacro", JSON.stringify(usuariosActualizadosBio));
+
+  // GUARDAR BIO EN NEON
+
+  btnGuardar.addEventListener("click", ()=>{
+
+
+    const nuevo =
+      textarea.value.trim() ||
+      "Todavía no escribió una biografía.";
+
+
+    bio.textContent = nuevo;
+
+
+    if(descripcionInicio)
+      descripcionInicio.textContent = nuevo;
+
+
+
+    fetch("/api/update-bio", {
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        username: datosUsuario.nombre,
+
+        bio: nuevo
+
+      })
+
+    })
+
+
+    .then(res=>res.json())
+
+
+    .then(data=>{
+
+      console.log(
+        "Bio actualizada:",
+        data
+      );
+
+    })
+
+
+    .catch(error=>{
+
+      console.error(
+        "Error actualizando bio:",
+        error
+      );
+
+    });
+
+
 
     bio.style.display = "";
-    textarea.remove(); btnGuardar.remove(); btnCancelar.remove();
+
+    textarea.remove();
+
+    btnGuardar.remove();
+
+    btnCancelar.remove();
+
+
   });
+
+
+
+  // CANCELAR
 
   btnCancelar.addEventListener("click", ()=>{
+
+
     bio.style.display = "";
-    textarea.remove(); btnGuardar.remove(); btnCancelar.remove();
+
+    textarea.remove();
+
+    btnGuardar.remove();
+
+    btnCancelar.remove();
+
+
   });
+
+
 });
 
-const bioGuardada = localStorage.getItem("bio_" + datosUsuario.nombre);
-if(bioGuardada){
-  document.getElementById("biografia").textContent = bioGuardada;
-  const desc = document.getElementById("descripcionInicio");
-  if(desc) desc.textContent = bioGuardada;
-}
 
+
+// CARGAR BIO DESDE DATOS DEL USUARIO
+
+if(datosUsuario.bio){
+
+  document.getElementById("biografia").textContent =
+    datosUsuario.bio;
+
+
+  const desc =
+    document.getElementById("descripcionInicio");
+
+
+  if(desc)
+    desc.textContent = datosUsuario.bio;
+
+}
 
 // ==============================
 // AMIGOS (pestaña del perfil)

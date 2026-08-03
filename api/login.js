@@ -27,7 +27,7 @@ module.exports = async function handler(req, res) {
 
 
     const usuarios = await sql`
-      SELECT id, username, level, xp, created_at
+      SELECT id, username, level, xp, created_at, bio
       FROM users
       WHERE username = ${username}
       AND password = ${password};
