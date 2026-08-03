@@ -57,7 +57,7 @@ return;
 
 
 try {
-
+console.log("Usuario enviado:", nombre);
     const respuesta = await fetch("/api/register", {
         method: "POST",
         headers: {
