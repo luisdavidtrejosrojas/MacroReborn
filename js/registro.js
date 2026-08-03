@@ -25,7 +25,7 @@ function mostrarMensajeRegistro(texto, tipo){
 }
 
 
-formulario.addEventListener("submit", function(e){
+formulario.addEventListener("submit", async function(e){
 
 e.preventDefault();
 
@@ -56,9 +56,41 @@ return;
 
 
 
-let usuarios = leerJSON(
-localStorage.getItem("usuariosMacro") || "[]"
-);
+try {
+
+    const respuesta = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: nombre,
+            password: password
+        })
+    });
+
+
+    const datos = await respuesta.json();
+
+
+    if(!datos.success){
+
+        if(datos.error.includes("users_username_key")){
+            mostrarMensajeRegistro("Ese usuario ya existe", "error");
+        } else {
+            mostrarMensajeRegistro("Error al crear cuenta", "error");
+        }
+
+        return;
+    }
+
+
+} catch(error){
+
+    mostrarMensajeRegistro("Error de conexión", "error");
+    return;
+
+}
 
 
 
