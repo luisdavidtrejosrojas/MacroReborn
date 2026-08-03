@@ -22,11 +22,27 @@ botones.forEach(boton=>{
 
 // USUARIO LOGUEADO
 
-const usuarios = leerJSON(localStorage.getItem("usuariosMacro") || "[]");
-
 let datosUsuario = leerJSON(
   localStorage.getItem("usuarioActivo") || "null"
 );
+
+
+if(!datosUsuario){
+
+  window.location.href = "login.html";
+  throw new Error("Sin sesión");
+
+}
+
+
+// Adaptar datos de Neon al formato antiguo del perfil
+
+datosUsuario.nombre = datosUsuario.username;
+datosUsuario.nivel = datosUsuario.level;
+datosUsuario.fechaRegistro = datosUsuario.created_at;
+datosUsuario.logros = datosUsuario.logros || 0;
+datosUsuario.biografia = datosUsuario.biografia || "Todavía no escribió una biografía.";
+datosUsuario.ultimaConexion = datosUsuario.ultimaConexion || "Nunca";
 
 // GUARDIA DE SESIÓN
 // Sin esto, cualquiera podía entrar a perfil.html sin haber iniciado
@@ -38,12 +54,6 @@ let datosUsuario = leerJSON(
 // algo — lo que además dejaba al navbar creyendo que había una sesión
 // iniciada. Si no hay sesión real, mandamos directo a login.html y
 // no seguimos ejecutando el resto del script.
-if(!datosUsuario){
-
-  window.location.href = "login.html";
-  throw new Error("MacroReborn: acceso a perfil.html sin sesión iniciada. Redirigiendo a login.");
-
-}
 
 
 // PERFIL
