@@ -73,17 +73,14 @@ try {
     const datos = await respuesta.json();
 
 
-    if(!datos.success){
+   if(!datos.success){
 
-        if(datos.error.includes("users_username_key")){
-            mostrarMensajeRegistro("Ese usuario ya existe", "error");
-        } else {
-            mostrarMensajeRegistro("Error al crear cuenta", "error");
-        }
+    console.log(datos.error);
 
-        return;
-    }
+    mostrarMensajeRegistro(datos.error, "error");
 
+    return;
+}
 
 } catch(error){
 
