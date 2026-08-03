@@ -41,7 +41,7 @@ datosUsuario.nombre = datosUsuario.username;
 datosUsuario.nivel = datosUsuario.level;
 datosUsuario.fechaRegistro = datosUsuario.created_at;
 datosUsuario.logros = datosUsuario.logros || 0;
-datosUsuario.biografia = datosUsuario.biografia || "Todavía no escribió una biografía.";
+datosUsuario.biografia = datosUsuario.bio || "Todavía no escribió una biografía.";
 datosUsuario.ultimaConexion = datosUsuario.ultimaConexion || "Nunca";
 
 // GUARDIA DE SESIÓN
