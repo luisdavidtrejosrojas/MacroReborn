@@ -652,78 +652,87 @@ botonEditar?.addEventListener("click", ()=>{
 
 
 
-  // GUARDAR BIO EN NEON
+// GUARDAR BIO EN NEON
 
-  btnGuardar.addEventListener("click", ()=>{
-
-
-    const nuevo =
-      textarea.value.trim() ||
-      "Todavía no escribió una biografía.";
+btnGuardar.addEventListener("click", ()=>{
 
 
-    bio.textContent = nuevo;
+  const nuevo =
+    textarea.value.trim() ||
+    "Todavía no escribió una biografía.";
 
 
-    if(descripcionInicio)
-      descripcionInicio.textContent = nuevo;
+  bio.textContent = nuevo;
+
+
+  if(descripcionInicio)
+    descripcionInicio.textContent = nuevo;
 
 
 
-    fetch("/api/update-bio", {
+  fetch("/api/update-bio", {
 
-      method:"POST",
+    method:"POST",
 
-      headers:{
-        "Content-Type":"application/json"
-      },
+    headers:{
+      "Content-Type":"application/json"
+    },
 
-      body:JSON.stringify({
+    body:JSON.stringify({
 
-        username: datosUsuario.nombre,
+      username: datosUsuario.nombre,
 
-        bio: nuevo
-
-      })
+      bio: nuevo
 
     })
 
-
-    .then(res=>res.json())
-
-
-    .then(data=>{
-
-      console.log(
-        "Bio actualizada:",
-        data
-      );
-
-    })
+  })
 
 
-    .catch(error=>{
-
-      console.error(
-        "Error actualizando bio:",
-        error
-      );
-
-    });
+  .then(res=>res.json())
 
 
+  .then(data=>{
 
-    bio.style.display = "";
+    console.log(
+      "Bio actualizada:",
+      data
+    );
 
-    textarea.remove();
 
-    btnGuardar.remove();
+    datosUsuario.bio = nuevo;
 
-    btnCancelar.remove();
 
+    localStorage.setItem(
+      "usuarioActivo",
+      JSON.stringify(datosUsuario)
+    );
+
+
+  })
+
+
+  .catch(error=>{
+
+    console.error(
+      "Error actualizando bio:",
+      error
+    );
 
   });
 
+
+
+  bio.style.display = "";
+
+  textarea.remove();
+
+  btnGuardar.remove();
+
+  btnCancelar.remove();
+
+
+});
 
 
   // CANCELAR
