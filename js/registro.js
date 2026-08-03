@@ -91,57 +91,7 @@ console.log("Usuario enviado:", nombre);
 
 
 
-let existe = usuarios.find(u => u.nombre === nombre);
 
-
-
-if(existe){
-
-mostrarMensajeRegistro("Ese usuario ya existe", "error");
-return;
-
-}
-
-
-
-// FECHA DE REGISTRO
-
-let fechaRegistro = new Date().toLocaleDateString("es-AR");
-
-
-
-let nuevo = {
-
-nombre:nombre,
-
-password:password,
-
-nivel:1,
-
-xp:0,
-
-logros:0,
-
-fechaRegistro: fechaRegistro,
-
-biografia:"Todavía no escribió una biografía.",
-
-insignias:[],
-
-suspendido:false
-
-};
-
-
-
-usuarios.push(nuevo);
-
-
-
-localStorage.setItem(
-"usuariosMacro",
-JSON.stringify(usuarios)
-);
 
 
 
