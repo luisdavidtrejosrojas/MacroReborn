@@ -7,98 +7,135 @@ const formulario = document.getElementById("formLogin");
 const mensajeLogin = document.getElementById("mensajeLogin");
 const cardLogin = document.getElementById("cardLogin");
 
+
 function mostrarMensajeLogin(texto, tipo){
     if(!mensajeLogin){
         alert(texto);
         return;
     }
+
     mensajeLogin.textContent = texto;
     mensajeLogin.classList.remove("error", "exito", "visible");
+
     void mensajeLogin.offsetWidth;
+
     mensajeLogin.classList.add(tipo, "visible");
 
+
     if(tipo === "error" && cardLogin){
+
         cardLogin.classList.remove("auth-shake");
+
         void cardLogin.offsetWidth;
+
         cardLogin.classList.add("auth-shake");
+
     }
 }
 
 
-formulario.addEventListener("submit", function(e){
 
-e.preventDefault();
+formulario.addEventListener("submit", async function(e){
 
-
-
-let usuario = document.getElementById("usuario").value.trim();
-
-let password = document.getElementById("password").value;
+    e.preventDefault();
 
 
+    let usuario = document.getElementById("usuario").value.trim();
 
-let usuarios = leerJSON(
-localStorage.getItem("usuariosMacro") || "[]"
-);
+    let password = document.getElementById("password").value;
 
 
 
-let encontrado = usuarios.find(u =>
+    if(!usuario || !password){
 
-u.nombre === usuario &&
-u.password === password
+        mostrarMensajeLogin(
+            "Completá usuario y contraseña",
+            "error"
+        );
 
-);
+        return;
 
-
-
-if(encontrado){
-
-
-encontrado.ultimaConexion = new Date().toLocaleString("es-AR");
-encontrado.ultimaConexionTS = Date.now();
+    }
 
 
 
-// actualizar usuario dentro de la lista
-
-let usuariosActualizados = usuarios.map(u =>
-
-u.nombre === encontrado.nombre ? encontrado : u
-
-);
+    try {
 
 
+        const respuesta = await fetch("/api/login", {
 
-localStorage.setItem(
-"usuariosMacro",
-JSON.stringify(usuariosActualizados)
-);
+            method:"POST",
 
+            headers:{
+                "Content-Type":"application/json"
+            },
 
+            body:JSON.stringify({
 
-localStorage.setItem(
-"usuarioActivo",
-JSON.stringify(encontrado)
-);
+                username: usuario,
 
+                password: password
 
+            })
 
-mostrarMensajeLogin("Bienvenido " + encontrado.nombre, "exito");
-
-setTimeout(function(){
-window.location.href="perfil.html";
-}, 700);
+        });
 
 
 
-}else{
+        const datos = await respuesta.json();
 
 
-mostrarMensajeLogin("Usuario o contraseña incorrectos", "error");
+
+        if(datos.success){
 
 
-}
+
+            localStorage.setItem(
+                "usuarioActivo",
+                JSON.stringify(datos.user)
+            );
+
+
+
+            mostrarMensajeLogin(
+                "Bienvenido " + datos.user.username,
+                "exito"
+            );
+
+
+
+            setTimeout(function(){
+
+                window.location.href="perfil.html";
+
+            },700);
+
+
+
+        }else{
+
+
+            mostrarMensajeLogin(
+                datos.error,
+                "error"
+            );
+
+
+        }
+
+
+
+    }catch(error){
+
+
+
+        mostrarMensajeLogin(
+            "Error de conexión",
+            "error"
+        );
+
+
+    }
 
 
 
