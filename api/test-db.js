@@ -2,7 +2,7 @@ const { neon } = require("@neondatabase/serverless");
 
 const sql = neon(process.env.DATABASE_URL);
 
-module.exports = async (req, res) => {
+module.exports = async function handler(req, res) {
   try {
     const result = await sql`SELECT NOW()`;
 
