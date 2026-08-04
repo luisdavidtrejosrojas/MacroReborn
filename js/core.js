@@ -122,3 +122,26 @@ if(document.readyState === "loading"){
 }else{
   _registrarLatidoPresencia();
 }
+
+
+
+
+// ==============================
+// AVATAR — NORMALIZACIÓN (Fase 1: Neon)
+// ==============================
+// El avatar ahora viaja dentro de cada usuario (columna users.avatar,
+// guardada como JSON) en vez de vivir en la clave localStorage
+// "avatar_<nombre>". Según el driver, esa columna puede llegar ya
+// parseada como objeto o como texto crudo: esta función normaliza
+// cualquiera de los dos casos a un objeto de capas (o null si el
+// usuario todavía no armó su avatar), para que el resto del sitio siga
+// trabajando con el mismo objeto { modelo, fondo, pelo, ... } de
+// siempre.
+
+function normalizarAvatar(valor){
+  if(!valor) return null;
+  if(typeof valor === "string"){
+    return leerJSON(valor);
+  }
+  return valor;
+}

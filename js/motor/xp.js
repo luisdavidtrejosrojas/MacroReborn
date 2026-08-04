@@ -1,6 +1,10 @@
 // =========================
 // MACROREBORN - SISTEMA XP
 // =========================
+// Fase 1: el cálculo de XP/nivel ahora lo hace el servidor
+// (POST /api/xp), que es la fuente de verdad. Este archivo solo pide
+// el resultado, actualiza la caché local de sesión (usuarioActivo) y
+// dispara los mismos efectos visuales/logros/actividad que ya existían.
 
 
 let intervaloXP;
@@ -33,14 +37,13 @@ function detenerXP(){
 
 
     clearInterval(intervaloXP);
-
 }
 
 
 
 
 
-function ganarXP(cantidad){
+async function ganarXP(cantidad){
 
 
     const usuario = leerJSON(
@@ -49,37 +52,45 @@ function ganarXP(cantidad){
 
 
 
-    if(!usuario) return;
+    if(!usuario || !usuario.nombre) return;
 
 
+    let subioNivel = false;
 
 
-    usuario.xp = usuario.xp || 0;
+    try {
 
-    usuario.nivel = usuario.nivel || 1;
+        const respuesta = await fetch("/api/xp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: usuario.nombre,
+                cantidad: cantidad
+            })
+        });
+
+        const datos = await respuesta.json();
+
+        if(!datos || !datos.success) return;
+
+        usuario.nivel = datos.user.level;
+        usuario.level = datos.user.level;
+        usuario.xp = datos.user.xp;
+
+        subioNivel = !!datos.subioNivel;
+
+    } catch(error){
+
+        console.warn("MacroReborn: no se pudo actualizar el XP.", error);
+        return;
+
+    }
 
 
-
-    usuario.xp += cantidad;
-
+    guardarUsuario(usuario);
 
 
-
-    let necesario = xpNecesaria(usuario.nivel);
-
-
-
-
-    if(usuario.xp >= necesario){
-
-
-
-        usuario.nivel++;
-
-
-
-        usuario.xp = 0;
-
+    if(subioNivel){
 
 
         mostrarToastNivel(
@@ -147,16 +158,7 @@ if(typeof crearNotificacion === "function"){
     }
 
 
-
-
-    guardarUsuario(usuario);
-
-
-
 }
-
-
-
 
 
 function mostrarToastNivel(mensaje){
@@ -248,50 +250,9 @@ function xpNecesaria(nivel){
 
 function guardarUsuario(usuario){
 
-
-
     localStorage.setItem(
-
         "usuarioActivo",
-
         JSON.stringify(usuario)
-
     );
-
-
-
-    let usuarios =
-    leerJSON(
-        localStorage.getItem("usuariosMacro")
-    ) || [];
-
-
-
-    usuarios = usuarios.map(u=>{
-
-
-        if(u.nombre === usuario.nombre){
-
-            return usuario;
-
-        }
-
-
-        return u;
-
-
-    });
-
-
-
-    localStorage.setItem(
-
-        "usuariosMacro",
-
-        JSON.stringify(usuarios)
-
-    );
-
-
 
 }

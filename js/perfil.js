@@ -60,9 +60,11 @@ datosUsuario.ultimaConexion = datosUsuario.ultimaConexion || "Nunca";
 
 // RANKING: se reutiliza obtenerPosicionRanking() (definida en js/ranking.js)
 // para que la posición mostrada acá sea siempre la misma que en ranking.html.
-const posicionRanking = typeof obtenerPosicionRanking === "function"
+// Es asincrónica (ahora sale de /api/users), así que se pinta con un
+// placeholder y se actualiza cuando resuelve.
+const posicionRankingPromesa = typeof obtenerPosicionRanking === "function"
   ? obtenerPosicionRanking(datosUsuario.nombre)
-  : null;
+  : Promise.resolve(null);
 
 const usuario={
 
@@ -76,7 +78,7 @@ const usuario={
 
   xp: Number(datosUsuario.xp) || 0,
 
-  ranking: posicionRanking ? "#" + posicionRanking : "Sin clasificar",
+  ranking: "Calculando…",
 
   logros: datosUsuario.logros || 0,
 
@@ -133,6 +135,10 @@ if(barraXP && textoXP){
 
 document.getElementById("ranking").textContent=usuario.ranking;
 
+posicionRankingPromesa.then(posicionRanking=>{
+  document.getElementById("ranking").textContent = posicionRanking ? "#" + posicionRanking : "Sin clasificar";
+});
+
 // ---------- PUNTOS DE LOGROS ----------
 
 function actualizarPuntosLogrosUI(){
@@ -142,7 +148,14 @@ function actualizarPuntosLogrosUI(){
   }
 }
 
-actualizarPuntosLogrosUI();
+// Los logros ahora salen de /api/achievements: se precargan una sola
+// vez acá y de ahí en más calcularPuntosLogros()/obtenerLogros() los
+// leen sincrónicamente desde la caché en memoria (js/motor/logros.js).
+const logrosListos = typeof cargarLogros === "function"
+  ? cargarLogros(datosUsuario.nombre)
+  : Promise.resolve();
+
+logrosListos.then(actualizarPuntosLogrosUI);
 
 document.getElementById("fechaRegistro").textContent = usuario.fechaRegistro;
 
@@ -288,27 +301,35 @@ const ORDEN_CAPAS=[
 ];
 
 
-// ---------- LOCAL STORAGE ----------
+// ---------- AVATAR (Neon: users.avatar) ----------
+// El avatar viaja embebido en datosUsuario (viene de /api/login o ya
+// estaba en la sesión guardada), así que leerlo es sincrónico. Guardarlo
+// sí pega a la API, además de actualizar la caché local al toque para
+// que el resto de la página (preview, avatar principal) lo vea ya.
 
 function cargarAvatar(){
-  const usuario = leerJSON(
-    localStorage.getItem("usuarioActivo") || "null"
-  );
-  if(!usuario) return null;
-  return leerJSON(
-    localStorage.getItem("avatar_" + usuario.nombre) || "null"
-  );
+  return normalizarAvatar(datosUsuario.avatar);
 }
 
-function guardarAvatar(avatar){
-  const usuario = leerJSON(
-    localStorage.getItem("usuarioActivo") || "null"
-  );
-  if(!usuario) return;
-  localStorage.setItem(
-    "avatar_" + usuario.nombre,
-    JSON.stringify(avatar)
-  );
+async function guardarAvatar(avatar){
+
+  datosUsuario.avatar = avatar;
+  localStorage.setItem("usuarioActivo", JSON.stringify(datosUsuario));
+
+  try{
+
+    await fetch("/api/update-avatar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: datosUsuario.nombre, avatar: avatar })
+    });
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudo guardar el avatar en el servidor.", error);
+
+  }
+
 }
 
 
@@ -470,8 +491,8 @@ document.getElementById("cancelarEditor")?.addEventListener("click",()=>{
 
 // ---------- GUARDAR AVATAR ----------
 
-document.getElementById("guardarAvatar")?.addEventListener("click",()=>{
-  guardarAvatar({...editorCapas});
+document.getElementById("guardarAvatar")?.addEventListener("click", async ()=>{
+  await guardarAvatar({...editorCapas});
   document.getElementById("editorAvatar").style.display="none";
   actualizarAvatarPrincipal();
 
@@ -777,21 +798,28 @@ if(datosUsuario.bio){
 // AMIGOS (pestaña del perfil)
 // ==============================
 
-function renderAmigosPerfil(){
+async function renderAmigosPerfil(){
   const contenedor = document.getElementById("listaAmigosPerfil");
   if(!contenedor) return;
 
-  const misAmigos = leerJSON(
-    localStorage.getItem("amigos_" + datosUsuario.nombre) || "[]"
-  );
+  let misAmigos = [];
+
+  try{
+    const respuesta = await fetch("/api/friends?username=" + encodeURIComponent(datosUsuario.nombre));
+    const datos = await respuesta.json();
+    if(datos && datos.success) misAmigos = datos.amigos;
+  }catch(error){
+    console.warn("MacroReborn: no se pudo cargar la lista de amigos.", error);
+  }
 
   if(misAmigos.length === 0){
     contenedor.innerHTML = `<p>Todavía no agregaste amigos. <a href="comunidad.html" style="color:#f0b429;">Buscá jugadores en la comunidad</a>.</p>`;
     return;
   }
 
-  contenedor.innerHTML = misAmigos.map(nombreAmigo => {
-    const avatar = leerJSON(localStorage.getItem("avatar_" + nombreAmigo) || "null");
+  contenedor.innerHTML = misAmigos.map(amigo => {
+    const nombreAmigo = amigo.username;
+    const avatar = normalizarAvatar(amigo.avatar);
 
     let avatarHTML;
     if(!avatar){
@@ -822,17 +850,21 @@ function renderAmigosPerfil(){
   }).join("");
 
   contenedor.querySelectorAll(".btn-quitar-amigo-perfil").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
+    btn.addEventListener("click", async ()=>{
       const objetivo = btn.dataset.nombre;
       if(!confirm(`¿Eliminar a ${objetivo} de tus amigos?`)) return;
 
-      const misAmigosNuevo = leerJSON(localStorage.getItem("amigos_" + datosUsuario.nombre) || "[]")
-        .filter(n => n !== objetivo);
-      localStorage.setItem("amigos_" + datosUsuario.nombre, JSON.stringify(misAmigosNuevo));
+      btn.disabled = true;
 
-      const susAmigos = leerJSON(localStorage.getItem("amigos_" + objetivo) || "[]")
-        .filter(n => n !== datosUsuario.nombre);
-      localStorage.setItem("amigos_" + objetivo, JSON.stringify(susAmigos));
+      try{
+        await fetch("/api/friends", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "remove", username: datosUsuario.nombre, friendUsername: objetivo })
+        });
+      }catch(error){
+        console.warn("MacroReborn: no se pudo eliminar al amigo.", error);
+      }
 
       renderAmigosPerfil();
     });
@@ -1101,6 +1133,8 @@ renderComentarios();
 // ==============================
 // MOSTRAR LOGROS
 // ==============================
+// (la definición de renderLogros queda igual; solo cambia CUÁNDO se
+// llama la primera vez, más abajo, para esperar a logrosListos)
 
 function renderLogros(){
 
@@ -1135,4 +1169,4 @@ function renderLogros(){
 
 }
 
-renderLogros();
+logrosListos.then(renderLogros);

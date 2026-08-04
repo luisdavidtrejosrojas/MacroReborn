@@ -19,10 +19,26 @@ module.exports = async function handler(req, res) {
   try {
     const { username, password } = req.body;
 
+    if(!username || !password){
+      return res.status(200).json({
+        success: false,
+        error: "Usuario y contraseña son obligatorios"
+      });
+    }
+
+    const existente = await sql`SELECT id FROM users WHERE username = ${username};`;
+
+    if(existente.length > 0){
+      return res.status(200).json({
+        success: false,
+        error: "Ese nombre de usuario ya existe"
+      });
+    }
+
     const user = await sql`
-      INSERT INTO users (username, password)
-      VALUES (${username}, ${password})
-      RETURNING id, username, level, xp, bio;
+      INSERT INTO users (username, password, level, xp, status, created_at, last_login)
+      VALUES (${username}, ${password}, 1, 0, 'active', now(), now())
+      RETURNING id, username, level, xp, bio, avatar, status, created_at;
     `;
 
     res.status(200).json({

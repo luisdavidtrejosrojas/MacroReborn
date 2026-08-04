@@ -89,10 +89,22 @@ formulario.addEventListener("submit", async function(e){
         if(datos.success){
 
 
+            // Neon devuelve el usuario con sus columnas tal cual
+            // (username, level...). El resto del sitio históricamente
+            // trabaja con "nombre" y "nivel", así que se guarda ya
+            // normalizado para que cualquier página que lea
+            // usuarioActivo directamente (navbar, chat, ranking,
+            // favoritos...) funcione sin tener que adaptarlo cada vez.
+
+            const usuarioNormalizado = {
+                ...datos.user,
+                nombre: datos.user.username,
+                nivel: datos.user.level
+            };
 
             localStorage.setItem(
                 "usuarioActivo",
-                JSON.stringify(datos.user)
+                JSON.stringify(usuarioNormalizado)
             );
 
 

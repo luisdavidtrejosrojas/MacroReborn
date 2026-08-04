@@ -3,8 +3,7 @@
 // --------------------------------------------------------------
 // Busca en tiempo real sobre datos que YA existen en el proyecto:
 //   - Juegos    -> arreglo "juegos" de js/datos-juegos.js
-//   - Usuarios  -> localStorage "usuariosMacro" (mismo que usa
-//                  login.js, registro.js, comunidad.js, etc.)
+//   - Usuarios  -> /api/users?q= (Neon, tabla users)
 //   - Noticias  -> tarjetas de noticias.html (índice de solo
 //                  lectura, ver NOTICIAS más abajo)
 //
@@ -58,15 +57,19 @@
     return (typeof juegos !== "undefined" && Array.isArray(juegos)) ? juegos : [];
   }
 
-  function obtenerUsuarios() {
+  async function obtenerUsuarios(termino) {
     try {
-      return leerJSON(localStorage.getItem("usuariosMacro") || "[]");
+      const resp = await fetch("/api/users?q=" + encodeURIComponent(termino) + "&limit=" + LIMITE_POR_CATEGORIA);
+      const datos = await resp.json();
+      if (!datos || !datos.success) return [];
+      return datos.users.map(u => ({ ...u, nombre: u.username }));
     } catch (e) {
+      console.warn("MacroReborn: no se pudo buscar usuarios.", e);
       return [];
     }
   }
 
-  function buscar(termino) {
+  async function buscar(termino) {
     const q = normalizar(termino);
 
     if (!q) {
@@ -77,9 +80,7 @@
       .filter(j => normalizar(j.nombre).includes(q) || normalizar(j.categoria).includes(q))
       .slice(0, LIMITE_POR_CATEGORIA);
 
-    const usuariosEncontrados = obtenerUsuarios()
-      .filter(u => normalizar(u.nombre).includes(q))
-      .slice(0, LIMITE_POR_CATEGORIA);
+    const usuariosEncontrados = await obtenerUsuarios(termino);
 
     const noticiasEncontradas = NOTICIAS
       .filter(n => normalizar(n.titulo).includes(q))
@@ -269,8 +270,12 @@
 
       // Pequeño debounce para que la búsqueda en tiempo real no
       // recalcule en cada micro-tecleo, sin que se sienta lenta.
-      temporizador = setTimeout(() => {
-        renderResultados(panelEl, buscar(valor));
+      temporizador = setTimeout(async () => {
+        const resultados = await buscar(valor);
+        // Si el usuario siguió tipeando mientras esperábamos la
+        // respuesta, no pisamos el resultado de la búsqueda más nueva.
+        if (inputEl.value !== valor) return;
+        renderResultados(panelEl, resultados);
       }, 120);
     });
 

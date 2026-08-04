@@ -1,6 +1,9 @@
 // =======================
 // COMUNIDAD MacroReborn
 // =======================
+// Fase 1: la lista de usuarios sale de /api/users (antes: la clave
+// localStorage "usuariosMacro", que en la práctica nunca se llegaba a
+// llenar). El estado de amistad/solicitudes sale de /api/friends.
 
 
 // ---------- RESOLVER RUTA DE UNA CAPA DE AVATAR ----------
@@ -33,19 +36,18 @@ const listaUsuarios = document.getElementById("listaUsuarios");
 const contador = document.getElementById("contadorUsuarios");
 const buscador = document.getElementById("buscadorUsuarios");
 
-const usuarios = leerJSON(localStorage.getItem("usuariosMacro") || "[]");
 const activo = leerJSON(localStorage.getItem("usuarioActivo") || "null");
+
+let usuarios = [];       // se llena en cargarComunidad()
+let misAmigos = [];      // nombres de mis amigos (si hay sesión)
+let solicitudesEnviadas = [];   // nombres a los que ya les mandé solicitud
+let solicitudesRecibidas = [];  // nombres que me mandaron solicitud
 
 
 // ---------- HELPER: AVATAR POR CAPAS ----------
 
-function avatarDe(nombre) {
-  return leerJSON(localStorage.getItem("avatar_" + nombre) || "null");
-}
-
-// claseCapa: clase css que se le pone a cada <img> de capa
-function avatarHTML(nombre, claseCapa) {
-  const avatar = avatarDe(nombre);
+function avatarHTML(avatarCrudo, claseCapa) {
+  const avatar = normalizarAvatar(avatarCrudo);
 
   if (!avatar) {
     return `<img src="imagenes/avatar.png" class="${claseCapa}" style="object-fit:contain;" alt="" loading="lazy">`;
@@ -69,23 +71,15 @@ function estadoRelacion(nombreOtro) {
   if (!activo) return "";
   if (activo.nombre === nombreOtro) return ""; // es uno mismo
 
-  const misAmigos = leerJSON(localStorage.getItem("amigos_" + activo.nombre) || "[]");
   if (misAmigos.includes(nombreOtro)) {
     return `<span class="rel-amigos">✅ Amigos</span>`;
   }
 
-  const solicitudes = leerJSON(localStorage.getItem("solicitudesAmigos") || "[]");
-  const enviada = solicitudes.some(
-    s => s.de === activo.nombre && s.para === nombreOtro && s.estado === "pendiente"
-  );
-  if (enviada) {
+  if (solicitudesEnviadas.includes(nombreOtro)) {
     return `<span class="rel-pendiente">⏳ Solicitud enviada</span>`;
   }
 
-  const recibida = solicitudes.some(
-    s => s.de === nombreOtro && s.para === activo.nombre && s.estado === "pendiente"
-  );
-  if (recibida) {
+  if (solicitudesRecibidas.includes(nombreOtro)) {
     return `<span class="rel-recibida">📩 Te mandó solicitud</span>`;
   }
 
@@ -114,7 +108,7 @@ function renderConectados(lista) {
   listaConectados.innerHTML = conectados.map(usuario => `
     <a href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}" class="tarjeta-mini">
       <div class="avatar-mini-conectado">
-        ${avatarHTML(usuario.nombre, "capa-mini")}
+        ${avatarHTML(usuario.avatar, "capa-mini")}
       </div>
       <div class="mini-info">
         <p class="mini-nombre">${usuario.nombre}</p>
@@ -145,6 +139,7 @@ function renderUsuarios(lista) {
 
     const conectado = estaConectado(usuario);
     const rel = estadoRelacion(usuario.nombre);
+    const cantidadLogros = typeof obtenerLogros === "function" ? obtenerLogros(usuario.nombre).length : 0;
 
     return `
       <div class="tarjeta-usuario">
@@ -154,7 +149,7 @@ function renderUsuarios(lista) {
         </span>
 
         <div class="avatar-tarjeta">
-          ${avatarHTML(usuario.nombre, "capa-tarjeta")}
+          ${avatarHTML(usuario.avatar, "capa-tarjeta")}
         </div>
 
         <h3 class="usuario-nombre">${usuario.nombre}</h3>
@@ -173,14 +168,14 @@ function renderUsuarios(lista) {
             <span class="stat-valor">${usuario.xp}</span>
             <span class="stat-label">XP</span>
           </div>` : ""}
-          ${usuario.logros ? `
+          ${cantidadLogros ? `
           <div class="stat-item">
-            <span class="stat-valor">${usuario.logros}</span>
+            <span class="stat-valor">${cantidadLogros}</span>
             <span class="stat-label">🏅 Logros</span>
           </div>` : ""}
         </div>
 
-        ${usuario.biografia ? `<p class="usuario-bio">${usuario.biografia}</p>` : ""}
+        ${usuario.bio ? `<p class="usuario-bio">${usuario.bio}</p>` : ""}
 
         <a href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}" class="btn-ver-perfil">👤 Ver perfil</a>
 
@@ -207,5 +202,53 @@ buscador?.addEventListener("input", aplicarFiltro);
 
 // ---------- INICIO ----------
 
-renderConectados(usuarios);
-renderUsuarios(usuarios);
+async function cargarComunidad() {
+
+  try {
+
+    const respuesta = await fetch("/api/users?limit=500");
+    const datos = await respuesta.json();
+    const crudos = (datos && datos.success) ? datos.users : [];
+
+    usuarios = crudos.map(u => ({ ...u, nombre: u.username, nivel: u.level }));
+
+  } catch (error) {
+
+    console.warn("MacroReborn: no se pudo cargar la comunidad.", error);
+    usuarios = [];
+
+  }
+
+  const nombres = usuarios.map(u => u.nombre);
+
+  const tareas = [];
+
+  if (typeof cargarLogrosDeVarios === "function") {
+    tareas.push(cargarLogrosDeVarios(nombres));
+  }
+  if (typeof cargarInsigniasDeVarios === "function") {
+    tareas.push(cargarInsigniasDeVarios(nombres));
+  }
+
+  if (activo) {
+    tareas.push(
+      fetch("/api/friends?username=" + encodeURIComponent(activo.nombre))
+        .then(r => r.json())
+        .then(datos => {
+          if (!datos || !datos.success) return;
+          misAmigos = datos.amigos.map(a => a.username);
+          solicitudesEnviadas = datos.solicitudesSalientes.map(s => s.para);
+          solicitudesRecibidas = datos.solicitudesEntrantes.map(s => s.de);
+        })
+        .catch(error => console.warn("MacroReborn: no se pudo cargar el estado de amistad.", error))
+    );
+  }
+
+  await Promise.all(tareas);
+
+  renderConectados(usuarios);
+  renderUsuarios(usuarios);
+
+}
+
+cargarComunidad();

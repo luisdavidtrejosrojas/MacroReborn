@@ -27,7 +27,7 @@ module.exports = async function handler(req, res) {
 
 
     const usuarios = await sql`
-      SELECT id, username, level, xp, created_at, bio
+      SELECT id, username, level, xp, created_at, bio, avatar, status
       FROM users
       WHERE username = ${username}
       AND password = ${password};
@@ -44,9 +44,17 @@ module.exports = async function handler(req, res) {
     }
 
 
+    const actualizado = await sql`
+      UPDATE users
+      SET last_login = now()
+      WHERE id = ${usuarios[0].id}
+      RETURNING last_login;
+    `;
+
+
     res.status(200).json({
       success:true,
-      user:usuarios[0]
+      user: { ...usuarios[0], last_login: actualizado[0].last_login }
     });
 
 

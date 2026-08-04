@@ -223,14 +223,94 @@ const LOGROS = {
 
 
 // ==============================
-// OBTENER LOGROS
+// CACHÉ EN MEMORIA
+// ==============================
+// Igual que insignias.js: media web llama a obtenerLogros()/tieneLogro()/
+// calcularPuntosLogros() de forma sincrónica dentro de bucles de render
+// (comunidad, ranking, comentarios...), así que se mantiene una caché
+// en memoria que las páginas precargan con cargarLogros()/
+// cargarLogrosDeVarios() antes de renderizar.
+
+const _cacheLogros = {};
+
+function _guardarEnCacheLogros(nombre, lista){
+  _cacheLogros[nombre] = Array.isArray(lista) ? lista : [];
+}
+
+
+
+
+// ==============================
+// OBTENER LOGROS (sincrónico, desde caché)
 // ==============================
 
 function obtenerLogros(nombre){
+  return _cacheLogros[nombre] || [];
+}
 
-  return leerJSON(
-    localStorage.getItem("logros_" + nombre) || "[]"
-  );
+
+
+
+// ==============================
+// CARGAR LOGROS DESDE EL SERVIDOR
+// ==============================
+
+function _adaptarLogroDelServidor(fila){
+  return {
+    id: fila.achievement_id,
+    fecha: new Date(fila.unlocked_at).toLocaleDateString("es-AR")
+  };
+}
+
+async function cargarLogros(nombre){
+
+  if(!nombre) return [];
+
+  try{
+
+    const respuesta = await fetch("/api/achievements?username=" + encodeURIComponent(nombre));
+    const datos = await respuesta.json();
+
+    const lista = (datos && datos.success)
+      ? datos.logros.map(_adaptarLogroDelServidor)
+      : [];
+
+    _guardarEnCacheLogros(nombre, lista);
+    return lista;
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudieron cargar los logros.", error);
+    return _cacheLogros[nombre] || [];
+
+  }
+
+}
+
+// Trae los logros de varios usuarios en un solo pedido (para listas:
+// comunidad, ranking, amigos). Se usa antes de renderizar esas listas.
+
+async function cargarLogrosDeVarios(nombres){
+
+  const unicos = [...new Set((nombres || []).filter(Boolean))];
+  if(!unicos.length) return;
+
+  try{
+
+    const respuesta = await fetch("/api/achievements?usernames=" + encodeURIComponent(unicos.join(",")));
+    const datos = await respuesta.json();
+
+    if(datos && datos.success && datos.porUsuario){
+      Object.keys(datos.porUsuario).forEach(nombre=>{
+        _guardarEnCacheLogros(nombre, datos.porUsuario[nombre].map(_adaptarLogroDelServidor));
+      });
+    }
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudieron cargar los logros.", error);
+
+  }
 
 }
 
@@ -238,30 +318,12 @@ function obtenerLogros(nombre){
 
 
 // ==============================
-// GUARDAR LOGROS
-// ==============================
-
-function guardarLogros(nombre,lista){
-
-  localStorage.setItem(
-    "logros_" + nombre,
-    JSON.stringify(lista)
-  );
-
-}
-
-
-
-
-// ==============================
-// TIENE LOGRO
+// TIENE LOGRO (sincrónico, desde caché)
 // ==============================
 
 function tieneLogro(nombre,id){
 
-  const lista = obtenerLogros(nombre);
-
-  return lista.some(l => l.id === id);
+  return obtenerLogros(nombre).some(logro => logro.id === id);
 
 }
 
@@ -271,86 +333,79 @@ function tieneLogro(nombre,id){
 // ==============================
 // DESBLOQUEAR LOGRO
 // ==============================
+// Actualiza la caché local al toque (para que cualquier render()
+// llamado en la línea siguiente ya vea el logro nuevo) y en paralelo
+// avisa al servidor. Es seguro llamarla repetidas veces: tanto acá
+// como en el servidor está protegida contra duplicados.
 
-function desbloquearLogro(nombre,id){
+async function desbloquearLogro(nombre,id){
 
   if(!LOGROS[id]){
     console.warn("Logro inexistente:",id);
     return;
   }
 
+  if(tieneLogro(nombre,id)) return;
 
+  const listaPrevia = obtenerLogros(nombre);
+  _guardarEnCacheLogros(nombre, [
+    ...listaPrevia,
+    { id, fecha: new Date().toLocaleDateString("es-AR") }
+  ]);
 
-  if(tieneLogro(nombre,id)){
+  let datos;
+
+  try{
+
+    const respuesta = await fetch("/api/achievements", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: nombre, achievementId: id })
+    });
+
+    datos = await respuesta.json();
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudo desbloquear el logro.", error);
     return;
+
   }
 
+  if(!datos || !datos.success || !datos.nuevo) return;
 
+  // ==============================
+  // ACTIVIDAD RECIENTE - LOGRO
+  // ==============================
 
-  const lista = obtenerLogros(nombre);
-
-
-
-  lista.push({
-
-    id:id,
-
-    fecha:new Date().toLocaleDateString("es-AR")
-
-  });
-
-
-
-  guardarLogros(nombre,lista);
-
-
-
-
-
-// ==============================
-// ACTIVIDAD RECIENTE - LOGRO
-// ==============================
-
-if(typeof registrarActividad === "function"){
-
+  if(typeof registrarActividad === "function"){
     registrarActividad(nombre, "logro", LOGROS[id].nombre);
+  }
 
-}
+  // ==============================
+  // NOTIFICACION DE LOGRO
+  // ==============================
 
-
-// ==============================
-// NOTIFICACION DE LOGRO
-// ==============================
-
-if(typeof crearNotificacion === "function"){
-
+  if(typeof crearNotificacion === "function"){
     crearNotificacion(
-
-        nombre,
-
-        "🏅 Nuevo logro desbloqueado",
-
-        "Conseguiste: " + LOGROS[id].nombre
-
+      nombre,
+      "🏅 Nuevo logro desbloqueado",
+      "Conseguiste: " + LOGROS[id].nombre
     );
+  }
 
 }
 
 
-}
 
 
 // ==============================
-// PUNTOS TOTALES DE LOGROS
+// CALCULAR PUNTOS DE LOGROS (sincrónico, desde caché)
 // ==============================
-// Suma los puntos de todos los logros que el usuario ya desbloqueó.
-// Función centralizada para que perfil.html, usuario.html y ranking.html
-// calculen siempre el mismo valor a partir de los mismos datos.
 
 function calcularPuntosLogros(nombre){
 
   const lista = obtenerLogros(nombre);
-
   let puntos = 0;
 
   lista.forEach(logro=>{
@@ -362,4 +417,3 @@ function calcularPuntosLogros(nombre){
   return puntos;
 
 }
-

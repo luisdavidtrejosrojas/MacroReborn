@@ -2,12 +2,16 @@
 // SISTEMA DE INSIGNIAS OFICIALES - MacroReborn
 // ==============================
 // Insignias oficiales, asignadas manualmente (desde admin.html, o a mano
-// desde la consola). Viven como un campo mas dentro de cada usuario
-// ( usuario.insignias -> array de ids, ej: ["administrador"] ), guardado
-// junto con el resto de "usuariosMacro" en localStorage. Asi, mismo
-// mecanismo que ya usa todo el sitio y listo para el dia que esto pase
-// a una base de datos real (el usuario ya viaja completo, insignias
-// incluidas).
+// desde la consola). Fase 1: viven en la tabla "badges" de Neon.
+//
+// Como medio sitio llama a obtenerInsignias()/insigniasBloqueHTML() de
+// forma SINCRÓNICA dentro de bucles de render (listas de comunidad,
+// ranking, comentarios...), se mantiene una caché en memoria
+// (_cacheInsignias). Las páginas precargan esa caché con
+// cargarInsignias()/cargarInsigniasDeVarios() antes de renderizar, y
+// las funciones de siempre (obtenerInsignias, insigniasItemsHTML, etc.)
+// siguen siendo sincrónicas leyendo de ahí, sin que haya que tocar cada
+// lugar que ya las usaba.
 
 
 // LISTA DE INSIGNIAS DISPONIBLES
@@ -38,82 +42,78 @@ const INSIGNIAS = {
 
 
 // ==============================
-// LECTURA / ESCRITURA DE USUARIOS
+// CACHÉ EN MEMORIA
 // ==============================
 
-function _insigniasLeerUsuarios(){
+const _cacheInsignias = {};
 
-  return leerJSON(
-    localStorage.getItem("usuariosMacro") || "[]"
-  );
-
-}
-
-function _insigniasGuardarUsuarios(lista){
-
-  localStorage.setItem(
-    "usuariosMacro",
-    JSON.stringify(lista)
-  );
-
+function _guardarEnCacheInsignias(nombre, lista){
+  _cacheInsignias[nombre] = Array.isArray(lista) ? lista : [];
 }
 
 
 
 
 // ==============================
-// OBTENER INSIGNIAS DE UN USUARIO
+// OBTENER INSIGNIAS DE UN USUARIO (sincrónico, desde caché)
 // ==============================
 
 function obtenerInsignias(nombre){
-
-  const usuarios = _insigniasLeerUsuarios();
-  const usuario = usuarios.find(u => u.nombre === nombre);
-
-  if(usuario && Array.isArray(usuario.insignias)){
-    return usuario.insignias;
-  }
-
-  // MIGRACION: versiones anteriores guardaban las insignias en una
-  // clave aparte ("insignias_<nombre>"). Si existe, se migra al campo
-  // "insignias" dentro del usuario y se limpia la clave vieja.
-  const legado = leerJSON(
-    localStorage.getItem("insignias_" + nombre) || "null"
-  );
-
-  if(Array.isArray(legado) && legado.length && usuario){
-    guardarInsignias(nombre, legado);
-    localStorage.removeItem("insignias_" + nombre);
-    return legado;
-  }
-
-  return [];
-
+  return _cacheInsignias[nombre] || [];
 }
 
 
 
 
 // ==============================
-// GUARDAR INSIGNIAS DE UN USUARIO
+// CARGAR INSIGNIAS DESDE EL SERVIDOR
 // ==============================
 
-function guardarInsignias(nombre, lista){
+async function cargarInsignias(nombre){
 
-  const usuarios = _insigniasLeerUsuarios();
-  const idx = usuarios.findIndex(u => u.nombre === nombre);
+  if(!nombre) return [];
 
-  if(idx === -1) return;
+  try{
 
-  usuarios[idx].insignias = lista;
-  _insigniasGuardarUsuarios(usuarios);
+    const respuesta = await fetch("/api/badges?username=" + encodeURIComponent(nombre));
+    const datos = await respuesta.json();
 
-  // Si es el usuario logueado en este navegador, sincronizar la sesion
-  // activa para que el cambio se vea sin tener que volver a loguearse.
-  const activo = leerJSON(localStorage.getItem("usuarioActivo") || "null");
-  if(activo && activo.nombre === nombre){
-    activo.insignias = lista;
-    localStorage.setItem("usuarioActivo", JSON.stringify(activo));
+    const lista = (datos && datos.success) ? datos.insignias : [];
+    _guardarEnCacheInsignias(nombre, lista);
+    return lista;
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudieron cargar las insignias.", error);
+    return _cacheInsignias[nombre] || [];
+
+  }
+
+}
+
+// Trae las insignias de varios usuarios en un solo pedido (para listas:
+// comunidad, ranking, amigos). Se usa antes de renderizar esas listas.
+
+async function cargarInsigniasDeVarios(nombres){
+
+  const unicos = [...new Set((nombres || []).filter(Boolean))];
+  if(!unicos.length) return;
+
+  try{
+
+    const respuesta = await fetch("/api/badges?usernames=" + encodeURIComponent(unicos.join(",")));
+    const datos = await respuesta.json();
+
+    if(datos && datos.success && datos.porUsuario){
+      Object.keys(datos.porUsuario).forEach(nombre=>{
+        _guardarEnCacheInsignias(nombre, datos.porUsuario[nombre]);
+      });
+    }
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudieron cargar las insignias.", error);
+
   }
 
 }
@@ -127,28 +127,56 @@ function guardarInsignias(nombre, lista){
 // Pensadas para usarse desde admin.html (solo administradores) o a
 // mano desde la consola.
 
-function asignarInsignia(nombre,id){
+async function asignarInsignia(nombre,id){
 
   if(!INSIGNIAS[id]){
     console.warn("Insignia inexistente:",id);
     return;
   }
 
-  const lista = obtenerInsignias(nombre);
+  try{
 
-  if(!lista.includes(id)){
-    lista.push(id);
-    guardarInsignias(nombre,lista);
+    const activo = typeof obtenerUsuarioActivo === "function"
+      ? obtenerUsuarioActivo()
+      : leerJSON(localStorage.getItem("usuarioActivo") || "null");
+
+    await fetch("/api/badges", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: nombre,
+        badgeId: id,
+        assignedBy: activo ? activo.nombre : null
+      })
+    });
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudo asignar la insignia.", error);
+
   }
+
+  await cargarInsignias(nombre);
 
 }
 
-function quitarInsignia(nombre,id){
+async function quitarInsignia(nombre,id){
 
-  const lista = obtenerInsignias(nombre)
-    .filter(actual => actual !== id);
+  try{
 
-  guardarInsignias(nombre,lista);
+    await fetch("/api/badges", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: nombre, badgeId: id })
+    });
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudo quitar la insignia.", error);
+
+  }
+
+  await cargarInsignias(nombre);
 
 }
 
@@ -198,14 +226,17 @@ function insigniasBloqueHTML(nombre,compacta){
 }
 
 // Pinta las insignias dentro de un contenedor ya existente en el DOM
-// (usado en perfil.html y usuario.html, debajo del nombre). Si no tiene
+// (usado en perfil.html y usuario.html, debajo del nombre). Carga los
+// datos frescos del servidor y recién ahí pinta. Si no tiene
 // insignias, oculta el contenedor para que no quede ningun espacio.
 
-function renderInsigniasEnContenedor(idContenedor,nombre,compacta){
+async function renderInsigniasEnContenedor(idContenedor,nombre,compacta){
 
   const contenedor = document.getElementById(idContenedor);
 
   if(!contenedor) return;
+
+  await cargarInsignias(nombre);
 
   const items = compacta
     ? insigniasCompactasHTML(nombre)

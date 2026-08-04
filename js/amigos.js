@@ -1,12 +1,9 @@
 // ==============================
 // AMIGOS - MacroReborn
 // ==============================
-
-
-// ---------- CLAVES ----------
-
-const CLAVE_SOLICITUDES = "solicitudesAmigos";
-
+// Fase 1: solicitudes y amistades salen de /api/friends (tablas
+// friend_requests / friendships en Neon) en vez de las claves
+// localStorage "solicitudesAmigos" / "amigos_<nombre>".
 
 
 // ---------- HELPERS ----------
@@ -20,54 +17,30 @@ localStorage.getItem("usuarioActivo") || "null"
 }
 
 
+// Datos traídos del servidor para la sesión actual (se llenan en
+// cargarDatosAmigos() y los leen los distintos render*()).
+let _datosAmigos = { amigos: [], solicitudesEntrantes: [], solicitudesSalientes: [] };
 
-function obtenerSolicitudes(){
+async function cargarDatosAmigos(nombre){
 
-return leerJSON(
-localStorage.getItem(CLAVE_SOLICITUDES) || "[]"
-);
+  try{
 
-}
+    const respuesta = await fetch("/api/friends?username=" + encodeURIComponent(nombre));
+    const datos = await respuesta.json();
 
+    if(datos && datos.success){
+      _datosAmigos = {
+        amigos: datos.amigos || [],
+        solicitudesEntrantes: datos.solicitudesEntrantes || [],
+        solicitudesSalientes: datos.solicitudesSalientes || []
+      };
+    }
 
+  }catch(error){
 
-function guardarSolicitudes(lista){
+    console.warn("MacroReborn: no se pudo cargar amigos/solicitudes.", error);
 
-localStorage.setItem(
-CLAVE_SOLICITUDES,
-JSON.stringify(lista)
-);
-
-}
-
-
-
-function obtenerAmigos(nombre){
-
-return leerJSON(
-localStorage.getItem("amigos_" + nombre) || "[]"
-);
-
-}
-
-
-
-function guardarAmigos(nombre,lista){
-
-localStorage.setItem(
-"amigos_" + nombre,
-JSON.stringify(lista)
-);
-
-}
-
-
-
-function obtenerAvatar(nombre){
-
-return leerJSON(
-localStorage.getItem("avatar_" + nombre) || "null"
-);
+  }
 
 }
 
@@ -123,10 +96,10 @@ return "imagenes/"+partes[0]+"/"+partes.slice(1).join("_")+".png";
 
 
 
-function htmlAvatarMini(nombre){
+function htmlAvatarMini(avatarCrudo){
 
 
-const avatar = obtenerAvatar(nombre);
+const avatar = normalizarAvatar(avatarCrudo);
 
 
 const div=document.createElement("div");
@@ -199,8 +172,7 @@ if(!contenedor)return;
 
 
 
-const lista =
-obtenerAmigos(activo.nombre);
+const lista = _datosAmigos.amigos;
 
 
 
@@ -223,8 +195,9 @@ contenedor.innerHTML="";
 
 
 
-lista.forEach(nombre=>{
+lista.forEach(amigo=>{
 
+const nombre = amigo.username;
 
 let card=document.createElement("div");
 
@@ -233,7 +206,7 @@ card.className="amigo-card";
 
 
 card.appendChild(
-htmlAvatarMini(nombre)
+htmlAvatarMini(amigo.avatar)
 );
 
 
@@ -288,18 +261,7 @@ if(!contenedor)return;
 
 
 
-const solicitudes =
-obtenerSolicitudes();
-
-
-
-const recibidas =
-solicitudes.filter(s=>
-
-s.para===activo.nombre &&
-s.estado==="pendiente"
-
-);
+const recibidas = _datosAmigos.solicitudesEntrantes;
 
 
 
@@ -332,7 +294,6 @@ let div=document.createElement("div");
 div.className="solicitud-card";
 
 
-
 div.innerHTML=`
 
 <div>
@@ -341,7 +302,7 @@ div.innerHTML=`
 
 
 <button class="btn-aceptar"
-data-de="${sol.de}">
+data-request-id="${sol.id}">
 
 ✅ Aceptar
 
@@ -361,23 +322,20 @@ contenedor.appendChild(div);
 
 
 
-document.querySelectorAll(".btn-aceptar")
+contenedor.querySelectorAll(".btn-aceptar")
 .forEach(btn=>{
 
 
-btn.onclick=()=>{
+btn.onclick=async ()=>{
 
+btn.disabled = true;
 
-aceptarSolicitud(
-
-btn.dataset.de,
-
+await aceptarSolicitud(
+Number(btn.dataset.requestId),
 activo.nombre
-
 );
 
-
-renderTodo(activo);
+await renderTodo(activo);
 
 
 };
@@ -396,173 +354,119 @@ renderTodo(activo);
 // ---------- ACEPTAR SOLICITUD ----------
 
 
-function aceptarSolicitud(de,para){
+async function aceptarSolicitud(requestId, para){
+
+  const solicitud = _datosAmigos.solicitudesEntrantes.find(s => s.id === requestId);
+  const de = solicitud ? solicitud.de : null;
+
+  try{
+
+    const respuesta = await fetch("/api/friends", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "accept", requestId })
+    });
+
+    const datos = await respuesta.json();
+    if(!datos || !datos.success) return;
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudo aceptar la solicitud.", error);
+    return;
+
+  }
+
+  if(!de) return;
+
+  // LOGROS DE AMIGOS
+
+  if(typeof desbloquearLogro==="function"){
+
+    desbloquearLogro(de,"primerAmigo");
+    desbloquearLogro(para,"primerAmigo");
+
+  }
+
+
+  // ACTIVIDAD RECIENTE - AMIGO
+
+  if(typeof registrarActividad==="function"){
+
+    registrarActividad(de,"amigo",para);
+    registrarActividad(para,"amigo",de);
+
+  }
 
 
 
-let lista =
-obtenerSolicitudes();
+  // NOTIFICACION
+
+  if(typeof crearNotificacion==="function"){
 
 
+    crearNotificacion(
 
-lista.forEach(s=>{
+    de,
 
+    "🤝 Solicitud aceptada",
 
-if(
-s.de===de &&
-s.para===para
-){
+    para+" aceptó tu solicitud de amistad."
 
-s.estado="aceptada";
-
-}
+    );
 
 
-});
-
-
-
-guardarSolicitudes(lista);
-
-
-
-
-let amigos1 =
-obtenerAmigos(de);
-
-
-if(!amigos1.includes(para))
-
-amigos1.push(para);
-
-
-guardarAmigos(
-de,
-amigos1
-);
-
-
-
-
-let amigos2 =
-obtenerAmigos(para);
-
-
-
-if(!amigos2.includes(de))
-
-amigos2.push(de);
-
-
-
-guardarAmigos(
-para,
-amigos2
-);
-
-
-
-
-// LOGROS DE AMIGOS
-
-if(typeof desbloquearLogro==="function"){
-
-desbloquearLogro(de,"primerAmigo");
-desbloquearLogro(para,"primerAmigo");
-
-if(amigos1.length>=50) desbloquearLogro(de,"popular");
-if(amigos2.length>=50) desbloquearLogro(para,"popular");
-
-if(amigos1.length>=100) desbloquearLogro(de,"leyendaSocial");
-if(amigos2.length>=100) desbloquearLogro(para,"leyendaSocial");
-
-}
-
-
-// ACTIVIDAD RECIENTE - AMIGO
-
-if(typeof registrarActividad==="function"){
-
-registrarActividad(de,"amigo",para);
-registrarActividad(para,"amigo",de);
-
-}
-
-
-
-// NOTIFICACION
-
-if(typeof crearNotificacion==="function"){
-
-
-crearNotificacion(
-
-de,
-
-"🤝 Solicitud aceptada",
-
-para+" aceptó tu solicitud de amistad."
-
-);
-
-
-}
+  }
 
 
 
 }
-
-
-
 
 
 
 
 // ---------- ENVIAR SOLICITUD ----------
+// (usada desde otras páginas, ej. usuario.html, si llaman a esta
+// función en vez de repetir la lógica)
 
 
-function enviarSolicitud(de,para){
+async function enviarSolicitud(de,para){
 
 
+  try{
 
-let lista =
-obtenerSolicitudes();
+    const respuesta = await fetch("/api/friends", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "request", from: de, to: para })
+    });
 
+    const datos = await respuesta.json();
+    if(!datos || !datos.success) return;
 
+  }catch(error){
 
-lista.push({
+    console.warn("MacroReborn: no se pudo enviar la solicitud.", error);
+    return;
 
-de:de,
-
-para:para,
-
-estado:"pendiente"
-
-});
-
-
-
-guardarSolicitudes(lista);
+  }
 
 
+  if(typeof crearNotificacion==="function"){
 
 
+    crearNotificacion(
 
-if(typeof crearNotificacion==="function"){
+    para,
 
+    "📩 Nueva solicitud de amistad",
 
-crearNotificacion(
+    de+" te envió una solicitud de amistad."
 
-para,
-
-"📩 Nueva solicitud de amistad",
-
-de+" te envió una solicitud de amistad."
-
-);
+    );
 
 
-}
+  }
 
 
 
@@ -612,7 +516,6 @@ c.classList.remove("activo-tab")
 btn.classList.add("activa-tab");
 
 
-
 const contenido =
 document.getElementById(
 btn.dataset.tab
@@ -639,7 +542,6 @@ contenido.classList.add("activo-tab");
 
 
 
-
 // ---------- SOLICITUDES ENVIADAS ----------
 
 
@@ -654,18 +556,7 @@ if(!contenedor)return;
 
 
 
-const solicitudes =
-obtenerSolicitudes();
-
-
-
-const enviadas =
-solicitudes.filter(s=>
-
-s.de===activo.nombre &&
-s.estado==="pendiente"
-
-);
+const enviadas = _datosAmigos.solicitudesSalientes;
 
 
 
@@ -730,17 +621,9 @@ const badgeAmigos = document.getElementById("badgeAmigos");
 const badgeSolicitudes = document.getElementById("badgeSolicitudes");
 const badgeEnviadas = document.getElementById("badgeEnviadas");
 
-const solicitudes = obtenerSolicitudes();
-
-const cantAmigos = obtenerAmigos(activo.nombre).length;
-
-const cantRecibidas = solicitudes.filter(s=>
-s.para===activo.nombre && s.estado==="pendiente"
-).length;
-
-const cantEnviadas = solicitudes.filter(s=>
-s.de===activo.nombre && s.estado==="pendiente"
-).length;
+const cantAmigos = _datosAmigos.amigos.length;
+const cantRecibidas = _datosAmigos.solicitudesEntrantes.length;
+const cantEnviadas = _datosAmigos.solicitudesSalientes.length;
 
 if(badgeAmigos) badgeAmigos.textContent = cantAmigos > 0 ? cantAmigos : "";
 if(badgeSolicitudes) badgeSolicitudes.textContent = cantRecibidas > 0 ? cantRecibidas : "";
@@ -754,8 +637,18 @@ if(badgeEnviadas) badgeEnviadas.textContent = cantEnviadas > 0 ? cantEnviadas : 
 // ---------- RENDER TOTAL ----------
 
 
-function renderTodo(activo){
+async function renderTodo(activo){
 
+await cargarDatosAmigos(activo.nombre);
+
+const nombres = [
+  ..._datosAmigos.amigos.map(a => a.username),
+  activo.nombre
+];
+
+if(typeof cargarInsigniasDeVarios === "function"){
+  await cargarInsigniasDeVarios(nombres);
+}
 
 renderAmigos(activo);
 
@@ -820,7 +713,6 @@ panel.style.display="block";
 
 
 iniciarPestanas();
-
 
 renderTodo(activo);
 

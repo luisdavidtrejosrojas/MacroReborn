@@ -1,6 +1,10 @@
 // ==============================
 // RANKING - MacroReborn
 // ==============================
+// Fase 1: la lista de usuarios sale de /api/users (antes: la clave
+// localStorage "usuariosMacro", que en la práctica nunca se llegaba a
+// llenar). Se cachea en memoria por carga de página para no repetir el
+// pedido cada vez que se llama a obtenerListaRanking().
 
 
 const podioRanking = document.getElementById("podioRanking");
@@ -14,24 +18,15 @@ const activoRanking = leerJSON(localStorage.getItem("usuarioActivo") || "null");
 
 
 // ==============================
-// OBTENER PUNTOS DE LOGROS
-// ==============================
-// La suma de puntos de logros la calcula calcularPuntosLogros(nombre),
-// definida en js/motor/logros.js, para que ranking.html, perfil.html
-// y usuario.html usen siempre el mismo cálculo.
-
-
-
-/// ==============================
 // OBTENER AVATAR
 // ==============================
+// Ahora el avatar viaja embebido en cada usuario (users.avatar), así
+// que se recibe directo en vez de ir a buscarlo a una clave aparte.
 
-function obtenerAvatar(nombre){
+function obtenerAvatar(nombre, avatarCrudo){
 
 
-    const avatar = leerJSON(
-        localStorage.getItem("avatar_" + nombre) || "null"
-    );
+    const avatar = normalizarAvatar(avatarCrudo);
 
 
     if(!avatar){
@@ -144,15 +139,52 @@ function obtenerAvatar(nombre){
 // La usan cargarRanking() acá abajo y también obtenerPosicionRanking(),
 // para que el podio, la lista y la posición individual salgan siempre
 // de los mismos datos.
+//
+// Se cachea en memoria (_cacheUsuariosRanking): la primera vez que se
+// pide, trae la lista de usuarios y precarga sus logros/insignias en
+// bloque; los pedidos siguientes reusan esos datos.
 
-function obtenerListaRanking(){
+let _cacheUsuariosRanking = null;
 
-    let usuarios =
-    leerJSON(
-        localStorage.getItem("usuariosMacro") || "[]"
-    );
+async function obtenerListaRanking(forzar){
 
-    let ranking = usuarios.map(usuario=>{
+    if(!_cacheUsuariosRanking || forzar){
+
+        let usuarios = [];
+
+        try{
+
+            const respuesta = await fetch("/api/users?limit=500");
+            const datos = await respuesta.json();
+            usuarios = (datos && datos.success) ? datos.users : [];
+
+        }catch(error){
+
+            console.warn("MacroReborn: no se pudo cargar la lista de usuarios.", error);
+
+        }
+
+        // Adaptar los nombres de columna de Neon (username/level) al
+        // formato que usa el resto del sitio (nombre/nivel).
+        _cacheUsuariosRanking = usuarios.map(u => ({
+            ...u,
+            nombre: u.username,
+            nivel: u.level
+        }));
+
+        const nombres = _cacheUsuariosRanking.map(u => u.nombre);
+
+        if(typeof cargarLogrosDeVarios === "function"){
+            await cargarLogrosDeVarios(nombres);
+        }
+
+        if(typeof cargarInsigniasDeVarios === "function"){
+            await cargarInsigniasDeVarios(nombres);
+        }
+
+    }
+
+    let ranking = _cacheUsuariosRanking.map(usuario=>{
 
         return{
 
@@ -196,9 +228,9 @@ function obtenerListaRanking(){
 // ranking general, o null si todavía no aparece en él. La usan
 // perfil.html (perfil.js) y usuario.html (usuario.js).
 
-function obtenerPosicionRanking(nombre){
+async function obtenerPosicionRanking(nombre){
 
-    const ranking = obtenerListaRanking();
+    const ranking = await obtenerListaRanking();
 
     const indice = ranking.findIndex(u=>u.nombre===nombre);
 
@@ -217,11 +249,11 @@ function obtenerPosicionRanking(nombre){
 // desbloquearLogro() ya evita duplicados, así que es seguro llamarla
 // repetidamente.
 
-function revisarLogrosRanking(){
+async function revisarLogrosRanking(){
 
     if(typeof desbloquearLogro !== "function") return;
 
-    const ranking = obtenerListaRanking();
+    const ranking = await obtenerListaRanking();
 
     ranking.forEach((usuario,index)=>{
 
@@ -245,7 +277,7 @@ function revisarLogrosRanking(){
 // CARGAR RANKING
 // ==============================
 
-function cargarRanking(filtro=""){
+async function cargarRanking(filtro=""){
 
     // Esta función pinta el podio y la lista de ranking.html. Si el
     // script se incluye en otra página solo para reutilizar
@@ -253,7 +285,7 @@ function cargarRanking(filtro=""){
     // no existen y no hay nada que dibujar acá.
     if(!podioRanking || !contenedorRanking) return;
 
-    let ranking = obtenerListaRanking();
+    let ranking = await obtenerListaRanking();
 
     if(filtro){
 
@@ -303,7 +335,7 @@ function cargarRanking(filtro=""){
             ? "<div class='corona'>👑</div>"
             : ""}
 
-            ${obtenerAvatar(usuario.nombre)}
+            ${obtenerAvatar(usuario.nombre, usuario.avatar)}
 
             <h2>${usuario.nombre}</h2>
 
@@ -351,7 +383,7 @@ function cargarRanking(filtro=""){
 
             </div>
 
-            ${obtenerAvatar(usuario.nombre)}
+            ${obtenerAvatar(usuario.nombre, usuario.avatar)}
 
             <div class="datos-ranking">
 

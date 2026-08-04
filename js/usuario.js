@@ -25,19 +25,6 @@ function obtenerActivo() {
   return leerJSON(localStorage.getItem("usuarioActivo") || "null");
 }
 
-function obtenerSolicitudes() {
-  return leerJSON(localStorage.getItem("solicitudesAmigos") || "[]");
-}
-
-function guardarSolicitudes(lista) {
-  localStorage.setItem("solicitudesAmigos", JSON.stringify(lista));
-}
-
-function obtenerAmigos(nombre) {
-  return leerJSON(localStorage.getItem("amigos_" + nombre) || "[]");
-}
-
-
 // ---------- ORDEN DE CAPAS ----------
 
 const ORDEN_CAPAS = [
@@ -66,8 +53,30 @@ function rutaImagenCapa(valor) {
 const params = new URLSearchParams(window.location.search);
 const nombreBuscado = params.get("usuario");
 
-const usuarios = leerJSON(localStorage.getItem("usuariosMacro") || "[]");
-const usuario = usuarios.find(u => u.nombre === nombreBuscado);
+(async function(){
+
+let usuario = null;
+
+try{
+
+  const respuesta = await fetch("/api/users?username=" + encodeURIComponent(nombreBuscado));
+  const datos = await respuesta.json();
+
+  if(datos && datos.success){
+    usuario = {
+      ...datos.user,
+      nombre: datos.user.username,
+      nivel: datos.user.level,
+      biografia: datos.user.bio || "Todavía no escribió una biografía.",
+      fechaRegistro: datos.user.created_at
+    };
+  }
+
+}catch(error){
+
+  console.warn("MacroReborn: no se pudo cargar el perfil.", error);
+
+}
 
 
 if (!usuario) {
@@ -75,6 +84,12 @@ if (!usuario) {
   alert("Usuario no encontrado");
 
 } else {
+
+  // Precargar logros/insignias del perfil visitado antes de renderizar
+  // nada que dependa de ellos (puntos de logros, insignias, tarjetas).
+  if(typeof cargarLogros === "function"){
+    await cargarLogros(usuario.nombre);
+  }
 
   // Datos básicos
   document.getElementById("nombreUsuario").textContent = usuario.nombre;
@@ -117,10 +132,14 @@ if (!usuario) {
 
   // RANKING: se reutiliza obtenerPosicionRanking() (js/ranking.js) para
   // mostrar la misma posición real que aparece en ranking.html.
-  const posicionRanking = typeof obtenerPosicionRanking === "function"
-    ? obtenerPosicionRanking(usuario.nombre)
-    : null;
-  document.getElementById("ranking").textContent = posicionRanking ? "#" + posicionRanking : "Sin clasificar";
+  document.getElementById("ranking").textContent = "Calculando…";
+  if(typeof obtenerPosicionRanking === "function"){
+    obtenerPosicionRanking(usuario.nombre).then(posicionRanking=>{
+      document.getElementById("ranking").textContent = posicionRanking ? "#" + posicionRanking : "Sin clasificar";
+    });
+  } else {
+    document.getElementById("ranking").textContent = "Sin clasificar";
+  }
 
   document.getElementById("registro").textContent = usuario.fechaRegistro || "Desconocido";
 
@@ -141,19 +160,33 @@ if (!usuario) {
 
   // ---------- AMIGOS (lista real, solo lectura) ----------
 
+  // Amigos del perfil visitado (para "ya somos amigos" y la lista de
+  // solo lectura). Se pide una sola vez y se reusa en ambos lados.
+  let _amigosDeEstePerfil = [];
+
+  async function cargarAmigosDeEstePerfil(){
+    try{
+      const respuesta = await fetch("/api/friends?username=" + encodeURIComponent(usuario.nombre));
+      const datos = await respuesta.json();
+      _amigosDeEstePerfil = (datos && datos.success) ? datos.amigos : [];
+    }catch(error){
+      console.warn("MacroReborn: no se pudo cargar la lista de amigos.", error);
+      _amigosDeEstePerfil = [];
+    }
+  }
+
   function renderAmigosUsuario() {
     const contenedor = document.getElementById("listaAmigosUsuario");
     if (!contenedor) return;
 
-    const listaAmigos = obtenerAmigos(usuario.nombre);
-
-    if (listaAmigos.length === 0) {
+    if (_amigosDeEstePerfil.length === 0) {
       contenedor.innerHTML = `<p style="color:#94a3b8;font-size:14px;">Este jugador todavía no tiene amigos.</p>`;
       return;
     }
 
-    contenedor.innerHTML = listaAmigos.map(nombreAmigo => {
-      const av = leerJSON(localStorage.getItem("avatar_" + nombreAmigo) || "null");
+    contenedor.innerHTML = _amigosDeEstePerfil.map(amigo => {
+      const nombreAmigo = amigo.username;
+      const av = normalizarAvatar(amigo.avatar);
 
       let avatarHTML;
       if (!av) {
@@ -181,12 +214,15 @@ if (!usuario) {
     }).join("");
   }
 
+  await cargarAmigosDeEstePerfil();
   renderAmigosUsuario();
 
 
   // ---------- AVATAR ----------
+  // El avatar viaja embebido en el usuario (users.avatar), ya no hace
+  // falta ir a buscarlo a una clave localStorage aparte.
 
-  const avatar = leerJSON(localStorage.getItem("avatar_" + usuario.nombre) || "null");
+  const avatar = normalizarAvatar(usuario.avatar);
   const caja = document.getElementById("avatarUsuario");
 
 if (avatar && caja) {
@@ -238,6 +274,26 @@ if (avatar && caja) {
   const btnAmigo = document.getElementById("agregarAmigo");
   const activo = obtenerActivo();
 
+  // Solicitudes propias del visitante (para saber si ya le mandó
+  // solicitud a este perfil, o si este perfil ya le mandó una a él).
+  let _misSolicitudes = { solicitudesEntrantes: [], solicitudesSalientes: [] };
+
+  async function cargarMisSolicitudes(){
+    if(!activo) return;
+    try{
+      const respuesta = await fetch("/api/friends?username=" + encodeURIComponent(activo.nombre));
+      const datos = await respuesta.json();
+      if(datos && datos.success){
+        _misSolicitudes = {
+          solicitudesEntrantes: datos.solicitudesEntrantes,
+          solicitudesSalientes: datos.solicitudesSalientes
+        };
+      }
+    }catch(error){
+      console.warn("MacroReborn: no se pudo cargar tus solicitudes.", error);
+    }
+  }
+
   function actualizarBotonAmigo() {
     if (!btnAmigo) return;
 
@@ -254,16 +310,9 @@ if (avatar && caja) {
       return;
     }
 
-    const misAmigos = obtenerAmigos(activo.nombre);
-    const solicitudes = obtenerSolicitudes();
-
-    const yaEsAmigo = misAmigos.includes(usuario.nombre);
-    const solicitudEnviada = solicitudes.some(
-      s => s.de === activo.nombre && s.para === usuario.nombre && s.estado === "pendiente"
-    );
-    const solicitudRecibida = solicitudes.some(
-      s => s.de === usuario.nombre && s.para === activo.nombre && s.estado === "pendiente"
-    );
+    const yaEsAmigo = _amigosDeEstePerfil.some(a => a.username === activo.nombre);
+    const solicitudEnviada = _misSolicitudes.solicitudesSalientes.some(s => s.para === usuario.nombre);
+    const solicitudRecibida = _misSolicitudes.solicitudesEntrantes.some(s => s.de === usuario.nombre);
 
     // Resetear estilos
     btnAmigo.disabled = false;
@@ -291,54 +340,48 @@ if (avatar && caja) {
     }
   }
 
+  await cargarMisSolicitudes();
   actualizarBotonAmigo();
 
   if (btnAmigo) {
-    btnAmigo.addEventListener("click", () => {
+    btnAmigo.addEventListener("click", async () => {
       if (!activo || btnAmigo.disabled) return;
 
       if(typeof bloqueadoPorSuspension === "function" && bloqueadoPorSuspension()) return;
 
-      const solicitudes = obtenerSolicitudes();
+      btnAmigo.disabled = true;
 
       // Si hay solicitud recibida pendiente → aceptar
-      const idxRecibida = solicitudes.findIndex(
-        s => s.de === usuario.nombre && s.para === activo.nombre && s.estado === "pendiente"
-      );
+      const recibida = _misSolicitudes.solicitudesEntrantes.find(s => s.de === usuario.nombre);
 
-      if (idxRecibida !== -1) {
-        solicitudes[idxRecibida].estado = "aceptada";
-        guardarSolicitudes(solicitudes);
+      if (recibida) {
+
+        try{
+          const respuesta = await fetch("/api/friends", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "accept", requestId: recibida.id })
+          });
+          const datos = await respuesta.json();
+          if(!datos || !datos.success){ actualizarBotonAmigo(); return; }
+        }catch(error){
+          console.warn("MacroReborn: no se pudo aceptar la solicitud.", error);
+          actualizarBotonAmigo();
+          return;
+        }
+
         if(typeof crearNotificacion === "function"){
-
-    crearNotificacion(
-
-        usuario.nombre,
-
-        "🤝 Nueva amistad",
-
-        activo.nombre + " aceptó tu solicitud de amistad."
-
-    );
-
-}
-
-        const misAmigos = obtenerAmigos(activo.nombre);
-        if (!misAmigos.includes(usuario.nombre)) misAmigos.push(usuario.nombre);
-        localStorage.setItem("amigos_" + activo.nombre, JSON.stringify(misAmigos));
-
-        const susAmigos = obtenerAmigos(usuario.nombre);
-        if (!susAmigos.includes(activo.nombre)) susAmigos.push(activo.nombre);
-        localStorage.setItem("amigos_" + usuario.nombre, JSON.stringify(susAmigos));
+          crearNotificacion(
+            usuario.nombre,
+            "🤝 Nueva amistad",
+            activo.nombre + " aceptó tu solicitud de amistad."
+          );
+        }
 
         // LOGROS DE AMIGOS
         if(typeof desbloquearLogro === "function"){
           desbloquearLogro(activo.nombre, "primerAmigo");
           desbloquearLogro(usuario.nombre, "primerAmigo");
-          if(misAmigos.length >= 50) desbloquearLogro(activo.nombre, "popular");
-          if(susAmigos.length >= 50) desbloquearLogro(usuario.nombre, "popular");
-          if(misAmigos.length >= 100) desbloquearLogro(activo.nombre, "leyendaSocial");
-          if(susAmigos.length >= 100) desbloquearLogro(usuario.nombre, "leyendaSocial");
         }
 
         // ACTIVIDAD RECIENTE - AMIGO
@@ -347,23 +390,31 @@ if (avatar && caja) {
           registrarActividad(usuario.nombre, "amigo", activo.nombre);
         }
 
+        await cargarAmigosDeEstePerfil();
+        await cargarMisSolicitudes();
         actualizarBotonAmigo();
         renderAmigosUsuario();
         return;
       }
+
       // Evitar duplicados
-      const yaExiste = solicitudes.some(
-        s => s.de === activo.nombre && s.para === usuario.nombre
-      );
-      if (yaExiste) return;
+      const yaExiste = _misSolicitudes.solicitudesSalientes.some(s => s.para === usuario.nombre);
+      if (yaExiste){ actualizarBotonAmigo(); return; }
 
       // Enviar solicitud
-      solicitudes.push({
-        de: activo.nombre,
-        para: usuario.nombre,
-        estado: "pendiente"
-      });
-      guardarSolicitudes(solicitudes);
+      try{
+        const respuesta = await fetch("/api/friends", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "request", from: activo.nombre, to: usuario.nombre })
+        });
+        const datos = await respuesta.json();
+        if(!datos || !datos.success){ actualizarBotonAmigo(); return; }
+      }catch(error){
+        console.warn("MacroReborn: no se pudo enviar la solicitud.", error);
+        actualizarBotonAmigo();
+        return;
+      }
 
       // NOTIFICACION A QUIEN RECIBE LA SOLICITUD
       if(typeof crearNotificacion==="function"){
@@ -374,6 +425,7 @@ if (avatar && caja) {
         );
       }
 
+      await cargarMisSolicitudes();
       actualizarBotonAmigo();
     });
   }
@@ -593,3 +645,5 @@ if(
   renderLogrosUsuario();
 
 }
+
+})();
