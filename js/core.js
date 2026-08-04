@@ -127,6 +127,50 @@ if(document.readyState === "loading"){
 
 
 // ==============================
+// LATIDO AL SERVIDOR (last_login real, Fase 1: Neon)
+// ==============================
+// Complementa al latido local de arriba: ese solo sirve dentro de ESTE
+// navegador (localStorage no se comparte entre dispositivos). Para que
+// "Comunidad" pueda saber quién está conectado de verdad sin importar
+// desde qué navegador/dispositivo, refrescamos periódicamente
+// "last_login" en Neon mientras haya una sesión iniciada con una
+// pestaña abierta. js/comunidad.js considera "conectado" a cualquier
+// usuario cuyo last_login sea de los últimos MINUTOS_CONECTADO minutos
+// (misma constante de arriba).
+
+const MINUTOS_LATIDO_SERVIDOR = 2; // más seguido que el umbral de "conectado" (5 min)
+
+function _latidoServidor(){
+
+  const activo = leerJSON(localStorage.getItem("usuarioActivo") || "null");
+  if(!activo || !activo.nombre) return;
+
+  fetch("/api/heartbeat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: activo.nombre })
+  }).catch(() => {
+    // Si falla (sin conexión, etc.) no rompe nada: se reintenta solo
+    // en el próximo latido.
+  });
+
+}
+
+function _iniciarLatidoServidor(){
+  _latidoServidor();
+  setInterval(_latidoServidor, MINUTOS_LATIDO_SERVIDOR * 60 * 1000);
+}
+
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", _iniciarLatidoServidor);
+}else{
+  _iniciarLatidoServidor();
+}
+
+
+
+
+// ==============================
 // AVATAR — NORMALIZACIÓN (Fase 1: Neon)
 // ==============================
 // El avatar ahora viaja dentro de cada usuario (columna users.avatar,

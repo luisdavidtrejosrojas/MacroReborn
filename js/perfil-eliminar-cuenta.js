@@ -12,15 +12,15 @@
 //                                     actual y la valida.
 //   3) eliminarCuentaCompleta()   -> único punto de borrado de datos.
 //
-// NOTA PARA LA FUTURA v1.0 (con base de datos real):
-// eliminarCuentaCompleta() es la única función que toca el "almacenamiento".
-// Hoy limpia localStorage; el día que exista un backend alcanza con
-// reemplazar su cuerpo por un fetch/DELETE a la API (por ejemplo
-// DELETE /api/usuario), que en el servidor haría el mismo borrado en
-// cascada (perfil, avatar, amigos, comentarios, favoritos, historial,
-// etc.) que acá se simula recorriendo localStorage. El resto del flujo
-// (confirmación, verificación de contraseña, cierre de sesión y
-// redirección) no cambiaría.
+// NOTA (Fase 1 - Neon):
+// El borrado de la cuenta "real" (fila en la tabla "users", y en
+// cascada sus logros/insignias/amistades/solicitudes) ahora lo hace el
+// servidor: POST /api/delete-account, que además valida la contraseña
+// contra la base (ver intentarConfirmar() más abajo). eliminarCuentaCompleta()
+// se llama DESPUÉS de que el servidor confirme el borrado, y solo se
+// encarga de lo que todavía vive en localStorage (comentarios,
+// favoritos, historial, notificaciones, likes, etc., que siguen sin
+// migrar a Neon).
 // ==============================
 
 (function () {
@@ -177,7 +177,13 @@
   // ---------- MODAL: PEDIR CONTRASEÑA Y CONFIRMAR ----------
   // Reutiliza la misma identidad visual que pedirConfirmacion() (definida
   // en js/perfil.js), agregando un campo de contraseña.
-  function pedirPasswordYEliminar(nombreUsuario, passwordReal) {
+  //
+  // NOTA (fix Fase 1): antes esta función recibía "passwordReal" desde
+  // usuarioActivo.password para comparar en el navegador. Como
+  // /api/login ya no devuelve la contraseña al cliente, ese valor
+  // siempre era undefined y la comparación fallaba siempre. Ahora la
+  // contraseña se valida en el servidor (POST /api/delete-account).
+  function pedirPasswordYEliminar(nombreUsuario) {
     document.querySelectorAll(".confirmacion-overlay").forEach((el) => el.remove());
 
     const overlay = document.createElement("div");
@@ -238,15 +244,36 @@
         return;
       }
 
-      // Verificar que la contraseña sea correcta.
-      if (ingresada !== (passwordReal || "")) {
-        mostrarErrorModal("La contraseña ingresada es incorrecta.");
-        return;
-      }
-
       botonConfirmarModal.disabled = true;
       botonCancelarModal.disabled = true;
 
+      // Validar la contraseña y borrar la cuenta en el servidor
+      // (Neon). La comparación ya NO se hace en el navegador.
+      let datos;
+      try {
+        const respuesta = await fetch("/api/delete-account", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: nombreUsuario, password: ingresada })
+        });
+        datos = await respuesta.json();
+      } catch (error) {
+        botonConfirmarModal.disabled = false;
+        botonCancelarModal.disabled = false;
+        mostrarErrorModal("Error de conexión. Probá de nuevo.");
+        return;
+      }
+
+      if (!datos || !datos.success) {
+        botonConfirmarModal.disabled = false;
+        botonCancelarModal.disabled = false;
+        mostrarErrorModal((datos && datos.error) || "La contraseña ingresada es incorrecta.");
+        return;
+      }
+
+      // La cuenta ya fue borrada en Neon (y, en cascada, sus logros,
+      // insignias, amistades y solicitudes). Ahora se limpia lo que
+      // todavía vive en localStorage.
       const eliminada = await eliminarCuentaCompleta(nombreUsuario);
 
       if (eliminada) {
@@ -255,7 +282,7 @@
       } else {
         botonConfirmarModal.disabled = false;
         botonCancelarModal.disabled = false;
-        mostrarErrorModal("No se pudo eliminar la cuenta. Probá de nuevo.");
+        mostrarErrorModal("No se pudo terminar de limpiar la cuenta. Probá de nuevo.");
       }
     }
 
@@ -296,7 +323,7 @@
     //    solo ejecuta el callback si el usuario elige "confirmar").
     pedirConfirmacion(
       "¿Estás seguro de que querés eliminar tu cuenta? Esta acción es permanente: se borrarán tu perfil, avatar, amigos, comentarios, favoritos, historial y todo lo asociado a tu cuenta.",
-      () => pedirPasswordYEliminar(activo.nombre, activo.password),
+      () => pedirPasswordYEliminar(activo.nombre),
       "Sí, continuar"
     );
   });

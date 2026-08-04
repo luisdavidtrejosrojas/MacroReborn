@@ -348,6 +348,9 @@ async function desbloquearLogro(nombre,id){
   if(tieneLogro(nombre,id)) return;
 
   const listaPrevia = obtenerLogros(nombre);
+
+  // Actualización optimista: se agrega a la caché ya mismo para que
+  // cualquier render() de la línea siguiente lo vea desbloqueado.
   _guardarEnCacheLogros(nombre, [
     ...listaPrevia,
     { id, fecha: new Date().toLocaleDateString("es-AR") }
@@ -367,12 +370,25 @@ async function desbloquearLogro(nombre,id){
 
   }catch(error){
 
-    console.warn("MacroReborn: no se pudo desbloquear el logro.", error);
+    // Sin confirmación del servidor: si dejáramos el logro en la
+    // caché, la persona lo vería "desbloqueado" en esta sesión pero,
+    // como nunca se guardó en Neon, desaparecería en el próximo
+    // reload (que vuelve a leer todo desde /api/achievements). Se
+    // revierte la actualización optimista para que el estado que se
+    // ve en pantalla sea siempre el que realmente está guardado.
+    console.warn("MacroReborn: no se pudo desbloquear el logro (sin conexión).", error);
+    _guardarEnCacheLogros(nombre, listaPrevia);
     return;
 
   }
 
-  if(!datos || !datos.success || !datos.nuevo) return;
+  if(!datos || !datos.success){
+    console.warn("MacroReborn: el servidor no pudo guardar el logro.", datos && datos.error);
+    _guardarEnCacheLogros(nombre, listaPrevia);
+    return;
+  }
+
+  if(!datos.nuevo) return;
 
   // ==============================
   // ACTIVIDAD RECIENTE - LOGRO

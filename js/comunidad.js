@@ -88,10 +88,25 @@ function estadoRelacion(nombreOtro) {
 
 
 // ---------- HELPER: ¿ESTÁ CONECTADO? ----------
-// Solo podemos confirmar con certeza la sesión activa en este navegador.
+// Antes solo se marcaba como "conectado" a la sesión activa DE ESTE
+// NAVEGADOR (activo.nombre === usuario.nombre), así que cualquier otra
+// persona realmente conectada desde otro dispositivo aparecía como
+// desconectada. Ahora se calcula a partir de "last_login" (que llega
+// desde /api/users y se mantiene fresco gracias al latido periódico
+// de js/core.js -> POST /api/heartbeat mientras la persona tiene una
+// pestaña abierta con sesión iniciada): si tuvo actividad dentro de
+// los últimos MINUTOS_CONECTADO minutos, cuenta como en línea, sin
+// importar en qué navegador esté.
+
+const MINUTOS_CONECTADO = 5;
 
 function estaConectado(usuario) {
-  return activo && activo.nombre === usuario.nombre;
+  if (!usuario || !usuario.last_login) return false;
+
+  const ultima = new Date(usuario.last_login).getTime();
+  if (isNaN(ultima)) return false;
+
+  return (Date.now() - ultima) <= MINUTOS_CONECTADO * 60 * 1000;
 }
 
 

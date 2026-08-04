@@ -53,6 +53,32 @@ function rutaImagenCapa(valor) {
 const params = new URLSearchParams(window.location.search);
 const nombreBuscado = params.get("usuario");
 
+
+// ---------- REDIRECCIÓN AL PROPIO PERFIL ----------
+// usuario.html es exclusivamente para ver perfiles AJENOS. Si la
+// persona logueada entra a su propio perfil desde acá (por ejemplo,
+// un link "Ver perfil" en Comunidad, Ranking, etc. que apunta a
+// usuario.html?usuario=<su propio nombre>), la mandamos directo a
+// perfil.html en vez de mostrarle su propio perfil como si fuera el
+// de otro jugador. Se compara sin distinguir mayúsculas/minúsculas
+// porque los nombres de usuario no son sensibles a eso en ningún otro
+// lugar del sitio (login, búsqueda, etc.).
+
+const _activoParaRedirigir = leerJSON(localStorage.getItem("usuarioActivo") || "null");
+
+const _esPropioPerfil = !!(
+  _activoParaRedirigir &&
+  _activoParaRedirigir.nombre &&
+  nombreBuscado &&
+  _activoParaRedirigir.nombre.toLowerCase() === nombreBuscado.toLowerCase()
+);
+
+if (_esPropioPerfil) {
+
+  window.location.replace("perfil.html");
+
+} else {
+
 (async function(){
 
 let usuario = null;
@@ -647,3 +673,5 @@ if(
 }
 
 })();
+
+}
