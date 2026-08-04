@@ -192,7 +192,7 @@ if (!usuario) {
 
   async function cargarAmigosDeEstePerfil(){
     try{
-      const respuesta = await fetch("/api/friends?username=" + encodeURIComponent(usuario.nombre));
+      const respuesta = await fetch("/api/social?action=friends&username=" + encodeURIComponent(usuario.nombre));
       const datos = await respuesta.json();
       _amigosDeEstePerfil = (datos && datos.success) ? datos.amigos : [];
     }catch(error){
@@ -307,7 +307,7 @@ if (avatar && caja) {
   async function cargarMisSolicitudes(){
     if(!activo) return;
     try{
-      const respuesta = await fetch("/api/friends?username=" + encodeURIComponent(activo.nombre));
+      const respuesta = await fetch("/api/social?action=friends&username=" + encodeURIComponent(activo.nombre));
       const datos = await respuesta.json();
       if(datos && datos.success){
         _misSolicitudes = {
@@ -383,7 +383,7 @@ if (avatar && caja) {
       if (recibida) {
 
         try{
-          const respuesta = await fetch("/api/friends", {
+          const respuesta = await fetch("/api/social?action=friends", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "accept", requestId: recibida.id })
@@ -429,7 +429,7 @@ if (avatar && caja) {
 
       // Enviar solicitud
       try{
-        const respuesta = await fetch("/api/friends", {
+        const respuesta = await fetch("/api/social?action=friends", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "request", from: activo.nombre, to: usuario.nombre })

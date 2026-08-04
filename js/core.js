@@ -145,7 +145,7 @@ function _latidoServidor(){
   const activo = leerJSON(localStorage.getItem("usuarioActivo") || "null");
   if(!activo || !activo.nombre) return;
 
-  fetch("/api/heartbeat", {
+  fetch("/api/users?action=heartbeat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username: activo.nombre })

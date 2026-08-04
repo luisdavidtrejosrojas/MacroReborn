@@ -62,7 +62,7 @@ formulario.addEventListener("submit", async function(e){
     try {
 
 
-        const respuesta = await fetch("/api/login", {
+        const respuesta = await fetch("/api/auth?action=login", {
 
             method:"POST",
 

@@ -25,7 +25,7 @@ async function cargarDatosAmigos(nombre){
 
   try{
 
-    const respuesta = await fetch("/api/friends?username=" + encodeURIComponent(nombre));
+    const respuesta = await fetch("/api/social?action=friends&username=" + encodeURIComponent(nombre));
     const datos = await respuesta.json();
 
     if(datos && datos.success){
@@ -361,7 +361,7 @@ async function aceptarSolicitud(requestId, para){
 
   try{
 
-    const respuesta = await fetch("/api/friends", {
+    const respuesta = await fetch("/api/social?action=friends", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "accept", requestId })
@@ -435,7 +435,7 @@ async function enviarSolicitud(de,para){
 
   try{
 
-    const respuesta = await fetch("/api/friends", {
+    const respuesta = await fetch("/api/social?action=friends", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "request", from: de, to: para })

@@ -247,7 +247,7 @@ async function cargarComunidad() {
 
   if (activo) {
     tareas.push(
-      fetch("/api/friends?username=" + encodeURIComponent(activo.nombre))
+      fetch("/api/social?action=friends&username=" + encodeURIComponent(activo.nombre))
         .then(r => r.json())
         .then(datos => {
           if (!datos || !datos.success) return;

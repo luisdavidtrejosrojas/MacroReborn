@@ -251,7 +251,7 @@
       // (Neon). La comparación ya NO se hace en el navegador.
       let datos;
       try {
-        const respuesta = await fetch("/api/delete-account", {
+        const respuesta = await fetch("/api/auth?action=delete-account", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: nombreUsuario, password: ingresada })

@@ -318,7 +318,7 @@ async function guardarAvatar(avatar){
 
   try{
 
-    await fetch("/api/update-avatar", {
+    await fetch("/api/users?action=update-avatar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: datosUsuario.nombre, avatar: avatar })
@@ -691,7 +691,7 @@ btnGuardar.addEventListener("click", ()=>{
 
 
 
-  fetch("/api/update-bio", {
+  fetch("/api/users?action=update-bio", {
 
     method:"POST",
 
@@ -805,7 +805,7 @@ async function renderAmigosPerfil(){
   let misAmigos = [];
 
   try{
-    const respuesta = await fetch("/api/friends?username=" + encodeURIComponent(datosUsuario.nombre));
+    const respuesta = await fetch("/api/social?action=friends&username=" + encodeURIComponent(datosUsuario.nombre));
     const datos = await respuesta.json();
     if(datos && datos.success) misAmigos = datos.amigos;
   }catch(error){
@@ -857,7 +857,7 @@ async function renderAmigosPerfil(){
       btn.disabled = true;
 
       try{
-        await fetch("/api/friends", {
+        await fetch("/api/social?action=friends", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "remove", username: datosUsuario.nombre, friendUsername: objetivo })

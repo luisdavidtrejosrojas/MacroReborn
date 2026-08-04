@@ -60,7 +60,7 @@ async function ganarXP(cantidad){
 
     try {
 
-        const respuesta = await fetch("/api/xp", {
+        const respuesta = await fetch("/api/users?action=xp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

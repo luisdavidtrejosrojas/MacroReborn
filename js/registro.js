@@ -58,7 +58,7 @@ return;
 
 try {
 console.log("Usuario enviado:", nombre);
-    const respuesta = await fetch("/api/register", {
+    const respuesta = await fetch("/api/auth?action=register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

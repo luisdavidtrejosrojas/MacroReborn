@@ -268,7 +268,7 @@ async function cargarLogros(nombre){
 
   try{
 
-    const respuesta = await fetch("/api/achievements?username=" + encodeURIComponent(nombre));
+    const respuesta = await fetch("/api/social?action=achievements&username=" + encodeURIComponent(nombre));
     const datos = await respuesta.json();
 
     const lista = (datos && datos.success)
@@ -297,7 +297,7 @@ async function cargarLogrosDeVarios(nombres){
 
   try{
 
-    const respuesta = await fetch("/api/achievements?usernames=" + encodeURIComponent(unicos.join(",")));
+    const respuesta = await fetch("/api/social?action=achievements&usernames=" + encodeURIComponent(unicos.join(",")));
     const datos = await respuesta.json();
 
     if(datos && datos.success && datos.porUsuario){
@@ -360,7 +360,7 @@ async function desbloquearLogro(nombre,id){
 
   try{
 
-    const respuesta = await fetch("/api/achievements", {
+    const respuesta = await fetch("/api/social?action=achievements", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: nombre, achievementId: id })

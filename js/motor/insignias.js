@@ -75,7 +75,7 @@ async function cargarInsignias(nombre){
 
   try{
 
-    const respuesta = await fetch("/api/badges?username=" + encodeURIComponent(nombre));
+    const respuesta = await fetch("/api/social?action=badges&username=" + encodeURIComponent(nombre));
     const datos = await respuesta.json();
 
     const lista = (datos && datos.success) ? datos.insignias : [];
@@ -101,7 +101,7 @@ async function cargarInsigniasDeVarios(nombres){
 
   try{
 
-    const respuesta = await fetch("/api/badges?usernames=" + encodeURIComponent(unicos.join(",")));
+    const respuesta = await fetch("/api/social?action=badges&usernames=" + encodeURIComponent(unicos.join(",")));
     const datos = await respuesta.json();
 
     if(datos && datos.success && datos.porUsuario){
@@ -140,7 +140,7 @@ async function asignarInsignia(nombre,id){
       ? obtenerUsuarioActivo()
       : leerJSON(localStorage.getItem("usuarioActivo") || "null");
 
-    await fetch("/api/badges", {
+    await fetch("/api/social?action=badges", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -164,7 +164,7 @@ async function quitarInsignia(nombre,id){
 
   try{
 
-    await fetch("/api/badges", {
+    await fetch("/api/social?action=badges", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: nombre, badgeId: id })
