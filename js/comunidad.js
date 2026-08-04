@@ -97,8 +97,14 @@ function estadoRelacion(nombreOtro) {
 // pestaña abierta con sesión iniciada): si tuvo actividad dentro de
 // los últimos MINUTOS_CONECTADO minutos, cuenta como en línea, sin
 // importar en qué navegador esté.
-
-const MINUTOS_CONECTADO = 5;
+//
+// MINUTOS_CONECTADO ya viene declarada como const en js/core.js (se
+// carga antes que este archivo en comunidad.html), así que se reusa
+// esa misma constante en vez de volver a declararla acá. Redeclarar
+// un "const" con el mismo nombre en dos <script> de la misma página
+// tira un SyntaxError apenas el navegador parsea este archivo, lo que
+// frenaba TODO comunidad.js (por eso no se veía ningún jugador, aunque
+// la API funcionara perfecto).
 
 function estaConectado(usuario) {
   if (!usuario || !usuario.last_login) return false;
