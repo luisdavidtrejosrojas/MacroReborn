@@ -16,19 +16,10 @@ if(nav){
 
     if(usuarioNav){
 
-        // Contador de notificaciones
-        const notificaciones = leerJSON(
-            localStorage.getItem("notificaciones_" + usuarioNav.nombre) || "[]"
-        );
-
-        const sinLeer = notificaciones.filter(n => !n.leida).length;
-
         nav.insertAdjacentHTML("beforeend",`
 
             <a class="sesion-extra" href="notificaciones.html">
-                🔔 <span id="contadorNotificaciones">${
-                    sinLeer > 0 ? sinLeer : ""
-                }</span>
+                🔔 <span id="contadorNotificaciones"></span>
             </a>
 
             <a class="sesion-extra" href="perfil.html">
@@ -40,6 +31,19 @@ if(nav){
             </a>
 
         `);
+
+        // Contador de notificaciones (Neon)
+        fetch("/api/content?action=notifications&username=" + encodeURIComponent(usuarioNav.nombre))
+            .then(resp => resp.json())
+            .then(datos => {
+                if(!datos || !datos.success) return;
+                const sinLeer = datos.notificaciones.filter(n => !n.leida).length;
+                const span = document.getElementById("contadorNotificaciones");
+                if(span) span.textContent = sinLeer > 0 ? sinLeer : "";
+            })
+            .catch(error => {
+                console.warn("MacroReborn: no se pudo cargar el contador de notificaciones.", error);
+            });
 
         const botonCerrar = document.getElementById("cerrarSesion");
 

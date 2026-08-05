@@ -1,5 +1,5 @@
 // =========================
-// MACROREBORN - ACTIVIDAD (PERFIL PROPIO)
+// MACROREBORN - ACTIVIDAD (PERFIL PROPIO) — Fase 2: Neon
 // =========================
 //
 // Usa datosUsuario, ORDEN_CAPAS y CAPAS_IMG definidos en perfil.js
@@ -10,7 +10,10 @@
 // ---------- AVATAR MINI (reutiliza el mismo criterio que perfil.js) ----------
 
 function avatarMiniActividad(nombre){
-  const avatar = leerJSON(localStorage.getItem("avatar_" + nombre) || "null");
+  // El avatar viaja embebido en el usuario (users.avatar, Neon); se lee
+  // de la caché en memoria de js/core.js, precargada por
+  // renderActividadAmigos() antes de pintar la lista.
+  const avatar = typeof obtenerAvatarCacheado === "function" ? obtenerAvatarCacheado(nombre) : null;
 
   if(!avatar){
     return `<img src="imagenes/avatar.png" style="width:44px;height:44px;border-radius:50%;object-fit:cover;" alt="" loading="lazy">`;
@@ -30,11 +33,11 @@ function avatarMiniActividad(nombre){
 
 // ---------- ACTIVIDAD RECIENTE (propia) ----------
 
-function renderActividadReciente(){
+async function renderActividadReciente(){
   const contenedor = document.getElementById("listaActividadReciente");
   if(!contenedor) return;
 
-  const lista = obtenerActividades(datosUsuario.nombre);
+  const lista = await obtenerActividades(datosUsuario.nombre);
 
   if(lista.length === 0){
     contenedor.innerHTML = `<p style="color:#94a3b8;font-size:14px;">Todavía no tenés actividad registrada.</p>`;
@@ -51,35 +54,37 @@ function renderActividadReciente(){
 
 
 // ---------- ACTIVIDAD DE AMIGOS ----------
+// La lista de amigos vive en Neon desde la Fase 1
+// (/api/social?action=friends), no en localStorage.
 
-function renderActividadAmigos(){
+async function renderActividadAmigos(){
   const contenedor = document.getElementById("listaActividadAmigos");
   if(!contenedor) return;
 
-  const misAmigos = leerJSON(localStorage.getItem("amigos_" + datosUsuario.nombre) || "[]");
+  let misAmigos = [];
+  try{
+    const resp = await fetch("/api/social?action=friends&username=" + encodeURIComponent(datosUsuario.nombre));
+    const datos = await resp.json();
+    misAmigos = (datos && datos.success) ? datos.amigos.map(a => a.username) : [];
+  }catch(error){
+    console.warn("MacroReborn: no se pudo cargar la lista de amigos.", error);
+  }
 
   if(misAmigos.length === 0){
     contenedor.innerHTML = `<p style="color:#94a3b8;font-size:14px;">No tienes amigos agregados.</p>`;
     return;
   }
 
-  // Juntamos la actividad de todos los amigos, con quién la hizo.
-  let actividadesAmigos = [];
-
-  misAmigos.forEach(nombreAmigo=>{
-    const actividades = obtenerActividades(nombreAmigo);
-    actividades.forEach(a=>{
-      actividadesAmigos.push({ ...a, nombreAmigo });
-    });
-  });
+  const actividadesAmigos = (await obtenerActividadesDe(misAmigos)).slice(0, MAX_ACTIVIDADES);
 
   if(actividadesAmigos.length === 0){
     contenedor.innerHTML = `<p style="color:#94a3b8;font-size:14px;">Tus amigos todavía no realizaron ninguna actividad.</p>`;
     return;
   }
 
-  actividadesAmigos.sort((a,b) => b.timestamp - a.timestamp);
-  actividadesAmigos = actividadesAmigos.slice(0, MAX_ACTIVIDADES);
+  if(typeof cargarAvataresDeVarios === "function"){
+    await cargarAvataresDeVarios(actividadesAmigos.map(a => a.nombreAmigo));
+  }
 
   contenedor.innerHTML = actividadesAmigos.map(a => `
     <div class="actividad" style="display:flex;align-items:center;gap:14px;">

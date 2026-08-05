@@ -1,5 +1,5 @@
 // ==============================
-// SISTEMA DE NOTIFICACIONES
+// SISTEMA DE NOTIFICACIONES (Fase 2: Neon)
 // ==============================
 
 
@@ -12,66 +12,58 @@ const usuarioActivo = leerJSON(
 
 // ---------- OBTENER ----------
 
-function obtenerNotificaciones(nombre){
+async function obtenerNotificaciones(nombre){
 
-    return leerJSON(
-        localStorage.getItem("notificaciones_" + nombre) || "[]"
-    );
+    try{
+        const resp = await fetch("/api/content?action=notifications&username=" + encodeURIComponent(nombre));
+        const datos = await resp.json();
+        if(!datos || !datos.success) return [];
 
-}
-
-
-// ---------- GUARDAR ----------
-
-function guardarNotificaciones(nombre, lista){
-
-    localStorage.setItem(
-        "notificaciones_" + nombre,
-        JSON.stringify(lista)
-    );
+        return datos.notificaciones.map(n => ({
+            id: n.id,
+            titulo: n.titulo,
+            mensaje: n.mensaje,
+            leida: n.leida,
+            fecha: new Date(n.created_at).toLocaleString("es-AR")
+        }));
+    }catch(error){
+        console.warn("MacroReborn: no se pudieron cargar las notificaciones.", error);
+        return [];
+    }
 
 }
 
 
 // ---------- CREAR ----------
+// No es async a propósito: dispara el POST y no bloquea a quien llama
+// (perfil.js, usuario.js, amigos.js, motor/logros.js, motor/xp.js),
+// igual que antes hacía con localStorage.
 
 function crearNotificacion(nombre, titulo, mensaje){
 
     if(!nombre) return;
 
-    let lista = obtenerNotificaciones(nombre);
-
-    lista.unshift({
-
-        id: Date.now(),
-
-        titulo: titulo,
-
-        mensaje: mensaje,
-
-        fecha: new Date().toLocaleString("es-AR"),
-
-        leida: false
-
+    fetch("/api/content?action=notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: nombre, titulo, mensaje })
+    }).then(()=>{
+        // Si la notificación es para quien está mirando esta página
+        // ahora mismo, refrescamos el contador y la lista.
+        if(usuarioActivo && usuarioActivo.nombre === nombre){
+            actualizarContador();
+            renderNotificaciones();
+        }
+    }).catch(error=>{
+        console.warn("MacroReborn: no se pudo crear la notificación.", error);
     });
-
-    // Máximo 100 notificaciones
-    if(lista.length > 100){
-
-        lista = lista.slice(0,100);
-
-    }
-
-    guardarNotificaciones(nombre, lista);
-
-    actualizarContador();
 
 }
 
 
 // ---------- MOSTRAR ----------
 
-function renderNotificaciones(){
+async function renderNotificaciones(){
 
     const contenedor = document.getElementById("listaNotificaciones");
 
@@ -90,7 +82,7 @@ function renderNotificaciones(){
 
     }
 
-    const lista = obtenerNotificaciones(usuarioActivo.nombre);
+    const lista = await obtenerNotificaciones(usuarioActivo.nombre);
 
     if(lista.length === 0){
 
@@ -134,7 +126,7 @@ function renderNotificaciones(){
 
 // ---------- CONTADOR ----------
 
-function actualizarContador(){
+async function actualizarContador(){
 
     const contador = document.getElementById("contadorNotificaciones");
 
@@ -152,7 +144,7 @@ function actualizarContador(){
 
     }
 
-    const lista = obtenerNotificaciones(usuarioActivo.nombre);
+    const lista = await obtenerNotificaciones(usuarioActivo.nombre);
 
     const sinLeer = lista.filter(n=>!n.leida).length;
 
@@ -163,19 +155,19 @@ function actualizarContador(){
 
 // ---------- MARCAR TODAS ----------
 
-document.getElementById("marcarLeidas")?.addEventListener("click",()=>{
+document.getElementById("marcarLeidas")?.addEventListener("click", async ()=>{
 
     if(!usuarioActivo) return;
 
-    const lista = obtenerNotificaciones(usuarioActivo.nombre);
-
-    lista.forEach(n=>{
-
-        n.leida = true;
-
-    });
-
-    guardarNotificaciones(usuarioActivo.nombre, lista);
+    try{
+        await fetch("/api/content?action=notifications-mark-read", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: usuarioActivo.nombre })
+        });
+    }catch(error){
+        console.warn("MacroReborn: no se pudieron marcar las notificaciones como leídas.", error);
+    }
 
     renderNotificaciones();
 
@@ -184,13 +176,21 @@ document.getElementById("marcarLeidas")?.addEventListener("click",()=>{
 
 // ---------- BORRAR TODAS ----------
 
-document.getElementById("borrarTodas")?.addEventListener("click",()=>{
+document.getElementById("borrarTodas")?.addEventListener("click", async ()=>{
 
     if(!usuarioActivo) return;
 
     if(!confirm("¿Vaciar todas las notificaciones?")) return;
 
-    guardarNotificaciones(usuarioActivo.nombre, []);
+    try{
+        await fetch("/api/content?action=notifications", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: usuarioActivo.nombre })
+        });
+    }catch(error){
+        console.warn("MacroReborn: no se pudieron borrar las notificaciones.", error);
+    }
 
     renderNotificaciones();
 

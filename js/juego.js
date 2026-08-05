@@ -194,87 +194,15 @@ if(botonJugar){
 
 
 
-botonJugar.addEventListener("click",()=>{
-
-
+botonJugar.addEventListener("click", async ()=>{
 
 if(!usuario){
 
-
 alert("Iniciá sesión para jugar");
-
 
 return;
 
-
 }
-
-
-
-
-
-
-
-const claveHistorial =
-
-"historial_" + usuario.nombre;
-
-
-
-
-
-
-let historial = leerJSON(
-
-localStorage.getItem(claveHistorial)
-
-) || [];
-
-
-
-
-
-
-
-historial = historial.filter(
-
-id => id !== String(idJuego)
-
-);
-
-
-
-
-
-historial.unshift(
-
-String(idJuego)
-
-);
-
-
-
-
-
-historial = historial.slice(0,5);
-
-
-
-
-
-
-localStorage.setItem(
-
-claveHistorial,
-
-JSON.stringify(historial)
-
-);
-
-
-
-
-
 
 // ==============================
 // ACTIVIDAD RECIENTE - JUGAR
@@ -286,34 +214,29 @@ registrarActividad(usuario.nombre, "juego", juego.nombre);
 
 }
 
-
-
-
-
 // ==============================
-// JUEGOS DISTINTOS JUGADOS (para Explorador / Coleccionista)
+// ÚLTIMOS JUGADOS + JUEGOS DISTINTOS (para Explorador / Coleccionista)
 // ==============================
-// Se guarda por separado del historial (que solo conserva los últimos 5)
-// para poder contar la cantidad total de juegos diferentes jugados alguna vez.
+// Un solo pedido hace las dos cosas del lado del servidor: actualiza
+// "últimos jugados" (se reordena solo, se acorta a 5 en la consulta)
+// y suma el juego a "juegos jugados" si es la primera vez (nunca se
+// acorta, sirve para contar juegos distintos jugados alguna vez).
 
-const claveJuegosUnicos =
-"juegosJugados_" + usuario.nombre;
+let juegosUnicos = 0;
 
-let juegosUnicos = leerJSON(
-localStorage.getItem(claveJuegosUnicos)
-) || [];
-
-if(!juegosUnicos.includes(String(idJuego))){
-
-juegosUnicos.push(String(idJuego));
-
-localStorage.setItem(
-claveJuegosUnicos,
-JSON.stringify(juegosUnicos)
-);
-
+try{
+    const resp = await fetch("/api/content?action=game-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: usuario.nombre, gameId: idJuego })
+    });
+    const datos = await resp.json();
+    if(datos && datos.success){
+        juegosUnicos = datos.juegosUnicos;
+    }
+}catch(error){
+    console.warn("MacroReborn: no se pudo registrar la partida.", error);
 }
-
 
 // ==============================
 // LOGROS DE JUEGOS
@@ -323,13 +246,13 @@ if(typeof desbloquearLogro === "function"){
 
 desbloquearLogro(usuario.nombre,"primerJuego");
 
-if(juegosUnicos.length >= 5){
+if(juegosUnicos >= 5){
 
 desbloquearLogro(usuario.nombre,"explorador");
 
 }
 
-if(juegosUnicos.length >= 30){
+if(juegosUnicos >= 30){
 
 desbloquearLogro(usuario.nombre,"coleccionista");
 
@@ -337,20 +260,12 @@ desbloquearLogro(usuario.nombre,"coleccionista");
 
 }
 
-
-
 // entrar al juego real
 
 window.location.href =
 
 "jugar.html?id=" + idJuego;
 
-
-
-
-
 });
-
-
 
 }

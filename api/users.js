@@ -29,6 +29,14 @@ const sql = neon(process.env.DATABASE_URL);
 //   POST /api/users?action=update-bio    { username, bio }
 //   POST /api/users?action=heartbeat     { username }
 //   POST /api/users?action=xp            { username, cantidad }
+//   POST /api/users?action=suspend       { username, motivo }
+//   POST /api/users?action=reactivate    { username }
+//   POST /api/users?action=change-password { username, currentPassword, newPassword }
+//
+// (suspend/reactivate/change-password se agregaron en el cierre de la
+// Fase 2: antes vivían en la clave localStorage "usuariosMacro", que
+// dejó de llenarse cuando el registro/login pasaron a Neon, así que
+// no tenían ningún efecto real.)
 // ==============================
 
 // XP necesaria por nivel (misma fórmula que js/motor/xp.js en el cliente).
@@ -40,11 +48,16 @@ function xpNecesaria(nivel) {
 
 async function listarUsuarios(req, res) {
   const { q, username, limit } = req.query;
-  const tope = Math.min(Number(limit) || 300, 500);
+  // Tope subido de 500 a 2000: el panel de administración
+  // (js/motor/permisos.js -> obtenerUsuarios()) pide la lista
+  // completa de usuarios con limit=2000 para poder listarlos a todos,
+  // no solo los primeros 500.
+  const tope = Math.min(Number(limit) || 300, 2000);
 
   if (username) {
     const usuario = await sql`
-      SELECT id, username, level, xp, status, bio, avatar, created_at, last_login
+      SELECT id, username, level, xp, status, bio, avatar, created_at, last_login,
+             suspendido, fecha_suspension, motivo_suspension
       FROM users
       WHERE username = ${username};
     `;
@@ -61,7 +74,8 @@ async function listarUsuarios(req, res) {
   if (q && String(q).trim() !== "") {
     const buscado = "%" + String(q).trim() + "%";
     usuarios = await sql`
-      SELECT id, username, level, xp, status, bio, avatar, created_at, last_login
+      SELECT id, username, level, xp, status, bio, avatar, created_at, last_login,
+             suspendido, fecha_suspension, motivo_suspension
       FROM users
       WHERE username ILIKE ${buscado}
       ORDER BY username ASC
@@ -69,7 +83,8 @@ async function listarUsuarios(req, res) {
     `;
   } else {
     usuarios = await sql`
-      SELECT id, username, level, xp, status, bio, avatar, created_at, last_login
+      SELECT id, username, level, xp, status, bio, avatar, created_at, last_login,
+             suspendido, fecha_suspension, motivo_suspension
       FROM users
       ORDER BY level DESC, xp DESC, username ASC
       LIMIT ${tope};
@@ -175,6 +190,73 @@ async function sumarXp(req, res) {
   });
 }
 
+async function suspend(req, res) {
+  const { username, motivo } = req.body || {};
+
+  if (!username) {
+    return res.status(400).json({ success: false, error: "Falta username" });
+  }
+
+  const usuario = await sql`
+    UPDATE users
+    SET suspendido = true, fecha_suspension = now(),
+        motivo_suspension = ${(motivo && String(motivo).trim()) ? String(motivo).trim() : "No especificado"}
+    WHERE username = ${username}
+    RETURNING id, username, suspendido, fecha_suspension, motivo_suspension;
+  `;
+
+  if (usuario.length === 0) {
+    return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+  }
+
+  return res.status(200).json({ success: true, user: usuario[0] });
+}
+
+async function reactivate(req, res) {
+  const { username } = req.body || {};
+
+  if (!username) {
+    return res.status(400).json({ success: false, error: "Falta username" });
+  }
+
+  const usuario = await sql`
+    UPDATE users
+    SET suspendido = false, fecha_suspension = NULL, motivo_suspension = NULL
+    WHERE username = ${username}
+    RETURNING id, username, suspendido;
+  `;
+
+  if (usuario.length === 0) {
+    return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+  }
+
+  return res.status(200).json({ success: true, user: usuario[0] });
+}
+
+async function changePassword(req, res) {
+  const { username, currentPassword, newPassword } = req.body || {};
+
+  if (!username || !currentPassword || !newPassword) {
+    return res.status(400).json({ success: false, error: "Faltan datos" });
+  }
+
+  if (String(newPassword).length < 6) {
+    return res.status(200).json({ success: false, error: "La nueva contraseña debe tener al menos 6 caracteres" });
+  }
+
+  const usuarios = await sql`
+    SELECT id FROM users WHERE username = ${username} AND password = ${currentPassword};
+  `;
+
+  if (usuarios.length === 0) {
+    return res.status(200).json({ success: false, error: "La contraseña actual no es correcta" });
+  }
+
+  await sql`UPDATE users SET password = ${newPassword} WHERE id = ${usuarios[0].id};`;
+
+  return res.status(200).json({ success: true });
+}
+
 module.exports = async function handler(req, res) {
 
   setCors(res, "GET, POST, OPTIONS");
@@ -196,6 +278,9 @@ module.exports = async function handler(req, res) {
       if (action === "update-bio") return await updateBio(req, res);
       if (action === "heartbeat") return await heartbeat(req, res);
       if (action === "xp") return await sumarXp(req, res);
+      if (action === "suspend") return await suspend(req, res);
+      if (action === "reactivate") return await reactivate(req, res);
+      if (action === "change-password") return await changePassword(req, res);
 
       return res.status(400).json({ success: false, error: "Acción inválida" });
     }

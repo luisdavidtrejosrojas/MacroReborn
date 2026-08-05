@@ -1,15 +1,17 @@
 // ==============================
-// PERFIL — CONFIGURACIÓN DE CUENTA
+// PERFIL — CONFIGURACIÓN DE CUENTA (Fase 2: Neon, cierre de migración)
+// ==============================
 // Exclusivo de perfil.html (perfil propio del usuario logueado).
 // usuario.html NO carga este script, así que esta sección jamás
 // aparece al ver el perfil de otra persona.
 //
-// NOTA PARA LA FUTURA v1.0 (con base de datos real):
-// Toda la lectura/escritura de la contraseña pasa por la función
-// guardarNuevaPasswordUsuario(). Hoy persiste en localStorage; el día
-// que exista un backend alcanza con reemplazar el cuerpo de esa función
-// por un fetch/POST a la API (por ejemplo POST /api/usuario/password),
-// sin tocar el formulario, las validaciones ni el resto del sitio.
+// El cambio de contraseña se valida y se guarda en el servidor
+// (/api/users?action=change-password, tabla "users" de Neon). Antes
+// comparaba la contraseña actual contra "usuarioActivo.password" en
+// localStorage, un campo que el login ya no incluye desde que pasó a
+// Neon (por seguridad, /api/auth nunca devuelve el password) — así
+// que la validación fallaba siempre, sin importar lo que se
+// escribiera.
 // ==============================
 
 (function () {
@@ -37,32 +39,6 @@
     mensaje.classList.add(tipo, "visible");
   }
 
-  // ---------- PERSISTENCIA (único punto de guardado) ----------
-  // Devuelve true/false. Se deja como función async a propósito para
-  // que el reemplazo por una llamada real a la API (v1.0) sea directo.
-  async function guardarNuevaPasswordUsuario(nombreUsuario, nuevaPassword) {
-
-    const usuarioActivoActual = leerJSON(localStorage.getItem("usuarioActivo") || "null");
-    if (!usuarioActivoActual) return false;
-
-    usuarioActivoActual.password = nuevaPassword;
-    const guardadoActivo = guardarJSON("usuarioActivo", usuarioActivoActual);
-
-    const listaUsuarios = leerJSON(localStorage.getItem("usuariosMacro") || "[]") || [];
-    const listaActualizada = listaUsuarios.map(u =>
-      u.nombre === nombreUsuario ? { ...u, password: nuevaPassword } : u
-    );
-    const guardadoLista = guardarJSON("usuariosMacro", listaActualizada);
-
-    // Mantenemos sincronizada la referencia que usa el resto de perfil.js
-    // (evita que quede desactualizada dentro de la misma sesión).
-    if (typeof datosUsuario !== "undefined" && datosUsuario) {
-      datosUsuario.password = nuevaPassword;
-    }
-
-    return guardadoActivo !== false && guardadoLista !== false;
-  }
-
   formPassword.addEventListener("submit", async function (evento) {
     evento.preventDefault();
 
@@ -79,12 +55,6 @@
 
     if (!actual || !nueva || !confirmar) {
       mostrarMensajeConfig("Completá los tres campos para continuar.", "error");
-      return;
-    }
-
-    // Verificar que la contraseña actual sea correcta.
-    if (actual !== (usuarioActivoActual.password || "")) {
-      mostrarMensajeConfig("La contraseña actual no es correcta.", "error");
       return;
     }
 
@@ -106,16 +76,38 @@
 
     if (boton) boton.disabled = true;
 
-    const actualizada = await guardarNuevaPasswordUsuario(usuarioActivoActual.nombre, nueva);
+    try {
 
-    if (boton) boton.disabled = false;
+      const resp = await fetch("/api/users?action=change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: usuarioActivoActual.nombre,
+          currentPassword: actual,
+          newPassword: nueva
+        })
+      });
 
-    if (actualizada) {
-      mostrarMensajeConfig("Contraseña actualizada correctamente. ✅", "exito");
-      formPassword.reset();
-    } else {
-      mostrarMensajeConfig("No se pudo actualizar la contraseña. Probá de nuevo.", "error");
+      const datos = await resp.json();
+
+      if (datos && datos.success) {
+        mostrarMensajeConfig("Contraseña actualizada correctamente. ✅", "exito");
+        formPassword.reset();
+      } else {
+        mostrarMensajeConfig((datos && datos.error) || "No se pudo actualizar la contraseña. Probá de nuevo.", "error");
+      }
+
+    } catch (error) {
+
+      console.warn("MacroReborn: no se pudo actualizar la contraseña.", error);
+      mostrarMensajeConfig("Error de conexión. Probá de nuevo.", "error");
+
+    } finally {
+
+      if (boton) boton.disabled = false;
+
     }
+
   });
 
 })();

@@ -96,8 +96,21 @@ async function deleteAccount(req, res) {
   }
 
   // Gracias a las FK "ON DELETE CASCADE" de migrations/001_fase1.sql,
-  // esto borra en cascada: achievements, badges, friend_requests y
-  // friendships del usuario.
+  // migrations/002_fase2_comentarios_likes_reportes.sql,
+  // migrations/003_fase2_chat.sql, migrations/004_fase2_notificaciones_actividad.sql,
+  // migrations/005_fase2_favoritos_historial.sql y
+  // migrations/006_fase2_resenas_moderacion.sql, esto borra en
+  // cascada: achievements, badges, friend_requests, friendships,
+  // profile_comments, chat_messages, notifications, activity_log,
+  // game_favorites, game_history, games_played, game_reviews,
+  // game_ratings y game_votes del usuario.
+  // "likes" y "moderation_log" no tienen FK (guardan el username tal
+  // cual, igual que "comment_reports"), así que "likes" se limpia a
+  // mano acá. "moderation_log" queda intacto a propósito: es un
+  // historial de auditoría y debe sobrevivir aunque se borre la cuenta
+  // del moderador o del usuario afectado.
+  await sql`DELETE FROM likes WHERE username = ${username};`;
+
   await sql`DELETE FROM users WHERE id = ${usuarios[0].id};`;
 
   return res.status(200).json({ success: true });

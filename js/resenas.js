@@ -1,14 +1,13 @@
 // =========================
-// MACROREBORN - RESEÑAS DE JUEGOS
+// MACROREBORN - RESEÑAS DE JUEGOS (Fase 2: Neon, cierre de migración)
 // =========================
 // Sistema independiente y autocontenido (IIFE), no depende del orden de
 // carga de los demás scripts de juego.html.
 //
-// Clave usada: resenas_<idJuego> -> array de
-//   { usuario, calificacion, texto, fecha, timestamp, editado }
-//
-// Un usuario solo puede tener UNA reseña por juego (se identifica por
-// nombre de usuario). Puede editarla o eliminarla, pero no duplicarla.
+// Las reseñas viven en la tabla "game_reviews" de Neon
+// (/api/content?action=reviews). Un usuario solo puede tener UNA
+// reseña por juego (UNIQUE user_id+game_id en la base). Puede editarla
+// o eliminarla, pero no duplicarla — mismo criterio que antes.
 
 (function () {
   "use strict";
@@ -19,7 +18,6 @@
   if (Number.isNaN(idJuegoResena)) return;
 
   const usuarioResena = leerJSON(localStorage.getItem("usuarioActivo") || "null");
-  const claveResenas = "resenas_" + idJuegoResena;
 
   // ---------- ELEMENTOS ----------
 
@@ -53,7 +51,7 @@
   }
 
   function avatarHTMLResena(nombre) {
-    const avatar = leerJSON(localStorage.getItem("avatar_" + nombre) || "null");
+    const avatar = typeof obtenerAvatarCacheado === "function" ? obtenerAvatarCacheado(nombre) : null;
 
     if (!avatar) {
       return `<img src="imagenes/avatar.png" class="resena-avatar-simple" alt="${escaparHTML(nombre)}" loading="lazy">`;
@@ -88,34 +86,44 @@
     return html;
   }
 
-  function obtenerResenas() {
-    return leerJSON(localStorage.getItem(claveResenas) || "[]");
+  async function obtenerResenas() {
+    try {
+      const resp = await fetch("/api/content?action=reviews&gameId=" + encodeURIComponent(idJuegoResena));
+      const datos = await resp.json();
+      return (datos && datos.success) ? datos.resenas : [];
+    } catch (error) {
+      console.warn("MacroReborn: no se pudieron cargar las reseñas.", error);
+      return [];
+    }
   }
 
-  function guardarResenas(lista) {
-    localStorage.setItem(claveResenas, JSON.stringify(lista));
-  }
-
-  function miResena() {
+  function miResena(lista) {
     if (!usuarioResena) return null;
-    return obtenerResenas().find((r) => r.usuario === usuarioResena.nombre) || null;
+    return lista.find((r) => r.usuario === usuarioResena.nombre) || null;
   }
 
   // ---------- RENDER LISTA ----------
 
-  function renderResenas() {
-    const lista = obtenerResenas()
-      .slice()
-      .sort((a, b) => b.timestamp - a.timestamp); // más recientes primero
+  let _resenasCache = [];
+
+  async function renderResenas() {
+    const lista = await obtenerResenas();
+    _resenasCache = lista;
+
+    if (typeof cargarAvataresDeVarios === "function") {
+      await cargarAvataresDeVarios(lista.map((r) => r.usuario));
+    }
 
     if (lista.length === 0) {
       listaResenas.innerHTML = `<p class="resenas-vacio">Todavía no hay reseñas para este juego. ¡Sé el primero en dejar la tuya!</p>`;
+      actualizarEstadoBotones();
       return;
     }
 
     listaResenas.innerHTML = lista
       .map((r) => {
         const esPropia = usuarioResena && r.usuario === usuarioResena.nombre;
+        const fecha = new Date(r.updated_at || r.created_at).toLocaleDateString("es-AR");
 
         return `
       <div class="tarjeta-resena${esPropia ? " resena-propia" : ""}" data-usuario="${escaparHTML(r.usuario)}">
@@ -124,7 +132,7 @@
           <div class="resena-datos">
             <b class="resena-nombre">${escaparHTML(r.usuario)}</b>
             <div class="resena-estrellas">${estrellasHTML(r.calificacion)}</div>
-            <span class="resena-fecha">${escaparHTML(r.fecha)}${r.editado ? " · editada" : ""}</span>
+            <span class="resena-fecha">${escaparHTML(fecha)}${r.editado ? " · editada" : ""}</span>
           </div>
           ${esPropia ? `
           <div class="resena-acciones-propias">
@@ -133,7 +141,7 @@
           </div>` : ""}
         </div>
         <p class="resena-texto">${escaparHTML(r.texto)}</p>
-        ${typeof botonLikeHTML === "function" ? botonLikeHTML("resenas_" + idJuegoResena, escaparHTML(r.usuario), usuarioResena ? usuarioResena.nombre : null) : ""}
+        ${typeof botonLikeHTML === "function" ? botonLikeHTML("resena", escaparHTML(idJuegoResena + ":" + r.usuario), usuarioResena ? usuarioResena.nombre : null) : ""}
       </div>
     `;
       })
@@ -153,6 +161,8 @@
     listaResenas.querySelectorAll(".boton-borrar-resena").forEach((btn) => {
       btn.addEventListener("click", eliminarMiResena);
     });
+
+    actualizarEstadoBotones();
   }
 
   // ---------- FORMULARIO ----------
@@ -169,7 +179,7 @@
   }
 
   function cargarFormularioParaEditar() {
-    const existente = miResena();
+    const existente = miResena(_resenasCache);
     if (!existente) return;
 
     valorSeleccionadoForm = existente.calificacion;
@@ -187,7 +197,7 @@
   }
 
   function actualizarEstadoBotones() {
-    const existente = miResena();
+    const existente = miResena(_resenasCache);
 
     if (botonPublicar) {
       botonPublicar.textContent = existente ? "Actualizar reseña" : "Publicar reseña";
@@ -228,11 +238,13 @@
   }
 
   if (botonPublicar) {
-    botonPublicar.addEventListener("click", () => {
+    botonPublicar.addEventListener("click", async () => {
       if (!usuarioResena) {
         alert("Iniciá sesión para dejar tu reseña");
         return;
       }
+
+      if (typeof bloqueadoPorSuspension === "function" && await bloqueadoPorSuspension()) return;
 
       const texto = (textareaResena?.value || "").trim();
 
@@ -246,34 +258,33 @@
         return;
       }
 
-      const lista = obtenerResenas();
-      const indiceExistente = lista.findIndex((r) => r.usuario === usuarioResena.nombre);
-      const ahora = new Date();
+      botonPublicar.disabled = true;
 
-      if (indiceExistente >= 0) {
-        // Editar reseña existente (no se permite duplicar)
-        lista[indiceExistente] = {
-          ...lista[indiceExistente],
-          calificacion: valorSeleccionadoForm,
-          texto: texto,
-          timestamp: ahora.getTime(),
-          fecha: ahora.toLocaleDateString("es-AR"),
-          editado: true
-        };
-      } else {
-        lista.push({
-          usuario: usuarioResena.nombre,
-          calificacion: valorSeleccionadoForm,
-          texto: texto,
-          fecha: ahora.toLocaleDateString("es-AR"),
-          timestamp: ahora.getTime(),
-          editado: false
+      try {
+        const resp = await fetch("/api/content?action=reviews", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: usuarioResena.nombre,
+            gameId: idJuegoResena,
+            calificacion: valorSeleccionadoForm,
+            texto: texto
+          })
         });
-      }
+        const datos = await resp.json();
 
-      guardarResenas(lista);
-      renderResenas();
-      actualizarEstadoBotones();
+        if (!datos || !datos.success) {
+          alert((datos && datos.error) || "No se pudo guardar la reseña");
+          return;
+        }
+
+        await renderResenas();
+      } catch (error) {
+        console.warn("MacroReborn: no se pudo guardar la reseña.", error);
+        alert("Error de conexión. Probá de nuevo.");
+      } finally {
+        botonPublicar.disabled = false;
+      }
     });
   }
 
@@ -287,12 +298,19 @@
             if (confirm(mensaje)) onConfirmar();
           };
 
-    confirmar("¿Seguro que querés eliminar tu reseña de este juego?", () => {
-      const lista = obtenerResenas().filter((r) => r.usuario !== usuarioResena.nombre);
-      guardarResenas(lista);
+    confirmar("¿Seguro que querés eliminar tu reseña de este juego?", async () => {
+      try {
+        await fetch("/api/content?action=reviews", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: usuarioResena.nombre, gameId: idJuegoResena })
+        });
+      } catch (error) {
+        console.warn("MacroReborn: no se pudo eliminar la reseña.", error);
+      }
+
       limpiarFormulario();
-      actualizarEstadoBotones();
-      renderResenas();
+      await renderResenas();
     });
   }
 

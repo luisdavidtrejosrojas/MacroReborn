@@ -1,15 +1,14 @@
 // =========================
 // MACROREBORN - CALIFICACION (ESTRELLAS) + LIKE / NO ME GUSTA
+// (Fase 2: Neon, cierre de migración)
 // =========================
 // Sistema independiente y autocontenido (IIFE) para no chocar con las
 // variables globales que ya usa juego.js (idJuego, juego, usuario, etc).
-// Todo se guarda en localStorage, igual que favoritos/historial/comentarios.
 //
-// Claves usadas:
-//   calificaciones_<idJuego>  -> { "nombreUsuario": puntuacion(1-5), ... }
-//   votosJuego_<idJuego>      -> { "nombreUsuario": "like" | "dislike", ... }
-//
-// No se mezclan datos entre juegos porque cada clave incluye el id del juego.
+// Las calificaciones en estrellas viven en "game_ratings" y los votos
+// like/dislike en "game_votes" (tabla de Neon,
+// /api/content?action=game-ratings|game-votes). Antes vivían en
+// localStorage bajo "calificaciones_<idJuego>" y "votosJuego_<idJuego>".
 
 (function () {
   "use strict";
@@ -20,9 +19,6 @@
   if (Number.isNaN(idJuegoVal)) return;
 
   const usuarioVal = leerJSON(localStorage.getItem("usuarioActivo") || "null");
-
-  const claveCalificaciones = "calificaciones_" + idJuegoVal;
-  const claveVotosJuego = "votosJuego_" + idJuegoVal;
 
   // ---------- ELEMENTOS ----------
 
@@ -41,24 +37,25 @@
 
   // ---------- CALIFICACIONES (1 a 5 ESTRELLAS) ----------
 
-  function obtenerCalificaciones() {
-    return leerJSON(localStorage.getItem(claveCalificaciones) || "{}");
+  async function obtenerCalificaciones() {
+    try {
+      const params = new URLSearchParams({ action: "game-ratings", gameId: idJuegoVal });
+      if (usuarioVal) params.set("username", usuarioVal.nombre);
+
+      const resp = await fetch("/api/content?" + params.toString());
+      const datos = await resp.json();
+
+      if (!datos || !datos.success) return { promedio: 0, cantidad: 0, miCalificacion: 0 };
+      return datos;
+    } catch (error) {
+      console.warn("MacroReborn: no se pudo cargar la calificación.", error);
+      return { promedio: 0, cantidad: 0, miCalificacion: 0 };
+    }
   }
 
-  function guardarCalificaciones(obj) {
-    localStorage.setItem(claveCalificaciones, JSON.stringify(obj));
-  }
-
-  function calcularPromedio(obj) {
-    const valores = Object.values(obj);
-    if (valores.length === 0) return { promedio: 0, cantidad: 0 };
-    const suma = valores.reduce((a, b) => a + b, 0);
-    return { promedio: suma / valores.length, cantidad: valores.length };
-  }
-
-  function renderCalificacion() {
-    const calificaciones = obtenerCalificaciones();
-    const { promedio, cantidad } = calcularPromedio(calificaciones);
+  function pintarCalificacion(datos) {
+    const promedio = datos.promedio || 0;
+    const cantidad = datos.cantidad || 0;
 
     if (contEstrellasRelleno) {
       contEstrellasRelleno.style.width = (promedio / 5) * 100 + "%";
@@ -74,12 +71,16 @@
     }
 
     if (contEstrellasUsuario) {
-      const miVoto = usuarioVal ? calificaciones[usuarioVal.nombre] || 0 : 0;
+      const miVoto = datos.miCalificacion || 0;
       contEstrellasUsuario.querySelectorAll(".estrella").forEach((btn) => {
         const valor = Number(btn.dataset.valor);
         btn.classList.toggle("activa", valor <= miVoto);
       });
     }
+  }
+
+  async function renderCalificacion() {
+    pintarCalificacion(await obtenerCalificaciones());
   }
 
   if (contEstrellasUsuario) {
@@ -93,18 +94,27 @@
         });
       });
 
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         if (!usuarioVal) {
           alert("Iniciá sesión para calificar este juego");
           return;
         }
 
-        const valor = Number(btn.dataset.valor);
-        const calificaciones = obtenerCalificaciones();
-        calificaciones[usuarioVal.nombre] = valor;
-        guardarCalificaciones(calificaciones);
+        if (typeof bloqueadoPorSuspension === "function" && await bloqueadoPorSuspension()) return;
 
-        renderCalificacion();
+        const valor = Number(btn.dataset.valor);
+
+        try {
+          const resp = await fetch("/api/content?action=game-ratings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: usuarioVal.nombre, gameId: idJuegoVal, calificacion: valor })
+          });
+          const datos = await resp.json();
+          if (datos && datos.success) pintarCalificacion(datos);
+        } catch (error) {
+          console.warn("MacroReborn: no se pudo guardar la calificación.", error);
+        }
       });
     });
 
@@ -117,47 +127,53 @@
 
   // ---------- LIKE / NO ME GUSTA ----------
 
-  function obtenerVotosJuego() {
-    return leerJSON(localStorage.getItem(claveVotosJuego) || "{}");
+  async function obtenerVotosJuego() {
+    try {
+      const params = new URLSearchParams({ action: "game-votes", gameId: idJuegoVal });
+      if (usuarioVal) params.set("username", usuarioVal.nombre);
+
+      const resp = await fetch("/api/content?" + params.toString());
+      const datos = await resp.json();
+
+      if (!datos || !datos.success) return { likes: 0, dislikes: 0, miVoto: null };
+      return datos;
+    } catch (error) {
+      console.warn("MacroReborn: no se pudieron cargar los votos.", error);
+      return { likes: 0, dislikes: 0, miVoto: null };
+    }
   }
 
-  function guardarVotosJuego(obj) {
-    localStorage.setItem(claveVotosJuego, JSON.stringify(obj));
+  function pintarVotosJuego(datos) {
+    if (contadorLikes) contadorLikes.textContent = datos.likes || 0;
+    if (contadorDislikes) contadorDislikes.textContent = datos.dislikes || 0;
+
+    if (botonLike) botonLike.classList.toggle("activo", datos.miVoto === "like");
+    if (botonDislike) botonDislike.classList.toggle("activo", datos.miVoto === "dislike");
   }
 
-  function renderVotosJuego() {
-    const votos = obtenerVotosJuego();
-    const valores = Object.values(votos);
-    const likes = valores.filter((v) => v === "like").length;
-    const dislikes = valores.filter((v) => v === "dislike").length;
-
-    if (contadorLikes) contadorLikes.textContent = likes;
-    if (contadorDislikes) contadorDislikes.textContent = dislikes;
-
-    const miVoto = usuarioVal ? votos[usuarioVal.nombre] : null;
-
-    if (botonLike) botonLike.classList.toggle("activo", miVoto === "like");
-    if (botonDislike) botonDislike.classList.toggle("activo", miVoto === "dislike");
+  async function renderVotosJuego() {
+    pintarVotosJuego(await obtenerVotosJuego());
   }
 
-  function votarJuego(tipo) {
+  async function votarJuego(tipo) {
     if (!usuarioVal) {
       alert("Iniciá sesión para votar este juego");
       return;
     }
 
-    const votos = obtenerVotosJuego();
+    if (typeof bloqueadoPorSuspension === "function" && await bloqueadoPorSuspension()) return;
 
-    // Un solo voto por usuario: si tocás el mismo botón, se quita;
-    // si tocás el otro, reemplaza al anterior.
-    if (votos[usuarioVal.nombre] === tipo) {
-      delete votos[usuarioVal.nombre];
-    } else {
-      votos[usuarioVal.nombre] = tipo;
+    try {
+      const resp = await fetch("/api/content?action=game-votes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: usuarioVal.nombre, gameId: idJuegoVal, voto: tipo })
+      });
+      const datos = await resp.json();
+      if (datos && datos.success) pintarVotosJuego(datos);
+    } catch (error) {
+      console.warn("MacroReborn: no se pudo registrar el voto.", error);
     }
-
-    guardarVotosJuego(votos);
-    renderVotosJuego();
   }
 
   if (botonLike) {

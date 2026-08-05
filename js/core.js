@@ -189,3 +189,59 @@ function normalizarAvatar(valor){
   }
   return valor;
 }
+
+
+
+
+// ==============================
+// AVATAR DE OTROS USUARIOS — CACHÉ (Fase 2: cierre de migración)
+// ==============================
+// Varios lugares del sitio (chat, comentarios de perfil, reseñas,
+// actividad de amigos) necesitan pintar el avatar de OTRO usuario de
+// forma sincrónica dentro de un bucle de render. Antes leían
+// "avatar_<nombre>" de localStorage, una clave que solo existía en el
+// navegador donde ese usuario había armado su avatar (nunca en el de
+// quien está mirando), así que en la práctica siempre mostraban el
+// avatar por defecto. Mismo criterio que _cacheInsignias en
+// js/motor/insignias.js: una caché en memoria que se llena con
+// cargarAvatarUsuario()/cargarAvataresDeVarios() antes de renderizar,
+// y un getter sincrónico (obtenerAvatarCacheado) para usar en el HTML.
+
+const _cacheAvatares = {};
+
+function obtenerAvatarCacheado(nombre){
+  return Object.prototype.hasOwnProperty.call(_cacheAvatares, nombre)
+    ? _cacheAvatares[nombre]
+    : null;
+}
+
+async function cargarAvatarUsuario(nombre){
+
+  if(!nombre) return null;
+
+  try{
+    const resp = await fetch("/api/users?username=" + encodeURIComponent(nombre));
+    const datos = await resp.json();
+    const avatar = (datos && datos.success) ? normalizarAvatar(datos.user.avatar) : null;
+    _cacheAvatares[nombre] = avatar;
+    return avatar;
+  }catch(error){
+    console.warn("MacroReborn: no se pudo cargar el avatar.", error);
+    return _cacheAvatares[nombre] || null;
+  }
+
+}
+
+// Trae los avatares de varios usuarios de una vez (listas: chat,
+// comentarios, reseñas, actividad), un pedido por nombre único.
+
+async function cargarAvataresDeVarios(nombres){
+
+  const unicos = [...new Set((nombres || []).filter(Boolean))]
+    .filter(nombre => !Object.prototype.hasOwnProperty.call(_cacheAvatares, nombre));
+
+  if(!unicos.length) return;
+
+  await Promise.all(unicos.map(nombre => cargarAvatarUsuario(nombre)));
+
+}

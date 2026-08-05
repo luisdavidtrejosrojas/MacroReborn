@@ -1,6 +1,8 @@
 // ==============================
-// CHAT GENERAL - MacroReborn
+// CHAT GENERAL - MacroReborn (Fase 2: Neon)
 // ==============================
+// Los mensajes viven en la tabla "chat_messages" de Neon
+// (/api/content?action=chat).
 
 // ---------- USUARIO ACTIVO ----------
 
@@ -15,22 +17,18 @@ const miNombre = usuarioActivo
 
 // ---------- MENSAJES ----------
 
-function obtenerMensajes(){
-    return leerJSON(
-        localStorage.getItem("chatGeneral") || "[]"
-    );
-}
+let _mensajesCacheChat = [];
 
-function guardarMensajes(lista){
-
-    if(lista.length > 200){
-        lista = lista.slice(-200);
+async function obtenerMensajes(){
+    try{
+        const resp = await fetch("/api/content?action=chat");
+        const datos = await resp.json();
+        _mensajesCacheChat = (datos && datos.success) ? datos.mensajes : [];
+    }catch(error){
+        console.warn("MacroReborn: no se pudieron cargar los mensajes del chat.", error);
+        _mensajesCacheChat = [];
     }
-
-    localStorage.setItem(
-        "chatGeneral",
-        JSON.stringify(lista)
-    );
+    return _mensajesCacheChat;
 }
 
 
@@ -64,9 +62,13 @@ function rutaImagenCapa(valor){
 
 function obtenerAvatarHTML(nombre){
 
-    const avatar = leerJSON(
-        localStorage.getItem("avatar_" + nombre) || "null"
-    );
+    // El avatar viaja embebido en el usuario (users.avatar, Neon), ya
+    // no vive en la clave localStorage "avatar_<nombre>" (esa clave
+    // solo existía en el navegador del propio dueño del avatar, nunca
+    // en el de quien está mirando el chat). Se lee de la caché en
+    // memoria de js/core.js, precargada por renderChat() antes de
+    // pintar los mensajes.
+    const avatar = typeof obtenerAvatarCacheado === "function" ? obtenerAvatarCacheado(nombre) : null;
 
     if(!avatar){
         return `<img src="imagenes/avatar.png" class="avatar-chat" alt="" loading="lazy">`;
@@ -94,12 +96,17 @@ function responder(nombre){
     input.focus();
 }
 
-function renderChat(){
+async function renderChat(){
 
     const contenedor = document.getElementById("mensajesChat");
     if(!contenedor) return;
 
-    const mensajes = obtenerMensajes();
+    const mensajes = await obtenerMensajes();
+
+    if(typeof cargarAvataresDeVarios === "function"){
+        await cargarAvataresDeVarios(mensajes.map(m => m.usuario));
+    }
+
     contenedor.innerHTML = "";
 
     if(mensajes.length === 0){
@@ -114,6 +121,7 @@ function renderChat(){
     mensajes.forEach(msg=>{
 
         const esMio = msg.usuario === miNombre;
+        const fecha = new Date(msg.created_at).toLocaleString("es-AR");
 
         const div = document.createElement("div");
         div.className = "mensaje" + (esMio ? " mensaje-propio" : "");
@@ -123,14 +131,14 @@ function renderChat(){
                 ${obtenerAvatarHTML(msg.usuario)}
                 <div>
                     <b>${msg.usuario}</b>
-                    <div class="fecha-chat">${msg.fecha}</div>
+                    <div class="fecha-chat">${fecha}</div>
                 </div>
             </div>
 
             <p class="texto-chat">${msg.texto}</p>
 
             <div class="acciones-chat">
-                ${typeof botonLikeHTML === "function" ? botonLikeHTML("chatGeneral", msg.id, miNombre) : ""}
+                ${typeof botonLikeHTML === "function" ? botonLikeHTML("chat", msg.id, miNombre) : ""}
 
                 <button class="btn-responder" onclick="responder('${msg.usuario}')">
                     Responder
@@ -157,7 +165,7 @@ function renderChat(){
 
 // ---------- ENVIAR MENSAJE ----------
 
-function enviarMensaje(){
+async function enviarMensaje(){
 
     const input = document.getElementById("mensajeInput");
     const texto = input.value.trim();
@@ -169,18 +177,18 @@ function enviarMensaje(){
         return;
     }
 
-    if(typeof bloqueadoPorSuspension === "function" && bloqueadoPorSuspension()) return;
+    if(typeof bloqueadoPorSuspension === "function" && await bloqueadoPorSuspension()) return;
 
-    const mensajes = obtenerMensajes();
-
-    mensajes.push({
-        id: Date.now(),
-        usuario: miNombre,
-        texto: texto,
-        fecha: new Date().toLocaleString("es-AR")
-    });
-
-    guardarMensajes(mensajes);
+    try{
+        await fetch("/api/content?action=chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: miNombre, texto })
+        });
+    }catch(error){
+        console.warn("MacroReborn: no se pudo enviar el mensaje.", error);
+        return;
+    }
 
     input.value = "";
     renderChat();
@@ -200,16 +208,20 @@ document.getElementById("mensajeInput")?.addEventListener("keydown", function(e)
 
 // ---------- BORRAR MENSAJES ----------
 
-document.addEventListener("click", (e)=>{
+document.addEventListener("click", async (e)=>{
     if(e.target.classList.contains("btn-borrar")){
 
-        const id = Number(e.target.dataset.id);
+        const id = e.target.dataset.id;
 
-        let mensajes = obtenerMensajes();
-
-        mensajes = mensajes.filter(m => m.id !== id);
-
-        guardarMensajes(mensajes);
+        try{
+            await fetch("/api/content?action=chat", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ messageId: id, username: miNombre })
+            });
+        }catch(error){
+            console.warn("MacroReborn: no se pudo borrar el mensaje.", error);
+        }
 
         renderChat();
     }
@@ -218,10 +230,9 @@ document.addEventListener("click", (e)=>{
 
 // ---------- REPORTAR MENSAJES ----------
 // Reutiliza el mismo motor de reportes que ya usan los comentarios de
-// perfil (js/motor/reportes.js -> reportarComentario), guardando todo
-// junto en localStorage bajo "reportesComentarios" para un futuro panel
-// de moderación. Acá el "perfil" que se pasa es un identificador fijo
-// ("chatGeneral") para distinguir estos reportes de los de perfiles.
+// perfil (js/motor/reportes.js -> reportarComentario). Acá el "origen"
+// que se pasa es un identificador fijo ("chatGeneral") para distinguir
+// estos reportes de los de perfiles.
 
 document.addEventListener("click", (e)=>{
     if(e.target.classList.contains("btn-reportar")){
@@ -231,10 +242,8 @@ document.addEventListener("click", (e)=>{
             return;
         }
 
-        const id = Number(e.target.dataset.id);
-        const mensajes = obtenerMensajes();
-        const indice = mensajes.findIndex(m => m.id === id);
-        const mensaje = mensajes[indice];
+        const id = e.target.dataset.id;
+        const mensaje = _mensajesCacheChat.find(m => String(m.id) === id);
 
         if(!mensaje) return;
 
@@ -246,10 +255,9 @@ document.addEventListener("click", (e)=>{
         confirmar("¿Seguro que querés reportar este mensaje?", () => {
             if(typeof reportarComentario === "function"){
                 const motivo = prompt("¿Por qué reportás este mensaje? (opcional)") || "";
-                reportarComentario("chatGeneral", indice, {
+                reportarComentario("chat", mensaje.id, "chatGeneral", {
                     usuario: mensaje.usuario,
-                    texto: mensaje.texto,
-                    id: mensaje.id
+                    texto: mensaje.texto
                 }, motivo);
             }
             alert("Gracias. El mensaje fue reportado correctamente.");
@@ -258,29 +266,6 @@ document.addEventListener("click", (e)=>{
 });
 
 
-// ---------- MENSAJES DE EJEMPLO ----------
-
-if(obtenerMensajes().length === 0){
-    guardarMensajes([
-        {
-            id: Date.now(),
-            usuario:"MacroBot",
-            texto:"👋 ¡Bienvenido al chat general de MacroReborn!",
-            fecha:new Date().toLocaleString("es-AR")
-        },
-        {
-            id: Date.now()+1,
-            usuario:"MacroBot",
-            texto:"🎮 Respetá a los demás jugadores y disfrutá la comunidad.",
-            fecha:new Date().toLocaleString("es-AR")
-        }
-    ]);
-}
-
-
 // ---------- INICIO ----------
 
 renderChat();
-
-// ⚠️ LO DE 10s DESPUÉS LO PODÉS QUITAR MÁS ADELANTE
-setInterval(renderChat, 10000);

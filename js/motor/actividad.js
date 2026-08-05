@@ -1,5 +1,5 @@
 // ==============================
-// SISTEMA DE ACTIVIDAD RECIENTE - MacroReborn
+// SISTEMA DE ACTIVIDAD RECIENTE - MacroReborn (Fase 2: Neon)
 // ==============================
 //
 // Este motor registra automáticamente las acciones importantes
@@ -8,12 +8,12 @@
 //   - "Actividad reciente" (pestaña del perfil propio)
 //   - "Actividad de amigos" (actividad de los amigos del usuario)
 //
-// Se guarda por usuario en localStorage bajo la clave
-// "actividad_<nombre>", igual que el resto del sitio (favoritos_,
-// amigos_, comentarios_, logros_, etc).
-//
-// No depende de ningún otro script: se puede incluir en cualquier
-// página y siempre queda disponible registrarActividad().
+// Los datos viven en la tabla "activity_log" de Neon
+// (/api/content?action=activity). "registrarActividad" sigue siendo
+// una función normal (no async) para que ninguno de los lugares que
+// ya la llaman (perfil.js, usuario.js, amigos.js, favoritos.js,
+// juego.js, motor/logros.js, motor/xp.js) tenga que cambiar: adentro
+// dispara el POST sin bloquear al que llama.
 
 
 // ---------- CONFIG ----------
@@ -31,19 +31,6 @@ const ICONOS_ACTIVIDAD = {
   amigo: "🤝",
   comentario: "💬"
 };
-
-
-// ---------- LOCALSTORAGE ----------
-
-function obtenerActividades(nombre){
-  if(!nombre) return [];
-  return leerJSON(localStorage.getItem("actividad_" + nombre) || "[]");
-}
-
-function guardarActividades(nombre, lista){
-  if(!nombre) return;
-  localStorage.setItem("actividad_" + nombre, JSON.stringify(lista));
-}
 
 
 // ---------- TEXTOS ----------
@@ -92,22 +79,77 @@ function textoActividadAmigo(nombreAmigo, tipo, detalle){
 // ---------- REGISTRAR ----------
 // tipo: "juego" | "favorito" | "logro" | "nivel" | "amigo" | "comentario"
 // detalle: dato extra (nombre del juego, nombre del logro, nivel, nombre del amigo, etc.)
+// No es async a propósito: dispara el POST y no bloquea a quien llama,
+// igual que antes hacía guardarActividades() con localStorage.
 
 function registrarActividad(nombre, tipo, detalle){
   if(!nombre || !tipo) return;
 
-  const ahora = new Date();
+  fetch("/api/content?action=activity", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: nombre, tipo, detalle: detalle || "" })
+  }).catch(error=>{
+    console.warn("MacroReborn: no se pudo registrar la actividad.", error);
+  });
+}
 
-  const nueva = {
-    tipo: tipo,
-    detalle: detalle || "",
-    texto: textoActividadPropia(tipo, detalle),
-    fecha: ahora.toLocaleDateString("es-AR"),
-    hora: ahora.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }),
-    timestamp: ahora.getTime()
-  };
 
-  const lista = obtenerActividades(nombre);
-  lista.unshift(nueva);
-  guardarActividades(nombre, lista.slice(0, MAX_ACTIVIDADES));
+// ---------- OBTENER (para renderActividadReciente / renderActividadAmigos) ----------
+// Devuelve las últimas actividades de un usuario ya con "texto", "fecha"
+// y "hora" armados, igual que antes armaba registrarActividad() al
+// guardar en localStorage.
+
+async function obtenerActividades(nombre){
+  if(!nombre) return [];
+
+  try{
+    const resp = await fetch("/api/content?action=activity&username=" + encodeURIComponent(nombre));
+    const datos = await resp.json();
+    if(!datos || !datos.success) return [];
+
+    return datos.actividades.map(a=>{
+      const fechaObj = new Date(a.created_at);
+      return {
+        tipo: a.tipo,
+        detalle: a.detalle || "",
+        texto: textoActividadPropia(a.tipo, a.detalle),
+        fecha: fechaObj.toLocaleDateString("es-AR"),
+        hora: fechaObj.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }),
+        timestamp: fechaObj.getTime()
+      };
+    });
+  }catch(error){
+    console.warn("MacroReborn: no se pudieron cargar las actividades.", error);
+    return [];
+  }
+}
+
+
+// ---------- OBTENER DE VARIOS USUARIOS A LA VEZ (para "Actividad de amigos") ----------
+// Un solo pedido en vez de uno por amigo.
+
+async function obtenerActividadesDe(nombres){
+  if(!nombres || !nombres.length) return [];
+
+  try{
+    const resp = await fetch("/api/content?action=activity-friends&usernames=" + encodeURIComponent(nombres.join(",")));
+    const datos = await resp.json();
+    if(!datos || !datos.success) return [];
+
+    return datos.actividades.map(a=>{
+      const fechaObj = new Date(a.created_at);
+      return {
+        nombreAmigo: a.username,
+        tipo: a.tipo,
+        detalle: a.detalle || "",
+        fecha: fechaObj.toLocaleDateString("es-AR"),
+        hora: fechaObj.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }),
+        timestamp: fechaObj.getTime()
+      };
+    });
+  }catch(error){
+    console.warn("MacroReborn: no se pudieron cargar las actividades de amigos.", error);
+    return [];
+  }
 }

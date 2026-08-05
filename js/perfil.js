@@ -878,23 +878,33 @@ renderAmigosPerfil();
 // COMENTARIOS
 // ==============================
 
-function cargarComentarios(){
-  return leerJSON(localStorage.getItem("comentarios_" + datosUsuario.nombre) || "[]");
-}
+// Comentarios viven en Neon (tabla profile_comments,
+// /api/content?action=comments). Se guarda una copia en memoria
+// (_comentariosCache) para que funciones que antes leían localStorage
+// de forma sincrónica (como renderUltimosComentariosInicio) puedan
+// seguir haciéndolo sin volverse async.
 
-function guardarComentarios(lista){
-  localStorage.setItem(
-    "comentarios_" + datosUsuario.nombre,
-    JSON.stringify(lista)
-  );
+let _comentariosCache = [];
+
+async function cargarComentarios(){
+  try{
+    const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(datosUsuario.nombre));
+    const datos = await resp.json();
+    _comentariosCache = (datos && datos.success) ? datos.comentarios : [];
+  }catch(error){
+    console.warn("MacroReborn: no se pudieron cargar los comentarios.", error);
+    _comentariosCache = [];
+  }
+  return _comentariosCache;
 }
 
 // AVATAR DEL USUARIO EN COMENTARIOS
 
 function obtenerAvatarComentario(nombre){
-  const avatar = leerJSON(
-    localStorage.getItem("avatar_" + nombre) || "null"
-  );
+  // El avatar viaja embebido en el usuario (users.avatar, Neon); se lee
+  // de la caché en memoria de js/core.js, precargada por
+  // renderComentarios() antes de pintar la lista.
+  const avatar = typeof obtenerAvatarCacheado === "function" ? obtenerAvatarCacheado(nombre) : null;
 
   if(!avatar){
     return `<img class="avatar-comentario" src="imagenes/avatar.png" alt="" loading="lazy">`;
@@ -920,7 +930,7 @@ function renderUltimosComentariosInicio(){
   const contenedor = document.getElementById("ultimosComentariosInicio");
   if(!contenedor) return;
 
-  const lista = cargarComentarios();
+  const lista = _comentariosCache;
 
   if(lista.length === 0){
     contenedor.innerHTML = `<p>Todavía no hay comentarios.</p>`;
@@ -929,8 +939,7 @@ function renderUltimosComentariosInicio(){
 
   const ultimos = lista.slice(-3).reverse();
 
-  contenedor.innerHTML = ultimos.map((c,pos)=>{
-    const indiceReal = lista.length - 1 - pos;
+  contenedor.innerHTML = ultimos.map((c)=>{
     return `
     <div class="comentario">
       <div class="usuario-comentario">
@@ -939,7 +948,7 @@ function renderUltimosComentariosInicio(){
       </div>
       ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(c.usuario, true) : ""}
       <p>${c.texto}</p>
-      ${typeof botonLikeHTML === "function" ? botonLikeHTML("comentarios_" + datosUsuario.nombre, indiceReal, datosUsuario.nombre) : ""}
+      ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
     </div>
   `;
   }).join("");
@@ -992,8 +1001,13 @@ function pedirConfirmacion(mensaje, onConfirmar, textoBoton){
 
 // MOSTRAR COMENTARIOS
 
-function renderComentarios(){
-  const lista = cargarComentarios();
+async function renderComentarios(){
+  const lista = await cargarComentarios();
+
+  if(typeof cargarAvataresDeVarios === "function"){
+    await cargarAvataresDeVarios(lista.map(c => c.usuario));
+  }
+
   const contenedor = document.getElementById("listaComentarios");
 
   // Mantenemos sincronizado el resumen de Inicio cada vez que se
@@ -1008,11 +1022,11 @@ function renderComentarios(){
       <b>Usuario</b>
       <p>Buen perfil 😄</p>
       <button class="boton-responder" data-usuario="Usuario">Responder</button>
-      <button class="boton-eliminar" data-index="-1">🗑️ Eliminar</button>
-      <button class="boton-reportar" data-index="-1">🚩 Reportar</button>
+      <button class="boton-eliminar" data-id="-1">🗑️ Eliminar</button>
+      <button class="boton-reportar" data-id="-1">🚩 Reportar</button>
     </div>`;
   } else {
-    contenedor.innerHTML = lista.map((c,i)=>{
+    contenedor.innerHTML = lista.map((c)=>{
       return `
       <div class="comentario">
         <div class="usuario-comentario">
@@ -1021,10 +1035,10 @@ function renderComentarios(){
         </div>
         ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(c.usuario, true) : ""}
         <p>${c.texto}</p>
-        ${typeof botonLikeHTML === "function" ? botonLikeHTML("comentarios_" + datosUsuario.nombre, i, datosUsuario.nombre) : ""}
+        ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
         <button class="boton-responder" data-usuario="${c.usuario}">Responder</button>
-        <button class="boton-eliminar" data-index="${i}">🗑️ Eliminar</button>
-        <button class="boton-reportar" data-index="${i}">🚩 Reportar</button>
+        <button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>
+        <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>`;
     }).join("");
   }
@@ -1043,16 +1057,22 @@ function renderComentarios(){
   // ELIMINAR
   contenedor.querySelectorAll(".boton-eliminar").forEach(btn=>{
     btn.onclick=()=>{
-      let index = Number(btn.dataset.index);
+      const id = btn.dataset.id;
 
-      pedirConfirmacion("¿Seguro que querés eliminar este comentario?", ()=>{
-        if(index === -1){
+      pedirConfirmacion("¿Seguro que querés eliminar este comentario?", async ()=>{
+        if(id === "-1"){
           contenedor.innerHTML="";
           return;
         }
-        const lista = cargarComentarios();
-        lista.splice(index,1);
-        guardarComentarios(lista);
+        try{
+          await fetch("/api/content?action=comments", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ commentId: id })
+          });
+        }catch(error){
+          console.warn("MacroReborn: no se pudo eliminar el comentario.", error);
+        }
         renderComentarios();
       });
     };
@@ -1061,17 +1081,16 @@ function renderComentarios(){
   // REPORTAR
   contenedor.querySelectorAll(".boton-reportar").forEach(btn=>{
     btn.onclick=()=>{
-      let index = Number(btn.dataset.index);
+      const id = btn.dataset.id;
 
       pedirConfirmacion("¿Seguro que querés reportar este comentario?", ()=>{
 
         if(typeof reportarComentario === "function"){
-          const listaActual = cargarComentarios();
-          const comentario = index === -1
+          const comentario = id === "-1"
             ? { usuario:"Usuario", texto:"Buen perfil 😄" }
-            : listaActual[index];
+            : _comentariosCache.find(c => String(c.id) === id);
           const motivo = prompt("¿Por qué reportás este comentario? (opcional)") || "";
-          reportarComentario(datosUsuario.nombre, index, comentario, motivo);
+          reportarComentario("comment", id === "-1" ? null : id, datosUsuario.nombre, comentario, motivo);
         }
 
         alert("Gracias. El comentario fue reportado correctamente.");
@@ -1083,25 +1102,33 @@ function renderComentarios(){
 
 // CREAR COMENTARIO
 
-document.getElementById("botonComentar")?.addEventListener("click",()=>{
+document.getElementById("botonComentar")?.addEventListener("click", async ()=>{
 
-  if(typeof bloqueadoPorSuspension === "function" && bloqueadoPorSuspension()) return;
+  if(typeof bloqueadoPorSuspension === "function" && await bloqueadoPorSuspension()) return;
 
   const input = document.getElementById("comentarioTexto");
   const texto = input.value.trim();
   if(!texto) return;
 
   const usuarioActivo = leerJSON(localStorage.getItem("usuarioActivo") || "null");
-  const lista = cargarComentarios();
 
-  lista.push({
-    usuario: usuarioActivo ? usuarioActivo.nombre : "Usuario",
-    texto: texto
-  });
+  try{
+    await fetch("/api/content?action=comments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        profileUsername: datosUsuario.nombre,
+        texto: texto,
+        authorUsername: usuarioActivo ? usuarioActivo.nombre : "Usuario"
+      })
+    });
+  }catch(error){
+    console.warn("MacroReborn: no se pudo publicar el comentario.", error);
+    return;
+  }
 
-  guardarComentarios(lista);
   input.value="";
-  renderComentarios();
+  await renderComentarios();
 
   // ==============================
   // LOGRO PRIMER COMENTARIO

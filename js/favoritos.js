@@ -1,5 +1,5 @@
 // =========================
-// MACROREBORN - FAVORITOS POR USUARIO
+// MACROREBORN - FAVORITOS POR USUARIO (Fase 2: Neon)
 // =========================
 
 
@@ -19,8 +19,6 @@ localStorage.getItem("usuarioActivo")
 
 
 
-
-
 if(usuarioActivoFavoritos && botonFavorito){
 
 
@@ -29,118 +27,77 @@ const nombreUsuario = usuarioActivoFavoritos.nombre;
 
 
 
-const claveFavoritos = "favoritos_" + nombreUsuario;
-
-
-
-let favoritos = leerJSON(
-localStorage.getItem(claveFavoritos)
-) || [];
-
-
-
-
+let esFavoritoActual = false;
 
 
 
 function actualizarBoton(){
 
-
-
-if(favoritos.includes(idJuegoFavorito)){
-
-
-botonFavorito.textContent = "⭐ En favoritos";
-
-
-}else{
-
-
-botonFavorito.textContent = "☆ Agregar favorito";
-
+    botonFavorito.textContent = esFavoritoActual
+        ? "⭐ En favoritos"
+        : "☆ Agregar favorito";
 
 }
 
 
 
-}
+async function cargarEstadoFavorito(){
 
+    try{
+        const resp = await fetch("/api/content?action=favorites&username=" + encodeURIComponent(nombreUsuario));
+        const datos = await resp.json();
+        esFavoritoActual = (datos && datos.success)
+            ? datos.favoritos.includes(idJuegoFavorito)
+            : false;
+    }catch(error){
+        console.warn("MacroReborn: no se pudo cargar el estado de favorito.", error);
+    }
 
-
-
-
-actualizarBoton();
-
-
-
-
-
-
-
-
-botonFavorito.addEventListener("click",()=>{
-
-
-
-
-
-if(favoritos.includes(idJuegoFavorito)){
-
-
-
-favoritos = favoritos.filter(id => id !== idJuegoFavorito);
-
-
-
-}else{
-
-
-
-favoritos.push(idJuegoFavorito);
-
-
-
-// ==============================
-// ACTIVIDAD RECIENTE - FAVORITO
-// ==============================
-
-if(typeof registrarActividad === "function" && typeof juegos !== "undefined"){
-
-const juegoFav = juegos.find(j => String(j.id) === idJuegoFavorito);
-
-registrarActividad(
-nombreUsuario,
-"favorito",
-juegoFav ? juegoFav.nombre : ("el juego #" + idJuegoFavorito)
-);
+    actualizarBoton();
 
 }
 
-
-
-}
-
+cargarEstadoFavorito();
 
 
 
+botonFavorito.addEventListener("click", async ()=>{
 
-localStorage.setItem(
-claveFavoritos,
-JSON.stringify(favoritos)
-);
+    if(botonFavorito.disabled) return;
+    botonFavorito.disabled = true;
 
+    try{
+        const resp = await fetch("/api/content?action=favorites", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: nombreUsuario, gameId: idJuegoFavorito })
+        });
+        const datos = await resp.json();
 
+        if(datos && datos.success){
+            esFavoritoActual = datos.favorito;
 
+            // ==============================
+            // ACTIVIDAD RECIENTE - FAVORITO
+            // ==============================
+            if(esFavoritoActual && typeof registrarActividad === "function" && typeof juegos !== "undefined"){
+                const juegoFav = juegos.find(j => String(j.id) === idJuegoFavorito);
+                registrarActividad(
+                    nombreUsuario,
+                    "favorito",
+                    juegoFav ? juegoFav.nombre : ("el juego #" + idJuegoFavorito)
+                );
+            }
 
-
-actualizarBoton();
-
-
-
-
+            actualizarBoton();
+        }
+    }catch(error){
+        console.warn("MacroReborn: no se pudo actualizar el favorito.", error);
+    }finally{
+        botonFavorito.disabled = false;
+    }
 
 });
-
 
 
 

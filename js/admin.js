@@ -1,31 +1,43 @@
 // ==============================
-// PANEL DE ADMINISTRACIÓN - MacroReborn
+// PANEL DE ADMINISTRACIÓN - MacroReborn (Fase 2: Neon, cierre de migración)
 // ==============================
 // Usa el motor de permisos (js/motor/permisos.js), insignias
-// (js/motor/insignias.js) y reportes (js/motor/reportes.js). Todo se
-// guarda en localStorage junto con "usuariosMacro", como el resto del
-// sitio, y queda preparado para reemplazar esas funciones por llamadas
-// a una API el día que MacroReborn tenga base de datos.
+// (js/motor/insignias.js) y reportes (js/motor/reportes.js), todos ya
+// conectados a Neon. Envuelto en un IIFE async porque el chequeo de
+// acceso necesita esperar a que se precarguen las insignias del
+// usuario activo (ver más abajo) antes de decidir si puede entrar.
 
+(async function(){
 
-// ==============================
-// CONTROL DE ACCESO
-// ==============================
+  // ==============================
+  // CONTROL DE ACCESO
+  // ==============================
 
-const activoAdmin = typeof obtenerUsuarioActivo === "function"
-  ? obtenerUsuarioActivo()
-  : leerJSON(localStorage.getItem("usuarioActivo") || "null");
+  const activoAdmin = typeof obtenerUsuarioActivo === "function"
+    ? obtenerUsuarioActivo()
+    : leerJSON(localStorage.getItem("usuarioActivo") || "null");
 
-const tieneAccesoPanel = activoAdmin &&
-  typeof tienePermiso === "function" &&
-  tienePermiso(activoAdmin, "panelModeracion");
+  // FIX: las insignias (administrador/moderador) viven en una caché en
+  // memoria (js/motor/insignias.js) que hay que precargar con un
+  // fetch antes de poder consultarla de forma sincrónica. Antes nada
+  // llamaba a cargarInsignias() acá, así que tienePermiso() siempre
+  // leía la caché vacía y el panel rechazaba incluso a administradores
+  // legítimos.
+  if(activoAdmin && typeof cargarInsignias === "function"){
+    await cargarInsignias(activoAdmin.nombre);
+  }
 
-if(!tieneAccesoPanel){
+  const tieneAccesoPanel = activoAdmin &&
+    typeof tienePermiso === "function" &&
+    tienePermiso(activoAdmin, "panelModeracion");
 
-  document.getElementById("accesoDenegado").style.display = "flex";
-  document.getElementById("panelAdmin").style.display = "none";
+  if(!tieneAccesoPanel){
 
-}else{
+    document.getElementById("accesoDenegado").style.display = "flex";
+    document.getElementById("panelAdmin").style.display = "none";
+    return;
+
+  }
 
   document.getElementById("panelAdmin").style.display = "block";
 
@@ -47,9 +59,6 @@ if(!tieneAccesoPanel){
   // El moderador solo tiene acceso a Reportes: las funciones
   // exclusivas del administrador (usuarios, insignias, estadísticas)
   // quedan directamente ocultas, no solo deshabilitadas.
-
-  const botonesTab = document.querySelectorAll(".menu-perfil .tab");
-  const contenidosTab = document.querySelectorAll(".contenido-tab");
 
   if(!esAdmin){
     document.getElementById("botonTabUsuarios").remove();
@@ -76,33 +85,33 @@ if(!tieneAccesoPanel){
   // ==============================
   // ADVERTIR USUARIO (administrador y moderador)
   // ==============================
-  // Manda una notificación directa al usuario (misma clave que usa
-  // js/notificaciones.js: "notificaciones_<nombre>", sin depender de
-  // que ese script esté cargado en esta página) y registra la acción
-  // en el historial de moderación. Pide el motivo con "prompt", igual
-  // que ya hace el sitio para reportar comentarios (js/perfil.js).
+  // Manda una notificación directa al usuario (POST a
+  // /api/content?action=notifications, sin depender de que
+  // js/notificaciones.js esté cargado en esta página) y registra la
+  // acción en el historial de moderación. Pide el motivo con
+  // "prompt", igual que ya hace el sitio para reportar comentarios
+  // (js/perfil.js).
 
-  function advertirUsuario(nombre){
+  async function advertirUsuario(nombre){
 
     const mensaje = prompt(`¿Por qué advertís a ${nombre}? Este texto se le va a mostrar como notificación.`);
     if(mensaje === null) return false; // canceló el prompt
 
     const motivo = mensaje.trim() || "No especificado";
 
-    const claveNotificaciones = "notificaciones_" + nombre;
-    const notificaciones = leerJSON(localStorage.getItem(claveNotificaciones) || "[]") || [];
-
-    notificaciones.unshift({
-      id: Date.now(),
-      titulo: "⚠️ Advertencia de la moderación",
-      mensaje: motivo,
-      fecha: new Date().toLocaleString("es-AR"),
-      leida: false
+    fetch("/api/content?action=notifications", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: nombre,
+        titulo: "⚠️ Advertencia de la moderación",
+        mensaje: motivo
+      })
+    }).catch(error=>{
+      console.warn("MacroReborn: no se pudo enviar la notificación de advertencia.", error);
     });
 
-    guardarJSON(claveNotificaciones, notificaciones.slice(0, 100));
-
-    registrarAccionModeracion({
+    await registrarAccionModeracion({
       accion: "advertir_usuario",
       usuarioAfectado: nombre,
       motivo: motivo
@@ -136,14 +145,18 @@ if(!tieneAccesoPanel){
     // Roles (administrador / moderador) van marcados con data-rol="1"
     // para poder pedir confirmación aparte y registrarlos como
     // "cambiar_rol" en vez de "asignar/quitar_insignia" en el historial.
+    // Las insignias de cada usuario salen de la caché de
+    // js/motor/insignias.js (tabla "badges" de Neon): hay que haber
+    // llamado a cargarInsigniasDeVarios() antes de renderizar (ver
+    // renderUsuariosAdmin más abajo).
     function botonesInsigniaUsuario(usuario){
       return Object.values(INSIGNIAS).map(insignia=>{
-        const tiene = (usuario.insignias || []).includes(insignia.id);
+        const tiene = obtenerInsignias(usuario.username).includes(insignia.id);
         const esRol = insignia.id === ROLES.ADMINISTRADOR || insignia.id === ROLES.MODERADOR;
         return `
           <button
             class="btn-insignia-toggle ${tiene ? "activa-insignia" : ""}"
-            data-usuario="${usuario.nombre}"
+            data-usuario="${usuario.username}"
             data-insignia="${insignia.id}"
             data-rol="${esRol ? "1" : "0"}"
             title="${tiene ? "Quitar" : "Asignar"} ${insignia.nombre}"
@@ -152,16 +165,16 @@ if(!tieneAccesoPanel){
       }).join("");
     }
 
-    renderUsuariosAdmin = function(filtro){
+    renderUsuariosAdmin = async function(filtro){
 
       const contenedor = document.getElementById("listaUsuariosAdmin");
       const contador = document.getElementById("contadorUsuariosAdmin");
 
-      let usuarios = obtenerUsuarios();
+      let usuarios = await obtenerUsuarios();
 
       if(filtro && filtro.trim()){
         const texto = filtro.trim().toLowerCase();
-        usuarios = usuarios.filter(u => u.nombre.toLowerCase().includes(texto));
+        usuarios = usuarios.filter(u => u.username.toLowerCase().includes(texto));
       }
 
       contador.textContent = `${usuarios.length} usuario${usuarios.length === 1 ? "" : "s"}`;
@@ -171,30 +184,41 @@ if(!tieneAccesoPanel){
         return;
       }
 
+      // Precarga en lote: insignias (para pintar los botones) y
+      // cantidad de advertencias (para el chip), un solo pedido por
+      // tipo en vez de uno por usuario dentro del map().
+      await cargarInsigniasDeVarios(usuarios.map(u => u.username));
+
+      const posiciones = {};
+      const advertenciasPorUsuario = {};
+
+      await Promise.all(usuarios.map(async usuario => {
+        posiciones[usuario.username] = typeof obtenerPosicionRanking === "function"
+          ? await obtenerPosicionRanking(usuario.username)
+          : null;
+        advertenciasPorUsuario[usuario.username] = typeof contarAdvertenciasDe === "function"
+          ? await contarAdvertenciasDe(usuario.username)
+          : 0;
+      }));
+
       contenedor.innerHTML = usuarios.map(usuario=>{
 
-        const ranking = typeof obtenerPosicionRanking === "function"
-          ? obtenerPosicionRanking(usuario.nombre)
-          : null;
-
-        const esUnoMismo = usuario.nombre === activoAdmin.nombre;
-
-        const advertencias = typeof contarAdvertenciasDe === "function"
-          ? contarAdvertenciasDe(usuario.nombre)
-          : 0;
+        const ranking = posiciones[usuario.username];
+        const esUnoMismo = usuario.username === activoAdmin.nombre;
+        const advertencias = advertenciasPorUsuario[usuario.username] || 0;
 
         return `
           <div class="admin-tarjeta-usuario">
 
             <div class="admin-tarjeta-cabecera">
-              <h3>${usuario.nombre}</h3>
+              <h3>${usuario.username}</h3>
               ${chipEstadoCuenta(usuario)}
             </div>
 
-            ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(usuario.nombre, false) : ""}
+            ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(usuario.username, false) : ""}
 
             <div class="admin-tarjeta-stats">
-              <span>⭐ Nivel ${usuario.nivel || 1}</span>
+              <span>⭐ Nivel ${usuario.level || 1}</span>
               <span>⚡ ${usuario.xp || 0} XP</span>
               <span>🏆 ${ranking ? "#" + ranking : "Sin clasificar"}</span>
               ${advertencias > 0 ? `<span class="chip-advertencias">⚠️ ${advertencias} advertencia${advertencias === 1 ? "" : "s"}</span>` : ""}
@@ -205,10 +229,10 @@ if(!tieneAccesoPanel){
             </div>
 
             <div class="admin-tarjeta-acciones">
-              <button class="btn-advertir" data-usuario="${usuario.nombre}" ${esUnoMismo ? "disabled title=\"No podés advertirte a vos mismo\"" : ""}>⚠️ Advertir usuario</button>
+              <button class="btn-advertir" data-usuario="${usuario.username}" ${esUnoMismo ? "disabled title=\"No podés advertirte a vos mismo\"" : ""}>⚠️ Advertir usuario</button>
               ${usuario.suspendido
-                ? `<button class="btn-reactivar" data-usuario="${usuario.nombre}">✅ Reactivar usuario</button>`
-                : `<button class="btn-suspender" data-usuario="${usuario.nombre}" ${esUnoMismo ? "disabled title=\"No podés suspender tu propia cuenta\"" : ""}>🚫 Suspender usuario</button>`
+                ? `<button class="btn-reactivar" data-usuario="${usuario.username}">✅ Reactivar usuario</button>`
+                : `<button class="btn-suspender" data-usuario="${usuario.username}" ${esUnoMismo ? "disabled title=\"No podés suspender tu propia cuenta\"" : ""}>🚫 Suspender usuario</button>`
               }
             </div>
 
@@ -219,7 +243,7 @@ if(!tieneAccesoPanel){
 
       // EVENTOS: insignias / roles
       contenedor.querySelectorAll(".btn-insignia-toggle").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
+        btn.addEventListener("click", async ()=>{
           const nombre = btn.dataset.usuario;
           const idInsignia = btn.dataset.insignia;
           const esRol = btn.dataset.rol === "1";
@@ -237,64 +261,64 @@ if(!tieneAccesoPanel){
           }
 
           if(laTiene){
-            quitarInsignia(nombre, idInsignia);
+            await quitarInsignia(nombre, idInsignia);
           }else{
-            asignarInsignia(nombre, idInsignia);
+            await asignarInsignia(nombre, idInsignia);
           }
 
-          registrarAccionModeracion({
+          await registrarAccionModeracion({
             accion: esRol ? "cambiar_rol" : (laTiene ? "quitar_insignia" : "asignar_insignia"),
             usuarioAfectado: nombre,
             motivo: `${laTiene ? "Quitó" : "Asignó"} ${nombreInsignia}`
           });
 
-          renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          renderEstadisticas();
-          renderHistorialModeracion();
+          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
+          await renderEstadisticas();
+          await renderHistorialModeracion();
         });
       });
 
       // EVENTOS: advertir
       contenedor.querySelectorAll(".btn-advertir").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
+        btn.addEventListener("click", async ()=>{
           if(btn.disabled) return;
-          if(!advertirUsuario(btn.dataset.usuario)) return;
-          renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          renderHistorialModeracion();
+          if(!(await advertirUsuario(btn.dataset.usuario))) return;
+          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
+          await renderHistorialModeracion();
         });
       });
 
       // EVENTOS: suspender
       contenedor.querySelectorAll(".btn-suspender").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
+        btn.addEventListener("click", async ()=>{
           if(btn.disabled) return;
           const nombre = btn.dataset.usuario;
           if(!confirm(`¿Suspender a ${nombre}? No podrá comentar, mandar mensajes ni usar la comunidad.`)) return;
           const motivo = prompt(`¿Por qué suspendés a ${nombre}? (opcional)`) || "";
-          suspenderUsuario(nombre, motivo);
-          registrarAccionModeracion({
+          await suspenderUsuario(nombre, motivo);
+          await registrarAccionModeracion({
             accion: "suspender_usuario",
             usuarioAfectado: nombre,
             motivo: motivo
           });
-          renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          renderEstadisticas();
-          renderHistorialModeracion();
+          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
+          await renderEstadisticas();
+          await renderHistorialModeracion();
         });
       });
 
       // EVENTOS: reactivar
       contenedor.querySelectorAll(".btn-reactivar").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
+        btn.addEventListener("click", async ()=>{
           const nombre = btn.dataset.usuario;
-          reactivarUsuario(nombre);
-          registrarAccionModeracion({
+          await reactivarUsuario(nombre);
+          await registrarAccionModeracion({
             accion: "reactivar_usuario",
             usuarioAfectado: nombre
           });
-          renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          renderEstadisticas();
-          renderHistorialModeracion();
+          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
+          await renderEstadisticas();
+          await renderHistorialModeracion();
         });
       });
 
@@ -304,14 +328,16 @@ if(!tieneAccesoPanel){
       renderUsuariosAdmin(e.target.value);
     });
 
-    renderUsuariosAdmin("");
+    await renderUsuariosAdmin("");
 
 
     // ==============================
     // ESTADÍSTICAS (solo administrador)
     // ==============================
     // Los números se calculan en js/motor/panelEstadisticas.js
-    // (obtenerEstadisticasAdmin); acá solo se pintan en el DOM.
+    // (obtenerEstadisticasAdmin, ahora async: pide los agregados a
+    // Neon en vez de recorrer localStorage); acá solo se pintan en
+    // el DOM.
 
     function _filaTop(item, unidad){
       return `<li><span class="admin-top-nombre">${item.nombre}</span><span class="admin-top-valor">${item.valor !== undefined ? item.valor : item.veces}${unidad || ""}</span></li>`;
@@ -325,27 +351,20 @@ if(!tieneAccesoPanel){
         : `<li class="admin-top-vacio">${vacio}</li>`;
     }
 
-    renderEstadisticas = function(){
+    renderEstadisticas = async function(){
 
       const datos = typeof obtenerEstadisticasAdmin === "function"
-        ? obtenerEstadisticasAdmin()
+        ? await obtenerEstadisticasAdmin()
         : null;
 
       if(!datos) return;
 
-      const usuarios = obtenerUsuarios();
-
-      const admins = usuarios.filter(u => (u.insignias || []).includes("administrador")).length;
-      const moderadores = usuarios.filter(u => (u.insignias || []).includes("moderador")).length;
-      const colaboradores = usuarios.filter(u => (u.insignias || []).includes("colaborador")).length;
-      const suspendidos = usuarios.filter(u => u.suspendido).length;
-
       // ---------- ROLES / MODERACIÓN ----------
-      document.getElementById("statUsuarios").textContent = usuarios.length;
-      document.getElementById("statSuspendidos").textContent = suspendidos;
-      document.getElementById("statAdmins").textContent = admins;
-      document.getElementById("statModeradores").textContent = moderadores;
-      document.getElementById("statColaboradores").textContent = colaboradores;
+      document.getElementById("statUsuarios").textContent = datos.usuarios.total;
+      document.getElementById("statSuspendidos").textContent = datos.usuarios.suspendidos;
+      document.getElementById("statAdmins").textContent = datos.roles.administradores;
+      document.getElementById("statModeradores").textContent = datos.roles.moderadores;
+      document.getElementById("statColaboradores").textContent = datos.roles.colaboradores;
       document.getElementById("statReportesPendientes").textContent = datos.comunidad.reportesPendientes;
 
       // ---------- 👥 USUARIOS ----------
@@ -374,7 +393,7 @@ if(!tieneAccesoPanel){
 
     }
 
-    renderEstadisticas();
+    await renderEstadisticas();
 
 
     // ==============================
@@ -395,7 +414,7 @@ if(!tieneAccesoPanel){
       });
     }
 
-    renderHistorialModeracion = function(){
+    renderHistorialModeracion = async function(){
 
       const contenedor = document.getElementById("listaHistorialModeracion");
       const contador = document.getElementById("contadorHistorial");
@@ -408,7 +427,7 @@ if(!tieneAccesoPanel){
       };
 
       const entradas = typeof obtenerHistorialFiltrado === "function"
-        ? obtenerHistorialFiltrado(filtros)
+        ? await obtenerHistorialFiltrado(filtros)
         : [];
 
       if(contador){
@@ -446,7 +465,7 @@ if(!tieneAccesoPanel){
     document.getElementById("filtroRolHistorial")?.addEventListener("change", renderHistorialModeracion);
     document.getElementById("filtroAccionHistorial")?.addEventListener("change", renderHistorialModeracion);
 
-    renderHistorialModeracion();
+    await renderHistorialModeracion();
 
   }
 
@@ -455,30 +474,38 @@ if(!tieneAccesoPanel){
   // REPORTES (administrador y moderador)
   // ==============================
 
-  function renderReportesAdmin(){
+  let _reportesCacheAdmin = [];
+
+  async function renderReportesAdmin(){
 
     const contenedor = document.getElementById("listaReportesAdmin");
-    const pendientes = obtenerReportesPendientes()
-      .slice()
-      .reverse(); // más recientes primero
+    const pendientes = (await obtenerReportesPendientes()).slice(); // ya vienen del más nuevo al más viejo
+    _reportesCacheAdmin = pendientes;
 
     if(pendientes.length === 0){
       contenedor.innerHTML = `<div class="estado-vacio"><span class="icono-vacio">✅</span><p>No hay reportes pendientes por ahora.</p></div>`;
       return;
     }
 
+    // Un solo pedido con todos los autores en vez de uno por reporte.
+    const listaUsuarios = await obtenerUsuarios();
+    const mapaUsuarios = {};
+    listaUsuarios.forEach(u => { mapaUsuarios[u.username] = u; });
+
     contenedor.innerHTML = pendientes.map(reporte=>{
 
-      const autor = buscarUsuarioPorNombre(reporte.usuario);
+      const autor = mapaUsuarios[reporte.usuario] || null;
       const autorSuspendido = autor && autor.suspendido;
-      const origen = reporte.perfil === "chatGeneral"
+      const esChat = reporte.origen === "chatGeneral";
+      const origen = esChat
         ? "💬 Chat general"
-        : `👤 Perfil de ${reporte.perfil}`;
+        : `👤 Perfil de ${reporte.origen}`;
+      const fecha = new Date(reporte.created_at).toLocaleString("es-AR");
 
       return `
         <div class="admin-tarjeta-reporte">
 
-          <div class="admin-reporte-origen">${origen} · ${reporte.fecha}</div>
+          <div class="admin-reporte-origen">${origen} · ${fecha}</div>
 
           <p class="admin-reporte-texto">"${reporte.texto}"</p>
 
@@ -490,7 +517,7 @@ if(!tieneAccesoPanel){
 
           <div class="admin-tarjeta-acciones">
             <button class="btn-ignorar-reporte" data-id="${reporte.id}">👁️ Ignorar</button>
-            <button class="btn-eliminar-reporte" data-id="${reporte.id}" data-origen="${reporte.perfil === "chatGeneral" ? "comentario" : "publicacion"}">🗑️ Eliminar ${reporte.perfil === "chatGeneral" ? "comentario" : "publicación"}</button>
+            <button class="btn-eliminar-reporte" data-id="${reporte.id}" data-origen="${esChat ? "comentario" : "publicacion"}">🗑️ Eliminar ${esChat ? "comentario" : "publicación"}</button>
             ${autor
               ? `
                 <button class="btn-advertir" data-usuario="${reporte.usuario}">⚠️ Advertir autor</button>
@@ -508,91 +535,91 @@ if(!tieneAccesoPanel){
     }).join("");
 
     contenedor.querySelectorAll(".btn-ignorar-reporte").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const reporte = obtenerReportes().find(r => r.id === btn.dataset.id);
-        ignorarReporte(btn.dataset.id);
-        registrarAccionModeracion({
+      btn.addEventListener("click", async ()=>{
+        const reporte = _reportesCacheAdmin.find(r => String(r.id) === btn.dataset.id);
+        await resolverReporte(btn.dataset.id, "ignorar");
+        await registrarAccionModeracion({
           accion: "rechazar_reporte",
           usuarioAfectado: reporte ? reporte.usuario : null,
           motivo: reporte ? `Reporte ignorado (motivo original: ${reporte.motivo})` : ""
         });
-        renderReportesAdmin();
+        await renderReportesAdmin();
         if(esAdmin){
-          renderEstadisticas();
-          renderHistorialModeracion();
+          await renderEstadisticas();
+          await renderHistorialModeracion();
         }
       });
     });
 
     contenedor.querySelectorAll(".btn-eliminar-reporte").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
+      btn.addEventListener("click", async ()=>{
         const esPublicacion = btn.dataset.origen === "publicacion";
         if(!confirm(`¿Eliminar ${esPublicacion ? "esta publicación" : "este comentario"}? Esta acción no se puede deshacer.`)) return;
-        const reporte = obtenerReportes().find(r => r.id === btn.dataset.id);
-        eliminarComentarioDeReporte(btn.dataset.id);
-        registrarAccionModeracion({
+        const reporte = _reportesCacheAdmin.find(r => String(r.id) === btn.dataset.id);
+        await resolverReporte(btn.dataset.id, "eliminar");
+        await registrarAccionModeracion({
           accion: "aceptar_reporte",
           usuarioAfectado: reporte ? reporte.usuario : null,
           motivo: reporte ? `Se eliminó ${esPublicacion ? "la publicación" : "el comentario"} (motivo del reporte: ${reporte.motivo})` : ""
         });
-        renderReportesAdmin();
+        await renderReportesAdmin();
         if(esAdmin){
-          renderEstadisticas();
-          renderHistorialModeracion();
+          await renderEstadisticas();
+          await renderHistorialModeracion();
         }
       });
     });
 
     contenedor.querySelectorAll(".btn-advertir").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        if(!advertirUsuario(btn.dataset.usuario)) return;
-        renderReportesAdmin();
+      btn.addEventListener("click", async ()=>{
+        if(!(await advertirUsuario(btn.dataset.usuario))) return;
+        await renderReportesAdmin();
         if(esAdmin){
-          renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          renderHistorialModeracion();
+          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
+          await renderHistorialModeracion();
         }
       });
     });
 
     contenedor.querySelectorAll(".btn-suspender").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
+      btn.addEventListener("click", async ()=>{
         const nombre = btn.dataset.usuario;
         if(!confirm(`¿Suspender a ${nombre}? No podrá comentar, mandar mensajes ni usar la comunidad.`)) return;
         const motivo = prompt(`¿Por qué suspendés a ${nombre}? (opcional)`) || "";
-        suspenderUsuario(nombre, motivo);
-        registrarAccionModeracion({
+        await suspenderUsuario(nombre, motivo);
+        await registrarAccionModeracion({
           accion: "suspender_usuario",
           usuarioAfectado: nombre,
           motivo: motivo
         });
-        renderReportesAdmin();
+        await renderReportesAdmin();
         if(esAdmin){
-          renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          renderEstadisticas();
-          renderHistorialModeracion();
+          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
+          await renderEstadisticas();
+          await renderHistorialModeracion();
         }
       });
     });
 
     contenedor.querySelectorAll(".btn-reactivar").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
+      btn.addEventListener("click", async ()=>{
         const nombre = btn.dataset.usuario;
-        reactivarUsuario(nombre);
-        registrarAccionModeracion({
+        await reactivarUsuario(nombre);
+        await registrarAccionModeracion({
           accion: "reactivar_usuario",
           usuarioAfectado: nombre
         });
-        renderReportesAdmin();
+        await renderReportesAdmin();
         if(esAdmin){
-          renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          renderEstadisticas();
-          renderHistorialModeracion();
+          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
+          await renderEstadisticas();
+          await renderHistorialModeracion();
         }
       });
     });
 
   }
 
-  renderReportesAdmin();
+  await renderReportesAdmin();
 
-}
+})();

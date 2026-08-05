@@ -373,7 +373,7 @@ if (avatar && caja) {
     btnAmigo.addEventListener("click", async () => {
       if (!activo || btnAmigo.disabled) return;
 
-      if(typeof bloqueadoPorSuspension === "function" && bloqueadoPorSuspension()) return;
+      if(typeof bloqueadoPorSuspension === "function" && await bloqueadoPorSuspension()) return;
 
       btnAmigo.disabled = true;
 
@@ -460,7 +460,10 @@ if (avatar && caja) {
   // ---------- COMENTARIOS ----------
 
   function obtenerAvatarComentario(nombre) {
-    const av = leerJSON(localStorage.getItem("avatar_" + nombre) || "null");
+    // El avatar viaja embebido en el usuario (users.avatar, Neon); se
+    // lee de la caché en memoria de js/core.js, precargada antes de
+    // pintar la lista de comentarios (ver renderComentarios más abajo).
+    const av = typeof obtenerAvatarCacheado === "function" ? obtenerAvatarCacheado(nombre) : null;
     if (!av) {
       return `<img src="imagenes/avatar.png" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #f0b429;" alt="" loading="lazy">`;
     }
@@ -474,12 +477,26 @@ if (avatar && caja) {
     return `<div class="avatar-mini">${capas}</div>`;
   }
 
-  function obtenerListaComentarios() {
-    return leerJSON(localStorage.getItem("comentarios_" + usuario.nombre) || "[]");
+  // Comentarios viven en Neon (tabla profile_comments,
+  // /api/content?action=comments). Se guarda una copia en memoria para
+  // que el handler de "Reportar" pueda encontrar el texto del
+  // comentario sin volver a pedirlo al servidor.
+  let _comentariosCacheUsuario = [];
+
+  async function obtenerListaComentarios() {
+    try{
+      const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(usuario.nombre));
+      const datos = await resp.json();
+      _comentariosCacheUsuario = (datos && datos.success) ? datos.comentarios : [];
+    }catch(error){
+      console.warn("MacroReborn: no se pudieron cargar los comentarios.", error);
+      _comentariosCacheUsuario = [];
+    }
+    return _comentariosCacheUsuario;
   }
 
-  function renderComentarios() {
-    const lista = obtenerListaComentarios();
+  async function renderComentarios() {
+    const lista = await obtenerListaComentarios();
     const contenedor = document.getElementById("listaComentarios");
     if (!contenedor) return;
 
@@ -488,7 +505,11 @@ if (avatar && caja) {
       return;
     }
 
-    contenedor.innerHTML = lista.map((c,i) => `
+    if (typeof cargarAvataresDeVarios === "function") {
+      await cargarAvataresDeVarios(lista.map(c => c.usuario));
+    }
+
+    contenedor.innerHTML = lista.map((c) => `
       <div class="comentario">
         <div class="usuario-comentario" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
           ${obtenerAvatarComentario(c.usuario)}
@@ -496,15 +517,15 @@ if (avatar && caja) {
         </div>
         ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(c.usuario, true) : ""}
         <p style="color:#cbd5e1;margin:0 0 10px;">${c.texto}</p>
-        ${typeof botonLikeHTML === "function" ? botonLikeHTML("comentarios_" + usuario.nombre, i, activo ? activo.nombre : null) : ""}
-        <button class="boton-reportar" data-index="${i}">🚩 Reportar</button>
+        ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, activo ? activo.nombre : null) : ""}
+        <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>
     `).join("");
 
     // REPORTAR
     contenedor.querySelectorAll(".boton-reportar").forEach(btn=>{
       btn.onclick = () => {
-        const index = Number(btn.dataset.index);
+        const id = btn.dataset.id;
 
         const confirmar = typeof pedirConfirmacion === "function"
           ? (mensaje, onConfirmar) => pedirConfirmacion(mensaje, onConfirmar, "🚩 Reportar")
@@ -512,9 +533,9 @@ if (avatar && caja) {
 
         confirmar("¿Seguro que querés reportar este comentario?", () => {
           if(typeof reportarComentario === "function"){
-            const listaActual = obtenerListaComentarios();
+            const comentario = _comentariosCacheUsuario.find(c => String(c.id) === id);
             const motivo = prompt("¿Por qué reportás este comentario? (opcional)") || "";
-            reportarComentario(usuario.nombre, index, listaActual[index], motivo);
+            reportarComentario("comment", id, usuario.nombre, comentario, motivo);
           }
           alert("Gracias. El comentario fue reportado correctamente.");
         });
@@ -529,94 +550,84 @@ if (avatar && caja) {
   const inputComentario = document.getElementById("comentarioTexto");
 
   if (botonComentar && inputComentario) {
-    const enviarComentario = () => {
+    const enviarComentario = async () => {
 
-      if(typeof bloqueadoPorSuspension === "function" && bloqueadoPorSuspension()) return;
+      if(typeof bloqueadoPorSuspension === "function" && await bloqueadoPorSuspension()) return;
 
       const texto = inputComentario.value.trim();
       if (!texto) return;
 
       const quien = activo ? activo.nombre : "Invitado";
-      const nuevo = { usuario: quien, texto };
+
       // ==============================
-// NOTIFICACION DE MENCION
-// ==============================
+      // NOTIFICACION DE MENCION
+      // ==============================
 
-if(typeof crearNotificacion === "function"){
+      if(typeof crearNotificacion === "function"){
 
-    const mencion = texto.match(/@(\w+)/);
+        const mencion = texto.match(/@(\w+)/);
 
+        if(mencion){
 
-    if(mencion){
+          const nombreMencionado = mencion[1];
 
-        const nombreMencionado = mencion[1];
+          // La lista completa de usuarios vive en Neon
+          // (/api/users), ya no en la clave localStorage
+          // "usuariosMacro" (que dejó de llenarse desde la Fase 1).
+          const existe = typeof buscarUsuarioPorNombre === "function"
+            ? await buscarUsuarioPorNombre(nombreMencionado)
+            : null;
 
-
-        const usuariosTodos = leerJSON(
-            localStorage.getItem("usuariosMacro") || "[]"
-        );
-
-
-        const existe = usuariosTodos.find(
-            u => u.nombre === nombreMencionado
-        );
-
-
-        if(existe && existe.nombre !== quien){
-
+          if(existe && existe.username !== quien){
 
             crearNotificacion(
-
-                existe.nombre,
-
-                "📢 Te mencionaron",
-
-                quien + " te mencionó en un comentario."
-
+              existe.username,
+              "📢 Te mencionaron",
+              quien + " te mencionó en un comentario."
             );
 
+          }
 
         }
 
-    }
+      }
 
-}
+      try{
+        await fetch("/api/content?action=comments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            profileUsername: usuario.nombre,
+            texto: texto,
+            authorUsername: quien
+          })
+        });
+      }catch(error){
+        console.warn("MacroReborn: no se pudo publicar el comentario.", error);
+        return;
+      }
 
-      const lista = obtenerListaComentarios();
+      inputComentario.value = "";
 
-lista.push(nuevo);
+      await renderComentarios();
 
-localStorage.setItem(
-    "comentarios_" + usuario.nombre,
-    JSON.stringify(lista)
-);
+      // ==============================
+      // NOTIFICACIÓN NUEVO COMENTARIO
+      // ==============================
 
-inputComentario.value = "";
+      if(
+        activo &&
+        activo.nombre !== usuario.nombre &&
+        typeof crearNotificacion === "function"
+      ){
 
-renderComentarios();
+        crearNotificacion(
+          usuario.nombre,
+          "💬 Nuevo comentario",
+          activo.nombre + " comentó en tu perfil."
+        );
 
-
-// ==============================
-// NOTIFICACIÓN NUEVO COMENTARIO
-// ==============================
-
-if(
-    activo &&
-    activo.nombre !== usuario.nombre &&
-    typeof crearNotificacion === "function"
-){
-
-    crearNotificacion(
-
-        usuario.nombre,
-
-        "💬 Nuevo comentario",
-
-        activo.nombre + " comentó en tu perfil."
-
-    );
-
-}
+      }
 
       // ==============================
       // LOGRO PRIMER COMENTARIO

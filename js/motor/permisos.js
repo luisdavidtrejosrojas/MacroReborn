@@ -1,33 +1,38 @@
 // ==============================
-// SISTEMA DE ROLES Y PERMISOS - MacroReborn
+// SISTEMA DE ROLES Y PERMISOS - MacroReborn (Fase 2: Neon, cierre de migración)
 // ==============================
-// Se apoya en el campo "insignias" que ya vive dentro de cada usuario
-// (ver js/motor/insignias.js) para decidir qué puede hacer cada uno.
-// Todo se guarda con el mismo mecanismo que el resto del sitio
-// (localStorage, clave "usuariosMacro"), así que no rompe nada de lo
-// que ya existía y queda preparado para el día que esto se conecte a
-// una base de datos real: alcanza con reemplazar estas funciones de
-// lectura/escritura por llamadas a una API sin tocar el resto del sitio.
+// Se apoya en las insignias oficiales (js/motor/insignias.js, ya en
+// Neon desde la Fase 1) para decidir qué puede hacer cada uno.
+//
+// La lista de usuarios y la suspensión de cuentas vivían antes en
+// localStorage bajo la clave "usuariosMacro" — una clave que dejó de
+// llenarse el día que el registro/login pasaron a Neon (Fase 1), así
+// que en la práctica "obtenerUsuarios()" siempre devolvía un array
+// vacío y la suspensión nunca tenía efecto real. Ahora todo sale de
+// /api/users (tabla "users" de Neon).
 
 
 // ==============================
-// LECTURA / ESCRITURA DE USUARIOS
+// LECTURA DE USUARIOS (Neon)
 // ==============================
 
-function obtenerUsuarios(){
+// Trae la lista completa de usuarios (para el panel de administración).
+// tope alto a propósito: el panel necesita verlos a todos, no solo los
+// primeros 300 que trae /api/users por defecto.
+async function obtenerUsuarios(){
 
-  return leerJSON(
-    localStorage.getItem("usuariosMacro") || "[]"
-  );
+  try{
 
-}
+    const resp = await fetch("/api/users?limit=2000");
+    const datos = await resp.json();
+    return (datos && datos.success) ? datos.users : [];
 
-function guardarUsuarios(lista){
+  }catch(error){
 
-  localStorage.setItem(
-    "usuariosMacro",
-    JSON.stringify(lista)
-  );
+    console.warn("MacroReborn: no se pudo cargar la lista de usuarios.", error);
+    return [];
+
+  }
 
 }
 
@@ -39,36 +44,22 @@ function obtenerUsuarioActivo(){
 
 }
 
-function buscarUsuarioPorNombre(nombre){
+async function buscarUsuarioPorNombre(nombre){
 
-  return obtenerUsuarios().find(u => u.nombre === nombre) || null;
+  if(!nombre) return null;
 
-}
+  try{
 
-// Actualiza un usuario dentro de "usuariosMacro" y, si es el que tiene
-// la sesión iniciada en este navegador, sincroniza también
-// "usuarioActivo" para que los cambios se vean sin tener que
-// desloguearse.
+    const resp = await fetch("/api/users?username=" + encodeURIComponent(nombre));
+    const datos = await resp.json();
+    return (datos && datos.success) ? datos.user : null;
 
-function actualizarUsuario(nombre, cambios){
+  }catch(error){
 
-  const usuarios = obtenerUsuarios();
-  const idx = usuarios.findIndex(u => u.nombre === nombre);
+    console.warn("MacroReborn: no se pudo cargar el usuario.", error);
+    return null;
 
-  if(idx === -1) return null;
-
-  usuarios[idx] = Object.assign({}, usuarios[idx], cambios);
-  guardarUsuarios(usuarios);
-
-  const activo = obtenerUsuarioActivo();
-  if(activo && activo.nombre === nombre){
-    localStorage.setItem(
-      "usuarioActivo",
-      JSON.stringify(Object.assign({}, activo, cambios))
-    );
   }
-
-  return usuarios[idx];
 
 }
 
@@ -93,8 +84,11 @@ const ROLES = {
 // ==============================
 // CONSULTA DE ROL / INSIGNIAS
 // ==============================
-// Aceptan tanto el nombre de usuario como el objeto usuario, para poder
-// usarse cómodamente desde cualquier página.
+// Sincrónicas a propósito (se llaman dentro de bucles de render): leen
+// de la caché en memoria de js/motor/insignias.js. Cualquier página
+// que necesite un resultado confiable tiene que llamar antes a
+// cargarInsignias(nombre) (o cargarInsigniasDeVarios) y esperarlo, tal
+// como ya hacía el resto del sitio con las insignias.
 
 function _insigniasDe(usuarioONombre){
 
@@ -104,12 +98,7 @@ function _insigniasDe(usuarioONombre){
 
   if(!nombre) return [];
 
-  if(typeof obtenerInsignias === "function"){
-    return obtenerInsignias(nombre);
-  }
-
-  const usuario = buscarUsuarioPorNombre(nombre);
-  return (usuario && Array.isArray(usuario.insignias)) ? usuario.insignias : [];
+  return typeof obtenerInsignias === "function" ? obtenerInsignias(nombre) : [];
 
 }
 
@@ -171,13 +160,13 @@ function tienePermiso(usuarioONombre, permiso){
 
 
 // ==============================
-// SUSPENSIÓN DE USUARIOS
+// SUSPENSIÓN DE USUARIOS (Neon)
 // ==============================
 // Un usuario suspendido no puede comentar, mandar mensajes ni hacer
 // acciones de comunidad (agregar amigos, aceptar solicitudes, etc).
 // Sigue pudiendo navegar el sitio con normalidad.
 
-function estaSuspendido(usuarioONombre){
+async function estaSuspendido(usuarioONombre){
 
   const nombre = typeof usuarioONombre === "string"
     ? usuarioONombre
@@ -185,41 +174,63 @@ function estaSuspendido(usuarioONombre){
 
   if(!nombre) return false;
 
-  const usuario = buscarUsuarioPorNombre(nombre);
+  const usuario = await buscarUsuarioPorNombre(nombre);
   return !!(usuario && usuario.suspendido);
 
 }
 
-function suspenderUsuario(nombre, motivo){
+async function suspenderUsuario(nombre, motivo){
 
-  return actualizarUsuario(nombre, {
-    suspendido: true,
-    fechaSuspension: new Date().toLocaleString("es-AR"),
-    motivoSuspension: motivo || "No especificado"
-  });
+  try{
+
+    const resp = await fetch("/api/users?action=suspend", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: nombre, motivo: motivo || "" })
+    });
+    const datos = await resp.json();
+    return (datos && datos.success) ? datos.user : null;
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudo suspender al usuario.", error);
+    return null;
+
+  }
 
 }
 
-function reactivarUsuario(nombre){
+async function reactivarUsuario(nombre){
 
-  return actualizarUsuario(nombre, {
-    suspendido: false,
-    fechaSuspension: null,
-    motivoSuspension: null
-  });
+  try{
+
+    const resp = await fetch("/api/users?action=reactivate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: nombre })
+    });
+    const datos = await resp.json();
+    return (datos && datos.success) ? datos.user : null;
+
+  }catch(error){
+
+    console.warn("MacroReborn: no se pudo reactivar al usuario.", error);
+    return null;
+
+  }
 
 }
 
 // Chequeo genérico para usar antes de comentar / mandar mensajes /
 // acciones de comunidad. Si está suspendido, muestra el aviso y
-// devuelve true (para poder hacer "if(bloqueadoPorSuspension()) return;").
+// devuelve true (para poder hacer "if(await bloqueadoPorSuspension()) return;").
 
-function bloqueadoPorSuspension(){
+async function bloqueadoPorSuspension(){
 
   const activo = obtenerUsuarioActivo();
   if(!activo) return false;
 
-  if(!estaSuspendido(activo.nombre)) return false;
+  if(!(await estaSuspendido(activo.nombre))) return false;
 
   mostrarAvisoSuspension();
   return true;
@@ -240,17 +251,17 @@ function mostrarAvisoSuspension(){
 // (lo agrega navbar.js en el DOM al cargar). No pisa nada del diseño
 // existente: usa las mismas clases que ya usa navbar.js.
 
-function _pintarBannerSuspension(){
+async function _pintarBannerSuspension(){
 
   const activo = obtenerUsuarioActivo();
-  if(!activo || !estaSuspendido(activo.nombre)) return;
+  if(!activo) return;
+
+  const usuarioActualizado = await buscarUsuarioPorNombre(activo.nombre);
+  if(!usuarioActualizado || !usuarioActualizado.suspendido) return;
 
   if(document.getElementById("avisoSuspension")) return;
 
-  const usuarioActualizado = buscarUsuarioPorNombre(activo.nombre);
-  const motivo = usuarioActualizado && usuarioActualizado.motivoSuspension
-    ? usuarioActualizado.motivoSuspension
-    : "";
+  const motivo = usuarioActualizado.motivo_suspension || "";
 
   const banner = document.createElement("div");
   banner.id = "avisoSuspension";
@@ -261,12 +272,17 @@ function _pintarBannerSuspension(){
 
 }
 
-function _pintarAccesoPanel(){
+async function _pintarAccesoPanel(){
 
   const activo = obtenerUsuarioActivo();
   const nav = document.querySelector(".nav-links") || document.querySelector("nav");
 
   if(!activo || !nav) return;
+
+  if(typeof cargarInsignias === "function"){
+    await cargarInsignias(activo.nombre);
+  }
+
   if(!tienePermiso(activo, "panelModeracion")) return;
   if(document.getElementById("enlacePanelAdmin")) return;
 
