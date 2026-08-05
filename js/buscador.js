@@ -148,6 +148,19 @@
     return "🎮";
   }
 
+  // FIX: acá se mostraba siempre "imagenes/avatar.png" (el avatar por
+  // defecto), nunca el avatar real de la persona. /api/users?q= ya
+  // trae la columna "avatar" de cada usuario (ver api/users.js), así
+  // que alcanza con reutilizar avatarMiniaturaHTML() de js/core.js
+  // -la misma función que arma el avatar en miniatura en comentarios,
+  // reseñas y actividad- en vez de hardcodear la imagen por defecto.
+  function avatarUsuarioHTML(u) {
+    if (typeof avatarMiniaturaHTML === "function") {
+      return avatarMiniaturaHTML(u.avatar);
+    }
+    return `<img src="imagenes/avatar.png" alt="">`;
+  }
+
   function renderResultados(panel, resultados) {
     const total = resultados.juegos.length + resultados.usuarios.length + resultados.noticias.length;
 
@@ -180,7 +193,7 @@
         html += `
           <a class="buscador-item" href="usuario.html?usuario=${encodeURIComponent(u.nombre)}">
             <span class="buscador-item-imagen buscador-item-avatar">
-              <img src="imagenes/avatar.png" alt="">
+              ${avatarUsuarioHTML(u)}
             </span>
             <span class="buscador-item-info">
               <span class="buscador-item-nombre">${escaparHTML(u.nombre)}</span>

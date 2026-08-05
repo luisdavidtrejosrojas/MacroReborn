@@ -117,15 +117,22 @@
   </section>
 
   <!-- ACTIVIDAD RECIENTE -->
+  <!-- Contenido pintado por js/usuario-actividad.js (reutiliza el
+       mismo motor que la pestaña "Actividad reciente" del perfil
+       propio, js/motor/actividad.js). -->
   <section id="actividad" class="contenido-tab">
     <h2>📜 Actividad reciente</h2>
-    <p>No hay actividad todavía.</p>
+    <div id="listaActividadUsuario"><p>No hay actividad todavía.</p></div>
   </section>
 
   <!-- FAVORITOS -->
+  <!-- FIX: faltaba el contenedor ".juegos-favoritos" (el mismo que usa
+       perfil.html) para que las tarjetas de juegos favoritos tengan la
+       grilla y el tamaño de imagen correctos; sin él, usuario-favoritos.js
+       insertaba las tarjetas sueltas dentro de la sección. -->
   <section id="favoritos" class="contenido-tab">
     <h2>❤️ Juegos favoritos</h2>
-    <p>Todavía no tiene juegos favoritos.</p>
+    <div class="juegos-favoritos"><p>Todavía no tiene juegos favoritos.</p></div>
   </section>
 
   <!-- ÚLTIMOS JUGADOS -->
@@ -211,6 +218,7 @@
 <script src="js/datos-juegos.js"></script>
 <script src="js/ranking.js"></script>
 <script src="js/usuario.js"></script>
+<script src="js/usuario-actividad.js"></script>
 <script src="js/usuario-favoritos.js"></script>
 <script src="js/usuario-historial.js"></script>
 <script src="js/navbar.js"></script>

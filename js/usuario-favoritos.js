@@ -11,7 +11,12 @@ window.location.search
 const idUsuario = parametrosUsuario.get("usuario");
 
 
-const seccionFavoritos = document.querySelector("#favoritos");
+// FIX: antes apuntaba a toda la sección "#favoritos" (con su <h2>
+// incluido) y las tarjetas quedaban sueltas ahí adentro, sin la
+// grilla de ".juegos-favoritos" que sí tiene perfil.html -> las
+// imágenes se veían desconfiguradas. Ahora apunta directo al
+// contenedor con esa clase (mismo criterio que perfil-favoritos.js).
+const seccionFavoritos = document.querySelector("#favoritos .juegos-favoritos");
 
 
 async function renderFavoritosUsuario(){

@@ -42,7 +42,14 @@ datosUsuario.nivel = datosUsuario.level;
 datosUsuario.fechaRegistro = datosUsuario.created_at;
 datosUsuario.logros = datosUsuario.logros || 0;
 datosUsuario.biografia = datosUsuario.bio || "Todavía no escribió una biografía.";
-datosUsuario.ultimaConexion = datosUsuario.ultimaConexion || "Nunca";
+
+// FIX: acá se pisaba datosUsuario.ultimaConexion con un campo que
+// nunca existía ("ultimaConexion"), así que siempre terminaba en
+// "Nunca". El dato real de Neon viaja como "last_login" (llega en
+// datosUsuario porque /api/auth?action=login y /api/auth?action=register
+// lo incluyen en la respuesta y js/login.js lo guarda tal cual en
+// usuarioActivo). Se guarda aparte para no perderlo.
+datosUsuario.ultimaConexion = datosUsuario.last_login || null;
 
 // GUARDIA DE SESIÓN
 // Sin esto, cualquiera podía entrar a perfil.html sin haber iniciado
@@ -157,11 +164,21 @@ const logrosListos = typeof cargarLogros === "function"
 
 logrosListos.then(actualizarPuntosLogrosUI);
 
-document.getElementById("fechaRegistro").textContent = usuario.fechaRegistro;
+// FIX: "Registrado" mostraba el timestamp ISO crudo de Neon
+// (ej. "2026-08-05T02:48:25.503Z") en vez de una fecha legible.
+document.getElementById("fechaRegistro").textContent =
+  typeof fechaLegible === "function"
+    ? fechaLegible(usuario.fechaRegistro, "Desconocida")
+    : usuario.fechaRegistro;
 
+// FIX: usaba un campo ("ultimaConexionTS") que nunca se llenaba en
+// ningún lado del sitio, así que siempre caía al valor por defecto
+// "Nunca" sin importar si la persona acababa de iniciar sesión. Ahora
+// usa el last_login real (ver más arriba, donde se guarda en
+// datosUsuario.ultimaConexion).
 document.getElementById("ultimaConexion").textContent =
   typeof tiempoRelativo === "function"
-    ? tiempoRelativo(datosUsuario.ultimaConexionTS || datosUsuario.ultimaConexion, "Nunca")
+    ? tiempoRelativo(datosUsuario.ultimaConexion, "Nunca")
     : usuario.ultimaConexion;
 
 

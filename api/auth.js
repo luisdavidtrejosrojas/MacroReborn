@@ -66,10 +66,17 @@ async function register(req, res) {
     });
   }
 
+  // FIX: last_login arrancaba en now() al registrarse, como si la
+  // persona ya hubiera iniciado sesión. Eso hacía que un usuario recién
+  // registrado (que todavía nunca inició sesión) apareciera "En línea"
+  // en Comunidad y con "Última conexión" reciente en su perfil. Queda
+  // en NULL hasta el primer login real (login() más arriba sí lo
+  // actualiza a now()). Se agrega también a RETURNING para que el
+  // frontend (perfil.js) pueda leerlo igual que hace con el de login.
   const user = await sql`
     INSERT INTO users (username, password, level, xp, status, created_at, last_login)
-    VALUES (${username}, ${password}, 1, 0, 'active', now(), now())
-    RETURNING id, username, level, xp, bio, avatar, status, created_at;
+    VALUES (${username}, ${password}, 1, 0, 'active', now(), NULL)
+    RETURNING id, username, level, xp, bio, avatar, status, created_at, last_login;
   `;
 
   return res.status(200).json({

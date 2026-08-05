@@ -570,6 +570,13 @@ html {
   border: 2px solid var(--gold);
   object-fit: cover;
   background: var(--bg-panel-alt);
+  /* FIX: ahora es un <div> (contenedor de las capas del avatar real,
+     ver avatarMiniaturaHTML en js/core.js) en vez de un <img> suelto,
+     así que necesita position:relative + overflow:hidden para que las
+     capas absolutas queden recortadas dentro del círculo. */
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .bienvenida-usuario .texto b {

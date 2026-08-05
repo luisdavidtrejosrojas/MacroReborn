@@ -245,3 +245,115 @@ async function cargarAvataresDeVarios(nombres){
   await Promise.all(unicos.map(nombre => cargarAvatarUsuario(nombre)));
 
 }
+
+
+
+
+// ==============================
+// FECHA LEGIBLE (Fase 1: Neon)
+// ==============================
+// Convierte una fecha/timestamp (ISO de Neon, epoch, etc.) en un
+// texto corto y legible tipo "05/08/2026 13:53" (formato es-AR).
+// Mismo criterio de "porDefecto" que ya usa tiempoRelativo() más
+// arriba. Se usa, por ejemplo, para "Registrado" en perfil.html y
+// usuario.html, que hasta ahora mostraban el ISO crudo de Neon.
+
+function fechaLegible(fechaOTimestamp, porDefecto){
+  if (fechaOTimestamp === undefined || fechaOTimestamp === null || fechaOTimestamp === "") {
+    return porDefecto !== undefined ? porDefecto : "Desconocida";
+  }
+
+  const fecha = new Date(fechaOTimestamp);
+
+  if (isNaN(fecha.getTime())) {
+    return porDefecto !== undefined ? porDefecto : "Desconocida";
+  }
+
+  const fechaCorta = fecha.toLocaleDateString("es-AR");
+  const horaCorta = fecha.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+
+  return fechaCorta + " " + horaCorta;
+}
+
+
+// ==============================
+// ¿ESTÁ CONECTADO? (Fase 2: cierre de migración)
+// ==============================
+// Mismo criterio que ya usa comunidad.js para la lista de "jugadores
+// conectados": se considera en línea si tuvo actividad (last_login,
+// refrescado por el latido de _iniciarLatidoServidor más arriba)
+// dentro de los últimos MINUTOS_CONECTADO minutos. Se centraliza acá
+// (con un nombre propio para no pisar la función local que ya tiene
+// comunidad.js) para que cualquier otra página -como usuario.html-
+// pueda mostrar el estado real de conexión de un usuario sin
+// reinventar este cálculo.
+
+function usuarioEstaConectado(usuario){
+  if(!usuario || !usuario.last_login) return false;
+
+  const ultima = new Date(usuario.last_login).getTime();
+  if(isNaN(ultima)) return false;
+
+  return (Date.now() - ultima) <= MINUTOS_CONECTADO * 60 * 1000;
+}
+
+
+// ==============================
+// AVATAR EN MINIATURA — HTML COMPARTIDO (Fase 2: cierre de migración)
+// ==============================
+// Arma el HTML de un avatar en miniatura (capas apiladas) a partir
+// del valor crudo guardado en users.avatar (string JSON u objeto ya
+// normalizado). Misma convención de rutas que ya usan
+// comunidad.js/amigos.js/usuario.js/chat.js: el "modelo" (ej. "tora")
+// vive en imagenes/tora.png, y cada capa de guardarropa (ej.
+// "tora_pelo1") vive en imagenes/tora/pelo1.png. Si el usuario no
+// tiene avatar guardado, devuelve el avatar por defecto
+// (imagenes/avatar.png) — nunca genera uno al azar.
+//
+// El HTML se arma con estilos inline (mismo criterio "top:0;left:0;
+// width:100%;height:100%;object-fit:contain" que ya usan
+// usuario.js/amigos.js/comunidad.js para el avatar principal) para
+// que se vea bien en CUALQUIER contenedor, sin depender de que la
+// página tenga cargado css/perfil.css ni de un tamaño fijo en
+// píxeles. Así se puede reutilizar en lugares nuevos como el panel
+// del buscador (ítems chicos) o la bienvenida de Inicio, además de
+// los que ya arman este mismo HTML "a mano" en cada archivo.
+
+const ORDEN_CAPAS_AVATAR = [
+  "fondo","espalda","modelo","piel","ojos","boca",
+  "botas","pantalon","remera","guantes","accesorio",
+  "cara","pelo","mascota","borde"
+];
+
+function rutaCapaAvatar(valor){
+  if(!valor || valor === "ninguno") return null;
+
+  const texto = String(valor);
+  const idx = texto.indexOf("_");
+
+  if(idx === -1) return "imagenes/" + texto + ".png";
+
+  return "imagenes/" + texto.slice(0, idx) + "/" + texto.slice(idx + 1) + ".png";
+}
+
+function avatarMiniaturaHTML(avatarCrudo){
+  const avatar = normalizarAvatar(avatarCrudo);
+  const avatarPorDefecto =
+    `<img src="imagenes/avatar.png" alt="" loading="lazy" ` +
+    `style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`;
+
+  if(!avatar) return avatarPorDefecto;
+
+  let capas = "";
+  ORDEN_CAPAS_AVATAR.forEach(tipo=>{
+    const ruta = rutaCapaAvatar(avatar[tipo]);
+    if(ruta){
+      capas += `<img src="${ruta}" alt="" loading="lazy" ` +
+        `style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;">`;
+    }
+  });
+
+  if(!capas) return avatarPorDefecto;
+
+  return `<div style="position:relative;width:100%;height:100%;">${capas}</div>`;
+}

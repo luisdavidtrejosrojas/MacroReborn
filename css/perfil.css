@@ -485,6 +485,24 @@ button {
   object-fit: contain;
 }
 
+/* FIX: esta clase se usa para el avatar por defecto (usuarios que
+   todavía no armaron su avatar personalizado, el caso más común) en
+   comentarios y en "Últimos comentarios" de Inicio, pero no tenía
+   ninguna regla propia: salía sin estilo, en su tamaño real (mucho
+   más grande que el círculo de 55px de ".avatar-mini"), rompiendo el
+   diseño y dando la impresión de que "no se ve el avatar". Se le da
+   el mismo tamaño/recorte circular que ya usa ".avatar-mini" para las
+   capas personalizadas. */
+.avatar-comentario {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-deep);
+  border: 2px solid var(--gold);
+}
+
 /* ==========================================================================
    JUEGOS FAVORITOS / ÚLTIMOS JUGADOS
    (tarjetas coherentes con css/juegos.css del catálogo)

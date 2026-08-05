@@ -143,7 +143,17 @@ if (!usuario) {
   if(typeof renderInsigniasEnContenedor === "function"){
     renderInsigniasEnContenedor("insigniasPerfil", usuario.nombre);
   }
-  document.getElementById("estado").textContent = usuario.estado || "🟢 En línea";
+  // FIX: "estado" nunca venía en la respuesta de /api/users (esa
+  // columna es el estado de la cuenta -status-, no de conexión), así
+  // que siempre caía al literal fijo "🟢 En línea" sin importar si la
+  // persona estaba realmente conectada. Se calcula con el mismo
+  // criterio que ya usa Comunidad (usuarioEstaConectado, en
+  // js/core.js): en línea si tuvo actividad (last_login) en los
+  // últimos MINUTOS_CONECTADO minutos.
+  document.getElementById("estado").textContent =
+    (typeof usuarioEstaConectado === "function" && usuarioEstaConectado(usuario))
+      ? "🟢 En línea"
+      : "⚪ Desconectado";
   document.getElementById("nivel").textContent = "⭐ Nivel " + (usuario.nivel || 1);
   document.getElementById("biografia").textContent = usuario.biografia || "Todavía no escribió una biografía.";
   document.getElementById("xp").textContent = (usuario.xp || 0) + " XP";
@@ -167,11 +177,19 @@ if (!usuario) {
     document.getElementById("ranking").textContent = "Sin clasificar";
   }
 
-  document.getElementById("registro").textContent = usuario.fechaRegistro || "Desconocido";
+  // FIX: mismos dos bugs que en perfil.js (perfil propio) — se
+  // mostraba el ISO crudo de Neon en vez de una fecha legible, y se
+  // leía un campo ("ultimaConexionTS") que nunca existía en vez del
+  // last_login real que ya viaja embebido en "usuario" (viene de
+  // /api/users, ver más arriba).
+  document.getElementById("registro").textContent =
+    typeof fechaLegible === "function"
+      ? fechaLegible(usuario.fechaRegistro, "Desconocido")
+      : (usuario.fechaRegistro || "Desconocido");
 
   const textoUltimaConexion = typeof tiempoRelativo === "function"
-    ? tiempoRelativo(usuario.ultimaConexionTS || usuario.ultimaConexion, "Nunca")
-    : (usuario.ultimaConexion || "Nunca");
+    ? tiempoRelativo(usuario.last_login, "Nunca")
+    : (usuario.last_login || "Nunca");
 
   document.getElementById("ultimaConexion").textContent = "Última conexión: " + textoUltimaConexion;
 

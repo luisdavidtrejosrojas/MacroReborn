@@ -114,7 +114,7 @@
     </div>
 
     <div id="bienvenidaUsuario" class="bienvenida-usuario" style="display:none;">
-      <img src="imagenes/avatar.png" class="avatar-mini" alt="Avatar">
+      <div id="avatarBienvenida" class="avatar-mini"><img src="imagenes/avatar.png" alt="Avatar"></div>
       <div class="texto">
         <div>¡Hola de nuevo, <b id="bienvenidaNombre">jugador</b>! 👋</div>
         <span id="bienvenidaNivel"></span>
@@ -255,12 +255,24 @@
     var usuarioAcciones = document.getElementById("bienvenidaUsuarioAcciones");
     var nombreEl = document.getElementById("bienvenidaNombre");
     var nivelEl = document.getElementById("bienvenidaNivel");
+    var avatarEl = document.getElementById("avatarBienvenida");
 
     if (invitado) invitado.style.display = "none";
     if (usuarioBox) usuarioBox.style.display = "flex";
     if (usuarioAcciones) usuarioAcciones.style.display = "flex";
     if (nombreEl) nombreEl.textContent = usuario.nombre || "jugador";
     if (nivelEl && usuario.nivel) nivelEl.textContent = "⭐ Nivel " + usuario.nivel;
+
+    // FIX: acá siempre se quedaba el avatar por defecto
+    // (imagenes/avatar.png), nunca el avatar real armado por la
+    // persona en perfil.html. El avatar viaja embebido en
+    // "usuarioActivo" (users.avatar, Neon) desde que inició sesión, así
+    // que alcanza con reutilizar avatarMiniaturaHTML() de js/core.js
+    // (misma función que ya usan el buscador, comentarios, etc.) en
+    // vez de dejar el <img> estático del HTML.
+    if (avatarEl && typeof avatarMiniaturaHTML === "function") {
+      avatarEl.innerHTML = avatarMiniaturaHTML(usuario.avatar);
+    }
   } catch (e) {
     // Si algo falla, se mantiene la vista de invitado por defecto.
   }
