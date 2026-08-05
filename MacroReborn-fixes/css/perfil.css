@@ -1,0 +1,1254 @@
+/* ==========================================================================
+   MACRO REBORN — PERFIL (propio y público)
+   Usa los tokens de css/inicio.css (:root, .navbar, .pie-footer, etc).
+   Este archivo es el sistema visual compartido por perfil.html y
+   usuario.html. Ningún selector de acá cambia IDs/clases usados por JS,
+   solo se los da estilo.
+   ========================================================================== */
+
+.mr-root {
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.perfil {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ==========================================================================
+   CABECERA DEL PERFIL
+   ========================================================================== */
+
+.perfil-superior {
+  position: relative;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 34px;
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-base));
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 32px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.perfil-superior::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 520px 320px at 0% 0%, rgba(240, 180, 41, 0.12), transparent 60%);
+  pointer-events: none;
+}
+
+/* ---- Avatar principal ---- */
+
+.avatar {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 327 / 505;
+  border: 3px solid var(--gold);
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(240, 180, 41, 0.14), transparent 65%),
+    var(--bg-deep);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(240, 180, 41, 0.12);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ---- Datos ---- */
+
+.datos {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.datos h1 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3.6vw, 34px);
+  margin: 0 0 12px;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 60%, var(--gold-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  word-break: break-word;
+}
+
+.perfil-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.estado,
+.nivel {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.estado {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.nivel {
+  background: rgba(240, 180, 41, 0.14);
+  color: var(--gold-bright);
+  border: 1px solid rgba(240, 180, 41, 0.35);
+}
+
+.biografia {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 60ch;
+  margin: 0 0 18px;
+}
+
+.insignias {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  padding: 8px 14px;
+  border-radius: 999px;
+  width: fit-content;
+  margin-bottom: 20px;
+}
+
+.datos button {
+  align-self: flex-start;
+  background: var(--bg-panel);
+  color: var(--text-main);
+  border: 1px solid var(--line);
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13.5px;
+  transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.datos button:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
+/* Botón "Agregar amigo" en usuario.html (mismo elemento, mismo id,       */
+/* estilado acá en vez de con estilos inline en el HTML — ver css/usuario.css */
+
+/* ==========================================================================
+   ESTADÍSTICAS
+   ========================================================================== */
+
+.estadisticas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.estadisticas > div {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.estadisticas > div:hover {
+  transform: translateY(-3px);
+  border-color: var(--gold-deep);
+}
+
+.estadisticas h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.estadisticas > div > p {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gold-bright);
+}
+
+.barra-xp {
+  width: 100%;
+  height: 10px;
+  background: var(--bg-deep);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 10px;
+  border: 1px solid var(--line);
+}
+
+#progresoXP {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+  transition: width 0.4s ease;
+}
+
+#textoXP {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   MENÚ DE PESTAÑAS
+   ========================================================================== */
+
+.menu-perfil {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 30px;
+  padding: 10px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  position: sticky;
+  top: 78px;
+  z-index: 20;
+}
+
+.menu-perfil button {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  padding: 10px 16px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.menu-perfil button:hover {
+  color: var(--text-main);
+  background: var(--bg-panel-alt);
+}
+
+.menu-perfil .activa {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  border-color: transparent;
+}
+
+.menu-perfil .activa:hover {
+  color: #241804;
+}
+
+/* ==========================================================================
+   CONTENIDO DE PESTAÑAS
+   ========================================================================== */
+
+.contenido-tab {
+  display: none;
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-base));
+  border: 1px solid var(--line);
+  padding: 28px;
+  margin-top: 20px;
+  border-radius: 16px;
+}
+
+.contenido-tab.activo {
+  display: block;
+  animation: aparecer 0.25s ease;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.contenido-tab > h2 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  margin: 0 0 18px;
+  color: var(--gold-bright);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contenido-tab > h3 {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 22px 0 12px;
+}
+
+.contenido-tab > p {
+  color: var(--text-muted);
+  font-size: 14.5px;
+}
+
+/* ==========================================================================
+   ACTIVIDAD (propia / de amigos / lista de amigos)
+   ========================================================================== */
+
+.actividad {
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 10px 0;
+  font-size: 14px;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.actividad:hover {
+  border-color: var(--gold);
+  transform: translateX(2px);
+}
+
+.actividad-fecha {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   COMENTARIOS
+   ========================================================================== */
+
+.comentario {
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  padding: 16px;
+  border-radius: 12px;
+  margin-top: 14px;
+}
+
+.usuario-comentario {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.usuario-comentario b {
+  color: var(--gold-bright);
+  font-size: 14px;
+}
+
+.comentario > p {
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.boton-responder {
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--cyan);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  transition: transform 0.15s ease;
+}
+
+.boton-responder:hover {
+  transform: translateY(-2px);
+}
+
+.boton-eliminar {
+  background: rgba(239, 68, 68, 0.14);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-left: 8px;
+  transition: transform 0.15s ease;
+}
+
+.boton-eliminar:hover {
+  transform: translateY(-2px);
+}
+
+.boton-reportar {
+  background: rgba(240, 180, 41, 0.14);
+  color: var(--gold-bright);
+  border: 1px solid rgba(240, 180, 41, 0.35);
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-left: 8px;
+  transition: transform 0.15s ease;
+}
+
+.boton-reportar:hover {
+  transform: translateY(-2px);
+}
+
+.nuevo-comentario {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.nuevo-comentario input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg-deep);
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.nuevo-comentario input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+#botonComentar {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 13.5px;
+  transition: transform 0.15s ease;
+}
+
+#botonComentar:hover {
+  transform: translateY(-2px);
+}
+
+/* Avatar chico usado en comentarios / actividad / listas de amigos      */
+/* (recorte "cara" por zoom: no cambiar 55px sin recalcular el zoom)     */
+
+.avatar-mini {
+  width: 55px;
+  height: 55px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  background: var(--bg-deep);
+  border: 2px solid var(--gold);
+}
+
+.capa-comentario {
+  position: absolute;
+  width: 800%;
+  height: 280%;
+  top: -15px;
+  left: -190px;
+  object-fit: contain;
+}
+
+/* FIX: esta clase se usa para el avatar por defecto (usuarios que
+   todavía no armaron su avatar personalizado, el caso más común) en
+   comentarios, "Últimos comentarios" de Inicio y actividad de amigos,
+   pero no tenía ninguna regla propia: salía sin estilo, en su tamaño
+   real (mucho más grande que el círculo de 55px de ".avatar-mini"),
+   rompiendo el diseño y dando la impresión de que "no se ve el
+   avatar". Se le da el mismo tamaño/recorte circular que ya usa
+   ".avatar-mini" para las capas personalizadas. */
+.avatar-comentario {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-deep);
+  border: 2px solid var(--gold);
+}
+
+/* ==========================================================================
+   JUEGOS FAVORITOS / ÚLTIMOS JUGADOS
+   (tarjetas coherentes con css/juegos.css del catálogo)
+   ========================================================================== */
+
+.juegos-favoritos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+/* NOTA: antes esta regla era ".juegos-favoritos, #ultimos", pero un
+   selector por ID (#ultimos) tiene más especificidad que la clase
+   ".contenido-tab" que oculta las pestañas inactivas (display:none).
+   Eso hacía que "Últimos jugados" quedara siempre visible sin importar
+   qué pestaña estuviera activa. Se agrega ".activo" para que el grid
+   solo se aplique cuando la pestaña realmente está seleccionada. */
+#ultimos.activo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+/* En #ultimos el propio JS inyecta un <h2> y a veces un <p>, que deben  */
+/* ocupar todo el ancho de la grilla en vez de achicarse como tarjeta.   */
+#ultimos > h2,
+#ultimos > p {
+  grid-column: 1 / -1;
+}
+
+.juego-card {
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-deep));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.juego-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold-deep);
+}
+
+.juego-imagen {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  background: radial-gradient(circle at 50% 40%, rgba(240, 180, 41, 0.12), rgba(0, 0, 0, 0.25) 70%);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.juego-card h3 {
+  font-size: 14px;
+  margin: 0;
+  color: var(--text-main);
+}
+
+/* ==========================================================================
+   EDITOR DE AVATAR
+   ========================================================================== */
+
+#botonCrearAvatar {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  border: none;
+  padding: 13px 26px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 14px;
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(240, 180, 41, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#botonCrearAvatar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(240, 180, 41, 0.4);
+}
+
+.subtitulo-avatares {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 0 0 4px;
+}
+
+.editor-avatar {
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  margin-top: 26px;
+  padding: 26px;
+  border-radius: 18px;
+}
+
+.editor-avatar > h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--gold-bright);
+  margin: 0 0 20px;
+}
+
+/* ---- Barra de categorías ---- */
+
+.editor-categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 26px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.cat-btn {
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+  border: 1px solid var(--line);
+  padding: 9px 15px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-weight: 700;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.cat-btn:hover {
+  background: var(--bg-panel-alt);
+  border-color: rgba(240, 180, 41, 0.4);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.cat-btn.activa-cat {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  border-color: transparent;
+}
+
+/* ---- Layout preview + opciones ---- */
+
+.preview-container {
+  display: flex;
+  gap: 36px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.preview-wrapper {
+  flex-shrink: 0;
+}
+
+.preview-label {
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Marco tipo "cápsula de personaje": mantiene proporción 327x505      */
+/* pero ahora es responsive (ver .capa dentro, en % en vez de px fijos). */
+.preview-capas {
+  position: relative;
+  width: 300px;
+  max-width: 100%;
+  aspect-ratio: 327 / 505;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(240, 180, 41, 0.14), transparent 65%),
+    var(--bg-panel);
+  border-radius: 14px;
+  border: 2px solid var(--gold);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(240, 180, 41, 0.1);
+}
+
+.preview-capas .capa {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  left: 0;
+  top: 0;
+}
+
+/* ---- Panel de opciones ---- */
+
+.opciones-editor {
+  flex: 1;
+  min-width: 260px;
+}
+
+.fila-opciones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.opcion-item {
+  background: var(--bg-panel);
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 2px solid var(--line);
+  transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+  color: var(--text-secondary);
+}
+
+.opcion-item img {
+  width: 64px;
+  height: 100px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 6px;
+}
+
+.opcion-item:hover {
+  border-color: rgba(240, 180, 41, 0.55);
+  transform: translateY(-3px);
+}
+
+.opcion-item.seleccionada {
+  border-color: var(--gold);
+  background: rgba(240, 180, 41, 0.1);
+  color: var(--gold-bright);
+}
+
+.sin-opciones {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ---- Acciones del editor ---- */
+
+.editor-acciones {
+  display: flex;
+  gap: 12px;
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+#guardarAvatar {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  border: none;
+  padding: 13px 26px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 8px 20px rgba(240, 180, 41, 0.28);
+  transition: transform 0.15s ease;
+}
+
+#guardarAvatar:hover {
+  transform: translateY(-2px);
+}
+
+#cancelarEditor {
+  background: var(--bg-panel);
+  color: var(--text-main);
+  border: 1px solid var(--line);
+  padding: 13px 26px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+#cancelarEditor:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   LOGROS
+   ========================================================================== */
+
+#listaLogros,
+#listaLogrosUsuario {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 6px;
+}
+
+.tarjeta-logro {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.tarjeta-logro:hover {
+  transform: translateY(-3px);
+}
+
+.icono-logro {
+  font-size: 32px;
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(240, 180, 41, 0.1);
+  border: 1px solid rgba(240, 180, 41, 0.25);
+}
+
+.tarjeta-logro h3 {
+  color: var(--gold-bright);
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.tarjeta-logro p {
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.estado-logro {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.tarjeta-logro.desbloqueado {
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+.tarjeta-logro.desbloqueado .estado-logro {
+  color: var(--green);
+}
+
+.tarjeta-logro.bloqueado {
+  opacity: 0.55;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .perfil-superior {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .avatar {
+    width: 200px;
+    margin: 0 auto;
+  }
+
+  .perfil-badges,
+  .insignias {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .datos button {
+    align-self: center;
+  }
+
+  .biografia {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .preview-container {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .perfil {
+    padding: 24px 14px 60px;
+  }
+
+  .perfil-superior {
+    padding: 22px;
+    border-radius: 16px;
+  }
+
+  .menu-perfil {
+    position: static;
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .contenido-tab {
+    padding: 18px;
+  }
+
+  .editor-categorias {
+    gap: 6px;
+  }
+
+  .cat-btn {
+    font-size: 11.5px;
+    padding: 8px 11px;
+  }
+}
+
+/* ==========================================================================
+   CONFIRMACIÓN AL ELIMINAR COMENTARIO
+   Modal simple, con la misma identidad visual (panel oscuro + acento
+   dorado) que el resto del perfil. Se crea dinámicamente desde perfil.js
+   solo cuando se necesita confirmar el borrado de un comentario.
+   ========================================================================== */
+
+.confirmacion-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 28, 0.72);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: confirmacionFundido 0.15s ease;
+}
+
+@keyframes confirmacionFundido {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.confirmacion-caja {
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-base));
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--gold);
+  border-radius: 14px;
+  padding: 26px 28px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: confirmacionAparecer 0.18s ease;
+}
+
+@keyframes confirmacionAparecer {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.confirmacion-mensaje {
+  color: var(--text-main);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 22px;
+}
+
+.confirmacion-botones {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.confirmacion-cancelar,
+.confirmacion-confirmar {
+  flex: 1;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13.5px;
+  padding: 11px 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.confirmacion-cancelar {
+  background: var(--bg-panel-alt);
+  color: var(--text-main);
+  border: 1px solid var(--line);
+}
+
+.confirmacion-cancelar:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
+.confirmacion-confirmar {
+  background: rgba(239, 68, 68, 0.14);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.confirmacion-confirmar:hover {
+  background: rgba(239, 68, 68, 0.24);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   CONFIGURACIÓN DE CUENTA (exclusivo de perfil.html — ver js/perfil-config.js)
+   Usa los mismos tokens (:root) que el resto de MacroReborn, por lo que
+   hereda automáticamente el modo oscuro/claro. No se reutiliza en
+   usuario.html porque esa página no incluye el markup #config-cuenta.
+   ========================================================================== */
+
+.config-subtitulo {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: -6px 0 24px;
+}
+
+.config-bloque {
+  margin-bottom: 30px;
+}
+
+.config-bloque:last-child {
+  margin-bottom: 0;
+}
+
+.config-bloque > h3 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--gold-bright);
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.config-tarjeta {
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 460px;
+}
+
+.config-tarjeta h4 {
+  margin: 0 0 18px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.config-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.campo-config {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.campo-config label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.campo-config input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg-panel);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.campo-config input:hover {
+  border-color: var(--line-hover);
+}
+
+.campo-config input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(240, 180, 41, 0.15);
+}
+
+.campo-config input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mensaje de error / éxito del formulario (oculto por defecto) */
+.config-mensaje {
+  display: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 13px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  line-height: 1.4;
+}
+
+.config-mensaje.visible {
+  display: block;
+  animation: config-mensaje-in 0.2s ease both;
+}
+
+.config-mensaje.error {
+  color: var(--danger-light);
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.config-mensaje.exito {
+  color: var(--success-light);
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+@keyframes config-mensaje-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#botonGuardarPassword {
+  align-self: flex-start;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 13.5px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+#botonGuardarPassword:hover {
+  transform: translateY(-2px);
+}
+
+#botonGuardarPassword:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 640px) {
+  .config-tarjeta {
+    max-width: 100%;
+    padding: 18px;
+  }
+
+  #botonGuardarPassword {
+    align-self: stretch;
+  }
+}
+
+/* ==========================================================================
+   ZONA PELIGROSA — ELIMINAR CUENTA (exclusivo de perfil.html)
+   Reutiliza los tokens (:root) y el modal .confirmacion-* ya existente en
+   este archivo, así que hereda automáticamente el modo oscuro/claro.
+   ========================================================================== */
+
+.config-bloque-peligro > h3 {
+  color: var(--danger-light);
+  border-bottom-color: rgba(239, 68, 68, 0.35);
+}
+
+.config-tarjeta-peligro {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.config-aviso-peligro {
+  color: var(--text-main);
+  font-size: 13.5px;
+  line-height: 1.55;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 0 0 20px;
+}
+
+.boton-peligro {
+  background: rgba(239, 68, 68, 0.16);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 13.5px;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.boton-peligro:hover {
+  background: #ef4444;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.boton-peligro:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Campo de contraseña dentro del modal de confirmación reutilizado */
+.confirmacion-caja .campo-config {
+  text-align: left;
+  margin: 0 0 14px;
+}
+
+.confirmacion-caja .config-mensaje {
+  text-align: left;
+  margin: 0 0 14px;
+}
+
+/* Mensaje de despedida que reemplaza la tarjeta tras eliminar la cuenta */
+.config-despedida {
+  color: var(--success-light);
+  font-size: 14.5px;
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
+  padding: 10px 0;
+}
+
+@media (max-width: 640px) {
+  .boton-peligro {
+    width: 100%;
+  }
+}

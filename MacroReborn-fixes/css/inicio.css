@@ -1,0 +1,1084 @@
+/* ==========================================================================
+   MACRO REBORN — INICIO
+   Paleta y tipografía alineadas a la identidad ya usada en comunidad.css /
+   chat.css / amigos.css (slate oscuro + dorado #f0b429), llevada a un
+   tratamiento más elaborado propio del landing.
+
+   SISTEMA DE TEMAS
+   -----------------
+   Todo el sitio se pinta a partir de estas variables. El modo oscuro es
+   el predeterminado (:root) y queda exactamente igual que siempre. El
+   modo claro se activa agregando data-tema="claro" en <html> (lo hace
+   js/tema.js) y solo redefine el VALOR de las mismas variables: como el
+   resto de los archivos CSS ya consume estos tokens con var(...), el
+   modo claro se propaga solo a navbar, tarjetas, botones, formularios,
+   comentarios, chat, noticias, etc. sin tener que duplicar reglas.
+   ========================================================================== */
+
+:root {
+  /* Fondos */
+  --bg-deep: #0a0f1c;
+  --bg-base: #0f172a;
+  --bg-panel: #141d31;
+  --bg-panel-alt: #1b2740;
+  --line: #263349;
+  --line-hover: #37455e;
+  --navbar-bg: rgba(15, 23, 42, 0.92);
+
+  /* Acentos */
+  --gold: #f0b429;
+  --gold-bright: #ffd666;
+  --gold-deep: #a8710f;
+  --cyan: #38bdf8;
+  --green: #22c55e;
+
+  /* Texto */
+  --text-main: #eef2f8;
+  --text-muted: #93a1b8;
+  --text-secondary: #cbd5e1;
+  --text-placeholder: #56637c;
+
+  /* Estados */
+  --danger: #f87171;
+  --danger-light: #fca5a5;
+  --success-light: #86efac;
+
+  /* Podio (ranking) */
+  --podio-plata: #dbe3ee;
+  --podio-bronce: #e3a374;
+
+  /* Sombras */
+  --sombra-suave: 0 14px 30px rgba(0, 0, 0, 0.35);
+  --chip-bg: rgba(20, 29, 49, 0.6);
+
+  --font-display: 'Orbitron', 'Arial Narrow', Arial, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', Arial, sans-serif;
+
+  --notch: 14px;
+}
+
+/* ---- Modo claro ----
+   Mismas variables, valores pensados para fondo claro: fondo principal
+   gris muy suave, tarjetas blancas, texto oscuro y los mismos acentos
+   dorado/celeste/verde de siempre pero ajustados para tener buen
+   contraste sobre blanco. */
+
+html[data-tema="claro"] {
+  --bg-deep: #e8ecf3;
+  --bg-base: #f4f6fa;
+  --bg-panel: #ffffff;
+  --bg-panel-alt: #eef1f7;
+  --line: #dde3ec;
+  --line-hover: #c7ccd6;
+  --navbar-bg: rgba(255, 255, 255, 0.92);
+
+  --gold: #92600a;
+  --gold-bright: #b8790d;
+  --gold-deep: #7a5108;
+  --cyan: #0284c7;
+  --green: #15803d;
+
+  --text-main: #1a2233;
+  --text-muted: #5b6472;
+  --text-secondary: #40495a;
+  --text-placeholder: #8a93a3;
+
+  --danger: #dc2626;
+  --danger-light: #b91c1c;
+  --success-light: #15803d;
+
+  --podio-plata: #64748b;
+  --podio-bronce: #b45309;
+
+  --sombra-suave: 0 10px 26px rgba(30, 41, 59, 0.1);
+  --chip-bg: rgba(255, 255, 255, 0.75);
+}
+
+/* Transición suave al alternar entre modo oscuro y claro */
+html {
+  transition: background-color 0.25s ease;
+}
+
+.mr-root,
+.mr-root *,
+.aviso-suspension,
+.navbar {
+  transition: background-color 0.25s ease, color 0.25s ease,
+    border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* ---- reset local (no toca body global de style.css porque no se incluye) ---- */
+
+.mr-root * {
+  box-sizing: border-box;
+}
+
+.mr-root {
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+.mr-root a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.mr-root img {
+  max-width: 100%;
+  display: block;
+}
+
+.mr-root ::selection {
+  background: var(--gold);
+  color: #1a1204;
+}
+
+/* Panel con esquinas cortadas (detalle "cartucho" que se repite como firma visual) */
+.mr-notched {
+  clip-path: polygon(
+    var(--notch) 0, 100% 0, 100% calc(100% - var(--notch)),
+    calc(100% - var(--notch)) 100%, 0 100%, 0 var(--notch)
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mr-root * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   AVISO DE CUENTA SUSPENDIDA
+   Se inyecta desde js/motor/permisos.js arriba de todo el contenido.
+   ========================================================================== */
+
+.aviso-suspension {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: #3a0f14;
+  color: #ffb4b4;
+  border-bottom: 1px solid #7a1f27;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  padding: 10px 16px;
+}
+
+/* ==========================================================================
+   NAVBAR
+   ========================================================================== */
+
+.navbar {
+  background: var(--navbar-bg);
+  backdrop-filter: blur(8px);
+  min-height: 70px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 14px 32px;
+  border-bottom: 2px solid var(--gold);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.nav-logo img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(240, 180, 41, 0.6));
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.nav-links a:hover {
+  color: var(--gold-bright);
+  background: var(--bg-panel-alt);
+}
+
+/* Links inyectados dinámicamente por navbar.js (login/registro o perfil/notif/logout) */
+.nav-links a.sesion-extra {
+  border: 1px solid var(--line);
+}
+
+.nav-links a.sesion-extra:hover {
+  border-color: var(--gold);
+}
+
+/* ==========================================================================
+   MENÚ HAMBURGUESA (navbar en pantallas chicas)
+   El botón lo inyecta js/nav-toggle.js (mismo patrón que navbar.js /
+   tema.js: agrega markup en runtime sin tocar el HTML de cada página).
+   En desktop queda oculto y el navbar se ve exactamente como siempre.
+   ========================================================================== */
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 0;
+}
+
+.nav-toggle:hover {
+  border-color: var(--gold);
+}
+
+.nav-toggle-barra {
+  position: relative;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+}
+
+.nav-toggle-barra::before,
+.nav-toggle-barra::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.nav-toggle-barra::before { top: -6px; }
+.nav-toggle-barra::after { top: 6px; }
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-barra {
+  background: transparent;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-barra::before {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-barra::after {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 12px 16px;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    order: 2;
+  }
+
+  .nav-logo {
+    order: 1;
+  }
+
+  .nav-buscador {
+    order: 3;
+  }
+
+  /* El panel de links pasa a ser un desplegable a todo lo ancho,
+     oculto hasta que se toca el botón hamburguesa. */
+  .nav-links {
+    order: 4;
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 2px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px;
+    margin-top: 10px;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+  }
+
+  .nav-links.nav-abierto {
+    display: flex;
+  }
+
+  .nav-links a,
+  .nav-links button.boton-tema {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    justify-content: flex-start;
+    padding: 13px 14px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+
+  /* El botón de tema (sol/luna) se ve como un ítem más de la lista,
+     con su etiqueta (misma que ya trae en aria-label) en vez de quedar
+     como un círculo suelto. */
+  .nav-links button.boton-tema {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: auto;
+    margin: 2px 0 0;
+  }
+
+  .nav-links button.boton-tema::after {
+    content: attr(aria-label);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+}
+
+/* ==========================================================================
+   HERO
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px 80px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 900px 500px at 50% -10%, rgba(240, 180, 41, 0.16), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 85% 100%, rgba(56, 189, 248, 0.08), transparent 60%),
+    linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-base) 55%, var(--bg-base) 100%);
+}
+
+/* Fondo tipo "grid" de arcade + scanlines, puramente decorativo */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(240, 180, 41, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 180, 41, 0.05) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, black 40%, transparent 90%);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.12) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.orbe {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: flotar 12s ease-in-out infinite;
+}
+
+.orbe-1 {
+  width: 320px;
+  height: 320px;
+  background: var(--gold);
+  top: -60px;
+  left: -80px;
+  animation-delay: 0s;
+}
+
+.orbe-2 {
+  width: 260px;
+  height: 260px;
+  background: var(--cyan);
+  bottom: -60px;
+  right: -60px;
+  animation-delay: -4s;
+}
+
+.orbe-3 {
+  width: 180px;
+  height: 180px;
+  background: var(--gold-deep);
+  top: 40%;
+  right: 8%;
+  opacity: 0.3;
+  animation-delay: -8s;
+}
+
+@keyframes flotar {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -25px) scale(1.08); }
+}
+
+.hero-contenido {
+  position: relative;
+  z-index: 2;
+  max-width: 780px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  background: rgba(240, 180, 41, 0.08);
+  border: 1px solid rgba(240, 180, 41, 0.35);
+  padding: 8px 16px;
+  border-radius: 999px;
+  margin-bottom: 28px;
+}
+
+.eyebrow .punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: parpadeo 2s ease-in-out infinite;
+}
+
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.logo-wrapper {
+  width: 108px;
+  height: 108px;
+  margin-bottom: 22px;
+  filter: drop-shadow(0 0 24px rgba(240, 180, 41, 0.45));
+  animation: subir 4.5s ease-in-out infinite;
+}
+
+@keyframes subir {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+#logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.titulo-principal {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 7vw, 68px);
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin: 0;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 55%, var(--gold-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 40px rgba(240, 180, 41, 0.25);
+}
+
+.subtitulo {
+  color: var(--cyan);
+  font-size: 17px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 14px 0 0;
+  font-weight: 600;
+}
+
+.descripcion {
+  color: var(--text-muted);
+  font-size: 17px;
+  max-width: 520px;
+  margin: 20px 0 0;
+}
+
+/* ---- Bienvenida dinámica (invitado / usuario con sesión) ---- */
+
+.bienvenida-usuario {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  padding: 14px 20px;
+  border-radius: 10px;
+}
+
+.bienvenida-usuario .avatar-mini {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: var(--bg-panel-alt);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* FIX: antes esta regla apuntaba directo al <img> único que traía el
+   avatar por defecto fijo. Ahora ".avatar-mini" es un contenedor y
+   puede tener varias <img> apiladas (una por capa del avatar real del
+   usuario, ver index.html), así que las imágenes se posicionan
+   absolutas dentro del círculo en vez de una sola con object-fit. */
+.bienvenida-usuario .avatar-mini img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bienvenida-usuario .texto b {
+  color: var(--gold-bright);
+}
+
+.bienvenida-usuario .texto span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.menu-inicio {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.boton {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 14px 26px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.boton-primario {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  box-shadow: 0 6px 20px rgba(240, 180, 41, 0.28);
+}
+
+.boton-primario:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(240, 180, 41, 0.4);
+}
+
+.boton-secundario {
+  background: var(--bg-panel);
+  color: var(--text-main);
+  border-color: var(--line);
+}
+
+.boton-secundario:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  transform: translateY(-2px);
+}
+
+.estado-servidor {
+  margin-top: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--green);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.estado-servidor .punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+
+.scroll-cue {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text-muted);
+  font-size: 22px;
+  opacity: 0.6;
+  animation: rebote 1.8s ease-in-out infinite;
+}
+
+@keyframes rebote {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, 8px); }
+}
+
+/* ==========================================================================
+   ACCESOS RÁPIDOS
+   ========================================================================== */
+
+.accesos {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: -46px auto 0;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 14px;
+}
+
+.acceso-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  padding: 20px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.acceso-card .icono {
+  font-size: 26px;
+}
+
+.acceso-card span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.acceso-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  background: var(--bg-panel-alt);
+}
+
+/* ==========================================================================
+   SECCIÓN "QUÉ OFRECE"
+   ========================================================================== */
+
+.seccion {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 90px 24px 40px;
+}
+
+.seccion-cabecera {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 48px;
+}
+
+.seccion-eyebrow {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.seccion-cabecera h2 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 32px);
+  margin: 12px 0 14px;
+  color: var(--text-main);
+}
+
+.seccion-cabecera p {
+  color: var(--text-muted);
+  font-size: 15.5px;
+}
+
+.grid-ofrece {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.card-ofrece {
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-base));
+  border: 1px solid var(--line);
+  padding: 26px 24px;
+  position: relative;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.card-ofrece:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold-deep);
+}
+
+.card-ofrece .icono {
+  font-size: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: rgba(240, 180, 41, 0.1);
+  border: 1px solid rgba(240, 180, 41, 0.25);
+  margin-bottom: 16px;
+}
+
+.card-ofrece h3 {
+  font-size: 17px;
+  margin: 0 0 8px;
+  color: var(--gold-bright);
+}
+
+.card-ofrece p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ==========================================================================
+   BANDA NOSTALGIA
+   ========================================================================== */
+
+.banda-nostalgia {
+  position: relative;
+  z-index: 1;
+  margin: 90px 0 0;
+  padding: 34px 24px;
+  text-align: center;
+  background: var(--bg-panel);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.banda-nostalgia p {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.banda-nostalgia p b {
+  color: var(--gold);
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.pie-footer {
+  position: relative;
+  z-index: 1;
+  background: var(--bg-deep);
+  border-top: 2px solid var(--gold);
+  padding: 56px 24px 24px;
+}
+
+.pie-contenido {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 32px;
+}
+
+.pie-marca {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pie-marca .nav-logo {
+  font-size: 20px;
+}
+
+.pie-marca p {
+  color: var(--text-muted);
+  font-size: 13.5px;
+  max-width: 260px;
+}
+
+.pie-columna h4 {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 14px;
+}
+
+.pie-columna a {
+  display: block;
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 10px;
+  transition: color 0.15s ease;
+  width: fit-content;
+}
+
+.pie-columna a:hover {
+  color: var(--gold-bright);
+}
+
+.pie-inferior {
+  max-width: 1100px;
+  margin: 40px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .pie-contenido {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 44px 18px 70px;
+  }
+
+  .titulo-principal {
+    font-size: clamp(32px, 10vw, 44px);
+  }
+
+  .bienvenida-usuario {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .accesos {
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: -30px;
+  }
+
+  .seccion {
+    padding: 60px 18px 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .accesos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .menu-inicio {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .boton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pie-contenido {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   PORTADAS DE JUEGOS (imagen real en vez de emoji)
+   Se comparte entre catálogo, destacados, favoritos, últimos jugados y
+   ficha de juego. Cada página sigue definiendo tamaño/marco de
+   .juego-imagen / .juego-grande en su propio CSS (juegos.css, perfil.css,
+   juego.css); acá solo se resuelve cómo encaja la imagen (o el
+   placeholder) adentro de ese marco.
+   ========================================================================== */
+
+.juego-imagen,
+.juego-grande {
+  overflow: hidden;
+}
+
+.juego-imagen img,
+.juego-grande img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+}
+
+/* Estado cuando falta la imagen de un juego o no llega a cargar */
+.placeholder-juego {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(240, 180, 41, 0.05),
+    rgba(240, 180, 41, 0.05) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+.placeholder-juego span {
+  opacity: 0.5;
+}
+
+/* ==========================================================================
+   BOTON DE LIKE (comentarios de perfil, chat, reseñas)
+   Vive acá (en vez de en un css por página) porque se usa en varias:
+   perfil.html, usuario.html, chat.html y juego.html.
+   ========================================================================== */
+
+.boton-like {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-panel-alt);
+  color: var(--cyan);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.boton-like:hover {
+  background: var(--bg-panel);
+  border-color: var(--cyan);
+}
+
+.boton-like:active {
+  transform: scale(0.95);
+}
+
+.boton-like.like-activo {
+  background: rgba(248, 113, 113, 0.14);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.like-icono {
+  font-size: 14px;
+}
+
+.like-contador {
+  min-width: 10px;
+  text-align: left;
+}
+
+/* ==========================================================================
+   BOTON DE TEMA (sol / luna) — inyectado por js/tema.js en el navbar
+   ========================================================================== */
+
+.boton-tema {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-left: 4px;
+  background: var(--bg-panel-alt);
+  color: var(--text-main);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.boton-tema:hover {
+  border-color: var(--gold);
+  background: var(--bg-panel);
+  transform: translateY(-1px);
+}
+
+.boton-tema:active {
+  transform: scale(0.92);
+}
+
+/* Páginas sin navbar (login / registro): el botón queda flotando */
+.boton-tema-flotante {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 500;
+  box-shadow: var(--sombra-suave);
+}
