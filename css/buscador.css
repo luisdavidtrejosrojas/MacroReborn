@@ -118,6 +118,13 @@
 }
 
 .buscador-item-imagen {
+  position: relative; /* FIX: sin esto, las capas del avatar
+    (position:absolute, ver avatarMiniaturaHTML() en js/core.js) no
+    tenían ningún ancestro posicionado cerca y terminaban ubicándose
+    respecto al documento completo: por eso el avatar se veía gigante
+    y tapaba el buscador. Con position:relative acá, las capas quedan
+    contenidas dentro de esta caja de 38x38, igual que en
+    .avatar-mini, .avatar-mini-ranking, etc. */
   flex-shrink: 0;
   width: 38px;
   height: 38px;
