@@ -344,6 +344,49 @@
 }
 
 /* ==========================================================================
+   INFO DEBAJO DEL CAMPO DE TEXTO (contador de caracteres + avisos antispam)
+   ========================================================================== */
+
+.escribir-wrap {
+  background: var(--bg-panel);
+  border-top: 1px solid var(--line);
+}
+
+.escribir-wrap .escribir {
+  border-top: none;
+}
+
+.escribir-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 0 22px 14px;
+  font-size: 12px;
+}
+
+.contador-chat {
+  color: var(--text-muted);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.contador-chat.contador-chat-limite {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.aviso-chat {
+  color: var(--danger);
+  font-weight: 600;
+  min-height: 1em;
+}
+
+.aviso-chat:empty {
+  display: none;
+}
+
+/* ==========================================================================
    SIN MENSAJES
    ========================================================================== */
 

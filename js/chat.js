@@ -75,16 +75,19 @@ function obtenerAvatarHTML(nombre){
     }
 
     let capas = "";
+    let rutasCapas = [];
 
     ORDEN_CAPAS.forEach(tipo=>{
         const ruta = rutaImagenCapa(avatar[tipo]);
 
         if(ruta){
             capas += `<img class="capa-chat" src="${ruta}" alt="" loading="lazy">`;
+            rutasCapas.push(ruta);
         }
     });
 
-    return `<div class="avatar-chat-personalizado">${capas}</div>`;
+    return `<div class="avatar-chat-personalizado avatar-compuesto" ` +
+        `data-capas="${rutasCapas.join("|")}" data-capa-class="capa-chat">${capas}</div>`;
 }
 
 
@@ -163,17 +166,120 @@ async function renderChat(){
 }
 
 
+// ---------- ANTISPAM ----------
+// Límites del lado del cliente: 5 mensajes por minuto y 200 caracteres
+// por mensaje, más las validaciones de mensaje vacío / solo espacios.
+// No toca el diseño ni el envío en sí, solo lo frena antes de llegar
+// al fetch cuando corresponde.
+
+const LIMITE_CARACTERES_CHAT = 200;
+const LIMITE_MENSAJES_POR_MINUTO = 5;
+const VENTANA_ANTISPAM_MS = 60 * 1000;
+
+// Se guarda por usuario en localStorage para que el límite sobreviva
+// a un refresco de página (no solo a la sesión en memoria).
+function _claveAntispamChat(){
+    return "chatAntispam_" + miNombre;
+}
+
+function _obtenerEnviosRecientes(){
+    const envios = leerJSON(localStorage.getItem(_claveAntispamChat()) || "[]") || [];
+    const ahora = Date.now();
+    return envios.filter(t => ahora - t < VENTANA_ANTISPAM_MS);
+}
+
+function _registrarEnvioAntispam(){
+    const envios = _obtenerEnviosRecientes();
+    envios.push(Date.now());
+    localStorage.setItem(_claveAntispamChat(), JSON.stringify(envios));
+}
+
+// Devuelve 0 si se puede enviar, o los segundos que faltan si está
+// bloqueado por haber superado el límite de mensajes por minuto.
+function _segundosDeEsperaAntispam(){
+    const envios = _obtenerEnviosRecientes();
+    if(envios.length < LIMITE_MENSAJES_POR_MINUTO) return 0;
+
+    const masAntiguo = Math.min(...envios);
+    const restante = VENTANA_ANTISPAM_MS - (Date.now() - masAntiguo);
+    return Math.max(1, Math.ceil(restante / 1000));
+}
+
+function _mostrarAvisoChat(mensaje){
+    const aviso = document.getElementById("avisoChat");
+    if(aviso) aviso.textContent = mensaje || "";
+}
+
+let _intervaloEsperaChat = null;
+
+function _iniciarCuentaRegresivaChat(segundos){
+    const boton = document.getElementById("botonEnviar");
+
+    clearInterval(_intervaloEsperaChat);
+
+    let restante = segundos;
+    if(boton) boton.disabled = true;
+    _mostrarAvisoChat("⏳ Superaste el límite de mensajes. Esperá " + restante + "s para volver a escribir.");
+
+    _intervaloEsperaChat = setInterval(()=>{
+        restante--;
+
+        if(restante <= 0){
+            clearInterval(_intervaloEsperaChat);
+            if(boton) boton.disabled = false;
+            _mostrarAvisoChat("");
+            return;
+        }
+
+        _mostrarAvisoChat("⏳ Superaste el límite de mensajes. Esperá " + restante + "s para volver a escribir.");
+    }, 1000);
+}
+
+// ---------- CONTADOR DE CARACTERES ----------
+
+function _actualizarContadorChat(){
+    const input = document.getElementById("mensajeInput");
+    const contador = document.getElementById("contadorChat");
+    if(!input || !contador) return;
+
+    const largo = input.value.length;
+    contador.textContent = largo + " / " + LIMITE_CARACTERES_CHAT;
+    contador.classList.toggle("contador-chat-limite", largo >= LIMITE_CARACTERES_CHAT);
+}
+
+document.getElementById("mensajeInput")?.addEventListener("input", _actualizarContadorChat);
+_actualizarContadorChat();
+
+
 // ---------- ENVIAR MENSAJE ----------
 
 async function enviarMensaje(){
 
     const input = document.getElementById("mensajeInput");
-    const texto = input.value.trim();
-
-    if(texto === "") return;
+    const textoOriginal = input.value;
+    const texto = textoOriginal.trim();
 
     if(!usuarioActivo){
         alert("Debés iniciar sesión.");
+        return;
+    }
+
+    // Validaciones: mensaje vacío o compuesto solo por espacios.
+    if(textoOriginal === "" || texto === ""){
+        _mostrarAvisoChat("✋ El mensaje no puede estar vacío.");
+        return;
+    }
+
+    // Límite de caracteres.
+    if(texto.length > LIMITE_CARACTERES_CHAT){
+        _mostrarAvisoChat("✋ El mensaje no puede superar los " + LIMITE_CARACTERES_CHAT + " caracteres.");
+        return;
+    }
+
+    // Límite de mensajes por minuto.
+    const espera = _segundosDeEsperaAntispam();
+    if(espera > 0){
+        _iniciarCuentaRegresivaChat(espera);
         return;
     }
 
@@ -190,7 +296,11 @@ async function enviarMensaje(){
         return;
     }
 
+    _registrarEnvioAntispam();
+    _mostrarAvisoChat("");
+
     input.value = "";
+    _actualizarContadorChat();
     renderChat();
 }
 

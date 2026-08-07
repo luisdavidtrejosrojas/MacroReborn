@@ -64,6 +64,17 @@ function avatarHTML(avatarCrudo, claseCapa) {
   return html || `<img src="imagenes/avatar.png" class="${claseCapa}" style="object-fit:contain;" alt="" loading="lazy">`;
 }
 
+// Rutas de las capas de un avatar, en el mismo orden que usa avatarHTML()
+// arriba. Se usa para armar el data-capas del contenedor ".avatar-compuesto"
+// que compone las capas en una sola imagen (ver componerAvataresEnPantalla
+// en js/core.js): así el click derecho fuera del editor toma el avatar
+// completo en vez de una capa suelta.
+function rutasCapasAvatar(avatarCrudo) {
+  const avatar = normalizarAvatar(avatarCrudo);
+  if (!avatar) return [];
+  return ORDEN_CAPAS.map(tipo => rutaImagenCapa(avatar[tipo])).filter(Boolean);
+}
+
 
 // ---------- HELPER ESTADO DE RELACIÓN (amigos / solicitudes) ----------
 
@@ -128,7 +139,7 @@ function renderConectados(lista) {
 
   listaConectados.innerHTML = conectados.map(usuario => `
     <a href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}" class="tarjeta-mini">
-      <div class="avatar-mini-conectado">
+      <div class="avatar-mini-conectado avatar-compuesto" data-capas="${rutasCapasAvatar(usuario.avatar).join("|")}" data-capa-class="capa-mini">
         ${avatarHTML(usuario.avatar, "capa-mini")}
       </div>
       <div class="mini-info">
@@ -169,7 +180,7 @@ function renderUsuarios(lista) {
           ${conectado ? "🟢 En línea" : "⚪ Desconectado"}
         </span>
 
-        <div class="avatar-tarjeta">
+        <div class="avatar-tarjeta avatar-compuesto" data-capas="${rutasCapasAvatar(usuario.avatar).join("|")}" data-capa-class="capa-tarjeta">
           ${avatarHTML(usuario.avatar, "capa-tarjeta")}
         </div>
 

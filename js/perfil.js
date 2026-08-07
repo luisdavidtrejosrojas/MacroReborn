@@ -241,12 +241,19 @@ const CAPAS_IMG={
   tora_accesorio2:"imagenes/tora/accesorio2.png",
   tora_cara1:"imagenes/tora/cara1.png",
   tora_cara2:"imagenes/tora/cara2.png",
+  tora_cara3:"imagenes/tora/cara3.png",
+  tora_cara4:"imagenes/tora/cara4.png",
+  tora_cara5:"imagenes/tora/cara5.png",
   tora_mascota1:"imagenes/tora/mascota1.png",
   tora_mascota2:"imagenes/tora/mascota2.png",
+  tora_mascota3:"imagenes/tora/mascota3.png",
+  tora_mascota4:"imagenes/tora/mascota4.png",
   tora_borde1:"imagenes/tora/borde1.png",
   tora_borde2:"imagenes/tora/borde2.png",
   tora_borde3:"imagenes/tora/borde3.png",
   tora_borde4:"imagenes/tora/borde4.png",
+  tora_borde5:"imagenes/tora/borde5.png",
+  tora_borde6:"imagenes/tora/borde6.png",
 
   // ---- Guardarropa de CEREZA ----
   cereza_fondo1:"imagenes/cereza/fondo1.png",
@@ -290,6 +297,10 @@ const CAPAS_IMG={
   cereza_borde2:"imagenes/cereza/borde2.png",
   cereza_borde3:"imagenes/cereza/borde3.png",
   cereza_borde4:"imagenes/cereza/borde4.png",
+
+  // ---- Guardarropa de FENGCHAO ----
+  fengchao_piel1:"imagenes/fengchao/piel1.png",
+  fengchao_piel2:"imagenes/fengchao/piel2.png",
 
 };
 
@@ -384,21 +395,24 @@ function actualizarAvatarPrincipal(){
   contenedor.style.position="relative";
   contenedor.style.width="100%";
   contenedor.style.height="100%";
+  contenedor.className="avatar-compuesto";
+
+  const estiloCapa = "position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;";
+  let rutasCapas = [];
 
   ORDEN_CAPAS.forEach(tipo=>{
     let valor=avatar[tipo];
     if(valor && valor!="ninguno" && CAPAS_IMG[valor]){
       let capa=document.createElement("img");
       capa.src=CAPAS_IMG[valor];
-      capa.style.position="absolute";
-      capa.style.top="0";
-      capa.style.left="0";
-      capa.style.width="100%";
-      capa.style.height="100%";
-      capa.style.objectFit="contain";
+      capa.setAttribute("style", estiloCapa);
       contenedor.appendChild(capa);
+      rutasCapas.push(CAPAS_IMG[valor]);
     }
   });
+
+  contenedor.setAttribute("data-capas", rutasCapas.join("|"));
+  contenedor.setAttribute("data-capa-style", estiloCapa);
 
   avatarWrapper.innerHTML="";
   avatarWrapper.appendChild(contenedor);
@@ -843,13 +857,16 @@ async function renderAmigosPerfil(){
       avatarHTML = `<img src="imagenes/avatar.png" style="width:55px;height:55px;border-radius:50%;object-fit:cover;" alt="" loading="lazy">`;
     } else {
       let capas = "";
+      let rutasCapas = [];
       ORDEN_CAPAS.forEach(tipo=>{
         const valor = avatar[tipo];
         if(valor && valor!=="ninguno" && CAPAS_IMG[valor]){
           capas += `<img class="capa-comentario" src="${CAPAS_IMG[valor]}" alt="" loading="lazy">`;
+          rutasCapas.push(CAPAS_IMG[valor]);
         }
       });
-      avatarHTML = `<div class="avatar-mini">${capas}</div>`;
+      avatarHTML = `<div class="avatar-mini avatar-compuesto" data-capas="${rutasCapas.join("|")}" ` +
+        `data-capa-class="capa-comentario">${capas}</div>`;
     }
 
     return `
@@ -928,14 +945,17 @@ function obtenerAvatarComentario(nombre){
   }
 
   let capas = "";
+  let rutasCapas = [];
   ORDEN_CAPAS.forEach(tipo=>{
     let valor = avatar[tipo];
     if(valor && valor !== "ninguno" && CAPAS_IMG[valor]){
       capas += `<img class="capa-comentario" src="${CAPAS_IMG[valor]}" alt="" loading="lazy">`;
+      rutasCapas.push(CAPAS_IMG[valor]);
     }
   });
 
-  return `<div class="avatar-mini">${capas}</div>`;
+  return `<div class="avatar-mini avatar-compuesto" data-capas="${rutasCapas.join("|")}" ` +
+    `data-capa-class="capa-comentario">${capas}</div>`;
 }
 
 // ÚLTIMOS COMENTARIOS (pestaña Inicio)
@@ -1158,7 +1178,7 @@ document.getElementById("botonComentar")?.addEventListener("click", async ()=>{
 
   // ACTIVIDAD RECIENTE - COMENTARIO
   if(usuarioActivo && typeof registrarActividad === "function"){
-    registrarActividad(usuarioActivo.nombre, "comentario", "");
+    registrarActividad(usuarioActivo.nombre, "comentario", texto);
     if(typeof renderActividadReciente === "function") renderActividadReciente();
   }
 });

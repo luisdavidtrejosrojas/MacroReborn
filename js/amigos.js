@@ -122,6 +122,8 @@ return div;
 
 
 
+let rutasCapas = [];
+
 ORDEN_CAPAS.forEach(tipo=>{
 
 
@@ -143,6 +145,8 @@ img.className="capa-amigo";
 
 div.appendChild(img);
 
+rutasCapas.push(ruta);
+
 
 }
 
@@ -151,6 +155,10 @@ div.appendChild(img);
 });
 
 
+
+div.classList.add("avatar-compuesto");
+div.setAttribute("data-capas", rutasCapas.join("|"));
+div.setAttribute("data-capa-class", "capa-amigo");
 
 return div;
 

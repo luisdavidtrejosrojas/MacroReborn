@@ -256,6 +256,47 @@
 }
 
 /* ==========================================================================
+   "VERSIÓN 1.0" — subtítulo y lista de novedades dentro del panel
+   (mismos tokens de color que .origen-panel, sin tocar sus reglas)
+   ========================================================================== */
+
+.version-subtitulo {
+  position: relative;
+  color: var(--cyan);
+  font-weight: 700;
+  font-size: 16.5px;
+  margin: 0 0 16px;
+  letter-spacing: 0.2px;
+}
+
+.version-lista {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.version-lista li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 15.5px;
+  background: rgba(240, 180, 41, 0.05);
+  border: 1px solid rgba(240, 180, 41, 0.18);
+  border-radius: 10px;
+  padding: 10px 16px;
+}
+
+.version-lista-icono {
+  font-size: 17px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
    CABECERA DE "ÚLTIMAS NOVEDADES"
    ========================================================================== */
 

@@ -355,5 +355,164 @@ function avatarMiniaturaHTML(avatarCrudo){
 
   if(!capas) return avatarPorDefecto;
 
-  return `<div style="position:relative;width:100%;height:100%;">${capas}</div>`;
+  const rutas = ORDEN_CAPAS_AVATAR
+    .map(tipo => rutaCapaAvatar(avatar[tipo]))
+    .filter(Boolean);
+
+  const estiloCapa = "position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;";
+
+  return `<div class="avatar-compuesto" data-capas="${rutas.join("|")}" ` +
+    `data-capa-style="${estiloCapa}">${capas}</div>`;
+}
+
+
+
+
+// ==============================
+// AVATAR — COMPOSICIÓN EN UNA SOLA IMAGEN (Fase 4: click derecho)
+// ==============================
+// El editor (js/perfil.js) sigue armando el avatar con varias <img>
+// superpuestas, tal cual funcionaba siempre: esto NO se toca. El
+// problema es que, fuera del editor (perfil, comentarios, amigos,
+// ranking, buscador, actividad, chat, reseñas), esas mismas capas
+// apiladas hacen que el botón derecho del navegador ("Guardar imagen
+// como", "Copiar imagen", "Abrir imagen") tome una sola capa suelta en
+// vez del avatar completo.
+//
+// La solución no reemplaza el sistema de capas: lo reutiliza. Cada
+// lugar del sitio que arma un avatar para MOSTRAR (no para editar)
+// sigue calculando sus capas exactamente igual que antes (mismo orden,
+// mismas rutas, mismas clases CSS) y las pinta apiladas como siempre
+// -eso da el primer pantallazo, instantáneo e idéntico al actual-,
+// pero además envuelve ese grupo de capas en un contenedor con
+// class="avatar-compuesto" y un data-capas con las rutas en orden.
+//
+// Esta sección junta esas capas en un <canvas>, las funde en un único
+// PNG con transparencia y reemplaza el contenido del contenedor por
+// una sola <img> con ese PNG -conservando la misma clase/estilo que
+// tenían las capas individuales, para que el recorte/zoom que ya
+// define cada CSS (.capa-comentario, .capa-ranking, etc.) se vea
+// exactamente igual-. A partir de ahí, para el navegador es una imagen
+// común y corriente: el click derecho la trata como una sola imagen.
+//
+// No hace falta acordarse de llamar a nada después de cada innerHTML:
+// un MutationObserver vigila el documento y compone solo cualquier
+// ".avatar-compuesto" que aparezca (más abajo).
+
+const _cacheAvatarCompuesto = {};
+
+function _cargarImagenAvatarParaCanvas(ruta){
+  return new Promise(resolve=>{
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null); // una capa rota no debe tirar abajo el resto
+    img.src = ruta;
+  });
+}
+
+// Todas las capas de un mismo avatar están pensadas para superponerse
+// en el mismo encuadre (por eso hoy funcionan apiladas con
+// position:absolute + object-fit:contain dentro del mismo contenedor).
+// Alcanza entonces con dibujar cada una a pantalla completa dentro de
+// un canvas del tamaño de la primera capa que cargue bien: el
+// resultado es un PNG con el mismo encuadre que tenía cada capa suelta,
+// así que al insertarlo con la misma clase/estilo CSS que usaban las
+// capas se ve exactamente igual (incluido cualquier recorte o zoom que
+// ya aplique ese CSS).
+
+function componerAvatarPNG(rutas){
+  const clave = rutas.join("|");
+  if(_cacheAvatarCompuesto[clave]) return _cacheAvatarCompuesto[clave];
+
+  const promesa = (async ()=>{
+    const imagenes = (await Promise.all(rutas.map(_cargarImagenAvatarParaCanvas))).filter(Boolean);
+    if(!imagenes.length) return null;
+
+    const ancho = imagenes[0].naturalWidth || 512;
+    const alto = imagenes[0].naturalHeight || 512;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = ancho;
+    canvas.height = alto;
+    const ctx = canvas.getContext("2d");
+
+    imagenes.forEach(img => ctx.drawImage(img, 0, 0, ancho, alto));
+
+    return canvas.toDataURL("image/png");
+  })();
+
+  _cacheAvatarCompuesto[clave] = promesa;
+  return promesa;
+}
+
+// Busca contenedores ".avatar-compuesto" todavía no procesados dentro
+// de "raiz" (por defecto, todo el documento) y les compone la imagen
+// única. Si algo falla (capas rotas, canvas no disponible, etc.) deja
+// las capas apiladas tal cual estaban: se sigue viendo igual, solo que
+// en ese caso puntual el click derecho seguiría tomando una sola capa.
+
+async function componerAvataresEnPantalla(raiz){
+  const contenedor = raiz || document;
+  const nodos = contenedor.querySelectorAll(".avatar-compuesto:not([data-compuesto])");
+  if(!nodos.length) return;
+
+  await Promise.all(Array.from(nodos).map(async nodo=>{
+    nodo.setAttribute("data-compuesto", "1"); // evita procesarlo dos veces
+
+    const rutasTexto = nodo.getAttribute("data-capas") || "";
+    const rutas = rutasTexto.split("|").filter(Boolean);
+
+    // Una sola capa ya ES una sola imagen: no hace falta canvas.
+    if(rutas.length < 2) return;
+
+    try{
+      const dataURL = await componerAvatarPNG(rutas);
+      if(!dataURL) return;
+      if(!nodo.isConnected) return; // se sacó del DOM mientras se componía
+
+      const clase = nodo.getAttribute("data-capa-class") || "";
+      const estilo = nodo.getAttribute("data-capa-style") || "";
+
+      const imgFinal = document.createElement("img");
+      if(clase) imgFinal.className = clase;
+      if(estilo) imgFinal.setAttribute("style", estilo);
+      imgFinal.alt = "";
+      imgFinal.loading = "lazy";
+      imgFinal.src = dataURL;
+
+      nodo.innerHTML = "";
+      nodo.appendChild(imgFinal);
+    }catch(error){
+      console.warn("MacroReborn: no se pudo componer el avatar en una sola imagen.", error);
+    }
+  }));
+}
+
+function _iniciarObservadorAvatares(){
+  componerAvataresEnPantalla(document);
+
+  if(typeof MutationObserver === "undefined") return; // navegador muy viejo: se queda con las capas apiladas
+
+  const observador = new MutationObserver(mutaciones=>{
+    for(const mutacion of mutaciones){
+      for(const nodo of mutacion.addedNodes){
+        if(nodo.nodeType !== 1) continue;
+        const esCandidato =
+          (nodo.matches && nodo.matches(".avatar-compuesto:not([data-compuesto])")) ||
+          (nodo.querySelector && nodo.querySelector(".avatar-compuesto:not([data-compuesto])"));
+        if(esCandidato){
+          componerAvataresEnPantalla(document);
+          return;
+        }
+      }
+    }
+  });
+
+  observador.observe(document.body, { childList: true, subtree: true });
+}
+
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", _iniciarObservadorAvatares);
+}else{
+  _iniciarObservadorAvatares();
 }

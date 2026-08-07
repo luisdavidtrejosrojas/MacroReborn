@@ -58,15 +58,17 @@
     }
 
     let capas = "";
+    let rutasCapas = [];
     ORDEN_CAPAS_RESENA.forEach((tipo) => {
       const ruta = rutaImagenCapaResena(avatar[tipo]);
       if (ruta) {
         capas += `<img src="${ruta}" class="capa-resena" alt="" loading="lazy">`;
+        rutasCapas.push(ruta);
       }
     });
 
     return capas
-      ? `<div class="resena-avatar">${capas}</div>`
+      ? `<div class="resena-avatar avatar-compuesto" data-capas="${rutasCapas.join("|")}" data-capa-class="capa-resena">${capas}</div>`
       : `<img src="imagenes/avatar.png" class="resena-avatar-simple" alt="${escaparHTML(nombre)}" loading="lazy">`;
   }
 

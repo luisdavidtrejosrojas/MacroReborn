@@ -20,14 +20,17 @@ function avatarMiniActividad(nombre){
   }
 
   let capas = "";
+  let rutasCapas = [];
   ORDEN_CAPAS.forEach(tipo=>{
     const valor = avatar[tipo];
     if(valor && valor !== "ninguno" && CAPAS_IMG[valor]){
       capas += `<img class="capa-comentario" src="${CAPAS_IMG[valor]}" alt="" loading="lazy">`;
+      rutasCapas.push(CAPAS_IMG[valor]);
     }
   });
 
-  return `<div class="avatar-mini" style="width:44px;height:44px;">${capas}</div>`;
+  return `<div class="avatar-mini avatar-compuesto" style="width:44px;height:44px;" ` +
+    `data-capas="${rutasCapas.join("|")}" data-capa-class="capa-comentario">${capas}</div>`;
 }
 
 

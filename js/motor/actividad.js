@@ -33,6 +33,38 @@ const ICONOS_ACTIVIDAD = {
 };
 
 
+// ---------- VISTA PREVIA DE COMENTARIOS ----------
+// Desde la Fase 2, "detalle" para tipo "comentario" trae el texto real
+// del comentario (antes viajaba vacío). Acá se recorta a un preview
+// tipo red social y se escapa, ya que el texto se inyecta como HTML
+// en perfil-actividad.js / usuario-actividad.js.
+
+const LARGO_PREVIEW_COMENTARIO = 90;
+
+function _escapeHTMLActividad(texto){
+  return String(texto || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Si el comentario ya no existe (se borró) o "detalle" viene vacío
+// (actividades viejas, previas a este cambio), devuelve null y quien
+// arma el texto cae al mensaje genérico de siempre.
+function previewComentario(detalle){
+  const texto = (detalle || "").trim();
+  if(!texto) return null;
+
+  const recortado = texto.length > LARGO_PREVIEW_COMENTARIO
+    ? texto.slice(0, LARGO_PREVIEW_COMENTARIO).trimEnd() + "..."
+    : texto;
+
+  return _escapeHTMLActividad(recortado);
+}
+
+
 // ---------- TEXTOS ----------
 // "Propio": en 2da persona, para la pestaña "Actividad reciente" del dueño.
 // "Amigo": en 3ra persona, para la pestaña "Actividad de amigos".
@@ -49,8 +81,10 @@ function textoActividadPropia(tipo, detalle){
       return "⭐ Subiste al nivel " + detalle;
     case "amigo":
       return "🤝 Agregaste a " + detalle + " como amigo";
-    case "comentario":
-      return "💬 Publicaste un comentario";
+    case "comentario":{
+      const preview = previewComentario(detalle);
+      return preview ? "💬 Comentaste: \"" + preview + "\"" : "💬 Publicaste un comentario";
+    }
     default:
       return (ICONOS_ACTIVIDAD[tipo] || "•") + " " + (detalle || "");
   }
@@ -68,8 +102,12 @@ function textoActividadAmigo(nombreAmigo, tipo, detalle){
       return "⭐ " + nombreAmigo + " subió al nivel " + detalle;
     case "amigo":
       return "🤝 " + nombreAmigo + " agregó a " + detalle + " como amigo";
-    case "comentario":
-      return "💬 " + nombreAmigo + " publicó un comentario";
+    case "comentario":{
+      const preview = previewComentario(detalle);
+      return preview
+        ? "💬 " + nombreAmigo + " comentó: \"" + preview + "\""
+        : "💬 " + nombreAmigo + " publicó un comentario";
+    }
     default:
       return (ICONOS_ACTIVIDAD[tipo] || "•") + " " + nombreAmigo + " tuvo actividad";
   }

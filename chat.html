@@ -82,15 +82,24 @@
       <!-- chat.js cargará los mensajes -->
     </div>
 
-    <div class="escribir">
-      <input
-        id="mensajeInput"
-        type="text"
-        maxlength="300"
-        autocomplete="off"
-        placeholder="Escribí un mensaje...">
+    <div class="escribir-wrap">
 
-      <button id="botonEnviar">📨 Enviar</button>
+      <div class="escribir">
+        <input
+          id="mensajeInput"
+          type="text"
+          maxlength="200"
+          autocomplete="off"
+          placeholder="Escribí un mensaje...">
+
+        <button id="botonEnviar">📨 Enviar</button>
+      </div>
+
+      <div class="escribir-info">
+        <span id="avisoChat" class="aviso-chat"></span>
+        <span id="contadorChat" class="contador-chat">0 / 200</span>
+      </div>
+
     </div>
 
   </div>

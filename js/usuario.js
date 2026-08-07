@@ -237,13 +237,16 @@ if (!usuario) {
         avatarHTML = `<img src="imagenes/avatar.png" style="width:55px;height:55px;border-radius:50%;object-fit:cover;" alt="" loading="lazy">`;
       } else {
         let capas = "";
+        let rutasCapas = [];
         ORDEN_CAPAS.forEach(tipo => {
           const ruta = rutaImagenCapa(av[tipo]);
           if (ruta) {
             capas += `<img class="capa-comentario" src="${ruta}" alt="" loading="lazy">`;
+            rutasCapas.push(ruta);
           }
         });
-        avatarHTML = `<div class="avatar-mini">${capas}</div>`;
+        avatarHTML = `<div class="avatar-mini avatar-compuesto" data-capas="${rutasCapas.join("|")}" ` +
+          `data-capa-class="capa-comentario">${capas}</div>`;
       }
 
       return `
@@ -281,7 +284,10 @@ if (avatar && caja) {
   contenedorAvatar.style.display = "flex";
   contenedorAvatar.style.justifyContent = "center";
   contenedorAvatar.style.alignItems = "center";
+  contenedorAvatar.className = "avatar-compuesto";
 
+  const estiloCapaUsuario = "position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;";
+  let rutasCapasUsuario = [];
 
   ORDEN_CAPAS.forEach(tipo => {
 
@@ -292,21 +298,17 @@ if (avatar && caja) {
       const img = document.createElement("img");
 
       img.src = ruta;
-
-      img.style.position = "absolute";
-      img.style.width = "100%";
-      img.style.height = "100%";
-      img.style.objectFit = "contain";
-
-      img.style.top = "0";
-      img.style.left = "0";
+      img.setAttribute("style", estiloCapaUsuario);
 
       contenedorAvatar.appendChild(img);
+      rutasCapasUsuario.push(ruta);
 
     }
 
   });
 
+  contenedorAvatar.setAttribute("data-capas", rutasCapasUsuario.join("|"));
+  contenedorAvatar.setAttribute("data-capa-style", estiloCapaUsuario);
 
   caja.appendChild(contenedorAvatar);
 
@@ -486,13 +488,16 @@ if (avatar && caja) {
       return `<img src="imagenes/avatar.png" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #f0b429;" alt="" loading="lazy">`;
     }
     let capas = "";
+    let rutasCapas = [];
     ORDEN_CAPAS.forEach(tipo => {
       const ruta = rutaImagenCapa(av[tipo]);
       if (ruta) {
         capas += `<img class="capa-comentario" src="${ruta}" alt="" loading="lazy">`;
+        rutasCapas.push(ruta);
       }
     });
-    return `<div class="avatar-mini">${capas}</div>`;
+    return `<div class="avatar-mini avatar-compuesto" data-capas="${rutasCapas.join("|")}" ` +
+      `data-capa-class="capa-comentario">${capas}</div>`;
   }
 
   // Comentarios viven en Neon (tabla profile_comments,
@@ -656,7 +661,7 @@ if (avatar && caja) {
 
       // ACTIVIDAD RECIENTE - COMENTARIO
       if (activo && typeof registrarActividad === "function") {
-        registrarActividad(activo.nombre, "comentario", "");
+        registrarActividad(activo.nombre, "comentario", texto);
       }
     };
 

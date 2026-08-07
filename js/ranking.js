@@ -64,6 +64,7 @@ function obtenerAvatar(nombre, avatarCrudo){
 
 
     let html = "";
+    let rutasCapas = [];
 
 
 
@@ -110,6 +111,8 @@ function obtenerAvatar(nombre, avatarCrudo){
             src="${ruta}" alt="" loading="lazy">
             `;
 
+            rutasCapas.push(ruta);
+
         }
 
 
@@ -119,7 +122,7 @@ function obtenerAvatar(nombre, avatarCrudo){
 
     return `
 
-    <div class="avatar-mini-ranking">
+    <div class="avatar-mini-ranking avatar-compuesto" data-capas="${rutasCapas.join("|")}" data-capa-class="capa-ranking">
 
         ${html}
 
