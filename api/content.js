@@ -79,7 +79,7 @@ async function comments(req, res) {
       SELECT id, author_username AS usuario, texto, created_at
       FROM profile_comments
       WHERE profile_user_id = ${profileId}
-      ORDER BY id ASC;
+      ORDER BY id DESC;
     `;
 
     return res.status(200).json({ success: true, comentarios: filas });
@@ -204,11 +204,25 @@ async function likes(req, res) {
 async function chat(req, res) {
 
   if (req.method === "GET") {
+    // Se traen los 200 mensajes más recientes (subconsulta ORDER BY id
+    // DESC), pero se devuelven en orden ascendente (más viejo primero,
+    // más nuevo al final) para que el chat general los pinte de arriba
+    // hacia abajo como siempre, con el mensaje más nuevo abajo del todo.
     const filas = await sql`
+<<<<<<< HEAD
       SELECT id, username AS usuario, texto, created_at
       FROM chat_messages
       ORDER BY id DESC
       LIMIT 200;
+=======
+      SELECT * FROM (
+        SELECT id, username AS usuario, texto, created_at
+        FROM chat_messages
+        ORDER BY id DESC
+        LIMIT 200
+      ) recientes
+      ORDER BY id ASC;
+>>>>>>> 448c333 (Chat: mensajes nuevos arriba)
     `;
 
     return res.status(200).json({ success: true, mensajes: filas });
