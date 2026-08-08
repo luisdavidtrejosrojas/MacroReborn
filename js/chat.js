@@ -23,7 +23,11 @@ async function obtenerMensajes(){
     try{
         const resp = await fetch("/api/content?action=chat");
         const datos = await resp.json();
-        _mensajesCacheChat = (datos && datos.success) ? datos.mensajes : [];
+        // La API entrega los mensajes del más nuevo al más viejo (para
+        // traer siempre los 200 más recientes). Acá se invierte el
+        // array para pintarlos de más viejo (arriba) a más nuevo
+        // (abajo), que es el orden clásico del chat general.
+        _mensajesCacheChat = (datos && datos.success) ? datos.mensajes.slice().reverse() : [];
     }catch(error){
         console.warn("MacroReborn: no se pudieron cargar los mensajes del chat.", error);
         _mensajesCacheChat = [];
@@ -162,6 +166,11 @@ async function renderChat(){
         contenedor.appendChild(div);
     });
 
+    // La API entrega los mensajes del más viejo al más nuevo (ORDER BY
+    // id ASC sobre los 200 más recientes), así que se pintan en ese
+    // mismo orden: más viejo arriba, más nuevo abajo. Por eso acá se
+    // lleva el scroll al final, tanto al entrar al chat como después
+    // de cada envío o borrado (que vuelven a llamar a renderChat()).
     contenedor.scrollTop = contenedor.scrollHeight;
 }
 

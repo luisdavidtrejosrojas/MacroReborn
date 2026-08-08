@@ -974,7 +974,10 @@ function renderUltimosComentariosInicio(){
     return;
   }
 
-  const ultimos = lista.slice(-3).reverse();
+  // La lista ya viene del más nuevo al más viejo (ORDER BY id DESC en
+  // /api/content?action=comments), así que los "últimos" son
+  // simplemente los primeros 3, sin necesidad de invertir nada.
+  const ultimos = lista.slice(0, 3);
 
   contenedor.innerHTML = ultimos.map((c)=>{
     return `
