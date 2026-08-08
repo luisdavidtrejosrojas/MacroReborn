@@ -207,7 +207,7 @@ async function chat(req, res) {
     const filas = await sql`
       SELECT id, username AS usuario, texto, created_at
       FROM chat_messages
-      ORDER BY id ASC
+      ORDER BY id DESC
       LIMIT 200;
     `;
 

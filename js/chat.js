@@ -162,7 +162,13 @@ async function renderChat(){
         contenedor.appendChild(div);
     });
 
-    contenedor.scrollTop = contenedor.scrollHeight;
+    // La API ahora entrega los mensajes del más nuevo al más viejo
+    // (ORDER BY id DESC en /api/content?action=chat), así que se
+    // pintan en ese mismo orden: más nuevo arriba, más viejo abajo.
+    // Por eso acá se lleva el scroll a la parte superior en vez de
+    // al final, tanto al entrar al chat como después de cada envío
+    // o borrado (que vuelven a llamar a renderChat()).
+    contenedor.scrollTop = 0;
 }
 
 
