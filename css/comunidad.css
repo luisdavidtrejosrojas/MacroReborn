@@ -244,6 +244,7 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
+  height: 100%;
   transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -375,7 +376,7 @@
   text-decoration: none;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  margin-top: 4px;
+  margin-top: auto;
 }
 
 .btn-ver-perfil:hover {
