@@ -1,37 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 <meta charset="UTF-8">
 <script src="js/tema.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Notificaciones | MacroReborn</title>
+<title>Notificaciones - MacroReborn</title>
 
 <!-- SEO -->
-<meta name="description" content="Revisá tus notificaciones de actividad, comentarios y solicitudes de amistad en MacroReborn.">
-<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Revisá tus notificaciones en MacroReborn: solicitudes de amigos, comentarios, logros y novedades de la comunidad.">
+<meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://www.macroreborn.com/notificaciones.html">
 <meta name="theme-color" content="#0f172a">
 <link rel="icon" href="imagenes/logo.png" type="image/png">
 <link rel="apple-touch-icon" href="imagenes/logo.png">
-
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="MacroReborn">
-<meta property="og:locale" content="es_AR">
-<meta property="og:title" content="Notificaciones | MacroReborn">
-<meta property="og:description" content="Revisá tus notificaciones de actividad, comentarios y solicitudes de amistad en MacroReborn.">
-<meta property="og:url" content="https://www.macroreborn.com/notificaciones.html">
-<meta property="og:image" content="https://www.macroreborn.com/imagenes/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="MacroReborn - Comunidad y catálogo de juegos gratis online">
-
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Notificaciones | MacroReborn">
-<meta name="twitter:description" content="Revisá tus notificaciones de actividad, comentarios y solicitudes de amistad en MacroReborn.">
-<meta name="twitter:image" content="https://www.macroreborn.com/imagenes/og-image.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,11 +20,11 @@
 
 <link rel="stylesheet" href="css/inicio.css">
 <link rel="stylesheet" href="css/notificaciones.css">
-<link rel="stylesheet" href="css/buscador.css">
 </head>
 
 <body class="mr-root">
 
+<!-- NAVBAR -->
 <nav class="navbar">
   <a href="index.html" class="nav-logo">
     <img src="imagenes/logo.png" alt="MacroReborn">
@@ -61,22 +42,21 @@
   </div>
 </nav>
 
+<div class="notif-header">
+  <h1>🔔 Notificaciones</h1>
+  <p class="notif-subtitulo">Todo lo que pasó mientras no mirabas.</p>
+</div>
+
 <main class="notif-main">
 
-  <div class="notif-header">
-    <div class="notif-header-icono">🔔</div>
-    <div>
-      <h1>Notificaciones</h1>
-      <p class="notif-subtitulo">Todo lo que pasó en tu cuenta, en un solo lugar.</p>
-    </div>
+  <div class="notif-controles">
+    <button id="marcarLeidas" class="boton boton-secundario">✅ Marcar todas como leídas</button>
+    <button id="borrarTodas" class="boton boton-secundario notif-borrar">🗑️ Borrar todas</button>
   </div>
 
-  <div class="acciones">
-    <button id="marcarLeidas">✓ Marcar todas como leídas</button>
-    <button id="borrarTodas">🗑 Vaciar notificaciones</button>
-  </div>
-
-  <div id="listaNotificaciones"></div>
+  <section id="listaNotificaciones" class="notif-lista">
+    <!-- js/notificaciones.js llena esto -->
+  </section>
 
 </main>
 
@@ -126,10 +106,7 @@
 <script src="js/motor/permisos.js"></script>
 <script src="js/notificaciones.js"></script>
 <script src="js/navbar.js"></script>
-<script src="js/datos-juegos.js"></script>
-<script src="js/buscador.js"></script>
 <script src="js/nav-toggle.js"></script>
 
 </body>
-
 </html>
