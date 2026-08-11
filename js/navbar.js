@@ -21,7 +21,7 @@ function _inyectarEstilosNotifDropdown(){
     estilo.id = "estilosNotifDropdown";
     estilo.textContent = `
         .notif-bell-wrap{ position: relative; display: inline-flex; }
-        .notif-bell-boton{ background: none; border: none; font: inherit; cursor: pointer; padding: 0; }
+        .notif-bell-boton{ background: none; border: none; font: inherit; cursor: pointer; padding: 0; color: var(--text-main); }
         .notif-dropdown{
             position: absolute; top: calc(100% + 10px); right: 0;
             width: 320px; max-width: 88vw;
