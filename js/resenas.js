@@ -144,6 +144,11 @@
         </div>
         <p class="resena-texto">${escaparHTML(r.texto)}</p>
         ${typeof botonLikeHTML === "function" ? botonLikeHTML("resena", escaparHTML(idJuegoResena + ":" + r.usuario), usuarioResena ? usuarioResena.nombre : null) : ""}
+        ${!esPropia ? `
+        <button type="button" class="boton-responder-resena" data-usuario="${escaparHTML(r.usuario)}"
+          style="margin-top:8px;background:none;border:1px solid rgba(148,163,184,0.35);color:#93c5fd;border-radius:8px;padding:4px 12px;font-size:12.5px;cursor:pointer;">
+          Responder
+        </button>` : ""}
       </div>
     `;
       })
@@ -162,6 +167,23 @@
 
     listaResenas.querySelectorAll(".boton-borrar-resena").forEach((btn) => {
       btn.addEventListener("click", eliminarMiResena);
+    });
+
+    // RESPONDER (autocompleta @usuario en el textarea de reseña)
+    listaResenas.querySelectorAll(".boton-responder-resena").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (!usuarioResena) {
+          alert("Iniciá sesión para responder");
+          return;
+        }
+        if (textareaResena) {
+          textareaResena.value = "@" + btn.dataset.usuario + " ";
+          textareaResena.focus();
+        }
+        if (formResena) {
+          formResena.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      });
     });
 
     actualizarEstadoBotones();
