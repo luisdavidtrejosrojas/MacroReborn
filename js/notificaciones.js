@@ -5,7 +5,7 @@
 
 // ---------- USUARIO ACTIVO ----------
 
-const usuarioActivo = leerJSON(
+const _usuarioNotif = leerJSON(
     localStorage.getItem("usuarioActivo") || "null"
 );
 
@@ -50,13 +50,65 @@ function crearNotificacion(nombre, titulo, mensaje){
     }).then(()=>{
         // Si la notificación es para quien está mirando esta página
         // ahora mismo, refrescamos el contador y la lista.
-        if(usuarioActivo && usuarioActivo.nombre === nombre){
+        if(_usuarioNotif && _usuarioNotif.nombre === nombre){
             actualizarContador();
             renderNotificaciones();
         }
     }).catch(error=>{
         console.warn("MacroReborn: no se pudo crear la notificación.", error);
     });
+
+}
+
+
+// ---------- DESPLEGABLE (navbar) ----------
+// Versión compacta de renderNotificaciones(), para el desplegable que
+// abre js/navbar.js al hacer click en la campanita. Reutiliza
+// obtenerNotificaciones() de arriba, no agrega ningún endpoint nuevo.
+
+async function renderNotificacionesDropdown(){
+
+    const contenedor = document.getElementById("notifDropdownLista");
+
+    if(!contenedor) return;
+
+    if(!_usuarioNotif){
+
+        contenedor.innerHTML = `
+        <div class="notif-dropdown-vacio">
+            Iniciá sesión para ver tus notificaciones.
+        </div>`;
+
+        return;
+
+    }
+
+    contenedor.innerHTML = `<div class="notif-dropdown-vacio">Cargando...</div>`;
+
+    const lista = await obtenerNotificaciones(_usuarioNotif.nombre);
+
+    if(lista.length === 0){
+
+        contenedor.innerHTML = `
+        <div class="notif-dropdown-vacio">
+            🔔 No tenés notificaciones.
+        </div>`;
+
+        return;
+
+    }
+
+    // Solo las 6 más recientes: el desplegable es un vistazo rápido,
+    // el listado completo sigue viviendo en notificaciones.html.
+    contenedor.innerHTML = lista.slice(0, 6).map(noti => `
+
+        <div class="notif-dropdown-item ${noti.leida ? "" : "no-leida"}">
+            <h4>${noti.titulo}</h4>
+            <p>${noti.mensaje}</p>
+            <span>${noti.fecha}</span>
+        </div>
+
+    `).join("");
 
 }
 
@@ -69,7 +121,7 @@ async function renderNotificaciones(){
 
     if(!contenedor) return;
 
-    if(!usuarioActivo){
+    if(!_usuarioNotif){
 
         contenedor.innerHTML = `
         <div class="vacio">
@@ -82,7 +134,7 @@ async function renderNotificaciones(){
 
     }
 
-    const lista = await obtenerNotificaciones(usuarioActivo.nombre);
+    const lista = await obtenerNotificaciones(_usuarioNotif.nombre);
 
     if(lista.length === 0){
 
@@ -136,7 +188,7 @@ async function actualizarContador(){
 
     }
 
-    if(!usuarioActivo){
+    if(!_usuarioNotif){
 
         contador.textContent = "";
 
@@ -144,7 +196,7 @@ async function actualizarContador(){
 
     }
 
-    const lista = await obtenerNotificaciones(usuarioActivo.nombre);
+    const lista = await obtenerNotificaciones(_usuarioNotif.nombre);
 
     const sinLeer = lista.filter(n=>!n.leida).length;
 
@@ -157,13 +209,13 @@ async function actualizarContador(){
 
 document.getElementById("marcarLeidas")?.addEventListener("click", async ()=>{
 
-    if(!usuarioActivo) return;
+    if(!_usuarioNotif) return;
 
     try{
         await fetch("/api/content?action=notifications-mark-read", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: usuarioActivo.nombre })
+            body: JSON.stringify({ username: _usuarioNotif.nombre })
         });
     }catch(error){
         console.warn("MacroReborn: no se pudieron marcar las notificaciones como leídas.", error);
@@ -178,7 +230,7 @@ document.getElementById("marcarLeidas")?.addEventListener("click", async ()=>{
 
 document.getElementById("borrarTodas")?.addEventListener("click", async ()=>{
 
-    if(!usuarioActivo) return;
+    if(!_usuarioNotif) return;
 
     if(!confirm("¿Vaciar todas las notificaciones?")) return;
 
@@ -186,7 +238,7 @@ document.getElementById("borrarTodas")?.addEventListener("click", async ()=>{
         await fetch("/api/content?action=notifications", {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: usuarioActivo.nombre })
+            body: JSON.stringify({ username: _usuarioNotif.nombre })
         });
     }catch(error){
         console.warn("MacroReborn: no se pudieron borrar las notificaciones.", error);

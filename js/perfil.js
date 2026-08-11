@@ -1262,6 +1262,10 @@ document.getElementById("botonComentar")?.addEventListener("click", async ()=>{
   input.value="";
   await renderComentarios();
 
+  if(typeof notificarMenciones === "function" && usuarioActivo){
+    notificarMenciones(texto, usuarioActivo.nombre, "en un comentario en el perfil de " + datosUsuario.nombre + ".");
+  }
+
   // ==============================
   // LOGRO PRIMER COMENTARIO
   // ==============================

@@ -280,6 +280,10 @@
           return;
         }
 
+        if (typeof notificarMenciones === "function") {
+          notificarMenciones(texto, usuarioResena.nombre, "en una reseña de este juego.");
+        }
+
         await renderResenas();
       } catch (error) {
         console.warn("MacroReborn: no se pudo guardar la reseña.", error);

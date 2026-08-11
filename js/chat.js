@@ -308,6 +308,10 @@ async function enviarMensaje(){
     _registrarEnvioAntispam();
     _mostrarAvisoChat("");
 
+    if(typeof notificarMenciones === "function"){
+        notificarMenciones(texto, miNombre, "en el chat general.");
+    }
+
     input.value = "";
     _actualizarContadorChat();
     renderChat();
