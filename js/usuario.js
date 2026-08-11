@@ -541,9 +541,21 @@ if (avatar && caja) {
         ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(c.usuario, true) : ""}
         <p style="color:#cbd5e1;margin:0 0 10px;">${c.texto}</p>
         ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, activo ? activo.nombre : null) : ""}
+        <button class="boton-responder" data-usuario="${c.usuario}">Responder</button>
         <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>
     `).join("");
+
+    // RESPONDER
+    contenedor.querySelectorAll(".boton-responder").forEach(btn=>{
+      btn.onclick = () => {
+        const input = document.getElementById("comentarioTexto");
+        if(input){
+          input.value = "@" + btn.dataset.usuario + " ";
+          input.focus();
+        }
+      };
+    });
 
     // REPORTAR
     contenedor.querySelectorAll(".boton-reportar").forEach(btn=>{
@@ -582,39 +594,6 @@ if (avatar && caja) {
 
       const quien = activo ? activo.nombre : "Invitado";
 
-      // ==============================
-      // NOTIFICACION DE MENCION
-      // ==============================
-
-      if(typeof crearNotificacion === "function"){
-
-        const mencion = texto.match(/@(\w+)/);
-
-        if(mencion){
-
-          const nombreMencionado = mencion[1];
-
-          // La lista completa de usuarios vive en Neon
-          // (/api/users), ya no en la clave localStorage
-          // "usuariosMacro" (que dejó de llenarse desde la Fase 1).
-          const existe = typeof buscarUsuarioPorNombre === "function"
-            ? await buscarUsuarioPorNombre(nombreMencionado)
-            : null;
-
-          if(existe && existe.username !== quien){
-
-            crearNotificacion(
-              existe.username,
-              "📢 Te mencionaron",
-              quien + " te mencionó en un comentario."
-            );
-
-          }
-
-        }
-
-      }
-
       try{
         await fetch("/api/content?action=comments", {
           method: "POST",
@@ -633,6 +612,14 @@ if (avatar && caja) {
       inputComentario.value = "";
 
       await renderComentarios();
+
+      // ==============================
+      // NOTIFICACIÓN DE MENCIÓN
+      // ==============================
+
+      if(typeof notificarMenciones === "function"){
+        notificarMenciones(texto, quien, "en un comentario en el perfil de " + usuario.nombre + ".");
+      }
 
       // ==============================
       // NOTIFICACIÓN NUEVO COMENTARIO
