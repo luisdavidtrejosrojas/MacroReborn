@@ -1,244 +1,138 @@
-/* ==========================================================================
-   NOTIFICACIONES
-   Paleta y tipografía alineadas al resto de MacroReborn (inicio.css /
-   perfil.css / amigos.css): slate oscuro + dorado, tarjetas con borde
-   sutil y acento a la izquierda para lo no leído.
-   ========================================================================== */
+/* ==============================
+   NOTIFICACIONES - MacroReborn
+   Hereda paleta y tipografía de css/inicio.css
+   (fondo #0f172a, Orbitron para títulos, Inter para texto).
+   ============================== */
 
-.notif-main {
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 48px 24px 80px;
-  min-height: calc(100vh - 70px);
+.notif-header{
+  max-width: 860px;
+  margin: 64px auto 8px;
+  padding: 0 24px;
+  text-align: center;
 }
 
-/* ---- Encabezado ---- */
-
-.notif-header {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 30px;
+.notif-header h1{
+  font-family: "Orbitron", sans-serif;
+  font-weight: 900;
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: 0.02em;
+  color: #f8fafc;
+  margin: 0 0 8px;
 }
 
-.notif-header-icono {
-  width: 56px;
-  height: 56px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  border-radius: 16px;
-  background: linear-gradient(160deg, rgba(240, 180, 41, 0.18), rgba(240, 180, 41, 0.05));
-  border: 1px solid rgba(240, 180, 41, 0.35);
-}
-
-.notif-header h1 {
-  font-family: var(--font-display);
-  color: var(--gold-bright);
-  font-size: 24px;
-  margin: 0 0 4px;
-}
-
-.notif-subtitulo {
-  color: var(--text-muted);
-  font-size: 14px;
+.notif-subtitulo{
+  font-family: "Inter", sans-serif;
+  color: #94a3b8;
+  font-size: 15px;
   margin: 0;
 }
 
-/* ---- Barra de acciones ---- */
+.notif-main{
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+}
 
-.acciones {
+.notif-controles{
   display: flex;
-  gap: 14px;
-  margin-bottom: 26px;
+  gap: 12px;
+  justify-content: flex-end;
   flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
-.acciones button {
-  font-family: var(--font-body);
-  border-radius: 10px;
-  padding: 11px 20px;
-  font-weight: 700;
-  font-size: 13.5px;
-  cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+.notif-controles .boton{
+  font-size: 13px;
+  padding: 10px 16px;
 }
 
-#marcarLeidas {
-  background: rgba(240, 180, 41, 0.1);
-  color: var(--gold-bright);
-  border: 1px solid rgba(240, 180, 41, 0.4);
+.notif-borrar{
+  border-color: rgba(224, 85, 63, 0.4) !important;
+  color: #f2a99a !important;
+}
+.notif-borrar:hover{
+  background: rgba(224, 85, 63, 0.12) !important;
 }
 
-#marcarLeidas:hover {
-  background: var(--gold);
-  color: #241804;
-  transform: translateY(-2px);
-}
-
-#borrarTodas {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-}
-
-#borrarTodas:hover {
-  background: rgba(239, 68, 68, 0.85);
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-/* ---- Lista ---- */
-
-#listaNotificaciones {
+.notif-lista{
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
-/* ---- Notificación individual ---- */
-
-.notificacion {
+/* Cada notificación, generada por js/notificaciones.js */
+.notificacion{
   position: relative;
-  background: linear-gradient(180deg, var(--bg-panel), var(--bg-base));
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--line);
-  border-radius: 14px;
-  padding: 18px 20px;
-  transition: transform 0.15s ease, border-color 0.15s ease;
-  animation: notif-aparecer 0.25s ease;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-left: 3px solid rgba(148, 163, 184, 0.3);
+  border-radius: 12px;
+  padding: 16px 20px;
+  transition: background .15s ease, border-color .15s ease, transform .15s ease;
 }
 
-@keyframes notif-aparecer {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+.notificacion.no-leida{
+  background: rgba(99, 102, 241, 0.08);
+  border-left-color: #818cf8;
 }
 
-.notificacion:hover {
-  transform: translateY(-2px);
-  border-color: var(--gold-deep);
+.notificacion:hover{
+  transform: translateY(-1px);
+  border-color: rgba(148, 163, 184, 0.3);
 }
 
-/* No leída: acento dorado + fondo levemente resaltado + etiqueta "Nuevo" */
-.notificacion.no-leida {
-  border-left-color: var(--gold);
-  background: linear-gradient(180deg, var(--bg-panel-alt), var(--bg-panel));
-}
-
-.notificacion.no-leida::after {
-  content: "● Nuevo";
-  position: absolute;
-  top: 18px;
-  right: 20px;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.4px;
-  color: var(--gold-bright);
-  background: rgba(240, 180, 41, 0.12);
-  border: 1px solid rgba(240, 180, 41, 0.35);
-  padding: 3px 10px;
-  border-radius: 999px;
-}
-
-/* Leída: atenuada para distinguirla de un vistazo */
-.notificacion.leida {
-  opacity: 0.6;
-}
-
-.notificacion.leida:hover {
-  opacity: 0.85;
-}
-
-.notificacion h3 {
-  margin: 0 6px 8px 0;
-  color: var(--gold-bright);
-  font-family: var(--font-display);
-  font-size: 15.5px;
-  padding-right: 70px;
-}
-
-.notificacion.leida h3 {
-  color: var(--text-main);
-}
-
-.notificacion p {
-  margin: 0 0 10px;
-  color: var(--text-main);
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.fecha {
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.fecha::before {
-  content: "🕒 ";
-}
-
-/* ---- Estado vacío (sin notificaciones o sin sesión) ---- */
-
-.vacio {
-  text-align: center;
-  color: var(--text-muted);
-  padding: 60px 20px;
+.notificacion h3{
+  font-family: "Inter", sans-serif;
   font-size: 15px;
-  background: var(--bg-panel);
-  border: 1px dashed var(--line);
-  border-radius: 16px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0 0 4px;
+  padding-right: 68px; /* deja lugar al pill de "Nueva" */
 }
 
-.vacio::before {
-  content: "🔔";
-  display: block;
-  font-size: 40px;
-  margin-bottom: 14px;
-  opacity: 0.7;
+.notificacion.no-leida h3::before{
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #818cf8;
+  margin-right: 8px;
+  vertical-align: middle;
 }
 
-/* ---- Responsive ---- */
+.notificacion p{
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #cbd5e1;
+  margin: 0 0 10px;
+}
 
-@media (max-width: 640px) {
+.notificacion .fecha{
+  font-size: 11.5px;
+  color: #64748b;
+  font-family: "Inter", sans-serif;
+}
 
-  .notif-main {
-    padding: 32px 16px 60px;
+/* Estado vacío / sin sesión, generado por js/notificaciones.js */
+.vacio{
+  text-align: center;
+  padding: 72px 20px;
+  color: #94a3b8;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(148, 163, 184, 0.25);
+  border-radius: 14px;
+}
+
+@media (max-width: 560px){
+  .notif-controles{
+    justify-content: stretch;
   }
-
-  .notif-header {
-    gap: 12px;
-    margin-bottom: 22px;
+  .notif-controles .boton{
+    flex: 1;
+    text-align: center;
   }
-
-  .notif-header-icono {
-    width: 46px;
-    height: 46px;
-    font-size: 21px;
-    border-radius: 12px;
-  }
-
-  .notif-header h1 {
-    font-size: 20px;
-  }
-
-  .acciones {
-    flex-direction: column;
-  }
-
-  .acciones button {
-    width: 100%;
-  }
-
-  .notificacion.no-leida::after {
-    position: static;
-    display: inline-block;
-    margin-bottom: 8px;
-  }
-
-  .notificacion h3 {
-    padding-right: 0;
-  }
-
 }
