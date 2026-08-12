@@ -111,12 +111,25 @@ async function comments(req, res) {
   }
 
   if (req.method === "DELETE") {
-    const { commentId } = req.body || {};
+    const { commentId, username } = req.body || {};
     if (!commentId) {
       return res.status(400).json({ success: false, error: "Falta commentId" });
     }
+    if (!username) {
+      return res.status(400).json({ success: false, error: "Falta username" });
+    }
 
-    await sql`DELETE FROM profile_comments WHERE id = ${commentId};`;
+    // Solo el autor puede borrar su propio comentario, sin importar en
+    // qué perfil lo haya escrito (mismo criterio que ya usa el chat).
+    const borrado = await sql`
+      DELETE FROM profile_comments
+      WHERE id = ${commentId} AND author_username = ${username}
+      RETURNING id;
+    `;
+
+    if (!borrado.length) {
+      return res.status(403).json({ success: false, error: "No podés eliminar un comentario que no es tuyo" });
+    }
 
     return res.status(200).json({ success: true });
   }
