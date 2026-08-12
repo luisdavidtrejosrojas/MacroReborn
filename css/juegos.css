@@ -13,6 +13,41 @@
 }
 
 /* ==========================================================================
+   NAVBAR — versión simplificada solo para esta página
+   Acá el nav-links original (Inicio/Comunidad/etc) se vació en el HTML.
+   Lo único que queda ahí son la campanita, el perfil, cerrar sesión y el
+   modo oscuro/claro (los sigue inyectando js/navbar.js y js/tema.js, en
+   ese mismo orden). Esta sección solo reacomoda el layout: todo eso
+   agrupado y pegado a la izquierda, junto al logo, y el buscador
+   centrado en el medio de la barra.
+   ========================================================================== */
+
+@media (min-width: 769px) {
+
+  .navbar {
+    justify-content: flex-start;
+  }
+
+  .navbar .nav-logo {
+    order: 1;
+  }
+
+  .navbar .nav-links {
+    order: 2;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .navbar .nav-buscador {
+    order: 3;
+    flex: 0 1 420px;
+    margin: 0 auto;
+  }
+
+}
+
+/* ==========================================================================
    ENCABEZADO DEL CATÁLOGO
    ========================================================================== */
 
