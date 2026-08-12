@@ -111,25 +111,60 @@ async function comments(req, res) {
   }
 
   if (req.method === "DELETE") {
-    const { commentId, username } = req.body || {};
-    if (!commentId) {
-      return res.status(400).json({ success: false, error: "Falta commentId" });
-    }
+    const { commentId, username, profileUsername, all } = req.body || {};
+
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
     }
 
-    // Solo el autor puede borrar su propio comentario, sin importar en
-    // qué perfil lo haya escrito (mismo criterio que ya usa el chat).
-    const borrado = await sql`
-      DELETE FROM profile_comments
-      WHERE id = ${commentId} AND author_username = ${username}
-      RETURNING id;
+    // Vaciar TODOS los comentarios de un perfil ("Eliminar Todo"):
+    // solo el dueño de ese perfil puede hacerlo, y solo sobre su
+    // propio perfil.
+    if (all) {
+      if (!profileUsername) {
+        return res.status(400).json({ success: false, error: "Falta profileUsername" });
+      }
+      if (username !== profileUsername) {
+        return res.status(403).json({ success: false, error: "Solo el dueño del perfil puede vaciar sus comentarios" });
+      }
+
+      const profileId = await getUserId(profileUsername);
+      if (!profileId) {
+        return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+      }
+
+      await sql`DELETE FROM profile_comments WHERE profile_user_id = ${profileId};`;
+
+      return res.status(200).json({ success: true });
+    }
+
+    // Borrar UN comentario. Puede hacerlo:
+    //  - su autor, sin importar en qué perfil lo haya escrito, o
+    //  - el dueño del perfil donde vive el comentario (moderación
+    //    dentro de su propio perfil, sobre comentarios ajenos).
+    if (!commentId) {
+      return res.status(400).json({ success: false, error: "Falta commentId" });
+    }
+
+    const filas = await sql`
+      SELECT pc.author_username, u.username AS profile_username
+      FROM profile_comments pc
+      JOIN users u ON u.id = pc.profile_user_id
+      WHERE pc.id = ${commentId};
     `;
 
-    if (!borrado.length) {
-      return res.status(403).json({ success: false, error: "No podés eliminar un comentario que no es tuyo" });
+    if (!filas.length) {
+      return res.status(404).json({ success: false, error: "Comentario no encontrado" });
     }
+
+    const esAutor = filas[0].author_username === username;
+    const esDuenioDelPerfil = filas[0].profile_username === username;
+
+    if (!esAutor && !esDuenioDelPerfil) {
+      return res.status(403).json({ success: false, error: "No podés eliminar este comentario" });
+    }
+
+    await sql`DELETE FROM profile_comments WHERE id = ${commentId};`;
 
     return res.status(200).json({ success: true });
   }
