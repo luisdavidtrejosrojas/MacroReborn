@@ -16,7 +16,7 @@ function avatarMiniActividad(nombre){
   const avatar = typeof obtenerAvatarCacheado === "function" ? obtenerAvatarCacheado(nombre) : null;
 
   if(!avatar){
-    return `<img src="imagenes/avatar.png" style="width:44px;height:44px;border-radius:50%;object-fit:cover;" alt="" loading="lazy">`;
+    return `<img src="imagenes/avatar.png" class="avatar-comentario" alt="" loading="lazy">`;
   }
 
   let capas = "";
@@ -29,7 +29,13 @@ function avatarMiniActividad(nombre){
     }
   });
 
-  return `<div class="avatar-mini avatar-compuesto" style="width:44px;height:44px;" ` +
+  // FIX: este contenedor forzaba un tamaño inline de 44x44px, pero el
+  // recorte de ".capa-comentario" está calibrado matemáticamente para
+  // los 55x55px de ".avatar-mini" (ver nota en css/perfil.css). Ese
+  // desajuste de tamaño rompía por completo el recorte y el círculo
+  // quedaba vacío. Se saca el "style" inline para que use el mismo
+  // tamaño de 55px que ya funciona bien en Comentarios.
+  return `<div class="avatar-mini avatar-compuesto" ` +
     `data-capas="${rutasCapas.join("|")}" data-capa-class="capa-comentario">${capas}</div>`;
 }
 
