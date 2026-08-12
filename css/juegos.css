@@ -25,6 +25,7 @@
 @media (min-width: 769px) {
 
   .navbar {
+    position: relative; /* ancla para centrar el buscador respecto a TODA la barra */
     justify-content: flex-start;
   }
 
@@ -39,10 +40,14 @@
     gap: 10px;
   }
 
+  /* Centrado real: se posiciona respecto al ancho total de .navbar,
+     no respecto al espacio que sobra después del grupo izquierdo. */
   .navbar .nav-buscador {
-    order: 3;
-    flex: 0 1 420px;
-    margin: 0 auto;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    max-width: 90%;
   }
 
 }
