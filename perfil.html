@@ -41,6 +41,7 @@
 <link rel="stylesheet" href="css/perfil.css">
 <link rel="stylesheet" href="css/insignias.css">
 <link rel="stylesheet" href="css/buscador.css">
+<link rel="stylesheet" href="css/retro-perfil.css">
 </head>
 
 
@@ -78,6 +79,11 @@ MacroReborn
 </nav>
 
 <main class="perfil">
+
+  <!-- TARJETA DE PERFIL "ESTILO CLÁSICO" (aparte, ver css/retro-perfil.css
+       y js/retro-perfil.js). No reemplaza nada de abajo, solo refleja
+       los mismos datos (nombre, nivel, estado, XP, avatar). -->
+  <div class="retro-perfil-bloque" id="retroPerfilWrap"></div>
 
   <!-- PERFIL SUPERIOR -->
   <div class="perfil-superior">
@@ -649,6 +655,8 @@ MacroReborn
 <script src="js/perfil-config.js"></script>
 
 <script src="js/perfil-eliminar-cuenta.js"></script>
+
+<script src="js/retro-perfil.js"></script>
 
 <script src="js/navbar.js"></script>
 <script src="js/buscador.js"></script>
