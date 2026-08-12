@@ -1,5 +1,6 @@
 const { neon } = require("@neondatabase/serverless");
 const { setCors } = require("./_utils");
+const { getPusher, canalNotificaciones } = require("./_pusher");
 
 const sql = neon(process.env.DATABASE_URL);
 
@@ -296,12 +297,30 @@ async function notifications(req, res) {
       return res.status(200).json({ success: false, error: "Usuario no encontrado" });
     }
 
-    await sql`
+    const filas = await sql`
       INSERT INTO notifications (user_id, titulo, mensaje)
-      VALUES (${userId}, ${titulo}, ${mensaje || ""});
+      VALUES (${userId}, ${titulo}, ${mensaje || ""})
+      RETURNING id, titulo, mensaje, leida, created_at;
     `;
 
-    return res.status(200).json({ success: true });
+    const notif = filas[0];
+
+    // Push en tiempo real. Va en un try/catch propio: si Pusher falla
+    // (credenciales mal puestas, corte del servicio, etc.) la
+    // notificación ya quedó guardada en la base igual, así que no
+    // rompemos la respuesta por esto — el usuario la va a ver de
+    // todas formas la próxima vez que actualice la lista.
+    try {
+      await getPusher().trigger(
+        canalNotificaciones(username),
+        "nueva-notificacion",
+        notif
+      );
+    } catch (error) {
+      console.warn("Pusher: no se pudo enviar el push en tiempo real.", error);
+    }
+
+    return res.status(200).json({ success: true, notificacion: notif });
   }
 
   if (req.method === "DELETE") {
