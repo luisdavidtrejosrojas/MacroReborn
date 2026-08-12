@@ -221,10 +221,16 @@ if (!usuario) {
 
 
   // ---------- AMIGOS (lista real, solo lectura) ----------
+  // Mismas tarjetas que la Comunidad (ver css/comunidad.css, copiadas
+  // en css/perfil.css bajo "AMIGOS"). La estrella de "Amigo favorito"
+  // acá es solo un indicador (no un botón): los favoritos los define
+  // cada usuario en SU PROPIO perfil (perfil.html), no se pueden
+  // marcar desde el perfil ajeno de otra persona.
 
   // Amigos del perfil visitado (para "ya somos amigos" y la lista de
   // solo lectura). Se pide una sola vez y se reusa en ambos lados.
   let _amigosDeEstePerfil = [];
+  let _favoritosDeEstePerfil = [];
 
   async function cargarAmigosDeEstePerfil(){
     try{
@@ -234,6 +240,15 @@ if (!usuario) {
     }catch(error){
       console.warn("MacroReborn: no se pudo cargar la lista de amigos.", error);
       _amigosDeEstePerfil = [];
+    }
+
+    try{
+      const respuestaFav = await fetch("/api/social?action=favoriteFriends&username=" + encodeURIComponent(usuario.nombre));
+      const datosFav = await respuestaFav.json();
+      _favoritosDeEstePerfil = (datosFav && datosFav.success) ? datosFav.favoritos : [];
+    }catch(error){
+      console.warn("MacroReborn: no se pudo cargar los amigos favoritos.", error);
+      _favoritosDeEstePerfil = [];
     }
   }
 
@@ -246,37 +261,55 @@ if (!usuario) {
       return;
     }
 
-    contenedor.innerHTML = _amigosDeEstePerfil.map(amigo => {
+    // Favoritos primero, igual que en perfil.html.
+    const amigosOrdenados = [
+      ..._amigosDeEstePerfil.filter(a => _favoritosDeEstePerfil.includes(a.username)),
+      ..._amigosDeEstePerfil.filter(a => !_favoritosDeEstePerfil.includes(a.username))
+    ];
+
+    contenedor.innerHTML = `<div class="grid-usuarios">` + amigosOrdenados.map(amigo => {
       const nombreAmigo = amigo.username;
       const av = normalizarAvatar(amigo.avatar);
+      const esFavorito = _favoritosDeEstePerfil.includes(nombreAmigo);
 
-      let avatarHTML;
-      if (!av) {
-        avatarHTML = `<img src="imagenes/avatar.png" style="width:55px;height:55px;border-radius:50%;object-fit:cover;" alt="" loading="lazy">`;
-      } else {
-        let capas = "";
-        let rutasCapas = [];
+      let capas = "";
+      let rutasCapas = [];
+
+      if (av) {
         ORDEN_CAPAS.forEach(tipo => {
           const ruta = rutaImagenCapa(av[tipo]);
           if (ruta) {
-            capas += `<img class="capa-comentario" src="${ruta}" alt="" loading="lazy">`;
+            capas += `<img class="capa-tarjeta" src="${ruta}" alt="" loading="lazy">`;
             rutasCapas.push(ruta);
           }
         });
-        avatarHTML = `<div class="avatar-mini avatar-compuesto" data-capas="${rutasCapas.join("|")}" ` +
-          `data-capa-class="capa-comentario">${capas}</div>`;
       }
 
+      const avatarHTML = capas || `<img src="imagenes/avatar.png" class="avatar-default" alt="" loading="lazy">`;
+
       return `
-        <div class="actividad" style="display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap;">
-          <div style="display:flex;align-items:center;gap:14px;">
+        <div class="tarjeta-usuario">
+
+          ${esFavorito ? `<span class="icono-favorito-amigo" title="Amigo favorito">★</span>` : ""}
+
+          <div class="avatar-tarjeta avatar-compuesto" data-capas="${rutasCapas.join("|")}" data-capa-class="capa-tarjeta">
             ${avatarHTML}
-            <b style="color:#f0b429;">${nombreAmigo}</b>
           </div>
-          <a href="usuario.html?usuario=${encodeURIComponent(nombreAmigo)}" style="background:#1e293b;color:#f0b429;border:2px solid #f0b429;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:bold;text-decoration:none;">👤 Ver perfil</a>
+
+          <h3 class="usuario-nombre">${nombreAmigo}</h3>
+
+          <div class="usuario-stats">
+            <div class="stat-item">
+              <span class="stat-valor">${amigo.level || 1}</span>
+              <span class="stat-label">⭐ Nivel</span>
+            </div>
+          </div>
+
+          <a href="usuario.html?usuario=${encodeURIComponent(nombreAmigo)}" class="btn-ver-perfil" style="width:100%;">👤 Ver perfil</a>
+
         </div>
       `;
-    }).join("");
+    }).join("") + `</div>`;
   }
 
   await cargarAmigosDeEstePerfil();

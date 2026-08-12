@@ -63,28 +63,31 @@ async function renderActividadReciente(){
 
 
 // ---------- ACTIVIDAD DE AMIGOS ----------
-// La lista de amigos vive en Neon desde la Fase 1
-// (/api/social?action=friends), no en localStorage.
+// Antes mostraba la actividad de TODOS los amigos
+// (/api/social?action=friends). Ahora, con el sistema de "Amigos
+// favoritos" (pestaña Amigos del perfil), esta pestaña muestra
+// únicamente la actividad de los amigos marcados como favoritos
+// (/api/social?action=favoriteFriends), no en localStorage.
 
 async function renderActividadAmigos(){
   const contenedor = document.getElementById("listaActividadAmigos");
   if(!contenedor) return;
 
-  let misAmigos = [];
+  let misFavoritos = [];
   try{
-    const resp = await fetch("/api/social?action=friends&username=" + encodeURIComponent(datosUsuario.nombre));
+    const resp = await fetch("/api/social?action=favoriteFriends&username=" + encodeURIComponent(datosUsuario.nombre));
     const datos = await resp.json();
-    misAmigos = (datos && datos.success) ? datos.amigos.map(a => a.username) : [];
+    misFavoritos = (datos && datos.success) ? datos.favoritos : [];
   }catch(error){
-    console.warn("MacroReborn: no se pudo cargar la lista de amigos.", error);
+    console.warn("MacroReborn: no se pudo cargar los amigos favoritos.", error);
   }
 
-  if(misAmigos.length === 0){
-    contenedor.innerHTML = `<p style="color:#94a3b8;font-size:14px;">No tienes amigos agregados.</p>`;
+  if(misFavoritos.length === 0){
+    contenedor.innerHTML = `<p style="color:#94a3b8;font-size:14px;">Todavía no marcaste amigos favoritos. Andá a la pestaña 🤝 Amigos y tocá la ⭐ de hasta 10 amigos para ver su actividad acá.</p>`;
     return;
   }
 
-  const actividadesAmigos = (await obtenerActividadesDe(misAmigos)).slice(0, MAX_ACTIVIDADES);
+  const actividadesAmigos = (await obtenerActividadesDe(misFavoritos)).slice(0, MAX_ACTIVIDADES);
 
   if(actividadesAmigos.length === 0){
     contenedor.innerHTML = `<p style="color:#94a3b8;font-size:14px;">Tus amigos todavía no realizaron ninguna actividad.</p>`;

@@ -930,11 +930,14 @@ if(datosUsuario.bio){
 // AMIGOS (pestaña del perfil)
 // ==============================
 
+const MAX_AMIGOS_FAVORITOS = 10;
+
 async function renderAmigosPerfil(){
   const contenedor = document.getElementById("listaAmigosPerfil");
   if(!contenedor) return;
 
   let misAmigos = [];
+  let misFavoritos = [];
 
   try{
     const respuesta = await fetch("/api/social?action=friends&username=" + encodeURIComponent(datosUsuario.nombre));
@@ -944,45 +947,72 @@ async function renderAmigosPerfil(){
     console.warn("MacroReborn: no se pudo cargar la lista de amigos.", error);
   }
 
+  try{
+    const respuestaFav = await fetch("/api/social?action=favoriteFriends&username=" + encodeURIComponent(datosUsuario.nombre));
+    const datosFav = await respuestaFav.json();
+    if(datosFav && datosFav.success) misFavoritos = datosFav.favoritos;
+  }catch(error){
+    console.warn("MacroReborn: no se pudo cargar los amigos favoritos.", error);
+  }
+
   if(misAmigos.length === 0){
     contenedor.innerHTML = `<p>Todavía no agregaste amigos. <a href="comunidad.html" style="color:#f0b429;">Buscá jugadores en la comunidad</a>.</p>`;
     return;
   }
 
-  contenedor.innerHTML = misAmigos.map(amigo => {
+  // Amigos favoritos primero, el resto después (mismo orden alfabético
+  // que ya trae /api/social?action=friends dentro de cada grupo).
+  const amigosOrdenados = [
+    ...misAmigos.filter(a => misFavoritos.includes(a.username)),
+    ...misAmigos.filter(a => !misFavoritos.includes(a.username))
+  ];
+
+  contenedor.innerHTML = `<div class="grid-usuarios">` + amigosOrdenados.map(amigo => {
     const nombreAmigo = amigo.username;
     const avatar = normalizarAvatar(amigo.avatar);
+    const esFavorito = misFavoritos.includes(nombreAmigo);
 
-    let avatarHTML;
-    if(!avatar){
-      avatarHTML = `<img src="imagenes/avatar.png" style="width:55px;height:55px;border-radius:50%;object-fit:cover;" alt="" loading="lazy">`;
-    } else {
-      let capas = "";
-      let rutasCapas = [];
+    let capas = "";
+    let rutasCapas = [];
+
+    if(avatar){
       ORDEN_CAPAS.forEach(tipo=>{
         const valor = avatar[tipo];
         if(valor && valor!=="ninguno" && CAPAS_IMG[valor]){
-          capas += `<img class="capa-comentario" src="${CAPAS_IMG[valor]}" alt="" loading="lazy">`;
+          capas += `<img class="capa-tarjeta" src="${CAPAS_IMG[valor]}" alt="" loading="lazy">`;
           rutasCapas.push(CAPAS_IMG[valor]);
         }
       });
-      avatarHTML = `<div class="avatar-mini avatar-compuesto" data-capas="${rutasCapas.join("|")}" ` +
-        `data-capa-class="capa-comentario">${capas}</div>`;
     }
 
+    const avatarHTML = capas || `<img src="imagenes/avatar.png" class="avatar-default" alt="" loading="lazy">`;
+
     return `
-      <div class="actividad" style="display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:14px;">
+      <div class="tarjeta-usuario">
+
+        <button class="btn-favorito-amigo ${esFavorito ? "es-favorito" : ""}" data-nombre="${nombreAmigo}" title="${esFavorito ? "Quitar de favoritos" : "Marcar como favorito"}">★</button>
+
+        <div class="avatar-tarjeta avatar-compuesto" data-capas="${rutasCapas.join("|")}" data-capa-class="capa-tarjeta">
           ${avatarHTML}
-          <b style="color:#f0b429;">${nombreAmigo}</b>
         </div>
-        <div style="display:flex;gap:10px;">
-          <a href="usuario.html?usuario=${encodeURIComponent(nombreAmigo)}" style="background:#1e293b;color:#f0b429;border:2px solid #f0b429;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:bold;text-decoration:none;">👤 Ver perfil</a>
-          <button class="btn-quitar-amigo-perfil" data-nombre="${nombreAmigo}" style="background:#ef444422;color:#ef4444;border:2px solid #ef444466;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:bold;cursor:pointer;">🗑️ Eliminar</button>
+
+        <h3 class="usuario-nombre">${nombreAmigo}</h3>
+
+        <div class="usuario-stats">
+          <div class="stat-item">
+            <span class="stat-valor">${amigo.level || 1}</span>
+            <span class="stat-label">⭐ Nivel</span>
+          </div>
         </div>
+
+        <div class="tarjeta-amigo-acciones">
+          <a href="usuario.html?usuario=${encodeURIComponent(nombreAmigo)}" class="btn-ver-perfil">👤 Ver perfil</a>
+          <button class="btn-quitar-amigo-perfil" data-nombre="${nombreAmigo}" title="Eliminar amigo">🗑️</button>
+        </div>
+
       </div>
     `;
-  }).join("");
+  }).join("") + `</div>`;
 
   contenedor.querySelectorAll(".btn-quitar-amigo-perfil").forEach(btn=>{
     btn.addEventListener("click", async ()=>{
@@ -999,6 +1029,40 @@ async function renderAmigosPerfil(){
         });
       }catch(error){
         console.warn("MacroReborn: no se pudo eliminar al amigo.", error);
+      }
+
+      renderAmigosPerfil();
+    });
+  });
+
+  contenedor.querySelectorAll(".btn-favorito-amigo").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const objetivo = btn.dataset.nombre;
+      const esFavoritoActual = btn.classList.contains("es-favorito");
+
+      if(!esFavoritoActual && misFavoritos.length >= MAX_AMIGOS_FAVORITOS){
+        alert(`Ya tenés el máximo de ${MAX_AMIGOS_FAVORITOS} amigos favoritos. Quitá uno antes de agregar otro.`);
+        return;
+      }
+
+      btn.disabled = true;
+
+      try{
+        const respuesta = await fetch("/api/social?action=favoriteFriends", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: esFavoritoActual ? "remove" : "add",
+            username: datosUsuario.nombre,
+            friendUsername: objetivo
+          })
+        });
+        const datosResp = await respuesta.json();
+        if(!datosResp || !datosResp.success){
+          alert((datosResp && datosResp.error) || "No se pudo actualizar el amigo favorito.");
+        }
+      }catch(error){
+        console.warn("MacroReborn: no se pudo actualizar el amigo favorito.", error);
       }
 
       renderAmigosPerfil();
