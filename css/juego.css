@@ -698,3 +698,11 @@
     justify-content: center;
   }
 }
+
+/* Evita el zoom automático de Safari/iOS al escribir una reseña (se activa
+   cuando un textarea tiene font-size menor a 16px). Solo aplica en mobile. */
+@media (max-width: 768px) {
+  .resena-textarea {
+    font-size: 16px;
+  }
+}

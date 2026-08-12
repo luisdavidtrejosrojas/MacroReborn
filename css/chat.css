@@ -464,3 +464,11 @@
     padding: 13px;
   }
 }
+
+/* Evita el zoom automático de Safari/iOS al escribir en el chat (se activa
+   cuando un input tiene font-size menor a 16px). Solo aplica en mobile. */
+@media (max-width: 768px) {
+  .escribir input {
+    font-size: 16px;
+  }
+}

@@ -1252,3 +1252,12 @@ button {
     width: 100%;
   }
 }
+
+/* Evita el zoom automático de Safari/iOS al tocar estos inputs (se activa
+   cuando el font-size es menor a 16px). Solo aplica en mobile. */
+@media (max-width: 768px) {
+  .nuevo-comentario input,
+  .campo-config input {
+    font-size: 16px;
+  }
+}

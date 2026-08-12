@@ -215,3 +215,11 @@
     font-size: 13px;
   }
 }
+
+/* Evita el zoom automático de Safari/iOS al tocar el buscador (se activa
+   cuando un input tiene font-size menor a 16px). Solo aplica en mobile. */
+@media (max-width: 768px) {
+  .buscador-input {
+    font-size: 16px;
+  }
+}

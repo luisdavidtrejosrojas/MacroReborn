@@ -409,3 +409,12 @@
     font-size: 12.5px;
   }
 }
+
+/* En mobile, cualquier input con font-size menor a 16px hace que Safari
+   (iOS) haga zoom automático al tocarlo. Se sube a 16px solo en pantallas
+   chicas para no cambiar el diseño de escritorio. */
+@media (max-width: 768px) {
+  .campo input {
+    font-size: 16px;
+  }
+}
