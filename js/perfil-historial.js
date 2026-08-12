@@ -45,12 +45,12 @@ async function renderHistorialPerfil(){
             if(juego){
 
                 contenedorHistorial.innerHTML += `
-                    <div class="juego-card">
+                    <a href="juego.html?id=${encodeURIComponent(juego.id)}" class="juego-card">
                         <div class="juego-imagen">
                             ${crearImagenJuego(juego)}
                         </div>
                         <h3>${juego.nombre}</h3>
-                    </div>
+                    </a>
                 `;
 
             }
