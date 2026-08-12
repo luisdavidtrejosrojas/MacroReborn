@@ -146,8 +146,8 @@
 .juego-card {
   position: relative;
   background: linear-gradient(180deg, var(--bg-panel), var(--bg-base));
-  border: 1px solid var(--line);
-  border-radius: 14px;
+  border: 2px solid var(--clasico-borde);
+  border-radius: var(--clasico-radio);
   padding: 18px;
   text-align: center;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
@@ -158,7 +158,7 @@
 
 .juego-card:hover {
   transform: translateY(-6px);
-  border-color: var(--gold-deep);
+  border-color: var(--gold);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(240, 180, 41, 0.15);
 }
 

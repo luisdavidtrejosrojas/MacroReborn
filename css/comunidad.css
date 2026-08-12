@@ -132,12 +132,12 @@
    ========================================================================== */
 
 .seccion-titulo {
-  font-family: var(--font-display);
+  font-family: var(--clasico-fuente);
   font-size: 18px;
-  color: var(--gold-bright);
+  color: var(--clasico-borde);
   margin: 0 0 20px;
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--clasico-borde);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -237,8 +237,8 @@
 .tarjeta-usuario {
   position: relative;
   background: linear-gradient(180deg, var(--bg-panel), var(--bg-deep));
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  border: 2px solid var(--clasico-borde);
+  border-radius: var(--clasico-radio);
   padding: 26px 20px 22px;
   display: flex;
   flex-direction: column;
@@ -432,8 +432,8 @@
   padding: 54px 20px;
   color: var(--text-muted);
   background: var(--bg-panel);
-  border: 1px dashed var(--line);
-  border-radius: 16px;
+  border: 2px dashed var(--clasico-borde);
+  border-radius: var(--clasico-radio);
 }
 
 .estado-vacio .icono-vacio {

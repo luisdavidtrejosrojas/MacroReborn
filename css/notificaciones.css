@@ -12,17 +12,17 @@
 }
 
 .notif-header h1{
-  font-family: "Orbitron", sans-serif;
+  font-family: var(--font-display);
   font-weight: 900;
   font-size: clamp(28px, 4vw, 40px);
   letter-spacing: 0.02em;
-  color: #f8fafc;
+  color: var(--text-main);
   margin: 0 0 8px;
 }
 
 .notif-subtitulo{
-  font-family: "Inter", sans-serif;
-  color: #94a3b8;
+  font-family: var(--font-body);
+  color: var(--text-muted);
   font-size: 15px;
   margin: 0;
 }
@@ -63,29 +63,29 @@
 /* Cada notificación, generada por js/notificaciones.js */
 .notificacion{
   position: relative;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-left: 3px solid rgba(148, 163, 184, 0.3);
-  border-radius: 12px;
+  background: var(--bg-panel);
+  border: 2px solid var(--clasico-borde);
+  border-left: 4px solid var(--gold-deep);
+  border-radius: var(--clasico-radio);
   padding: 16px 20px;
   transition: background .15s ease, border-color .15s ease, transform .15s ease;
 }
 
 .notificacion.no-leida{
-  background: rgba(99, 102, 241, 0.08);
-  border-left-color: #818cf8;
+  background: rgba(56, 189, 248, 0.08);
+  border-left-color: var(--cyan);
 }
 
 .notificacion:hover{
   transform: translateY(-1px);
-  border-color: rgba(148, 163, 184, 0.3);
+  border-color: var(--gold);
 }
 
 .notificacion h3{
-  font-family: "Inter", sans-serif;
+  font-family: var(--clasico-fuente);
   font-size: 15px;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--text-main);
   margin: 0 0 4px;
   padding-right: 68px; /* deja lugar al pill de "Nueva" */
 }
@@ -96,35 +96,35 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #818cf8;
+  background: var(--cyan);
   margin-right: 8px;
   vertical-align: middle;
 }
 
 .notificacion p{
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
   line-height: 1.5;
-  color: #cbd5e1;
+  color: var(--text-secondary);
   margin: 0 0 10px;
 }
 
 .notificacion .fecha{
   font-size: 11.5px;
-  color: #64748b;
-  font-family: "Inter", sans-serif;
+  color: var(--text-muted);
+  font-family: var(--font-body);
 }
 
 /* Estado vacío / sin sesión, generado por js/notificaciones.js */
 .vacio{
   text-align: center;
   padding: 72px 20px;
-  color: #94a3b8;
-  font-family: "Inter", sans-serif;
+  color: var(--text-muted);
+  font-family: var(--font-body);
   font-size: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px dashed rgba(148, 163, 184, 0.25);
-  border-radius: 14px;
+  background: var(--bg-panel);
+  border: 2px dashed var(--clasico-borde);
+  border-radius: var(--clasico-radio);
 }
 
 @media (max-width: 560px){

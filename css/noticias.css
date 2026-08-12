@@ -114,9 +114,9 @@
   background:
     radial-gradient(ellipse 520px 260px at 85% -10%, rgba(240, 180, 41, 0.14), transparent 65%),
     linear-gradient(165deg, var(--bg-panel) 0%, var(--bg-deep) 100%);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--gold);
-  border-radius: 20px;
+  border: 3px solid var(--clasico-borde);
+  border-left: 5px solid var(--gold);
+  border-radius: var(--clasico-radio);
   padding: 44px 40px 48px;
   margin-bottom: 56px;
   overflow: hidden;
@@ -308,9 +308,9 @@
 }
 
 .novedades-cabecera h3 {
-  font-family: var(--font-display);
+  font-family: var(--clasico-fuente);
   font-size: 17px;
-  color: var(--gold-bright);
+  color: var(--clasico-borde);
   white-space: nowrap;
   margin: 0;
 }
@@ -334,8 +334,8 @@
 .noticia {
   position: relative;
   background: linear-gradient(180deg, var(--bg-panel), var(--bg-deep));
-  border: 1px solid var(--line);
-  border-radius: 16px;
+  border: 2px solid var(--clasico-borde);
+  border-radius: var(--clasico-radio);
   padding: 26px 24px 24px;
   display: flex;
   flex-direction: column;
