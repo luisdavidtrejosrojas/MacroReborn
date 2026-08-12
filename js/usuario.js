@@ -692,6 +692,39 @@ if (avatar && caja) {
 
   renderLogrosUsuario();
 
+
+  // ---------- TIEMPO REAL (Pusher) ----------
+  // Mismo canal público por usuario que ya usa js/realtime.js para
+  // las notificaciones ("notificaciones-<nombre>", acá el nombre del
+  // PERFIL VISITADO, no el de quien está mirando). Escucha los
+  // eventos que dispara el servidor cada vez que alguien comenta,
+  // registra actividad, juega un juego o desbloquea un logro en este
+  // perfil, y vuelve a pintar solo esa sección, sin recargar.
+
+  if (typeof Pusher !== "undefined") {
+
+    // Mismos valores que js/realtime.js (públicos a propósito).
+    const PUSHER_KEY = "767a9d93fede4f8f7b52";
+    const PUSHER_CLUSTER = "sa1";
+
+    if (PUSHER_KEY !== "TU_PUSHER_KEY") {
+
+      const pusherPerfilVisitado = new Pusher(PUSHER_KEY, { cluster: PUSHER_CLUSTER });
+      const canalPerfilVisitado = pusherPerfilVisitado.subscribe("notificaciones-" + usuario.nombre.toLowerCase());
+
+      canalPerfilVisitado.bind("nuevo-comentario", () => renderComentarios());
+      canalPerfilVisitado.bind("nueva-actividad", () => {
+        if (typeof renderActividadUsuario === "function") renderActividadUsuario();
+      });
+      canalPerfilVisitado.bind("nuevo-historial", () => {
+        if (typeof renderHistorialUsuario === "function") renderHistorialUsuario();
+      });
+      canalPerfilVisitado.bind("nuevo-logro", () => renderLogrosUsuario());
+
+    }
+
+  }
+
 }
 
 })();
