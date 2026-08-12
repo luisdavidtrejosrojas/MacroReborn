@@ -532,7 +532,9 @@ if (avatar && caja) {
       await cargarAvataresDeVarios(lista.map(c => c.usuario));
     }
 
-    contenedor.innerHTML = lista.map((c) => `
+    contenedor.innerHTML = lista.map((c) => {
+      const esMio = activo && c.usuario === activo.nombre;
+      return `
       <div class="comentario">
         <div class="usuario-comentario" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
           ${obtenerAvatarComentario(c.usuario)}
@@ -542,9 +544,36 @@ if (avatar && caja) {
         <p style="color:#cbd5e1;margin:0 0 10px;">${c.texto}</p>
         ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, activo ? activo.nombre : null) : ""}
         <button class="boton-responder" data-usuario="${c.usuario}">Responder</button>
+        ${esMio ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
         <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>
-    `).join("");
+    `;
+    }).join("");
+
+    // ELIMINAR (solo mis propios comentarios, sin importar en qué
+    // perfil los haya dejado)
+    contenedor.querySelectorAll(".boton-eliminar").forEach(btn=>{
+      btn.onclick = () => {
+        const id = btn.dataset.id;
+
+        const confirmar = typeof pedirConfirmacion === "function"
+          ? (mensaje, onConfirmar) => pedirConfirmacion(mensaje, onConfirmar, "🗑️ Eliminar")
+          : (mensaje, onConfirmar) => { if(confirm(mensaje)) onConfirmar(); };
+
+        confirmar("¿Seguro que querés eliminar este comentario?", async () => {
+          try{
+            await fetch("/api/content?action=comments", {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ commentId: id, username: activo ? activo.nombre : "" })
+            });
+          }catch(error){
+            console.warn("MacroReborn: no se pudo eliminar el comentario.", error);
+          }
+          renderComentarios();
+        });
+      };
+    });
 
     // RESPONDER
     contenedor.querySelectorAll(".boton-responder").forEach(btn=>{
@@ -713,6 +742,7 @@ if (avatar && caja) {
       const canalPerfilVisitado = pusherPerfilVisitado.subscribe("notificaciones-" + usuario.nombre.toLowerCase());
 
       canalPerfilVisitado.bind("nuevo-comentario", () => renderComentarios());
+      canalPerfilVisitado.bind("comentarios-vaciados", () => renderComentarios());
       canalPerfilVisitado.bind("nueva-actividad", () => {
         if (typeof renderActividadUsuario === "function") renderActividadUsuario();
       });

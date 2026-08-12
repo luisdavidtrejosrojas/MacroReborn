@@ -1240,6 +1240,27 @@ async function renderComentarios(){
   });
 }
 
+// ELIMINAR TODOS MIS COMENTARIOS (vaciar el muro del propio perfil)
+
+document.getElementById("botonEliminarTodosComentarios")?.addEventListener("click", ()=>{
+  pedirConfirmacion(
+    "¿Seguro que querés eliminar TODOS los comentarios de tu perfil? Esta acción no se puede deshacer.",
+    async ()=>{
+      try{
+        await fetch("/api/content?action=comments", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ profileUsername: datosUsuario.nombre, username: datosUsuario.nombre })
+        });
+      }catch(error){
+        console.warn("MacroReborn: no se pudieron eliminar los comentarios.", error);
+      }
+      renderComentarios();
+    },
+    "🗑️ Eliminar todos"
+  );
+});
+
 // CREAR COMENTARIO
 
 document.getElementById("botonComentar")?.addEventListener("click", async ()=>{

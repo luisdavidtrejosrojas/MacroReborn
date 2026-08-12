@@ -40,6 +40,10 @@
     if (typeof renderComentarios === "function") renderComentarios();
   });
 
+  canal.bind("comentarios-vaciados", function () {
+    if (typeof renderComentarios === "function") renderComentarios();
+  });
+
   canal.bind("nueva-actividad", function () {
     if (typeof renderActividadReciente === "function") renderActividadReciente();
   });
