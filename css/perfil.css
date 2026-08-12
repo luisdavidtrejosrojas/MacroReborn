@@ -823,6 +823,10 @@ html[data-tema="claro"] .perfil {
   padding: 16px;
   text-align: center;
   transition: transform 0.2s ease, border-color 0.2s ease;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 .juego-card:hover {
