@@ -50,16 +50,10 @@
     <img src="imagenes/logo.png" alt="MacroReborn">
     MacroReborn
   </a>
-  <div class="nav-links">
-    <a href="index.html">🏠 Inicio</a>
-    <a href="comunidad.html">🌐 Comunidad</a>
-    <a href="perfil.html">👤 Perfil</a>
-    <a href="juegos.html">🎮 Juegos</a>
-    <a href="ranking.html">🏆 Ranking</a>
-    <a href="amigos.html">👥 Amigos</a>
-    <a href="chat.html">💬 Chat</a>
-    <a href="noticias.html">📰 Noticias</a>
-  </div>
+  <!-- Los links de navegación se sacaron a propósito de esta página:
+       acá solo quedan la campanita, el perfil, cerrar sesión y el modo
+       oscuro/claro, que navbar.js y tema.js siguen inyectando acá adentro. -->
+  <div class="nav-links"></div>
 </nav>
 
 <!-- ENCABEZADO DEL CATÁLOGO -->
@@ -157,6 +151,8 @@
 <script src="js/juegos.js"></script>
 
 <script src="js/notificaciones.js"></script>
+<script src="https://js.pusher.com/8.4/pusher.min.js"></script>
+<script src="js/realtime.js"></script>
 <script src="js/navbar.js"></script>
 <script src="js/buscador.js"></script>
 <script src="js/nav-toggle.js"></script>
