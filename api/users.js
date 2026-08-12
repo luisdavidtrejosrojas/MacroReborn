@@ -1,5 +1,6 @@
 const { neon } = require("@neondatabase/serverless");
 const { setCors } = require("./_utils");
+const { getPusher, canalNotificaciones } = require("./_pusher");
 
 const sql = neon(process.env.DATABASE_URL);
 
@@ -144,6 +145,19 @@ async function heartbeat(req, res) {
 
   if (actualizado.length === 0) {
     return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+  }
+
+  // Push en tiempo real: quien tenga este perfil abierto (el suyo o
+  // el de otra persona) ve "Última conexión" y el estado 🟢/⚪
+  // actualizarse solos, sin recargar.
+  try {
+    await getPusher().trigger(
+      canalNotificaciones(username),
+      "latido",
+      { last_login: actualizado[0].last_login }
+    );
+  } catch (error) {
+    console.warn("Pusher: no se pudo avisar el latido en vivo.", error);
   }
 
   return res.status(200).json({ success: true, last_login: actualizado[0].last_login });
