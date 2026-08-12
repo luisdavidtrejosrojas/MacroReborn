@@ -150,10 +150,34 @@ if (!usuario) {
   // criterio que ya usa Comunidad (usuarioEstaConectado, en
   // js/core.js): en línea si tuvo actividad (last_login) en los
   // últimos MINUTOS_CONECTADO minutos.
-  document.getElementById("estado").textContent =
-    (typeof usuarioEstaConectado === "function" && usuarioEstaConectado(usuario))
-      ? "🟢 En línea"
-      : "⚪ Desconectado";
+  // FIX: "estado" nunca venía en la respuesta de /api/users (esa
+  // columna es el estado de la cuenta -status-, no de conexión), así
+  // que siempre caía al literal fijo "🟢 En línea" sin importar si la
+  // persona estaba realmente conectada. Se calcula con el mismo
+  // criterio que ya usa Comunidad (usuarioEstaConectado, en
+  // js/core.js): en línea si tuvo actividad (last_login) en los
+  // últimos MINUTOS_CONECTADO minutos.
+  //
+  // Queda en una función aparte (en vez de código suelto) para poder
+  // volver a pintarla sola cuando llega un latido en vivo por Pusher,
+  // o cada cierto tiempo (setInterval más abajo), sin recargar la
+  // página.
+  function pintarEstadoYUltimaConexion(){
+
+    document.getElementById("estado").textContent =
+      (typeof usuarioEstaConectado === "function" && usuarioEstaConectado(usuario))
+        ? "🟢 En línea"
+        : "⚪ Desconectado";
+
+    const textoUltimaConexion = typeof tiempoRelativo === "function"
+      ? tiempoRelativo(usuario.last_login, "Nunca")
+      : (usuario.last_login || "Nunca");
+
+    document.getElementById("ultimaConexion").textContent = "Última conexión: " + textoUltimaConexion;
+
+  }
+
+  pintarEstadoYUltimaConexion();
   document.getElementById("nivel").textContent = "⭐ Nivel " + (usuario.nivel || 1);
   document.getElementById("biografia").textContent = usuario.biografia || "Todavía no escribió una biografía.";
   document.getElementById("xp").textContent = (usuario.xp || 0) + " XP";
@@ -186,12 +210,6 @@ if (!usuario) {
     typeof fechaLegible === "function"
       ? fechaLegible(usuario.fechaRegistro, "Desconocido")
       : (usuario.fechaRegistro || "Desconocido");
-
-  const textoUltimaConexion = typeof tiempoRelativo === "function"
-    ? tiempoRelativo(usuario.last_login, "Nunca")
-    : (usuario.last_login || "Nunca");
-
-  document.getElementById("ultimaConexion").textContent = "Última conexión: " + textoUltimaConexion;
 
   document.title = usuario.nombre + " - MacroReborn";
   
@@ -751,9 +769,22 @@ if (avatar && caja) {
       });
       canalPerfilVisitado.bind("nuevo-logro", () => renderLogrosUsuario());
 
+      // "Última conexión" / estado 🟢-⚪ en vivo: el servidor avisa
+      // por acá cada vez que este usuario tiene actividad (latido
+      // cada pocos minutos mientras navega, ver js/core.js).
+      canalPerfilVisitado.bind("latido", (datos) => {
+        if (datos && datos.last_login) usuario.last_login = datos.last_login;
+        pintarEstadoYUltimaConexion();
+      });
+
     }
 
   }
+
+  // Aunque no llegue ningún latido nuevo, el texto "hace X minutos" y
+  // el pasaje de 🟢 a ⚪ (a los MINUTOS_CONECTADO de inactividad)
+  // tienen que actualizarse solos con el correr del tiempo.
+  setInterval(pintarEstadoYUltimaConexion, 30 * 1000);
 
 }
 

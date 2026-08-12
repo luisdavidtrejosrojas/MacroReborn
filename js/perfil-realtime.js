@@ -56,4 +56,17 @@
     if (typeof renderLogros === "function") renderLogros();
   });
 
+  // "Última conexión" en vivo: útil, por ejemplo, si tenías el perfil
+  // abierto en una pestaña y volvés a entrar desde otro dispositivo.
+  canal.bind("latido", function (datos) {
+    if (datos && datos.last_login) datosUsuario.ultimaConexion = datos.last_login;
+    if (typeof pintarUltimaConexion === "function") pintarUltimaConexion();
+  });
+
+  // Aunque no llegue ningún latido nuevo, el texto "hace X minutos"
+  // tiene que ir avanzando solo con el correr del tiempo.
+  if (typeof pintarUltimaConexion === "function") {
+    setInterval(pintarUltimaConexion, 30 * 1000);
+  }
+
 })();

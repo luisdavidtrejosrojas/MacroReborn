@@ -176,10 +176,19 @@ document.getElementById("fechaRegistro").textContent =
 // "Nunca" sin importar si la persona acababa de iniciar sesión. Ahora
 // usa el last_login real (ver más arriba, donde se guarda en
 // datosUsuario.ultimaConexion).
-document.getElementById("ultimaConexion").textContent =
-  typeof tiempoRelativo === "function"
-    ? tiempoRelativo(datosUsuario.ultimaConexion, "Nunca")
-    : usuario.ultimaConexion;
+//
+// Queda en una función aparte (en vez de código suelto) para poder
+// volver a pintarla sola cuando llega un latido en vivo por Pusher
+// (por ejemplo, si iniciaste sesión en otro dispositivo), o cada
+// cierto tiempo, sin recargar la página.
+function pintarUltimaConexion(){
+  document.getElementById("ultimaConexion").textContent =
+    typeof tiempoRelativo === "function"
+      ? tiempoRelativo(datosUsuario.ultimaConexion, "Nunca")
+      : usuario.ultimaConexion;
+}
+
+pintarUltimaConexion();
 
 
 // ==============================
