@@ -17,32 +17,35 @@
    Acá el nav-links original (Inicio/Comunidad/etc) se vació en el HTML.
    Lo único que queda ahí son la campanita, el perfil, cerrar sesión y el
    modo oscuro/claro (los sigue inyectando js/navbar.js y js/tema.js, en
-   ese mismo orden). Esta sección solo reacomoda el layout: todo eso
-   agrupado y pegado a la izquierda, junto al logo, y el buscador
-   centrado en el medio de la barra.
+   ese mismo orden). Esta sección solo reacomoda el layout: logo a la
+   izquierda, buscador centrado en el medio de la barra, y ese grupo
+   pegado a la derecha (esquina opuesta al logo).
    ========================================================================== */
 
 @media (min-width: 769px) {
 
   .navbar {
     position: relative; /* ancla para centrar el buscador respecto a TODA la barra */
-    justify-content: flex-start;
+    justify-content: space-between; /* logo a la izquierda, nav-links a la derecha */
   }
 
   .navbar .nav-logo {
     order: 1;
   }
 
+  /* Grupo (campanita, perfil, cerrar sesión, tema) pegado a la
+     esquina derecha, después del buscador. */
   .navbar .nav-links {
-    order: 2;
+    order: 3;
     flex-wrap: nowrap;
     align-items: center;
     gap: 10px;
   }
 
   /* Centrado real: se posiciona respecto al ancho total de .navbar,
-     no respecto al espacio que sobra después del grupo izquierdo. */
+     no respecto al espacio que sobra entre logo y nav-links. */
   .navbar .nav-buscador {
+    order: 2;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
