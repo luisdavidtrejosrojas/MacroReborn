@@ -11,6 +11,45 @@
   line-height: 1.5;
 }
 
+/* ==========================================================================
+   NAVBAR — mismo criterio y misma estructura que juegos.html: logo a la
+   izquierda, buscador centrado respecto a TODA la barra (position: absolute,
+   no margin: auto), y el grupo de la derecha (campanita, perfil, cerrar
+   sesión, tema oscuro/claro, inyectados por navbar.js y tema.js dentro de
+   .nav-links) pegado a la esquina derecha, después del buscador.
+   ========================================================================== */
+
+@media (min-width: 769px) {
+
+  .navbar {
+    position: relative; /* ancla para centrar el buscador respecto a TODA la barra */
+    justify-content: space-between;
+  }
+
+  .navbar .nav-logo {
+    order: 1;
+  }
+
+  .navbar .nav-links {
+    order: 3;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Centrado real: se posiciona respecto al ancho total de .navbar,
+     no respecto al espacio que sobra entre logo y menú. */
+  .navbar .nav-buscador {
+    order: 2;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    max-width: 90%;
+  }
+
+}
+
 .contenido-principal {
   max-width: 1100px;
   margin: 0 auto;
