@@ -126,12 +126,44 @@ async function comments(req, res) {
   }
 
   if (req.method === "DELETE") {
-    const { commentId, username } = req.body || {};
-    if (!commentId) {
-      return res.status(400).json({ success: false, error: "Falta commentId" });
-    }
+    const { commentId, username, profileUsername } = req.body || {};
+
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
+    }
+
+    // Vaciar TODOS los comentarios de un perfil de una sola vez: solo
+    // puede hacerlo el dueño de ese perfil, sin importar quién haya
+    // escrito cada comentario. Se distingue de un borrado individual
+    // porque no viene commentId, sino profileUsername.
+    if (!commentId && profileUsername) {
+
+      if (username !== profileUsername) {
+        return res.status(403).json({ success: false, error: "Solo el dueño del perfil puede vaciar sus comentarios" });
+      }
+
+      const profileId = await getUserId(profileUsername);
+      if (!profileId) {
+        return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+      }
+
+      await sql`DELETE FROM profile_comments WHERE profile_user_id = ${profileId};`;
+
+      try {
+        await getPusher().trigger(
+          canalNotificaciones(profileUsername),
+          "comentarios-vaciados",
+          {}
+        );
+      } catch (error) {
+        console.warn("Pusher: no se pudo avisar el vaciado de comentarios en vivo.", error);
+      }
+
+      return res.status(200).json({ success: true });
+    }
+
+    if (!commentId) {
+      return res.status(400).json({ success: false, error: "Falta commentId" });
     }
 
     // Solo el autor puede borrar su propio comentario, sin importar en
@@ -139,11 +171,26 @@ async function comments(req, res) {
     const borrado = await sql`
       DELETE FROM profile_comments
       WHERE id = ${commentId} AND author_username = ${username}
-      RETURNING id;
+      RETURNING id, profile_user_id;
     `;
 
     if (!borrado.length) {
       return res.status(403).json({ success: false, error: "No podés eliminar un comentario que no es tuyo" });
+    }
+
+    // Push en tiempo real: si alguien tiene abierto el perfil donde
+    // estaba este comentario, se le refresca la lista sola.
+    try {
+      const filasPerfil = await sql`SELECT username FROM users WHERE id = ${borrado[0].profile_user_id};`;
+      if (filasPerfil.length) {
+        await getPusher().trigger(
+          canalNotificaciones(filasPerfil[0].username),
+          "nuevo-comentario",
+          {}
+        );
+      }
+    } catch (error) {
+      console.warn("Pusher: no se pudo avisar la eliminación en vivo.", error);
     }
 
     return res.status(200).json({ success: true });
