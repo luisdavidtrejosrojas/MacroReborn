@@ -5,7 +5,7 @@ const { getPusher, canalNotificaciones } = require("./_pusher");
 const sql = neon(process.env.DATABASE_URL);
 
 // ==============================
-// /api/social?action=friends|achievements|badges
+// /api/social?action=friends|favoriteFriends|achievements|badges
 // ==============================
 // Fusión de los antiguos endpoints /api/friends, /api/achievements y
 // /api/badges en un solo archivo, para bajar la cantidad de
@@ -21,6 +21,11 @@ const sql = neon(process.env.DATABASE_URL);
 // GET  /api/social?action=friends&username=X
 // POST /api/social?action=friends  { action:"request"|"accept"|"reject"|"cancel"|"remove", ... }
 //
+// GET  /api/social?action=favoriteFriends&username=X
+// POST /api/social?action=favoriteFriends { action:"add"|"remove", username, friendUsername }
+//   Máximo 10 favoritos por usuario (validado acá, no en la base) y
+//   solo se puede marcar como favorito a alguien que ya es amigo.
+//
 // GET  /api/social?action=achievements&username=X
 // GET  /api/social?action=achievements&usernames=a,b,c
 // POST /api/social?action=achievements { username, achievementId }
@@ -30,6 +35,8 @@ const sql = neon(process.env.DATABASE_URL);
 // POST   /api/social?action=badges { username, badgeId, assignedBy }
 // DELETE /api/social?action=badges { username, badgeId }
 // ==============================
+
+const MAX_AMIGOS_FAVORITOS = 10;
 
 async function getUserId(username) {
   if (!username) return null;
@@ -182,6 +189,100 @@ async function friends(req, res) {
       await sql`DELETE FROM friendships WHERE user_id = ${userId} AND friend_id = ${friendId};`;
       await sql`DELETE FROM friendships WHERE user_id = ${friendId} AND friend_id = ${userId};`;
 
+      // Si alguno de los dos lo tenía marcado como "Amigo favorito",
+      // esa marca deja de tener sentido (ya no son amigos): se limpia
+      // en ambos sentidos para que no quede un favorito "fantasma"
+      // ocupando uno de los 10 lugares.
+      await sql`DELETE FROM friend_favorites WHERE user_id = ${userId} AND friend_id = ${friendId};`;
+      await sql`DELETE FROM friend_favorites WHERE user_id = ${friendId} AND friend_id = ${userId};`;
+
+      return res.status(200).json({ success: true });
+    }
+
+    return res.status(400).json({ success: false, error: "Acción inválida" });
+  }
+
+  return res.status(405).json({ success: false, error: "Método no permitido" });
+}
+
+// ============== AMIGOS FAVORITOS ==============
+
+async function favoriteFriends(req, res) {
+
+  if (req.method === "GET") {
+
+    const { username } = req.query;
+    if (!username) {
+      return res.status(400).json({ success: false, error: "Falta username" });
+    }
+
+    const userId = await getUserId(username);
+    if (!userId) {
+      return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+    }
+
+    const filas = await sql`
+      SELECT u.username, ff.created_at
+      FROM friend_favorites ff
+      JOIN users u ON u.id = ff.friend_id
+      WHERE ff.user_id = ${userId}
+      ORDER BY ff.created_at ASC;
+    `;
+
+    return res.status(200).json({
+      success: true,
+      favoritos: filas.map(f => f.username)
+    });
+  }
+
+  if (req.method === "POST") {
+
+    const { action, username, friendUsername } = req.body || {};
+
+    if (!username || !friendUsername) {
+      return res.status(400).json({ success: false, error: "Datos incompletos" });
+    }
+
+    const userId = await getUserId(username);
+    const friendId = await getUserId(friendUsername);
+
+    if (!userId || !friendId) {
+      return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+    }
+
+    if (action === "add") {
+
+      const esAmigo = await sql`
+        SELECT 1 FROM friendships WHERE user_id = ${userId} AND friend_id = ${friendId};
+      `;
+      if (!esAmigo.length) {
+        return res.status(200).json({ success: false, error: "Solo podés marcar como favorito a alguien que ya es tu amigo" });
+      }
+
+      const yaFavorito = await sql`
+        SELECT 1 FROM friend_favorites WHERE user_id = ${userId} AND friend_id = ${friendId};
+      `;
+      if (yaFavorito.length) {
+        return res.status(200).json({ success: true, yaExistia: true });
+      }
+
+      const cantidadActual = await sql`
+        SELECT COUNT(*)::int AS total FROM friend_favorites WHERE user_id = ${userId};
+      `;
+      if (cantidadActual[0].total >= MAX_AMIGOS_FAVORITOS) {
+        return res.status(200).json({ success: false, error: `Ya tenés el máximo de ${MAX_AMIGOS_FAVORITOS} amigos favoritos` });
+      }
+
+      await sql`
+        INSERT INTO friend_favorites (user_id, friend_id) VALUES (${userId}, ${friendId})
+        ON CONFLICT (user_id, friend_id) DO NOTHING;
+      `;
+
+      return res.status(200).json({ success: true });
+    }
+
+    if (action === "remove") {
+      await sql`DELETE FROM friend_favorites WHERE user_id = ${userId} AND friend_id = ${friendId};`;
       return res.status(200).json({ success: true });
     }
 
@@ -387,6 +488,7 @@ module.exports = async function handler(req, res) {
   try {
 
     if (action === "friends") return await friends(req, res);
+    if (action === "favoriteFriends") return await favoriteFriends(req, res);
     if (action === "achievements") return await achievements(req, res);
     if (action === "badges") return await badges(req, res);
 
