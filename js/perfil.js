@@ -1148,6 +1148,12 @@ async function renderComentarios(){
 
   if(!contenedor) return;
 
+  // Usuario logueado en ESTE navegador: el botón "Eliminar" solo debe
+  // aparecer en los comentarios que escribió esta persona, sin
+  // importar en qué perfil los haya dejado (el suyo o el de otro).
+  const usuarioActivoComentarios = leerJSON(localStorage.getItem("usuarioActivo") || "null");
+  const miNombreComentarios = usuarioActivoComentarios ? usuarioActivoComentarios.nombre : null;
+
   if(lista.length === 0){
     contenedor.innerHTML = `
     <div class="comentario">
@@ -1159,6 +1165,7 @@ async function renderComentarios(){
     </div>`;
   } else {
     contenedor.innerHTML = lista.map((c)=>{
+      const esMio = miNombreComentarios && c.usuario === miNombreComentarios;
       return `
       <div class="comentario">
         <div class="usuario-comentario">
@@ -1169,7 +1176,7 @@ async function renderComentarios(){
         <p>${c.texto}</p>
         ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
         <button class="boton-responder" data-usuario="${c.usuario}">Responder</button>
-        <button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>
+        ${esMio ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
         <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>`;
     }).join("");
@@ -1200,7 +1207,7 @@ async function renderComentarios(){
           await fetch("/api/content?action=comments", {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ commentId: id })
+            body: JSON.stringify({ commentId: id, username: miNombreComentarios })
           });
         }catch(error){
           console.warn("MacroReborn: no se pudo eliminar el comentario.", error);
