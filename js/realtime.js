@@ -14,8 +14,8 @@
 // dos valores de abajo por los de tu app en
 // https://dashboard.pusher.com -> tu app -> App Keys.
 
-const PUSHER_KEY = "TU_PUSHER_KEY";
-const PUSHER_CLUSTER = "TU_PUSHER_CLUSTER";
+const PUSHER_KEY = "767a9d93fede4f8f7b52";
+const PUSHER_CLUSTER = "sa1";
 
 (function () {
 
