@@ -28,8 +28,8 @@
   padding: 4px 10px;
   border-radius: 999px;
   background: var(--bg-panel);
-  border: 1px solid var(--line);
-  color: var(--gold-bright);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
   white-space: nowrap;
 }
 
