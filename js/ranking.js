@@ -374,15 +374,21 @@ async function cargarRanking(filtro=""){
 
         let puesto = index + 4;
 
-        let medalla = puesto + "️⃣";
+        // El "puesto" ahora se pinta como número simple + clase de
+        // color según el rango (antes se armaba con el emoji de
+        // teclado combinado "N️⃣", que solo funciona bien con un
+        // dígito: a partir del puesto 10 el emoji se rompía y se veía
+        // distinto al resto).
+        let claseRango =
+        puesto <= 10 ? "puesto-top10" : "puesto-normal";
 
         contenedorRanking.innerHTML += `
 
         <div class="jugador ${activoRanking && activoRanking.nombre === usuario.nombre ? "es-actual" : ""}">
 
-            <div class="puesto">
+            <div class="puesto ${claseRango}">
 
-            ${medalla}
+            ${puesto}
 
             </div>
 
