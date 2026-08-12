@@ -532,7 +532,11 @@ if (avatar && caja) {
       await cargarAvataresDeVarios(lista.map(c => c.usuario));
     }
 
-    contenedor.innerHTML = lista.map((c) => `
+    const miNombreComentariosUsuario = activo ? activo.nombre : null;
+
+    contenedor.innerHTML = lista.map((c) => {
+      const esMio = miNombreComentariosUsuario && c.usuario === miNombreComentariosUsuario;
+      return `
       <div class="comentario">
         <div class="usuario-comentario" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
           ${obtenerAvatarComentario(c.usuario)}
@@ -542,9 +546,11 @@ if (avatar && caja) {
         <p style="color:#cbd5e1;margin:0 0 10px;">${c.texto}</p>
         ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, activo ? activo.nombre : null) : ""}
         <button class="boton-responder" data-usuario="${c.usuario}">Responder</button>
+        ${esMio ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
         <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>
-    `).join("");
+    `;
+    }).join("");
 
     // RESPONDER
     contenedor.querySelectorAll(".boton-responder").forEach(btn=>{
@@ -554,6 +560,30 @@ if (avatar && caja) {
           input.value = "@" + btn.dataset.usuario + " ";
           input.focus();
         }
+      };
+    });
+
+    // ELIMINAR (solo comentarios propios, escritos en el perfil de otro)
+    contenedor.querySelectorAll(".boton-eliminar").forEach(btn=>{
+      btn.onclick = () => {
+        const id = btn.dataset.id;
+
+        const confirmar = typeof pedirConfirmacion === "function"
+          ? (mensaje, onConfirmar) => pedirConfirmacion(mensaje, onConfirmar)
+          : (mensaje, onConfirmar) => { if(confirm(mensaje)) onConfirmar(); };
+
+        confirmar("¿Seguro que querés eliminar este comentario?", async () => {
+          try{
+            await fetch("/api/content?action=comments", {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ commentId: id, username: miNombreComentariosUsuario })
+            });
+          }catch(error){
+            console.warn("MacroReborn: no se pudo eliminar el comentario.", error);
+          }
+          renderComentarios();
+        });
       };
     });
 
