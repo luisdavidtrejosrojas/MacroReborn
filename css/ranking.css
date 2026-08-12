@@ -310,6 +310,21 @@
   background: var(--bg-deep);
   border: 1px solid var(--line);
   border-radius: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Puestos 4 a 10: destacados en dorado, en línea con el podio */
+.puesto.puesto-top10 {
+  color: var(--gold-bright);
+  background: rgba(240, 180, 41, 0.12);
+  border: 1px solid var(--gold);
+}
+
+/* Puesto 11 en adelante: tono neutro, mismo tamaño y forma que el resto */
+.puesto.puesto-normal {
+  color: var(--text-muted);
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
 }
 
 .datos-ranking {
