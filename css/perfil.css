@@ -477,11 +477,18 @@ button {
 }
 
 .capa-comentario {
+  /* Recorte calibrado para mostrar SOLO la cabeza del avatar (antes
+     mostraba cabeza + hombro + parte de un brazo). El lienzo de cada
+     capa es siempre 327x504px sin importar qué capas estén activas,
+     así que este recorte funciona igual para cualquier combinación.
+     Calibrado sobre el contenedor de 55px de ".avatar-mini": si ese
+     tamaño cambia, hay que recalcular estos porcentajes (ver nota en
+     ".avatar-mini" más abajo). */
   position: absolute;
-  width: 800%;
-  height: 280%;
-  top: -15px;
-  left: -190px;
+  width: 233.6%;
+  height: 360%;
+  top: -10.7%;
+  left: -62.9%;
   object-fit: contain;
 }
 
