@@ -1,7 +1,8 @@
 /* ==========================================================================
    MACRO REBORN — USUARIO (perfil público)
    Complementa css/perfil.css (que ya cubre la mayoría de los componentes
-   compartidos). Acá solo va lo específico de ver el perfil de otra persona.
+   compartidos, ahora con el look "clásico" de portal). Acá solo va lo
+   específico de ver el perfil de otra persona.
    ========================================================================== */
 
 /* ---- Línea de última conexión (bajo la biografía) ---- */
@@ -23,23 +24,24 @@
 
 #agregarAmigo {
   margin-top: 18px;
-  background: var(--bg-panel);
-  color: var(--gold-bright);
-  border: 1px solid var(--gold);
-  padding: 12px 24px;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 65%, var(--gold-deep) 100%);
+  color: #241804;
+  border: 2px solid var(--gold-deep);
+  padding: 11px 24px;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 800;
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
 
 #agregarAmigo:hover:not(:disabled) {
   transform: translateY(-2px);
-  background: rgba(240, 180, 41, 0.14);
+  filter: brightness(1.06);
 }
 
 #agregarAmigo:disabled {
   cursor: default;
+  filter: grayscale(0.3);
 }
 
 @media (max-width: 900px) {
