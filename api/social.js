@@ -1,5 +1,6 @@
 const { neon } = require("@neondatabase/serverless");
 const { setCors } = require("./_utils");
+const { getPusher, canalNotificaciones } = require("./_pusher");
 
 const sql = neon(process.env.DATABASE_URL);
 
@@ -260,6 +261,17 @@ async function achievements(req, res) {
       VALUES (${usuarios[0].id}, ${achievementId})
       ON CONFLICT (user_id, achievement_id) DO NOTHING;
     `;
+
+    // Push en tiempo real: refresca la pestaña "Logros" sin recargar.
+    try {
+      await getPusher().trigger(
+        canalNotificaciones(username),
+        "nuevo-logro",
+        { achievementId }
+      );
+    } catch (error) {
+      console.warn("Pusher: no se pudo avisar el nuevo logro en vivo.", error);
+    }
 
     return res.status(200).json({ success: true, nuevo: true });
   }

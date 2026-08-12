@@ -107,64 +107,44 @@ async function comments(req, res) {
       RETURNING id, author_username AS usuario, texto, created_at;
     `;
 
+    // Push en tiempo real: avisa a quien tenga el perfil abierto (el
+    // suyo o el de otra persona) para que la lista de comentarios se
+    // repinte sola, sin recargar la página. Mismo criterio que las
+    // notificaciones: si Pusher falla, el comentario ya quedó guardado
+    // igual, así que no rompemos la respuesta por esto.
+    try {
+      await getPusher().trigger(
+        canalNotificaciones(profileUsername),
+        "nuevo-comentario",
+        filas[0]
+      );
+    } catch (error) {
+      console.warn("Pusher: no se pudo avisar el nuevo comentario en vivo.", error);
+    }
+
     return res.status(200).json({ success: true, comentario: filas[0] });
   }
 
   if (req.method === "DELETE") {
-    const { commentId, username, profileUsername, all } = req.body || {};
-
+    const { commentId, username } = req.body || {};
+    if (!commentId) {
+      return res.status(400).json({ success: false, error: "Falta commentId" });
+    }
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
     }
 
-    // Vaciar TODOS los comentarios de un perfil ("Eliminar Todo"):
-    // solo el dueño de ese perfil puede hacerlo, y solo sobre su
-    // propio perfil.
-    if (all) {
-      if (!profileUsername) {
-        return res.status(400).json({ success: false, error: "Falta profileUsername" });
-      }
-      if (username !== profileUsername) {
-        return res.status(403).json({ success: false, error: "Solo el dueño del perfil puede vaciar sus comentarios" });
-      }
-
-      const profileId = await getUserId(profileUsername);
-      if (!profileId) {
-        return res.status(404).json({ success: false, error: "Usuario no encontrado" });
-      }
-
-      await sql`DELETE FROM profile_comments WHERE profile_user_id = ${profileId};`;
-
-      return res.status(200).json({ success: true });
-    }
-
-    // Borrar UN comentario. Puede hacerlo:
-    //  - su autor, sin importar en qué perfil lo haya escrito, o
-    //  - el dueño del perfil donde vive el comentario (moderación
-    //    dentro de su propio perfil, sobre comentarios ajenos).
-    if (!commentId) {
-      return res.status(400).json({ success: false, error: "Falta commentId" });
-    }
-
-    const filas = await sql`
-      SELECT pc.author_username, u.username AS profile_username
-      FROM profile_comments pc
-      JOIN users u ON u.id = pc.profile_user_id
-      WHERE pc.id = ${commentId};
+    // Solo el autor puede borrar su propio comentario, sin importar en
+    // qué perfil lo haya escrito (mismo criterio que ya usa el chat).
+    const borrado = await sql`
+      DELETE FROM profile_comments
+      WHERE id = ${commentId} AND author_username = ${username}
+      RETURNING id;
     `;
 
-    if (!filas.length) {
-      return res.status(404).json({ success: false, error: "Comentario no encontrado" });
+    if (!borrado.length) {
+      return res.status(403).json({ success: false, error: "No podés eliminar un comentario que no es tuyo" });
     }
-
-    const esAutor = filas[0].author_username === username;
-    const esDuenioDelPerfil = filas[0].profile_username === username;
-
-    if (!esAutor && !esDuenioDelPerfil) {
-      return res.status(403).json({ success: false, error: "No podés eliminar este comentario" });
-    }
-
-    await sql`DELETE FROM profile_comments WHERE id = ${commentId};`;
 
     return res.status(200).json({ success: true });
   }
@@ -449,6 +429,18 @@ async function activity(req, res) {
       VALUES (${userId}, ${tipo}, ${detalle || ""});
     `;
 
+    // Push en tiempo real: quien tenga este perfil abierto ve la
+    // actividad nueva sin recargar.
+    try {
+      await getPusher().trigger(
+        canalNotificaciones(username),
+        "nueva-actividad",
+        { tipo, detalle: detalle || "" }
+      );
+    } catch (error) {
+      console.warn("Pusher: no se pudo avisar la nueva actividad en vivo.", error);
+    }
+
     return res.status(200).json({ success: true });
   }
 
@@ -593,6 +585,17 @@ async function gameHistory(req, res) {
     const totalJuegosUnicos = await sql`
       SELECT COUNT(*)::int AS cantidad FROM games_played WHERE user_id = ${userId};
     `;
+
+    // Push en tiempo real: refresca "Últimos jugados" sin recargar.
+    try {
+      await getPusher().trigger(
+        canalNotificaciones(username),
+        "nuevo-historial",
+        { gameId: idTexto }
+      );
+    } catch (error) {
+      console.warn("Pusher: no se pudo avisar el nuevo juego jugado en vivo.", error);
+    }
 
     return res.status(200).json({
       success: true,
