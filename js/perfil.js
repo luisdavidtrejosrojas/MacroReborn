@@ -1148,18 +1148,11 @@ async function renderComentarios(){
 
   if(!contenedor) return;
 
-  // Usuario logueado en ESTE navegador. perfil.js SIEMPRE muestra el
-  // perfil propio (datosUsuario = usuarioActivo), así que quien mira
-  // esta pantalla es siempre el dueño del perfil: puede eliminar
-  // cualquier comentario acá (el suyo o el de otros), y el backend
-  // valida que quien borra sea el autor o el dueño del perfil.
+  // Usuario logueado en ESTE navegador: el botón "Eliminar" solo debe
+  // aparecer en los comentarios que escribió esta persona, sin
+  // importar en qué perfil los haya dejado (el suyo o el de otro).
   const usuarioActivoComentarios = leerJSON(localStorage.getItem("usuarioActivo") || "null");
   const miNombreComentarios = usuarioActivoComentarios ? usuarioActivoComentarios.nombre : null;
-
-  const botonEliminarTodo = document.getElementById("botonEliminarTodosComentarios");
-  if(botonEliminarTodo){
-    botonEliminarTodo.style.display = lista.length ? "" : "none";
-  }
 
   if(lista.length === 0){
     contenedor.innerHTML = `
@@ -1172,6 +1165,7 @@ async function renderComentarios(){
     </div>`;
   } else {
     contenedor.innerHTML = lista.map((c)=>{
+      const esMio = miNombreComentarios && c.usuario === miNombreComentarios;
       return `
       <div class="comentario">
         <div class="usuario-comentario">
@@ -1182,7 +1176,7 @@ async function renderComentarios(){
         <p>${c.texto}</p>
         ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
         <button class="boton-responder" data-usuario="${c.usuario}">Responder</button>
-        <button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>
+        ${esMio ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
         <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>`;
     }).join("");
@@ -1194,7 +1188,8 @@ async function renderComentarios(){
       const input = document.getElementById("comentarioTexto");
       if(input){
         input.value = "@" + btn.dataset.usuario + " ";
-        input.focus();
+        input.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(()=> input.focus(), 300);
       }
     };
   });
@@ -1243,34 +1238,6 @@ async function renderComentarios(){
       }, "🚩 Reportar");
     };
   });
-
-  // ELIMINAR TODO
-  if(botonEliminarTodo){
-    botonEliminarTodo.onclick = ()=>{
-      if(!miNombreComentarios) return;
-
-      pedirConfirmacion(
-        "¿Seguro que querés eliminar TODOS los comentarios de tu perfil? Esta acción no se puede deshacer.",
-        async ()=>{
-          try{
-            await fetch("/api/content?action=comments", {
-              method: "DELETE",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                all: true,
-                username: miNombreComentarios,
-                profileUsername: datosUsuario.nombre
-              })
-            });
-          }catch(error){
-            console.warn("MacroReborn: no se pudieron eliminar los comentarios.", error);
-          }
-          renderComentarios();
-        },
-        "🗑️ Eliminar todo"
-      );
-    };
-  }
 }
 
 // CREAR COMENTARIO
