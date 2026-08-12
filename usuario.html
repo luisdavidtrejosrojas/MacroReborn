@@ -102,6 +102,7 @@
   <!-- MENÚ DE PESTAÑAS -->
   <div class="menu-perfil">
     <button class="tab activa" data-tab="inicio">🏠 Inicio</button>
+    <button class="tab" data-tab="actividad-amigos">👥 Actividad de amigos</button>
     <button class="tab" data-tab="actividad">📜 Actividad reciente</button>
     <button class="tab" data-tab="favoritos">❤️ Juegos favoritos</button>
     <button class="tab" data-tab="ultimos">🎮 Últimos jugados</button>
@@ -114,6 +115,17 @@
   <section id="inicio" class="contenido-tab activo">
     <h2>Información general</h2>
     <p id="descripcionInicio">Todavía no escribió una biografía.</p>
+  </section>
+
+  <!-- ACTIVIDAD AMIGOS -->
+  <!-- Contenido pintado por js/usuario-actividad.js. Muestra la
+       actividad de los amigos favoritos (⭐) del usuario visitado,
+       mismo criterio que la pestaña equivalente del perfil propio
+       (js/perfil-actividad.js). -->
+  <section id="actividad-amigos" class="contenido-tab">
+    <h2>👥 Actividad de amigos</h2>
+    <p>Actividad reciente de los amigos favoritos de este jugador.</p>
+    <div id="listaActividadAmigosUsuario"><p>No hay actividad todavía.</p></div>
   </section>
 
   <!-- ACTIVIDAD RECIENTE -->
