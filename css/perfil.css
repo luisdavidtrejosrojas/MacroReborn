@@ -377,6 +377,226 @@ html[data-tema="claro"] .perfil {
 }
 
 /* ==========================================================================
+   AMIGOS (pestaña "Amigos" de perfil.html / usuario.html)
+   Mismas tarjetas que la Comunidad (css/comunidad.css: .grid-usuarios,
+   .tarjeta-usuario, .avatar-tarjeta, .usuario-nombre, .usuario-stats,
+   .stat-item, .btn-ver-perfil), copiadas acá porque esta página no
+   carga css/comunidad.css. Se agregan además la estrella de "Amigo
+   favorito" y el pie de acciones propio de esta pestaña.
+   ========================================================================== */
+
+.grid-usuarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.tarjeta-usuario {
+  position: relative;
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-deep));
+  border: 2px solid var(--clasico-borde);
+  border-radius: var(--clasico-radio);
+  padding: 26px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarjeta-usuario:hover {
+  border-color: var(--gold-deep);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4);
+}
+
+.avatar-tarjeta {
+  width: 96px;
+  height: 148px;
+  position: relative;
+  border: 3px solid var(--gold);
+  border-radius: 12px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(240, 180, 41, 0.14), transparent 65%),
+    var(--bg-deep);
+  flex-shrink: 0;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.avatar-tarjeta .capa-tarjeta,
+.avatar-tarjeta .avatar-default {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  top: 0;
+  left: 0;
+}
+
+.usuario-nombre {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  margin: 0;
+  text-align: center;
+}
+
+.usuario-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.stat-item {
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 7px 12px;
+  text-align: center;
+  min-width: 58px;
+}
+
+.stat-item .stat-valor {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  display: block;
+  line-height: 1.2;
+}
+
+.stat-item .stat-label {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  display: block;
+}
+
+.btn-ver-perfil {
+  display: block;
+  text-align: center;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  font-weight: 800;
+  font-size: 13px;
+  border: none;
+  border-radius: 9px;
+  padding: 10px 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  flex: 1;
+}
+
+.btn-ver-perfil:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(240, 180, 41, 0.3);
+}
+
+/* Pie de la tarjeta de amigo: "Ver perfil" + "Eliminar" lado a lado */
+.tarjeta-amigo-acciones {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+}
+
+.btn-quitar-amigo-perfil {
+  background: rgba(239, 68, 68, 0.13);
+  color: #ef4444;
+  border: 2px solid rgba(239, 68, 68, 0.4);
+  padding: 10px 14px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-quitar-amigo-perfil:hover {
+  background: rgba(239, 68, 68, 0.22);
+  transform: translateY(-2px);
+}
+
+/* Estrella de "Amigo favorito", esquina superior derecha de la tarjeta */
+.btn-favorito-amigo {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  z-index: 2;
+}
+
+.btn-favorito-amigo:hover {
+  transform: scale(1.12);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
+.btn-favorito-amigo.es-favorito {
+  background: rgba(240, 180, 41, 0.16);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
+.btn-favorito-amigo:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Estrella de favorito en modo solo lectura (perfil ajeno, usuario.html):
+   no es un botón clickeable, solo un indicador visual. */
+.icono-favorito-amigo {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(240, 180, 41, 0.16);
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  color: var(--gold-bright);
+  font-size: 16px;
+  line-height: 1;
+  z-index: 2;
+}
+
+@media (max-width: 480px) {
+  .grid-usuarios {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .avatar-tarjeta {
+    width: 76px;
+    height: 116px;
+  }
+
+  .usuario-nombre {
+    font-size: 14px;
+  }
+
+  .tarjeta-amigo-acciones {
+    flex-direction: column;
+  }
+}
+
+/* ==========================================================================
    COMENTARIOS
    ========================================================================== */
 
