@@ -1087,7 +1087,7 @@ let _comentariosCache = [];
 
 async function cargarComentarios(){
   try{
-    const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(datosUsuario.nombre) + (usuarioActivo && usuarioActivo.nombre ? "&viewer=" + encodeURIComponent(usuarioActivo.nombre) : ""));
+    const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(datosUsuario.nombre));
     const datos = await resp.json();
     _comentariosCache = (datos && datos.success) ? datos.comentarios : [];
   }catch(error){
@@ -1354,7 +1354,7 @@ document.getElementById("botonComentar")?.addEventListener("click", async ()=>{
   const usuarioActivo = leerJSON(localStorage.getItem("usuarioActivo") || "null");
 
   try{
-    await fetch("/api/content?action=comments", {
+    const respuestaComentario = await fetch("/api/content?action=comments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -1363,6 +1363,12 @@ document.getElementById("botonComentar")?.addEventListener("click", async ()=>{
         authorUsername: usuarioActivo ? usuarioActivo.nombre : "Usuario"
       })
     });
+
+    const datosComentario = await respuestaComentario.json().catch(() => null);
+    if (!respuestaComentario.ok || !datosComentario || !datosComentario.success) {
+      console.warn("MacroReborn: el servidor rechazó el comentario.", datosComentario);
+      return;
+    }
   }catch(error){
     console.warn("MacroReborn: no se pudo publicar el comentario.", error);
     return;
