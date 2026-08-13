@@ -8,13 +8,36 @@
 
 const botonesTab = document.querySelectorAll(".tab");
 const contenidosTab = document.querySelectorAll(".contenido-tab");
+let perfilLimitadoPorBloqueo = false;
+
+function aplicarRestriccionTabsPorBloqueo() {
+  if (!perfilLimitadoPorBloqueo) return;
+
+  botonesTab.forEach(boton => {
+    const esInicio = boton.dataset.tab === "inicio";
+    boton.hidden = !esInicio;
+    boton.classList.toggle("activa", esInicio);
+  });
+
+  contenidosTab.forEach(contenido => {
+    const esInicio = contenido.id === "inicio";
+    contenido.hidden = !esInicio;
+    contenido.classList.toggle("activo", esInicio);
+  });
+
+  const aviso = document.getElementById("avisoPerfilBloqueado");
+  if (aviso) aviso.hidden = false;
+}
 
 botonesTab.forEach(boton => {
   boton.addEventListener("click", () => {
+    if (perfilLimitadoPorBloqueo && boton.dataset.tab !== "inicio") return;
+
     botonesTab.forEach(b => b.classList.remove("activa"));
     contenidosTab.forEach(c => c.classList.remove("activo"));
     boton.classList.add("activa");
-    document.getElementById(boton.dataset.tab).classList.add("activo");
+    const destino = document.getElementById(boton.dataset.tab);
+    if (destino) destino.classList.add("activo");
   });
 });
 
@@ -83,7 +106,6 @@ if (_esPropioPerfil) {
 
 let usuario = null;
 const activo = obtenerActivo();
-let perfilLimitadoPorBloqueo = false;
 
 try{
 
@@ -520,7 +542,8 @@ if (avatar && caja) {
         crearNotificacion(
           usuario.nombre,
           "📩 Nueva solicitud de amistad",
-          activo.nombre + " te envió una solicitud de amistad."
+          activo.nombre + " te envió una solicitud de amistad.",
+          activo.nombre
         );
       }
 
@@ -534,19 +557,20 @@ if (avatar && caja) {
 
   const btnBloquear = document.getElementById("bloquearUsuario");
   let _yaBloqueado = false;
+  let _bloqueadoPorElPerfil = false;
 
   async function cargarEstadoBloqueo(){
     if(!activo || activo.nombre === usuario.nombre) return;
     try{
       const respuesta = await fetch(
-        "/api/social?action=blocks&username=" +
-        encodeURIComponent(activo.nombre) +
-        "&viewer=" +
-        encodeURIComponent(usuario.nombre)
+        "/api/social?action=blocks&username=" + encodeURIComponent(activo.nombre) +
+        "&viewer=" + encodeURIComponent(usuario.nombre)
       );
       const datos = await respuesta.json();
       if(datos && datos.success){
-        _yaBloqueado = !!datos.bloqueadoPorElPerfil;
+        _yaBloqueado = !!datos.bloqueadoPorMi;
+        _bloqueadoPorElPerfil = !!datos.bloqueadoPorElPerfil;
+        perfilLimitadoPorBloqueo = _bloqueadoPorElPerfil;
       }
     }catch(error){
       console.warn("MacroReborn: no se pudo cargar el estado de bloqueo.", error);
@@ -556,7 +580,7 @@ if (avatar && caja) {
   function actualizarBotonBloquear(){
     if(!btnBloquear) return;
 
-    if(!activo || activo.nombre === usuario.nombre){
+    if(!activo || activo.nombre === usuario.nombre || _bloqueadoPorElPerfil){
       btnBloquear.style.display = "none";
       return;
     }
@@ -572,6 +596,7 @@ if (avatar && caja) {
   }
 
   await cargarEstadoBloqueo();
+  aplicarRestriccionTabsPorBloqueo();
   actualizarBotonBloquear();
 
   if(btnBloquear){
@@ -645,7 +670,7 @@ if (avatar && caja) {
 
   async function obtenerListaComentarios() {
     try{
-      const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(usuario.nombre) + (activo && activo.nombre ? "&viewer=" + encodeURIComponent(activo.nombre) : ""));
+      const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(usuario.nombre));
       const datos = await resp.json();
       _comentariosCacheUsuario = (datos && datos.success) ? datos.comentarios : [];
     }catch(error){
@@ -807,7 +832,8 @@ if (avatar && caja) {
         crearNotificacion(
           usuario.nombre,
           "💬 Nuevo comentario",
-          activo.nombre + " comentó en tu perfil."
+          activo.nombre + " comentó en tu perfil.",
+          activo.nombre
         );
 
       }
