@@ -306,6 +306,15 @@
           notificarMenciones(texto, usuarioResena.nombre, "en una reseña de este juego.");
         }
 
+        if (typeof registrarActividad === "function") {
+          const nombreJuego = (typeof juego !== "undefined" && juego) ? juego.nombre : ("Juego #" + idJuegoResena);
+          registrarActividad(
+            usuarioResena.nombre,
+            "resena",
+            typeof empaquetarJuego === "function" ? empaquetarJuego(nombreJuego, idJuegoResena, texto) : nombreJuego
+          );
+        }
+
         await renderResenas();
       } catch (error) {
         console.warn("MacroReborn: no se pudo guardar la reseña.", error);

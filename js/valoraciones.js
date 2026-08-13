@@ -170,7 +170,21 @@
         body: JSON.stringify({ username: usuarioVal.nombre, gameId: idJuegoVal, voto: tipo })
       });
       const datos = await resp.json();
-      if (datos && datos.success) pintarVotosJuego(datos);
+      if (datos && datos.success) {
+        pintarVotosJuego(datos);
+
+        // Actividad reciente: solo cuando el resultado del click es
+        // "me gusta" activo (no cuando se saca el like ni cuando se
+        // vota "no me gusta").
+        if (tipo === "like" && datos.miVoto === "like" && typeof registrarActividad === "function") {
+          const nombreJuego = (typeof juego !== "undefined" && juego) ? juego.nombre : ("Juego #" + idJuegoVal);
+          registrarActividad(
+            usuarioVal.nombre,
+            "like_juego",
+            typeof empaquetarJuego === "function" ? empaquetarJuego(nombreJuego, idJuegoVal) : nombreJuego
+          );
+        }
+      }
     } catch (error) {
       console.warn("MacroReborn: no se pudo registrar el voto.", error);
     }

@@ -39,12 +39,16 @@ async function renderActividadUsuario(){
 
     }
 
-    contenedorActividadUsuario.innerHTML = lista.map(a => `
-        <div class="actividad">
-            <div>${a.texto}</div>
-            <div class="actividad-fecha">${a.fecha} · ${a.hora}</div>
-        </div>
-    `).join("");
+    contenedorActividadUsuario.innerHTML = lista.map(a => {
+        const tag = a.destino ? "a" : "div";
+        const href = a.destino ? ` href="${a.destino}"` : "";
+        return `
+            <${tag} class="actividad"${href}>
+                <div>${a.texto}</div>
+                <div class="actividad-fecha">${a.fecha} · ${a.hora}</div>
+            </${tag}>
+        `;
+    }).join("");
 
 }
 
@@ -115,15 +119,19 @@ async function renderActividadAmigosUsuario(){
     await cargarAvataresDeVarios(actividadesAmigos.map(a => a.nombreAmigo));
   }
 
-  contenedorActividadAmigosUsuario.innerHTML = actividadesAmigos.map(a => `
-    <div class="actividad" style="display:flex;align-items:center;gap:14px;">
-      ${avatarMiniActividadUsuario(a.nombreAmigo)}
-      <div style="flex:1;min-width:0;">
-        <div>${textoActividadAmigo(a.nombreAmigo, a.tipo, a.detalle)}</div>
-        <div class="actividad-fecha">${a.fecha} · ${a.hora}</div>
-      </div>
-    </div>
-  `).join("");
+  contenedorActividadAmigosUsuario.innerHTML = actividadesAmigos.map(a => {
+    const tag = a.destino ? "a" : "div";
+    const href = a.destino ? ` href="${a.destino}"` : "";
+    return `
+      <${tag} class="actividad"${href} style="display:flex;align-items:center;gap:14px;">
+        ${avatarMiniActividadUsuario(a.nombreAmigo)}
+        <div style="flex:1;min-width:0;">
+          <div>${textoActividadAmigo(a.nombreAmigo, a.tipo, a.detalle)}</div>
+          <div class="actividad-fecha">${a.fecha} · ${a.hora}</div>
+        </div>
+      </${tag}>
+    `;
+  }).join("");
 }
 
 renderActividadAmigosUsuario();
