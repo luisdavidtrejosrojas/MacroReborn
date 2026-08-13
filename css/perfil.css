@@ -370,6 +370,17 @@ html[data-tema="claro"] .perfil {
   transform: translateX(2px);
 }
 
+/* Actividades con destino (mención, reseña, like, amigo agregado) se
+   pintan como <a> en vez de <div> para que se pueda tocar y navegar;
+   este selector les saca la pinta de link del navegador para que se
+   vean exactamente igual que las que no son clickeables. */
+a.actividad {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .actividad-fecha {
   color: var(--text-muted);
   font-size: 12px;
