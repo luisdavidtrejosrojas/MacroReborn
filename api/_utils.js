@@ -10,7 +10,6 @@ function setCors(res, metodos) {
   res.setHeader("Access-Control-Allow-Methods", (metodos || "GET, POST, OPTIONS"));
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
-
 async function getUserId(sql, username) {
   if (!username) return null;
   const filas = await sql`SELECT id FROM users WHERE username = ${username};`;
@@ -24,7 +23,6 @@ async function hayBloqueoEntreUsuarios(sql, usernameA, usernameB) {
 
   const idA = await getUserId(sql, usernameA);
   const idB = await getUserId(sql, usernameB);
-
   if (!idA || !idB) return false;
 
   const filas = await sql`
@@ -34,7 +32,6 @@ async function hayBloqueoEntreUsuarios(sql, usernameA, usernameB) {
        OR (blocker_id = ${idB} AND blocked_id = ${idA})
     LIMIT 1;
   `;
-
   return filas.length > 0;
 }
 
@@ -45,7 +42,6 @@ async function usuarioBloqueaA(sql, blockerUsername, blockedUsername) {
 
   const blockerId = await getUserId(sql, blockerUsername);
   const blockedId = await getUserId(sql, blockedUsername);
-
   if (!blockerId || !blockedId) return false;
 
   const filas = await sql`
@@ -54,13 +50,11 @@ async function usuarioBloqueaA(sql, blockerUsername, blockedUsername) {
     WHERE blocker_id = ${blockerId} AND blocked_id = ${blockedId}
     LIMIT 1;
   `;
-
   return filas.length > 0;
 }
 
+
 module.exports = {
-  setCors,
   getUserId,
   hayBloqueoEntreUsuarios,
-  usuarioBloqueaA
-};
+  usuarioBloqueaA, setCors };

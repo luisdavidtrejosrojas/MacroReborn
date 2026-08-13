@@ -120,14 +120,6 @@ async function friends(req, res) {
         return res.status(200).json({ success: false, error: "No podés agregarte a vos mismo" });
       }
 
-      if (await hayBloqueoEntreUsuarios(sql, from, to)) {
-        return res.status(403).json({
-          success: false,
-          bloqueado: true,
-          error: "No se puede realizar esta acción porque existe un bloqueo entre ambos usuarios"
-        });
-      }
-
       const yaAmigos = await sql`
         SELECT 1 FROM friendships WHERE user_id = ${fromId} AND friend_id = ${toId};
       `;
@@ -167,28 +159,12 @@ async function friends(req, res) {
 
       const solicitud = filas[0];
 
-      const nombresSolicitud = await sql`
-        SELECT
-          (SELECT username FROM users WHERE id = ${solicitud.from_user_id}) AS "fromUsername",
-          (SELECT username FROM users WHERE id = ${solicitud.to_user_id}) AS "toUsername";
-      `;
-      const datosSolicitud = nombresSolicitud[0];
-
-
       if (action === "reject") {
         await sql`UPDATE friend_requests SET status = 'rechazada', responded_at = now() WHERE id = ${requestId};`;
         return res.status(200).json({ success: true });
       }
 
-      if (datosSolicitud && await hayBloqueoEntreUsuarios(sql, datosSolicitud.fromUsername, datosSolicitud.toUsername)) {
-          return res.status(403).json({
-            success: false,
-            bloqueado: true,
-            error: "No se puede aceptar esta solicitud porque existe un bloqueo entre ambos usuarios"
-          });
-        }
-
-        await aceptarSolicitud(requestId, solicitud.from_user_id, solicitud.to_user_id);
+      await aceptarSolicitud(requestId, solicitud.from_user_id, solicitud.to_user_id);
       return res.status(200).json({ success: true });
     }
 
@@ -272,14 +248,6 @@ async function favoriteFriends(req, res) {
 
     if (!userId || !friendId) {
       return res.status(404).json({ success: false, error: "Usuario no encontrado" });
-    }
-
-    if (await hayBloqueoEntreUsuarios(sql, username, friendUsername)) {
-      return res.status(403).json({
-        success: false,
-        bloqueado: true,
-        error: "No se puede modificar esta relación porque existe un bloqueo entre ambos usuarios"
-      });
     }
 
     if (action === "add") {
