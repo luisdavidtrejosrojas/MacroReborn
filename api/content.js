@@ -100,7 +100,7 @@ async function comments(req, res) {
       WHERE profile_user_id = ${profileId}
         AND (
           ${viewerEsElPropioPerfil}
-          OR ${viewer || null} IS NULL
+          OR ${viewer || null}::text IS NULL
           OR NOT EXISTS (
             SELECT 1
             FROM user_blocks b
@@ -336,7 +336,7 @@ async function chat(req, res) {
       SELECT id, username AS usuario, texto, created_at
       FROM chat_messages cm
       WHERE (
-        ${viewer || null} IS NULL
+        ${viewer || null}::text IS NULL
         OR NOT EXISTS (
           SELECT 1
           FROM user_blocks b
