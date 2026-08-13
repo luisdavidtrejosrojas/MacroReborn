@@ -559,20 +559,49 @@ if (avatar && caja) {
   let _yaBloqueado = false;
   let _bloqueadoPorElPerfil = false;
 
+  function limpiarEstadoVisualBloqueo(){
+    _bloqueadoPorElPerfil = false;
+    perfilLimitadoPorBloqueo = false;
+
+    botonesTab.forEach(boton => {
+      boton.hidden = false;
+    });
+    contenidosTab.forEach(contenido => {
+      contenido.hidden = false;
+    });
+
+    const aviso = document.getElementById("avisoPerfilBloqueado");
+    if (aviso) aviso.hidden = true;
+  }
+
   async function cargarEstadoBloqueo(){
-    if(!activo || activo.nombre === usuario.nombre) return;
+    // Cada perfil se evalúa desde cero. Así una navegación o un estado
+    // anterior nunca puede dejar un aviso/limitación pegado en otro perfil.
+    limpiarEstadoVisualBloqueo();
+
+    if(!activo || !activo.nombre || !usuario || !usuario.nombre ||
+       activo.nombre.toLowerCase() === usuario.nombre.toLowerCase()){
+      return;
+    }
+
     try{
       const respuesta = await fetch(
         "/api/social?action=blocks&username=" + encodeURIComponent(usuario.nombre) +
         "&viewer=" + encodeURIComponent(activo.nombre)
       );
       const datos = await respuesta.json();
-      if(datos && datos.success){
-        _yaBloqueado = !!datos.bloqueadoPorMi;
-        _bloqueadoPorElPerfil = !!datos.bloqueadoPorElPerfil;
-        perfilLimitadoPorBloqueo = _bloqueadoPorElPerfil;
+
+      if(datos && datos.success === true){
+        _yaBloqueado = datos.bloqueadoPorMi === true;
+        _bloqueadoPorElPerfil = datos.bloqueadoPorElPerfil === true;
+        perfilLimitadoPorBloqueo = _bloqueadoPorElPerfil === true;
+      } else {
+        _yaBloqueado = false;
       }
     }catch(error){
+      // Ante un fallo de red/API, NO asumimos que existe un bloqueo.
+      _yaBloqueado = false;
+      limpiarEstadoVisualBloqueo();
       console.warn("MacroReborn: no se pudo cargar el estado de bloqueo.", error);
     }
   }
@@ -598,6 +627,8 @@ if (avatar && caja) {
   await cargarEstadoBloqueo();
   aplicarRestriccionTabsPorBloqueo();
   actualizarBotonBloquear();
+  const avisoInicialBloqueo = document.getElementById("avisoPerfilBloqueado");
+  if (avisoInicialBloqueo) avisoInicialBloqueo.hidden = !perfilLimitadoPorBloqueo;
 
   if(btnBloquear){
     btnBloquear.addEventListener("click", async () => {
