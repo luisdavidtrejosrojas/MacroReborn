@@ -592,11 +592,17 @@
 }
 
 .capa-resena {
+  /* FIX: el recorte estaba mal calibrado (mezclaba % con px fijos y un
+     zoom de 800%, así que según qué capas tuviera el avatar el círculo
+     salía vacío, gigante o corrido). Se usan los mismos porcentajes ya
+     calibrados de ".capa-comentario" (css/perfil.css): como ambos son
+     círculos cuadrados, el mismo recorte relativo funciona igual acá,
+     mostrando solo cabeza/hombros del avatar. */
   position: absolute;
-  width: 800%;
-  height: 280%;
-  top: -14px;
-  left: -173px;
+  width: 233.6%;
+  height: 360%;
+  top: -10.7%;
+  left: -62.9%;
   object-fit: contain;
 }
 
