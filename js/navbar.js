@@ -128,6 +128,28 @@ if(nav){
             if(typeof renderNotificacionesDropdown === "function"){
                 renderNotificacionesDropdown();
             }
+
+            // Al abrir la campanita, se marcan todas las notificaciones
+            // como leídas (mismo endpoint que ya usa el botón "Marcar
+            // leídas" de notificaciones.html). El contador se vacía al
+            // toque para que se sienta instantáneo, sin esperar la
+            // respuesta del servidor.
+            const span = document.getElementById("contadorNotificaciones");
+            if(span) span.textContent = "";
+
+            fetch("/api/content?action=notifications-mark-read", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: usuarioNav.nombre })
+            }).then(()=>{
+                // Repinta el listado para que también se les quite el
+                // resaltado de "no leída" a los ítems del desplegable.
+                if(typeof renderNotificacionesDropdown === "function"){
+                    renderNotificacionesDropdown();
+                }
+            }).catch(error => {
+                console.warn("MacroReborn: no se pudieron marcar las notificaciones como leídas.", error);
+            });
         }
 
         if(botonNotif && dropdownNotif){
