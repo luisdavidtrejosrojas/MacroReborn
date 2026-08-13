@@ -1072,6 +1072,268 @@ html[data-tema="claro"] .perfil {
   transform: translateY(-2px);
 }
 
+#guardarEnGaleria {
+  background: var(--bg-panel);
+  color: var(--clasico-borde);
+  border: 2px solid var(--clasico-borde);
+  padding: 12px 26px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 14px;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+#guardarEnGaleria:hover {
+  background: rgba(56, 189, 248, 0.12);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   GALERÍA DE AVATARES GUARDADOS
+   (perfil.html: 6 casilleros propios con cuadros de conteo.
+   usuario.html: los mismos 6 casilleros, ajenos, con botones de voto.)
+   ========================================================================== */
+
+.galeria-avatares-wrap {
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+
+.galeria-avatares-wrap > h3 {
+  font-family: var(--clasico-fuente);
+  font-size: 16px;
+  color: var(--clasico-borde);
+  margin: 0 0 6px;
+}
+
+.galeria-avatares {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.tarjeta-avatar-galeria {
+  position: relative;
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-deep));
+  border: 1.5px solid var(--clasico-borde);
+  border-radius: 12px;
+  padding: 16px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarjeta-avatar-galeria:hover {
+  border-color: var(--gold-deep);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+}
+
+.numero-casillero {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-galeria-visor {
+  width: 100px;
+  height: 154px;
+  position: relative;
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(240, 180, 41, 0.14), transparent 65%),
+    var(--bg-deep);
+  flex-shrink: 0;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.32);
+}
+
+.avatar-galeria-visor .capa-tarjeta {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  top: 0;
+  left: 0;
+}
+
+.avatar-galeria-visor.vacio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: var(--text-placeholder);
+  border-style: dashed;
+  border-color: var(--line);
+}
+
+.tarjeta-avatar-vacia {
+  border-style: dashed;
+  border-color: var(--line);
+}
+
+.tarjeta-avatar-vacia:hover {
+  border-color: var(--clasico-borde);
+}
+
+.texto-vacio {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ---- Botones de acción del dueño (guardar / reemplazar / quitar) ---- */
+
+.acciones-avatar-galeria {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.btn-guardar-aqui,
+.btn-reemplazar-avatar,
+.btn-quitar-avatar-galeria {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 7px 8px;
+  border-radius: 8px;
+  width: 100%;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.btn-guardar-aqui {
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 65%, var(--gold-deep) 100%);
+  color: #241804;
+  border: 1.5px solid var(--gold-deep);
+}
+
+.btn-reemplazar-avatar {
+  background: var(--bg-panel);
+  color: var(--clasico-borde);
+  border: 1.5px solid var(--clasico-borde);
+}
+
+.btn-quitar-avatar-galeria {
+  background: var(--bg-panel);
+  color: var(--danger-light);
+  border: 1.5px solid var(--danger);
+}
+
+.btn-guardar-aqui:hover,
+.btn-reemplazar-avatar:hover,
+.btn-quitar-avatar-galeria:hover {
+  transform: translateY(-2px);
+}
+
+/* ---- Cuadros de conteo (dueño: reemplazan los botones de voto) ---- */
+
+.votos-avatar-caja {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.caja-conteo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 4px;
+}
+
+.caja-conteo .icono {
+  font-size: 14px;
+}
+
+.caja-conteo .numero {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.caja-conteo-like {
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.caja-conteo-dislike {
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+/* ---- Botones de voto (visitante: usuario.html) ---- */
+
+.votos-avatar-botones {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-voto-avatar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: var(--bg-deep);
+  color: var(--text-secondary);
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 4px;
+  font-size: 12.5px;
+  font-weight: 800;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-voto-avatar:hover {
+  transform: translateY(-2px);
+}
+
+.btn-voto-like:hover,
+.btn-voto-like.activo {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.btn-voto-dislike:hover,
+.btn-voto-dislike.activo {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+@media (max-width: 480px) {
+  .galeria-avatares {
+    grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+  }
+
+  .avatar-galeria-visor {
+    width: 84px;
+    height: 130px;
+  }
+}
+
 /* ==========================================================================
    LOGROS
    ========================================================================== */
