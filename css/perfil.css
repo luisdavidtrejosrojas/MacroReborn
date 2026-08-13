@@ -738,7 +738,7 @@ html[data-tema="claro"] .perfil {
 }
 
 /* Avatar chico usado en comentarios / actividad / listas de amigos      */
-/* (recorte "cara" por zoom: no cambiar 55px sin recalcular el zoom)     */
+/* (mismo criterio "círculo con object-fit:cover" que Comunidad/Chat)    */
 
 .avatar-mini {
   width: 55px;
@@ -753,19 +753,24 @@ html[data-tema="claro"] .perfil {
 }
 
 .capa-comentario {
-  /* Recorte calibrado para mostrar SOLO la cabeza del avatar (antes
-     mostraba cabeza + hombro + parte de un brazo). El lienzo de cada
-     capa es siempre 327x504px sin importar qué capas estén activas,
-     así que este recorte funciona igual para cualquier combinación.
-     Calibrado sobre el contenedor de 55px de ".avatar-mini": si ese
-     tamaño cambia, hay que recalcular estos porcentajes (ver nota en
-     ".avatar-mini" más abajo). */
+  /* FIX: se reemplaza el recorte "a mano" (mezcla de % + zoom fijo,
+     calibrado solo para el lienzo de 327x504px) por el mismo criterio
+     que ya usa correctamente ".avatar-mini-conectado .capa-mini" en
+     Comunidad (css/comunidad.css) y ".capa-chat" en el chat
+     (css/chat.css): la capa ocupa el 100% del círculo, pegada arriba
+     a la izquierda, con object-fit:cover. Al depender de porcentajes
+     fijos de zoom, el recorte anterior se veía bien solo si el avatar
+     tenía activas exactamente las mismas capas con las que se calibró;
+     con otras combinaciones (o el avatar por defecto) la imagen
+     quedaba corrida hacia abajo, fuera de encuadre dentro del círculo.
+     Con este criterio el avatar se ve igual acá que en Comunidad y en
+     el chat, y funciona para cualquier combinación de capas. */
   position: absolute;
-  width: 233.6%;
-  height: 360%;
-  top: -10.7%;
-  left: -62.9%;
-  object-fit: contain;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* FIX: esta clase se usa para el avatar por defecto (usuarios que
