@@ -563,8 +563,8 @@ if (avatar && caja) {
     if(!activo || activo.nombre === usuario.nombre) return;
     try{
       const respuesta = await fetch(
-        "/api/social?action=blocks&username=" + encodeURIComponent(activo.nombre) +
-        "&viewer=" + encodeURIComponent(usuario.nombre)
+        "/api/social?action=blocks&username=" + encodeURIComponent(usuario.nombre) +
+        "&viewer=" + encodeURIComponent(activo.nombre)
       );
       const datos = await respuesta.json();
       if(datos && datos.success){
@@ -622,7 +622,19 @@ if (avatar && caja) {
         });
         const datos = await respuesta.json();
         if(datos && datos.success){
-          _yaBloqueado = datos.bloqueado;
+          _yaBloqueado = !!datos.bloqueado;
+
+          if(!_yaBloqueado){
+            _bloqueadoPorElPerfil = false;
+            perfilLimitadoPorBloqueo = false;
+            aplicarRestriccionTabsPorBloqueo();
+            botonesTab.forEach(boton => { boton.hidden = false; });
+            contenidosTab.forEach(contenido => { contenido.hidden = false; });
+            const aviso = document.getElementById("avisoPerfilBloqueado");
+            if(aviso) aviso.hidden = true;
+          }
+
+          actualizarBotonBloquear();
         }
       }catch(error){
         console.warn("MacroReborn: no se pudo actualizar el bloqueo.", error);
@@ -906,6 +918,42 @@ if (avatar && caja) {
     const PUSHER_CLUSTER = "sa1";
 
     if (PUSHER_KEY !== "TU_PUSHER_KEY") {
+
+      // Canal propio: recibe los cambios de bloqueo/desbloqueo que afectan
+      // a la cuenta que está navegando, para actualizar el perfil sin recargar.
+      if (activo && activo.nombre) {
+        const pusherEstadoBloqueo = new Pusher(PUSHER_KEY, { cluster: PUSHER_CLUSTER });
+        const canalEstadoBloqueo = pusherEstadoBloqueo.subscribe(
+          "notificaciones-" + activo.nombre.toLowerCase()
+        );
+
+        canalEstadoBloqueo.bind("estado-bloqueo", async (datos) => {
+          if (!datos || !datos.por) return;
+          if (String(datos.por).toLowerCase() !== String(usuario.nombre).toLowerCase()) return;
+
+          _bloqueadoPorElPerfil = !!datos.bloqueado;
+          perfilLimitadoPorBloqueo = _bloqueadoPorElPerfil;
+
+          if (perfilLimitadoPorBloqueo) {
+            aplicarRestriccionTabsPorBloqueo();
+          } else {
+            botonesTab.forEach(boton => { boton.hidden = false; });
+            contenidosTab.forEach(contenido => { contenido.hidden = false; });
+            botonesTab.forEach(boton => boton.classList.remove("activa"));
+            contenidosTab.forEach(contenido => contenido.classList.remove("activo"));
+            const inicioBoton = document.querySelector('.tab[data-tab="inicio"]');
+            const inicioContenido = document.getElementById("inicio");
+            if (inicioBoton) inicioBoton.classList.add("activa");
+            if (inicioContenido) inicioContenido.classList.add("activo");
+          }
+
+          const aviso = document.getElementById("avisoPerfilBloqueado");
+          if (aviso) aviso.hidden = !perfilLimitadoPorBloqueo;
+
+          await cargarEstadoBloqueo();
+          actualizarBotonBloquear();
+        });
+      }
 
       const pusherPerfilVisitado = new Pusher(PUSHER_KEY, { cluster: PUSHER_CLUSTER });
       const canalPerfilVisitado = pusherPerfilVisitado.subscribe("notificaciones-" + usuario.nombre.toLowerCase());
