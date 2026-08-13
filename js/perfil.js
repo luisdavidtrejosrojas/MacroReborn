@@ -109,7 +109,7 @@ if(bienvenidaPerfil){
   bienvenidaPerfil.textContent = "Bienvenido al perfil de " + usuario.nombre + ".";
 }
 
-document.querySelector(".estado").textContent=usuario.estado;
+document.querySelector(".estado").textContent=usuario.nombre+" · "+usuario.estado;
 document.querySelector(".nivel").textContent="⭐ Nivel "+usuario.nivel;
 document.getElementById("biografia").textContent=usuario.biografia;
 document.getElementById("xp").textContent="⚡ "+usuario.xp+" XP";

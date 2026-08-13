@@ -165,9 +165,10 @@ if (!usuario) {
   function pintarEstadoYUltimaConexion(){
 
     document.getElementById("estado").textContent =
-      (typeof usuarioEstaConectado === "function" && usuarioEstaConectado(usuario))
+      usuario.nombre + " · " +
+      ((typeof usuarioEstaConectado === "function" && usuarioEstaConectado(usuario))
         ? "🟢 En línea"
-        : "⚪ Desconectado";
+        : "⚪ Desconectado");
 
     const textoUltimaConexion = typeof tiempoRelativo === "function"
       ? tiempoRelativo(usuario.last_login, "Nunca")
@@ -522,6 +523,85 @@ if (avatar && caja) {
         );
       }
 
+      await cargarMisSolicitudes();
+      actualizarBotonAmigo();
+    });
+  }
+
+
+  // ---------- BOTÓN BLOQUEAR USUARIO ----------
+
+  const btnBloquear = document.getElementById("bloquearUsuario");
+  let _yaBloqueado = false;
+
+  async function cargarEstadoBloqueo(){
+    if(!activo || activo.nombre === usuario.nombre) return;
+    try{
+      const respuesta = await fetch("/api/social?action=blocks&username=" + encodeURIComponent(activo.nombre));
+      const datos = await respuesta.json();
+      if(datos && datos.success){
+        _yaBloqueado = datos.bloqueados.includes(usuario.nombre);
+      }
+    }catch(error){
+      console.warn("MacroReborn: no se pudo cargar el estado de bloqueo.", error);
+    }
+  }
+
+  function actualizarBotonBloquear(){
+    if(!btnBloquear) return;
+
+    if(!activo || activo.nombre === usuario.nombre){
+      btnBloquear.style.display = "none";
+      return;
+    }
+
+    btnBloquear.disabled = false;
+    if(_yaBloqueado){
+      btnBloquear.textContent = "✅ Usuario bloqueado (click para desbloquear)";
+      btnBloquear.classList.add("ya-bloqueado");
+    }else{
+      btnBloquear.textContent = "🚫 Bloquear a este usuario";
+      btnBloquear.classList.remove("ya-bloqueado");
+    }
+  }
+
+  await cargarEstadoBloqueo();
+  actualizarBotonBloquear();
+
+  if(btnBloquear){
+    btnBloquear.addEventListener("click", async () => {
+      if(!activo || btnBloquear.disabled) return;
+
+      const confirmacion = _yaBloqueado
+        ? confirm("¿Desbloquear a " + usuario.nombre + "?")
+        : confirm("¿Bloquear a " + usuario.nombre + "? Ya no podrán ser amigos ni tener solicitudes pendientes entre ustedes.");
+      if(!confirmacion) return;
+
+      btnBloquear.disabled = true;
+
+      try{
+        const respuesta = await fetch("/api/social?action=blocks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: _yaBloqueado ? "unblock" : "block",
+            username: activo.nombre,
+            targetUsername: usuario.nombre
+          })
+        });
+        const datos = await respuesta.json();
+        if(datos && datos.success){
+          _yaBloqueado = datos.bloqueado;
+        }
+      }catch(error){
+        console.warn("MacroReborn: no se pudo actualizar el bloqueo.", error);
+      }
+
+      actualizarBotonBloquear();
+
+      // Bloquear rompe la amistad/solicitudes en el servidor: se
+      // refresca el botón de amigo para reflejarlo.
+      await cargarAmigosDeEstePerfil();
       await cargarMisSolicitudes();
       actualizarBotonAmigo();
     });
