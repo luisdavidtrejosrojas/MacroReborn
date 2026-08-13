@@ -11,22 +11,39 @@ const contenidosTab = document.querySelectorAll(".contenido-tab");
 let perfilLimitadoPorBloqueo = false;
 
 function aplicarRestriccionTabsPorBloqueo() {
-  if (!perfilLimitadoPorBloqueo) return;
-
+  // El estado visual SIEMPRE se recalcula desde cero. El aviso y las
+  // pestañas no pueden quedar arrastrados de otro perfil visitado.
   botonesTab.forEach(boton => {
     const esInicio = boton.dataset.tab === "inicio";
-    boton.hidden = !esInicio;
-    boton.classList.toggle("activa", esInicio);
+    if (perfilLimitadoPorBloqueo) {
+      boton.hidden = !esInicio;
+      boton.style.display = esInicio ? "" : "none";
+      boton.classList.toggle("activa", esInicio);
+    } else {
+      boton.hidden = false;
+      boton.style.display = "";
+    }
   });
 
   contenidosTab.forEach(contenido => {
     const esInicio = contenido.id === "inicio";
-    contenido.hidden = !esInicio;
-    contenido.classList.toggle("activo", esInicio);
+    if (perfilLimitadoPorBloqueo) {
+      contenido.hidden = !esInicio;
+      contenido.style.display = esInicio ? "" : "none";
+      contenido.classList.toggle("activo", esInicio);
+    } else {
+      contenido.hidden = false;
+      contenido.style.display = "";
+    }
   });
 
   const aviso = document.getElementById("avisoPerfilBloqueado");
-  if (aviso) aviso.hidden = false;
+  if (aviso) {
+    aviso.hidden = !perfilLimitadoPorBloqueo;
+    // Algunos estilos globales pueden sobrescribir el comportamiento
+    // nativo de [hidden], por eso también fijamos display explícitamente.
+    aviso.style.display = perfilLimitadoPorBloqueo ? "inline-flex" : "none";
+  }
 }
 
 botonesTab.forEach(boton => {
@@ -560,18 +577,10 @@ if (avatar && caja) {
   let _bloqueadoPorElPerfil = false;
 
   function limpiarEstadoVisualBloqueo(){
+    _yaBloqueado = false;
     _bloqueadoPorElPerfil = false;
     perfilLimitadoPorBloqueo = false;
-
-    botonesTab.forEach(boton => {
-      boton.hidden = false;
-    });
-    contenidosTab.forEach(contenido => {
-      contenido.hidden = false;
-    });
-
-    const aviso = document.getElementById("avisoPerfilBloqueado");
-    if (aviso) aviso.hidden = true;
+    aplicarRestriccionTabsPorBloqueo();
   }
 
   async function cargarEstadoBloqueo(){
@@ -597,7 +606,13 @@ if (avatar && caja) {
         perfilLimitadoPorBloqueo = _bloqueadoPorElPerfil === true;
       } else {
         _yaBloqueado = false;
+        _bloqueadoPorElPerfil = false;
+        perfilLimitadoPorBloqueo = false;
       }
+
+      // Aplicar el resultado explícitamente, incluso cuando el resultado
+      // es "no bloqueado".
+      aplicarRestriccionTabsPorBloqueo();
     }catch(error){
       // Ante un fallo de red/API, NO asumimos que existe un bloqueo.
       _yaBloqueado = false;
@@ -627,8 +642,6 @@ if (avatar && caja) {
   await cargarEstadoBloqueo();
   aplicarRestriccionTabsPorBloqueo();
   actualizarBotonBloquear();
-  const avisoInicialBloqueo = document.getElementById("avisoPerfilBloqueado");
-  if (avisoInicialBloqueo) avisoInicialBloqueo.hidden = !perfilLimitadoPorBloqueo;
 
   if(btnBloquear){
     btnBloquear.addEventListener("click", async () => {
@@ -659,10 +672,6 @@ if (avatar && caja) {
             _bloqueadoPorElPerfil = false;
             perfilLimitadoPorBloqueo = false;
             aplicarRestriccionTabsPorBloqueo();
-            botonesTab.forEach(boton => { boton.hidden = false; });
-            contenidosTab.forEach(contenido => { contenido.hidden = false; });
-            const aviso = document.getElementById("avisoPerfilBloqueado");
-            if(aviso) aviso.hidden = true;
           }
 
           actualizarBotonBloquear();
@@ -965,21 +974,7 @@ if (avatar && caja) {
           _bloqueadoPorElPerfil = !!datos.bloqueado;
           perfilLimitadoPorBloqueo = _bloqueadoPorElPerfil;
 
-          if (perfilLimitadoPorBloqueo) {
-            aplicarRestriccionTabsPorBloqueo();
-          } else {
-            botonesTab.forEach(boton => { boton.hidden = false; });
-            contenidosTab.forEach(contenido => { contenido.hidden = false; });
-            botonesTab.forEach(boton => boton.classList.remove("activa"));
-            contenidosTab.forEach(contenido => contenido.classList.remove("activo"));
-            const inicioBoton = document.querySelector('.tab[data-tab="inicio"]');
-            const inicioContenido = document.getElementById("inicio");
-            if (inicioBoton) inicioBoton.classList.add("activa");
-            if (inicioContenido) inicioContenido.classList.add("activo");
-          }
-
-          const aviso = document.getElementById("avisoPerfilBloqueado");
-          if (aviso) aviso.hidden = !perfilLimitadoPorBloqueo;
+          aplicarRestriccionTabsPorBloqueo();
 
           await cargarEstadoBloqueo();
           actualizarBotonBloquear();
