@@ -12,7 +12,7 @@ function setCors(res, metodos) {
 }
 async function getUserId(sql, username) {
   if (!username) return null;
-  const filas = await sql`SELECT id FROM users WHERE username = ${username};`;
+  const filas = await sql`SELECT id FROM users WHERE LOWER(username) = LOWER(${username});`;
   return filas.length ? filas[0].id : null;
 }
 

@@ -505,18 +505,27 @@ async function blocks(req, res) {
       ORDER BY b.created_at DESC;
     `;
 
+    // Estas banderas SOLO son verdaderas cuando existe una fila real
+    // en user_blocks con la dirección exacta del bloqueo. No se infieren
+    // por visitar un perfil ni por ninguna otra relación social.
     let bloqueadoPorElPerfil = false;
     let bloqueadoPorMi = false;
+
     if (viewer) {
-      bloqueadoPorElPerfil = await usuarioBloqueaA(sql, username, viewer);
-      bloqueadoPorMi = await usuarioBloqueaA(sql, viewer, username);
+      const perfilUsername = username;
+      const visitanteUsername = viewer;
+
+      if (perfilUsername.toLowerCase() !== visitanteUsername.toLowerCase()) {
+        bloqueadoPorElPerfil = await usuarioBloqueaA(sql, perfilUsername, visitanteUsername);
+        bloqueadoPorMi = await usuarioBloqueaA(sql, visitanteUsername, perfilUsername);
+      }
     }
 
     return res.status(200).json({
       success: true,
       bloqueados: filas.map(f => f.username),
-      bloqueadoPorElPerfil,
-      bloqueadoPorMi
+      bloqueadoPorElPerfil: bloqueadoPorElPerfil === true,
+      bloqueadoPorMi: bloqueadoPorMi === true
     });
   }
 
