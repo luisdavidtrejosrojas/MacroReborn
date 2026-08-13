@@ -1,5 +1,5 @@
 const { neon } = require("@neondatabase/serverless");
-const { setCors } = require("./_utils");
+const { setCors, hayBloqueoEntreUsuarios } = require("./_utils");
 const { getPusher, canalNotificaciones } = require("./_pusher");
 
 const sql = neon(process.env.DATABASE_URL);
@@ -79,7 +79,7 @@ async function getUserId(username) {
 async function comments(req, res) {
 
   if (req.method === "GET") {
-    const { username } = req.query;
+    const { username, viewer } = req.query;
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
     }
@@ -91,8 +91,21 @@ async function comments(req, res) {
 
     const filas = await sql`
       SELECT id, author_username AS usuario, texto, created_at
-      FROM profile_comments
+      FROM profile_comments pc
       WHERE profile_user_id = ${profileId}
+        AND (
+          ${viewer || null} IS NULL
+          OR NOT EXISTS (
+            SELECT 1
+            FROM user_blocks b
+            JOIN users u1 ON u1.id = b.blocker_id
+            JOIN users u2 ON u2.id = b.blocked_id
+            WHERE
+              (u1.username = ${viewer || ""} AND u2.username = pc.author_username)
+              OR
+              (u1.username = pc.author_username AND u2.username = ${viewer || ""})
+          )
+        )
       ORDER BY id DESC;
     `;
 
@@ -113,6 +126,14 @@ async function comments(req, res) {
 
     const nombreAutor = (authorUsername && authorUsername.trim()) ? authorUsername.trim() : "Usuario";
     const authorId = await getUserId(nombreAutor);
+
+    if (await hayBloqueoEntreUsuarios(sql, profileUsername, nombreAutor)) {
+      return res.status(403).json({
+        success: false,
+        bloqueado: true,
+        error: "No se puede comentar entre usuarios bloqueados"
+      });
+    }
 
     const filas = await sql`
       INSERT INTO profile_comments (profile_user_id, author_user_id, author_username, texto)
@@ -299,13 +320,27 @@ async function likes(req, res) {
 async function chat(req, res) {
 
   if (req.method === "GET") {
+    const { username: viewer } = req.query;
     // Se traen los 200 mensajes más recientes, del más nuevo al más
     // viejo (misma consulta simple que ya funcionaba antes). El orden
     // para mostrarlos de más viejo a más nuevo se resuelve en
     // js/chat.js, así evitamos subconsultas SQL nuevas sin probar.
     const filas = await sql`
       SELECT id, username AS usuario, texto, created_at
-      FROM chat_messages
+      FROM chat_messages cm
+      WHERE (
+        ${viewer || null} IS NULL
+        OR NOT EXISTS (
+          SELECT 1
+          FROM user_blocks b
+          JOIN users a ON a.id = b.blocker_id
+          JOIN users blocked ON blocked.id = b.blocked_id
+          WHERE
+            (a.username = ${viewer || ""} AND blocked.username = cm.username)
+            OR
+            (a.username = cm.username AND blocked.username = ${viewer || ""})
+        )
+      )
       ORDER BY id DESC
       LIMIT 200;
     `;
@@ -380,7 +415,7 @@ async function notifications(req, res) {
   }
 
   if (req.method === "POST") {
-    const { username, titulo, mensaje } = req.body || {};
+    const { username, titulo, mensaje, origenNombre } = req.body || {};
 
     if (!username || !titulo) {
       return res.status(400).json({ success: false, error: "Datos incompletos" });
@@ -389,6 +424,14 @@ async function notifications(req, res) {
     const userId = await getUserId(username);
     if (!userId) {
       return res.status(200).json({ success: false, error: "Usuario no encontrado" });
+    }
+
+    if (origenNombre && await hayBloqueoEntreUsuarios(sql, origenNombre, username)) {
+      return res.status(403).json({
+        success: false,
+        bloqueado: true,
+        error: "La notificación no fue enviada porque existe un bloqueo entre ambos usuarios"
+      });
     }
 
     const filas = await sql`
