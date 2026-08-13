@@ -477,7 +477,18 @@ async function componerAvataresEnPantalla(raiz){
       if(clase) imgFinal.className = clase;
       if(estilo) imgFinal.setAttribute("style", estilo);
       imgFinal.alt = "";
-      imgFinal.loading = "lazy";
+      // FIX: esta imagen ya está 100% en memoria (es un data:URI en base64,
+      // resultado de fusionar las capas en el <canvas> de más arriba), no
+      // hay nada que "cargar" de la red. Ponerle loading="lazy" a un <img>
+      // creado por JS, absolutamente posicionado y recortado dentro de un
+      // círculo chico (overflow:hidden), hacía que en varios navegadores el
+      // cálculo de "¿está visible?" del lazy-loading nativo fallara para
+      // este tipo de elemento fuera de flujo, y la imagen se quedaba sin
+      // pintar nunca: el círculo aparecía vacío aunque el <img> ya tuviera
+      // su src asignado y ningún error en consola. Con loading="eager" se
+      // pinta apenas está lista, como corresponde para algo que ya está en
+      // memoria.
+      imgFinal.loading = "eager";
       imgFinal.src = dataURL;
 
       nodo.innerHTML = "";
