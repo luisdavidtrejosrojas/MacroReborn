@@ -691,7 +691,7 @@ const juegos = [
     estado: "⭐ Nuevo",
     tipo: "destacado",
     descripcion: "Capturá Pokémon, armá tu equipo y defendé el camino de las oleadas de enemigos utilizando las habilidades de cada criatura.",
-    iframe: "./html/juegos/pokemontowerdefense.html"
+    iframe: "https://pokepath-game.pages.dev/"
 },
 
 {
@@ -1160,6 +1160,51 @@ const juegos = [
     descripcion: "Explorá un pueblo cubierto por una extraña niebla, resolvé acertijos, enfrentate a criaturas aterradoras y descubrí los oscuros secretos de Silent Hill.",
     iframe: "./html/juegos/silenthill.html"
 },
+
+{
+    id: 106,
+    nombre: "Crazy Zombie 9",
+    imagen: "imagenes/juegos/crazyzombie9.png",
+    categoria: "Acción",
+    estado: "⭐ Nuevo",
+    tipo: "destacado",
+    descripcion: "Enfrentate a hordas de zombis, utilizá distintas armas y habilidades, derrotá enemigos cada vez más peligrosos y sobreviví a intensos combates.",
+    iframe: "https://en.gameslol.net/data/crazyzombie9/index.php"
+},
+
+{
+    id: 107,
+    nombre: "Crazy Zombie 8",
+    imagen: "imagenes/juegos/crazyzombie8.png",
+    categoria: "Acción",
+    estado: "⭐ Nuevo",
+    tipo: "destacado",
+    descripcion: "Enfrentate a hordas de zombis, utilizá distintas armas y habilidades, derrotá enemigos cada vez más peligrosos y sobreviví a intensos combates.",
+    iframe: "https://en.gameslol.net/data/crazyzombie8/index.php"
+},
+
+{
+    id: 108,
+    nombre: "Earn to Die",
+    imagen: "imagenes/juegos/earntodie.png",
+    categoria: "Acción",
+    estado: "⭐ Nuevo",
+    tipo: "destacado",
+    descripcion: "Conducí a través de un mundo infestado de zombis, atropellá enemigos, mejorá tu vehículo y superá distintos obstáculos para llegar cada vez más lejos.",
+    iframe: "./html/juegos/earntodie.html"
+},
+
+{
+    id: 109,
+    nombre: "Sports Head Football",
+    imagen: "imagenes/juegos/headsfootball.png",
+    categoria: "Deportes",
+    estado: "⭐ Nuevo",
+    tipo: "destacado",
+    descripcion: "Jugá partidos de fútbol con jugadores cabezones, enfrentate a tus rivales, marcá goles y competí para ganar cada partido.",
+    iframe: "https://www.play-games.com/iframe/11113.html"
+},
+
 ];
 
 
