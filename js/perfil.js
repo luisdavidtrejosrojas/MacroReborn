@@ -1237,8 +1237,15 @@ async function renderComentarios(){
       <button class="boton-reportar" data-id="-1">🚩 Reportar</button>
     </div>`;
   } else {
+    // Quién puede borrar cada comentario: el que lo escribió, o el
+    // dueño de este perfil (esta página siempre muestra el perfil
+    // propio, así que "esDueñoDelPerfil" da siempre true acá, pero se
+    // deja explícito para que la regla sea igual que en js/usuario.js).
+    const esDueñoDelPerfil = miNombreComentarios && miNombreComentarios === datosUsuario.nombre;
+
     contenedor.innerHTML = lista.map((c)=>{
       const esMio = miNombreComentarios && c.usuario === miNombreComentarios;
+      const puedeEliminar = esMio || esDueñoDelPerfil;
       return `
       <div class="comentario">
         <div class="usuario-comentario">
@@ -1249,7 +1256,7 @@ async function renderComentarios(){
         <p>${c.texto}</p>
         ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
         <button class="boton-responder" data-usuario="${c.usuario}">Responder</button>
-        ${esMio ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
+        ${puedeEliminar ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
         <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>`;
     }).join("");

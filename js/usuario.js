@@ -583,8 +583,14 @@ if (avatar && caja) {
       await cargarAvataresDeVarios(lista.map(c => c.usuario));
     }
 
+    // Quién puede borrar cada comentario: el que lo escribió, o el
+    // dueño de este perfil (por si "activo" está viendo su propio
+    // perfil a través de esta misma página).
+    const esDueñoDelPerfil = activo && activo.nombre === usuario.nombre;
+
     contenedor.innerHTML = lista.map((c) => {
       const esMio = activo && c.usuario === activo.nombre;
+      const puedeEliminar = esMio || esDueñoDelPerfil;
       return `
       <div class="comentario">
         <div class="usuario-comentario" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
@@ -595,7 +601,7 @@ if (avatar && caja) {
         <p style="color:#cbd5e1;margin:0 0 10px;">${c.texto}</p>
         ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, activo ? activo.nombre : null) : ""}
         <button class="boton-responder" data-usuario="${c.usuario}">Responder</button>
-        ${esMio ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
+        ${puedeEliminar ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
         <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>
     `;
