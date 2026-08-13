@@ -50,3 +50,43 @@
     margin-right: auto;
   }
 }
+
+/* ---- Botón "Bloquear a este usuario" ----
+   Mismo tamaño/forma que #agregarAmigo pero en tono de alerta, para
+   que se distinga claramente como una acción distinta. El estado
+   (texto/colores según ya esté bloqueado o no) lo maneja js/usuario.js. */
+
+#bloquearUsuario {
+  display: block;
+  margin-top: 10px;
+  background: transparent;
+  color: #f87171;
+  border: 2px solid #f87171;
+  padding: 9px 24px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
+}
+
+#bloquearUsuario:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #f8717122;
+}
+
+#bloquearUsuario:disabled {
+  cursor: default;
+  filter: grayscale(0.2);
+}
+
+#bloquearUsuario.ya-bloqueado {
+  color: var(--text-muted);
+  border-color: var(--line);
+}
+
+@media (max-width: 900px) {
+  #bloquearUsuario {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
