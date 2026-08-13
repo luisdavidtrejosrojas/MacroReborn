@@ -517,10 +517,19 @@ async function activity(req, res) {
       return res.status(200).json({ success: true, actividades: [] });
     }
 
+    // "Actividad reciente" ya no muestra todo lo que hace el usuario:
+    // solo reseñas de juegos, comentarios que mencionan a alguien
+    // (@usuario), likes a juegos, amigos agregados y logros. Jugar,
+    // favoritos y subir de nivel se siguen guardando en activity_log
+    // igual que antes, simplemente no se devuelven acá.
     const filas = await sql`
       SELECT tipo, detalle, created_at
       FROM activity_log
       WHERE user_id = ${userId}
+        AND (
+          tipo IN ('resena', 'like_juego', 'amigo', 'logro')
+          OR (tipo = 'comentario' AND detalle ~ '@[A-Za-z0-9_]{3,20}')
+        )
       ORDER BY id DESC
       LIMIT 20;
     `;
@@ -575,11 +584,16 @@ async function activityFriends(req, res) {
     return res.status(200).json({ success: true, actividades: [] });
   }
 
+  // Mismo criterio de "solo estas 5 acciones" que en activity() de acá arriba.
   const filas = await sql`
     SELECT u.username, a.tipo, a.detalle, a.created_at
     FROM activity_log a
     JOIN users u ON u.id = a.user_id
     WHERE u.username = ANY(${lista})
+      AND (
+        a.tipo IN ('resena', 'like_juego', 'amigo', 'logro')
+        OR (a.tipo = 'comentario' AND a.detalle ~ '@[A-Za-z0-9_]{3,20}')
+      )
     ORDER BY a.id DESC
     LIMIT 20;
   `;
