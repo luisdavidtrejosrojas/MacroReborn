@@ -79,7 +79,7 @@ async function getUserId(username) {
 async function comments(req, res) {
 
   if (req.method === "GET") {
-    const { username } = req.query;
+    const { username, viewer } = req.query;
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
     }
@@ -89,10 +89,29 @@ async function comments(req, res) {
       return res.status(404).json({ success: false, error: "Usuario no encontrado" });
     }
 
+    const viewerEsElPropioPerfil = !!(
+      viewer &&
+      String(viewer).trim().toLowerCase() === String(username).trim().toLowerCase()
+    );
+
     const filas = await sql`
       SELECT id, author_username AS usuario, texto, created_at
-      FROM profile_comments
+      FROM profile_comments pc
       WHERE profile_user_id = ${profileId}
+        AND (
+          ${viewerEsElPropioPerfil}
+          OR ${viewer || null} IS NULL
+          OR NOT EXISTS (
+            SELECT 1
+            FROM user_blocks b
+            JOIN users u1 ON u1.id = b.blocker_id
+            JOIN users u2 ON u2.id = b.blocked_id
+            WHERE
+              (LOWER(u1.username) = LOWER(${viewer || ""}) AND LOWER(u2.username) = LOWER(pc.author_username))
+              OR
+              (LOWER(u1.username) = LOWER(pc.author_username) AND LOWER(u2.username) = LOWER(${viewer || ""}))
+          )
+        )
       ORDER BY id DESC;
     `;
 
@@ -113,6 +132,15 @@ async function comments(req, res) {
 
     const nombreAutor = (authorUsername && authorUsername.trim()) ? authorUsername.trim() : "Usuario";
     const authorId = await getUserId(nombreAutor);
+
+    const esPropioPerfil = String(profileUsername).trim().toLowerCase() === String(nombreAutor).trim().toLowerCase();
+    if (!esPropioPerfil && await hayBloqueoEntreUsuarios(sql, profileUsername, nombreAutor)) {
+      return res.status(403).json({
+        success: false,
+        bloqueado: true,
+        error: "No se puede comentar entre usuarios bloqueados"
+      });
+    }
 
     const filas = await sql`
       INSERT INTO profile_comments (profile_user_id, author_user_id, author_username, texto)
@@ -299,13 +327,27 @@ async function likes(req, res) {
 async function chat(req, res) {
 
   if (req.method === "GET") {
+    const { username: viewer } = req.query;
     // Se traen los 200 mensajes más recientes, del más nuevo al más
     // viejo (misma consulta simple que ya funcionaba antes). El orden
     // para mostrarlos de más viejo a más nuevo se resuelve en
     // js/chat.js, así evitamos subconsultas SQL nuevas sin probar.
     const filas = await sql`
       SELECT id, username AS usuario, texto, created_at
-      FROM chat_messages
+      FROM chat_messages cm
+      WHERE (
+        ${viewer || null} IS NULL
+        OR NOT EXISTS (
+          SELECT 1
+          FROM user_blocks b
+          JOIN users a ON a.id = b.blocker_id
+          JOIN users blocked ON blocked.id = b.blocked_id
+          WHERE
+            (a.username = ${viewer || ""} AND blocked.username = cm.username)
+            OR
+            (a.username = cm.username AND blocked.username = ${viewer || ""})
+        )
+      )
       ORDER BY id DESC
       LIMIT 200;
     `;
@@ -391,13 +433,11 @@ async function notifications(req, res) {
       return res.status(200).json({ success: false, error: "Usuario no encontrado" });
     }
 
-    // Regla de bloqueo: nunca crear ni emitir una notificación entre usuarios
-    // que tengan un bloqueo en cualquiera de las dos direcciones.
     if (origenNombre && await hayBloqueoEntreUsuarios(sql, origenNombre, username)) {
       return res.status(403).json({
         success: false,
         bloqueado: true,
-        error: "Notificación bloqueada por relación de bloqueo"
+        error: "La notificación no fue enviada porque existe un bloqueo entre ambos usuarios"
       });
     }
 
