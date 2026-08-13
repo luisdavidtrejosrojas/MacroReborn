@@ -31,7 +31,8 @@ function notificarMenciones(texto, origenNombre, contexto){
         crearNotificacion(
             nombre,
             "📣 Te mencionaron",
-            (origenNombre || "Alguien") + " te mencionó " + contexto
+            (origenNombre || "Alguien") + " te mencionó " + contexto,
+            origenNombre
         );
     });
 

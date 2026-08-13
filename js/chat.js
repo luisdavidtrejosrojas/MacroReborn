@@ -21,7 +21,7 @@ let _mensajesCacheChat = [];
 
 async function obtenerMensajes(){
     try{
-        const resp = await fetch("/api/content?action=chat");
+        const resp = await fetch("/api/content?action=chat" + (usuarioActivo && usuarioActivo.nombre ? "&username=" + encodeURIComponent(usuarioActivo.nombre) : ""));
         const datos = await resp.json();
         // La API entrega los mensajes del más nuevo al más viejo (para
         // traer siempre los 200 más recientes). Acá se invierte el

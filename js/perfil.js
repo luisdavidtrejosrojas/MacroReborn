@@ -1087,7 +1087,7 @@ let _comentariosCache = [];
 
 async function cargarComentarios(){
   try{
-    const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(datosUsuario.nombre));
+    const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(datosUsuario.nombre) + (usuarioActivo && usuarioActivo.nombre ? "&viewer=" + encodeURIComponent(usuarioActivo.nombre) : ""));
     const datos = await resp.json();
     _comentariosCache = (datos && datos.success) ? datos.comentarios : [];
   }catch(error){

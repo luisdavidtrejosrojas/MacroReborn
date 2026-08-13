@@ -82,6 +82,8 @@ if (_esPropioPerfil) {
 (async function(){
 
 let usuario = null;
+const activo = obtenerActivo();
+let perfilLimitadoPorBloqueo = false;
 
 try{
 
@@ -370,7 +372,6 @@ if (avatar && caja) {
   // ---------- BOTÓN AGREGAR AMIGO ----------
 
   const btnAmigo = document.getElementById("agregarAmigo");
-  const activo = obtenerActivo();
 
   // Solicitudes propias del visitante (para saber si ya le mandó
   // solicitud a este perfil, o si este perfil ya le mandó una a él).
@@ -537,10 +538,15 @@ if (avatar && caja) {
   async function cargarEstadoBloqueo(){
     if(!activo || activo.nombre === usuario.nombre) return;
     try{
-      const respuesta = await fetch("/api/social?action=blocks&username=" + encodeURIComponent(activo.nombre));
+      const respuesta = await fetch(
+        "/api/social?action=blocks&username=" +
+        encodeURIComponent(activo.nombre) +
+        "&viewer=" +
+        encodeURIComponent(usuario.nombre)
+      );
       const datos = await respuesta.json();
       if(datos && datos.success){
-        _yaBloqueado = datos.bloqueados.includes(usuario.nombre);
+        _yaBloqueado = !!datos.bloqueadoPorElPerfil;
       }
     }catch(error){
       console.warn("MacroReborn: no se pudo cargar el estado de bloqueo.", error);
@@ -639,7 +645,7 @@ if (avatar && caja) {
 
   async function obtenerListaComentarios() {
     try{
-      const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(usuario.nombre));
+      const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(usuario.nombre) + (activo && activo.nombre ? "&viewer=" + encodeURIComponent(activo.nombre) : ""));
       const datos = await resp.json();
       _comentariosCacheUsuario = (datos && datos.success) ? datos.comentarios : [];
     }catch(error){

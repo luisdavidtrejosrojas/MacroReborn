@@ -39,14 +39,14 @@ async function obtenerNotificaciones(nombre){
 // (perfil.js, usuario.js, amigos.js, motor/logros.js, motor/xp.js),
 // igual que antes hacía con localStorage.
 
-function crearNotificacion(nombre, titulo, mensaje){
+function crearNotificacion(nombre, titulo, mensaje, origenNombre){
 
     if(!nombre) return;
 
     fetch("/api/content?action=notifications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: nombre, titulo, mensaje })
+        body: JSON.stringify({ username: nombre, titulo, mensaje, origenNombre })
     }).then(()=>{
         // Si la notificación es para quien está mirando esta página
         // ahora mismo, refrescamos el contador y la lista.
