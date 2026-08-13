@@ -540,6 +540,17 @@ async function blocks(req, res) {
 
     if (action === "unblock") {
       await sql`DELETE FROM user_blocks WHERE blocker_id = ${userId} AND blocked_id = ${targetId};`;
+
+      try {
+        await getPusher().trigger(
+          canalNotificaciones(targetUsername),
+          "estado-bloqueo",
+          { bloqueado: false, por: username }
+        );
+      } catch (pusherError) {
+        console.warn("Pusher bloqueos (unblock):", pusherError.message);
+      }
+
       return res.status(200).json({ success: true, bloqueado: false });
     }
 
@@ -554,6 +565,16 @@ async function blocks(req, res) {
     await sql`DELETE FROM friend_favorites WHERE (user_id = ${userId} AND friend_id = ${targetId}) OR (user_id = ${targetId} AND friend_id = ${userId});`;
     await sql`UPDATE friend_requests SET status = 'cancelada', responded_at = now()
       WHERE status = 'pendiente' AND ((from_user_id = ${userId} AND to_user_id = ${targetId}) OR (from_user_id = ${targetId} AND to_user_id = ${userId}));`;
+
+    try {
+      await getPusher().trigger(
+        canalNotificaciones(targetUsername),
+        "estado-bloqueo",
+        { bloqueado: true, por: username }
+      );
+    } catch (pusherError) {
+      console.warn("Pusher bloqueos (block):", pusherError.message);
+    }
 
     return res.status(200).json({ success: true, bloqueado: true });
   }
