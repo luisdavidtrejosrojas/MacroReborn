@@ -475,6 +475,80 @@ async function badges(req, res) {
   return res.status(405).json({ success: false, error: "Método no permitido" });
 }
 
+// ============== BLOQUEOS DE USUARIO ==============
+// GET  /api/social?action=blocks&username=X
+//   -> { success, bloqueados: [usernames que X bloqueó] }
+// POST /api/social?action=blocks { action:"block"|"unblock", username, targetUsername }
+//   "block": username bloquea a targetUsername. Además rompe el
+//   vínculo de amistad/solicitudes pendientes entre ambos, si existía.
+//   "unblock": username deja de bloquear a targetUsername.
+
+async function blocks(req, res) {
+
+  if (req.method === "GET") {
+
+    const { username } = req.query;
+    if (!username) {
+      return res.status(400).json({ success: false, error: "Falta username" });
+    }
+
+    const userId = await getUserId(username);
+    if (!userId) {
+      return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+    }
+
+    const filas = await sql`
+      SELECT u.username, b.created_at
+      FROM user_blocks b
+      JOIN users u ON u.id = b.blocked_id
+      WHERE b.blocker_id = ${userId}
+      ORDER BY b.created_at DESC;
+    `;
+
+    return res.status(200).json({ success: true, bloqueados: filas.map(f => f.username) });
+  }
+
+  if (req.method === "POST") {
+
+    const { action, username, targetUsername } = req.body || {};
+
+    if (!username || !targetUsername) {
+      return res.status(400).json({ success: false, error: "Datos incompletos" });
+    }
+    if (username === targetUsername) {
+      return res.status(200).json({ success: false, error: "No podés bloquearte a vos mismo" });
+    }
+
+    const userId = await getUserId(username);
+    const targetId = await getUserId(targetUsername);
+
+    if (!userId || !targetId) {
+      return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+    }
+
+    if (action === "unblock") {
+      await sql`DELETE FROM user_blocks WHERE blocker_id = ${userId} AND blocked_id = ${targetId};`;
+      return res.status(200).json({ success: true, bloqueado: false });
+    }
+
+    await sql`
+      INSERT INTO user_blocks (blocker_id, blocked_id) VALUES (${userId}, ${targetId})
+      ON CONFLICT (blocker_id, blocked_id) DO NOTHING;
+    `;
+
+    // Bloquear a alguien también corta la amistad y cualquier
+    // solicitud pendiente entre ambos, en los dos sentidos.
+    await sql`DELETE FROM friendships WHERE (user_id = ${userId} AND friend_id = ${targetId}) OR (user_id = ${targetId} AND friend_id = ${userId});`;
+    await sql`DELETE FROM friend_favorites WHERE (user_id = ${userId} AND friend_id = ${targetId}) OR (user_id = ${targetId} AND friend_id = ${userId});`;
+    await sql`UPDATE friend_requests SET status = 'cancelada', responded_at = now()
+      WHERE status = 'pendiente' AND ((from_user_id = ${userId} AND to_user_id = ${targetId}) OR (from_user_id = ${targetId} AND to_user_id = ${userId}));`;
+
+    return res.status(200).json({ success: true, bloqueado: true });
+  }
+
+  return res.status(405).json({ success: false, error: "Método no permitido" });
+}
+
 module.exports = async function handler(req, res) {
 
   setCors(res, "GET, POST, DELETE, OPTIONS");
@@ -491,6 +565,7 @@ module.exports = async function handler(req, res) {
     if (action === "favoriteFriends") return await favoriteFriends(req, res);
     if (action === "achievements") return await achievements(req, res);
     if (action === "badges") return await badges(req, res);
+    if (action === "blocks") return await blocks(req, res);
 
     return res.status(400).json({ success: false, error: "Acción inválida" });
 
