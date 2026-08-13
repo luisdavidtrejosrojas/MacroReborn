@@ -53,6 +53,19 @@ const sql = neon(process.env.DATABASE_URL);
 //
 // GET  /api/content?action=moderation-log&rol=X&accion=Y&texto=Z
 // POST /api/content?action=moderation-log { moderatorUsername, moderatorRole, accion, usuarioAfectado, motivo }
+//
+// GET  /api/content?action=avatar-gallery&username=X&viewer=Y
+//   -> devuelve los 6 casilleros de la galería de avatares guardados
+//      de X (ocupados o vacíos), con el conteo de likes/dislikes de
+//      cada uno y, si se pasa "viewer", el voto de ese usuario.
+// POST /api/content?action=avatar-gallery { username, slot, avatar }
+//   -> guarda (o reemplaza) el diseño de avatar en ese casillero
+//      (1 a 6) de "username". Si "avatar" viene null/vacío, vacía el
+//      casillero en vez de guardar.
+//
+// POST /api/content?action=avatar-vote { username, avatarId, voto: "like"|"dislike" }
+//   -> vota (o saca el voto, toggle) un avatar guardado de la galería
+//      de otro usuario. Mismo criterio que "game-votes".
 // ==============================
 
 async function getUserId(username) {
@@ -994,6 +1007,190 @@ async function gameVotes(req, res) {
   return res.status(405).json({ success: false, error: "Método no permitido" });
 }
 
+// ============== AVATAR GALLERY (6 casilleros guardados por usuario) ==============
+// Mismo criterio que gameVotes/gameRatings de acá arriba: cuenta
+// likes/dislikes agrupando por avatar_id y resuelve "miVoto" del
+// visitante (query "viewer") si se pasa.
+
+const CASILLEROS_GALERIA = 6;
+
+async function avatarGallery(req, res) {
+
+  if (req.method === "GET") {
+    const { username, viewer } = req.query;
+
+    if (!username) {
+      return res.status(400).json({ success: false, error: "Falta username" });
+    }
+
+    const userId = await getUserId(username);
+    if (!userId) {
+      return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+    }
+
+    const guardados = await sql`
+      SELECT id, slot, avatar FROM saved_avatars WHERE user_id = ${userId};
+    `;
+
+    const conteos = await sql`
+      SELECT v.avatar_id, v.voto, COUNT(*)::int AS cantidad
+      FROM avatar_votes v
+      JOIN saved_avatars a ON a.id = v.avatar_id
+      WHERE a.user_id = ${userId}
+      GROUP BY v.avatar_id, v.voto;
+    `;
+
+    let misVotos = {};
+    if (viewer) {
+      const viewerId = await getUserId(viewer);
+      if (viewerId) {
+        const propios = await sql`
+          SELECT v.avatar_id, v.voto
+          FROM avatar_votes v
+          JOIN saved_avatars a ON a.id = v.avatar_id
+          WHERE a.user_id = ${userId} AND v.user_id = ${viewerId};
+        `;
+        propios.forEach(p => { misVotos[p.avatar_id] = p.voto; });
+      }
+    }
+
+    const porSlot = {};
+    guardados.forEach(fila => { porSlot[fila.slot] = fila; });
+
+    const slots = [];
+    for (let n = 1; n <= CASILLEROS_GALERIA; n++) {
+      const fila = porSlot[n];
+
+      if (!fila) {
+        slots.push({ slot: n, id: null, avatar: null, likes: 0, dislikes: 0, miVoto: null });
+        continue;
+      }
+
+      let likes = 0, dislikes = 0;
+      conteos.forEach(c => {
+        if (c.avatar_id !== fila.id) return;
+        if (c.voto === "like") likes = c.cantidad;
+        if (c.voto === "dislike") dislikes = c.cantidad;
+      });
+
+      slots.push({
+        slot: n,
+        id: fila.id,
+        avatar: fila.avatar,
+        likes,
+        dislikes,
+        miVoto: misVotos[fila.id] || null
+      });
+    }
+
+    return res.status(200).json({ success: true, slots });
+  }
+
+  if (req.method === "POST") {
+    const { username, slot, avatar } = req.body || {};
+    const slotNum = Number(slot);
+
+    if (!username || !Number.isInteger(slotNum) || slotNum < 1 || slotNum > CASILLEROS_GALERIA) {
+      return res.status(400).json({ success: false, error: "Datos incompletos" });
+    }
+
+    const userId = await getUserId(username);
+    if (!userId) {
+      return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+    }
+
+    // Sin avatar (null/vacío) -> vacía el casillero (borra el diseño
+    // guardado y, en cascada, los votos que tenía).
+    if (!avatar) {
+      await sql`DELETE FROM saved_avatars WHERE user_id = ${userId} AND slot = ${slotNum};`;
+      return res.status(200).json({
+        success: true,
+        slot: { slot: slotNum, id: null, avatar: null, likes: 0, dislikes: 0, miVoto: null }
+      });
+    }
+
+    const fila = await sql`
+      INSERT INTO saved_avatars (user_id, slot, avatar)
+      VALUES (${userId}, ${slotNum}, ${JSON.stringify(avatar)})
+      ON CONFLICT (user_id, slot)
+      DO UPDATE SET avatar = ${JSON.stringify(avatar)}, updated_at = now()
+      RETURNING id, slot, avatar;
+    `;
+
+    // Reemplazar el diseño de un casillero limpia los votos viejos:
+    // esos votos eran sobre el diseño anterior, no sobre el nuevo.
+    await sql`DELETE FROM avatar_votes WHERE avatar_id = ${fila[0].id};`;
+
+    return res.status(200).json({
+      success: true,
+      slot: { slot: fila[0].slot, id: fila[0].id, avatar: fila[0].avatar, likes: 0, dislikes: 0, miVoto: null }
+    });
+  }
+
+  return res.status(405).json({ success: false, error: "Método no permitido" });
+}
+
+// ============== AVATAR VOTE (like / dislike sobre un avatar guardado) ==============
+
+async function avatarVote(req, res) {
+
+  if (req.method !== "POST") {
+    return res.status(405).json({ success: false, error: "Método no permitido" });
+  }
+
+  const { username, avatarId, voto } = req.body || {};
+  const avatarIdNum = Number(avatarId);
+
+  if (!username || !Number.isInteger(avatarIdNum) || !["like", "dislike"].includes(voto)) {
+    return res.status(400).json({ success: false, error: "Datos incompletos" });
+  }
+
+  const userId = await getUserId(username);
+  if (!userId) {
+    return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+  }
+
+  const avatarGuardado = await sql`SELECT id, user_id FROM saved_avatars WHERE id = ${avatarIdNum};`;
+  if (avatarGuardado.length === 0) {
+    return res.status(404).json({ success: false, error: "Avatar no encontrado" });
+  }
+
+  // No tiene sentido votar el propio avatar (acá el dueño ve los
+  // cuadros de conteo en vez de los botones, pero se valida también
+  // del lado del servidor por las dudas).
+  if (avatarGuardado[0].user_id === userId) {
+    return res.status(400).json({ success: false, error: "No podés votar tu propio avatar" });
+  }
+
+  const existente = await sql`
+    SELECT id, voto FROM avatar_votes WHERE user_id = ${userId} AND avatar_id = ${avatarIdNum};
+  `;
+
+  if (existente.length && existente[0].voto === voto) {
+    // Mismo voto de nuevo -> se quita (toggle), igual que game-votes.
+    await sql`DELETE FROM avatar_votes WHERE id = ${existente[0].id};`;
+  } else if (existente.length) {
+    await sql`UPDATE avatar_votes SET voto = ${voto} WHERE id = ${existente[0].id};`;
+  } else {
+    await sql`INSERT INTO avatar_votes (user_id, avatar_id, voto) VALUES (${userId}, ${avatarIdNum}, ${voto});`;
+  }
+
+  const filas = await sql`
+    SELECT voto, COUNT(*)::int AS cantidad FROM avatar_votes
+    WHERE avatar_id = ${avatarIdNum} GROUP BY voto;
+  `;
+
+  let likes = 0, dislikes = 0;
+  filas.forEach(f => {
+    if (f.voto === "like") likes = f.cantidad;
+    if (f.voto === "dislike") dislikes = f.cantidad;
+  });
+
+  const miVotoFinal = (existente.length && existente[0].voto === voto) ? null : voto;
+
+  return res.status(200).json({ success: true, likes, dislikes, miVoto: miVotoFinal });
+}
+
 // ============== MODERATION LOG (historial de moderación) ==============
 
 async function moderationLog(req, res) {
@@ -1083,6 +1280,8 @@ module.exports = async function handler(req, res) {
     if (action === "reviews") return await reviews(req, res);
     if (action === "game-ratings") return await gameRatings(req, res);
     if (action === "game-votes") return await gameVotes(req, res);
+    if (action === "avatar-gallery") return await avatarGallery(req, res);
+    if (action === "avatar-vote") return await avatarVote(req, res);
     if (action === "moderation-log") return await moderationLog(req, res);
 
     return res.status(400).json({ success: false, error: "Acción inválida" });
