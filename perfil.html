@@ -520,9 +520,21 @@ MacroReborn
       <div class="editor-acciones">
         <button id="avatarAleatorio">🎲 Aleatorio</button>
         <button id="guardarAvatar">💾 Guardar avatar</button>
+        <button id="guardarEnGaleria" type="button">🗂️ Guardar en galería</button>
         <button id="cancelarEditor">❌ Cancelar</button>
       </div>
 
+    </div>
+
+    <!-- GALERÍA DE AVATARES GUARDADOS -->
+    <!-- Pintada por js/perfil-avatares-galeria.js (script aparte que
+         NO modifica js/perfil.js, mismo criterio que
+         js/retro-perfil.js). Guarda hasta 6 diseños de avatar; los
+         demás usuarios los ven y los votan desde usuario.html. -->
+    <div class="galeria-avatares-wrap">
+      <h3>🖼️ Mis avatares guardados</h3>
+      <p class="subtitulo-avatares">Guardá hasta 6 diseños de avatar acá. Los demás usuarios van a poder verlos y votarlos con 👍 o 👎 al entrar a tu perfil.</p>
+      <div id="galeriaAvataresGuardados" class="galeria-avatares"></div>
     </div>
 
   </section>
@@ -658,6 +670,8 @@ MacroReborn
 <script src="js/perfil-config.js"></script>
 
 <script src="js/perfil-eliminar-cuenta.js"></script>
+
+<script src="js/perfil-avatares-galeria.js"></script>
 
 <script src="js/navbar.js"></script>
 <script src="js/buscador.js"></script>

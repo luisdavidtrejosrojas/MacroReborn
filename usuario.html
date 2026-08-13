@@ -108,6 +108,7 @@
     <button class="tab" data-tab="ultimos">🎮 Últimos jugados</button>
     <button class="tab" data-tab="amigos">🤝 Amigos</button>
     <button class="tab" data-tab="logros-tab">🏅 Logros</button>
+    <button class="tab" data-tab="avatares-usuario">🖼️ Avatares</button>
     <button class="tab" data-tab="comentarios">💬 Comentarios</button>
   </div>
 
@@ -163,6 +164,17 @@
   <section id="logros-tab" class="contenido-tab">
     <h2>🏅 Logros</h2>
     <div id="listaLogrosUsuario"></div>
+  </section>
+
+  <!-- AVATARES GUARDADOS -->
+  <!-- Pintada por js/usuario-avatares-galeria.js (script aparte que
+       NO modifica js/usuario.js). Muestra los 6 casilleros de la
+       galería de este jugador, con botones de "Me gusta" / "No me
+       gusta" para votar cada avatar guardado. -->
+  <section id="avatares-usuario" class="contenido-tab">
+    <h2>🖼️ Avatares guardados</h2>
+    <p>Votá los diseños de avatar que este jugador guardó en su galería.</p>
+    <div id="galeriaAvataresUsuario" class="galeria-avatares"></div>
   </section>
 
   <!-- COMENTARIOS -->
@@ -236,6 +248,7 @@
 <script src="js/usuario-actividad.js"></script>
 <script src="js/usuario-favoritos.js"></script>
 <script src="js/usuario-historial.js"></script>
+<script src="js/usuario-avatares-galeria.js"></script>
 <script src="js/navbar.js"></script>
 <script src="js/buscador.js"></script>
 <script src="js/nav-toggle.js"></script>
