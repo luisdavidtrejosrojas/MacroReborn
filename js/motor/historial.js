@@ -33,6 +33,7 @@ const ACCIONES_MODERACION = {
   cambiar_rol: { icono: "🔑", etiqueta: "Cambió un rol" },
   asignar_insignia: { icono: "🏅", etiqueta: "Asignó una insignia" },
   quitar_insignia: { icono: "🏅", etiqueta: "Quitó una insignia" },
+  recalcular_ranking: { icono: "🏆", etiqueta: "Recalculó el ranking a mano" },
   otra: { icono: "📌", etiqueta: "Otra acción de moderación" }
 
 };
