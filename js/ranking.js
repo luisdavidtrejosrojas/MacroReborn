@@ -5,6 +5,14 @@
 // localStorage "usuariosMacro", que en la práctica nunca se llegaba a
 // llenar). Se cachea en memoria por carga de página para no repetir el
 // pedido cada vez que se llama a obtenerListaRanking().
+//
+// Ranking por tiempo jugado: la posición de cada usuario (rank_actual)
+// YA NO se calcula acá con nivel/XP/logros: la calcula el servidor una
+// vez por semana (api/system.js -> recalcularRanking(), todos los
+// lunes a las 5:00 hora Argentina) según cuánto jugó, qué tan seguido
+// y qué tan variados fueron los juegos. Este archivo solo ordena por
+// esa posición ya calculada (rank_actual), que viaja en cada usuario
+// que devuelve /api/users.
 
 
 const podioRanking = document.getElementById("podioRanking");
@@ -138,8 +146,9 @@ function obtenerAvatar(nombre, avatarCrudo){
 // ==============================
 // LISTA DE RANKING (ordenada)
 // ==============================
-// Calcula la lista completa de usuarios ordenada por puntuación.
-// La usan cargarRanking() acá abajo y también obtenerPosicionRanking(),
+// Calcula la lista completa de usuarios ordenada por posición
+// (rank_actual, calculado por el servidor una vez por semana). La
+// usan cargarRanking() acá abajo y también obtenerPosicionRanking(),
 // para que el podio, la lista y la posición individual salgan siempre
 // de los mismos datos.
 //
@@ -194,27 +203,24 @@ async function obtenerListaRanking(forzar){
             ...usuario,
 
             puntosLogros:
-            calcularPuntosLogros(usuario.nombre),
-
-            puntuacion:
-
-            (Number(usuario.nivel)||1) * 100000
-
-            +
-
-            (Number(usuario.xp)||0)
-
-            +
-
             calcularPuntosLogros(usuario.nombre)
 
         };
 
     });
 
+    // Orden por posición ya calculada por el servidor (rank_actual:
+    // 1 = primer puesto). Quien todavía no tiene posición calculada
+    // (usuario nuevo, antes del próximo lunes) queda al final,
+    // desempatado por minutos jugados esta semana.
     ranking.sort((a,b)=>{
 
-        return b.puntuacion - a.puntuacion;
+        const posA = Number(a.rank_actual) || Infinity;
+        const posB = Number(b.rank_actual) || Infinity;
+
+        if(posA !== posB) return posA - posB;
+
+        return (Number(b.minutos_semana_actual)||0) - (Number(a.minutos_semana_actual)||0);
 
     });
 
@@ -251,6 +257,11 @@ async function obtenerPosicionRanking(nombre){
 // de todos los usuarios y se desbloquean los logros correspondientes.
 // desbloquearLogro() ya evita duplicados, así que es seguro llamarla
 // repetidamente.
+//
+// Usa el rank_actual real que manda el servidor (no la posición del
+// usuario dentro del array): así, si todavía nadie tiene una posición
+// calculada (sitio recién levantado, antes del primer lunes), no se
+// le adjudica de arranque un top100/top10/etc. a todo el mundo.
 
 async function revisarLogrosRanking(){
 
@@ -258,9 +269,11 @@ async function revisarLogrosRanking(){
 
     const ranking = await obtenerListaRanking();
 
-    ranking.forEach((usuario,index)=>{
+    ranking.forEach((usuario)=>{
 
-        const puesto = index + 1;
+        const puesto = Number(usuario.rank_actual);
+
+        if(!puesto) return; // todavía no se calculó (se calcula los lunes)
 
         if(puesto <= 100) desbloquearLogro(usuario.nombre,"top100");
         if(puesto <= 50) desbloquearLogro(usuario.nombre,"top50");
@@ -344,9 +357,9 @@ async function cargarRanking(filtro=""){
 
             ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(usuario.nombre, true) : ""}
 
-            <p>⭐ Nivel ${usuario.nivel || 1}</p>
+            <p>⏱️ ${usuario.minutos_semana_actual || 0} min esta semana</p>
 
-            <p>⚡ ${usuario.xp || 0} XP</p>
+            <p>📅 ${usuario.dias_activos_semana_actual || 0} días activos</p>
 
             <p>🏅 ${usuario.puntosLogros} puntos</p>
 
@@ -400,9 +413,9 @@ async function cargarRanking(filtro=""){
 
                 ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(usuario.nombre, true) : ""}
 
-                <p>⭐ Nivel ${usuario.nivel || 1}</p>
+                <p>⏱️ ${usuario.minutos_semana_actual || 0} min esta semana</p>
 
-                <p>⚡ ${usuario.xp || 0} XP</p>
+                <p>📅 ${usuario.dias_activos_semana_actual || 0} días activos</p>
 
                 <p>🏅 ${usuario.puntosLogros} puntos</p>
 

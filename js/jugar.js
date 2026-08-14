@@ -97,9 +97,12 @@ else {
 // =========================
 // XP (si existe el sistema)
 // =========================
+// Se le pasa idJuego para que, además de sumar XP cada 1 minuto
+// jugado, ese mismo pulso cuente como tiempo jugado a ESTE juego
+// puntual (lo usa el ranking semanal — ver js/motor/xp.js).
 
 if (typeof iniciarXP === "function") {
 
-    iniciarXP();
+    iniciarXP(idJuego);
 
 }

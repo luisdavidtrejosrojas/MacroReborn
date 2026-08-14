@@ -12,6 +12,15 @@
 // De paso, como ranking y comunidad necesitan la misma lista de
 // usuarios, acá se pide UNA sola vez a /api/users y se reusa para
 // las dos secciones (antes cada página hacía su propio pedido).
+//
+// Ranking por tiempo jugado: el orden del ranking (podio + resto)
+// YA NO sale de nivel/XP: sale de rank_actual, que calcula el
+// servidor una vez por semana según minutos jugados, frecuencia
+// (días activos) y diversidad de juegos (ver api/system.js ->
+// recalcularRanking()). Acá solo se ordena por esa posición ya
+// calculada y se muestra cuánto lleva jugado cada uno esta semana,
+// a modo informativo (eso no mueve la posición hasta el próximo
+// lunes).
 
 
 // ---------- ELEMENTOS: RANKING ----------
@@ -33,7 +42,7 @@ const comBuscador = document.getElementById("buscadorUsuarios");
 const activoComRk = leerJSON(localStorage.getItem("usuarioActivo") || "null");
 
 let _rkOrdenarPorLogros = false;
-let _rkUsuarios = [];       // lista completa ya con puntuacion/puntosLogros
+let _rkUsuarios = [];       // lista completa ya con puntosLogros
 let _comAmigos = [];
 let _comSolicitudesEnviadas = [];
 let _comSolicitudesRecibidas = [];
@@ -93,9 +102,10 @@ function rkAvatarHTML(avatarCrudo, contenedorClase, capaClase, defaultAncho) {
 // INDICADOR DE CAMBIO DE POSICIÓN (+1 / -1 / --)
 // ==============================
 // Sale de rank_actual y rank_anterior, que llegan desde /api/users
-// (se calculan y refrescan solos del lado del servidor, ver
-// actualizarSnapshotRanking() en api/users.js). Si todavía no hay
-// datos guardados para ese usuario, se muestra "--".
+// (se calculan una vez por semana del lado del servidor, ver
+// recalcularRanking() en api/system.js, disparado por un cron todos
+// los lunes 5am hora Argentina). Si todavía no hay datos guardados
+// para ese usuario, se muestra "--".
 
 function rkDeltaHTML(usuario) {
 
@@ -126,8 +136,22 @@ function rkRenderizar(filtro = "") {
   let lista = _rkUsuarios.slice();
 
   lista.sort((a, b) => {
-    const campo = _rkOrdenarPorLogros ? "puntosLogros" : "puntuacion";
-    return b[campo] - a[campo];
+
+    if (_rkOrdenarPorLogros) {
+      return b.puntosLogros - a.puntosLogros;
+    }
+
+    // Orden normal: por posición ya calculada por el servidor
+    // (rank_actual, 1 = primer puesto). Sin posición todavía (usuario
+    // nuevo, antes del próximo lunes) queda al final, desempatado por
+    // minutos jugados esta semana.
+    const posA = Number(a.rank_actual) || Infinity;
+    const posB = Number(b.rank_actual) || Infinity;
+
+    if (posA !== posB) return posA - posB;
+
+    return (Number(b.minutos_semana_actual) || 0) - (Number(a.minutos_semana_actual) || 0);
+
   });
 
   if (filtro) {
@@ -157,7 +181,10 @@ function rkRenderizar(filtro = "") {
 
         ${_rkOrdenarPorLogros
           ? `<span class="rk-delta rk-neutro">🏅 ${usuario.puntosLogros}</span>`
-          : rkDeltaHTML(usuario)}
+          : `
+            <p class="rk-podio-stat">⏱️ ${usuario.minutos_semana_actual || 0} min esta semana</p>
+            ${rkDeltaHTML(usuario)}
+          `}
 
       </div>
     `;
@@ -180,7 +207,10 @@ function rkRenderizar(filtro = "") {
 
         ${_rkOrdenarPorLogros
           ? `<span class="rk-delta rk-neutro">🏅 ${usuario.puntosLogros}</span>`
-          : rkDeltaHTML(usuario)}
+          : `
+            <p class="rk-mini-stat">⏱️ ${usuario.minutos_semana_actual || 0} min</p>
+            ${rkDeltaHTML(usuario)}
+          `}
 
       </a>
     `;
@@ -197,7 +227,7 @@ rkBuscador?.addEventListener("input", () => {
 });
 
 // ---- Botón "Ver Ranking de Logros" ----
-// Alterna el orden entre puntuación total (nivel+XP+logros, la de
+// Alterna el orden entre la posición general (tiempo jugado, la de
 // siempre) y solo puntos de logros, reusando los mismos datos ya
 // cargados (no hace falta pedir nada de nuevo al servidor).
 
@@ -303,14 +333,9 @@ function comRenderUsuarios(lista) {
 
         <div class="usuario-stats">
           <div class="stat-item">
-            <span class="stat-valor">${usuario.nivel || 1}</span>
-            <span class="stat-label">⭐ Nivel</span>
+            <span class="stat-valor">${usuario.minutos_semana_actual || 0}</span>
+            <span class="stat-label">⏱️ min esta semana</span>
           </div>
-          ${usuario.xp ? `
-          <div class="stat-item">
-            <span class="stat-valor">${usuario.xp}</span>
-            <span class="stat-label">XP</span>
-          </div>` : ""}
           ${cantidadLogros ? `
           <div class="stat-item">
             <span class="stat-valor">${cantidadLogros}</span>
@@ -378,19 +403,15 @@ async function iniciarComunidadRanking() {
 
   await Promise.all(tareas);
 
-  // Puntuación total (nivel + XP + logros), misma fórmula que usaba
-  // js/ranking.js, más los puntos de logros solos para el toggle.
+  // Puntos de logros (solo para el toggle "Ver Ranking de Logros"; el
+  // orden general ya no depende de esto, ver rkRenderizar()).
   _rkUsuarios = usuarios.map(usuario => {
 
     const puntosLogros = typeof calcularPuntosLogros === "function"
       ? calcularPuntosLogros(usuario.nombre)
       : 0;
 
-    return {
-      ...usuario,
-      puntosLogros,
-      puntuacion: (Number(usuario.nivel) || 1) * 100000 + (Number(usuario.xp) || 0) + puntosLogros
-    };
+    return { ...usuario, puntosLogros };
 
   });
 
