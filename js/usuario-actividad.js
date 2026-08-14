@@ -39,16 +39,18 @@ async function renderActividadUsuario(){
 
     }
 
-    contenedorActividadUsuario.innerHTML = lista.map(a => {
-        const tag = a.destino ? "a" : "div";
-        const href = a.destino ? ` href="${a.destino}"` : "";
-        return `
-            <${tag} class="actividad"${href}>
-                <div>${a.texto}</div>
-                <div class="actividad-fecha">${a.fecha} · ${a.hora}</div>
-            </${tag}>
-        `;
-    }).join("");
+    // FIX: el avatar del jugador visitado tampoco vive en _cacheAvatares
+    // (esa caché es para avatares de OTROS usuarios vistos desde la
+    // sesión activa) hasta que se pide explícitamente. El nuevo
+    // encabezado con avatar (ver renderizarActividadHTML en
+    // js/motor/actividad.js) lo necesita para esta misma pestaña.
+    if(typeof cargarAvatarUsuario === "function"){
+        await cargarAvatarUsuario(idUsuarioActividad);
+    }
+
+    contenedorActividadUsuario.innerHTML = lista.map(a =>
+        renderizarActividadHTML(idUsuarioActividad, a.tipo, a.detalle, a.fecha, a.hora, avatarMiniActividadUsuario)
+    ).join("");
 
 }
 
@@ -119,19 +121,9 @@ async function renderActividadAmigosUsuario(){
     await cargarAvataresDeVarios(actividadesAmigos.map(a => a.nombreAmigo));
   }
 
-  contenedorActividadAmigosUsuario.innerHTML = actividadesAmigos.map(a => {
-    const tag = a.destino ? "a" : "div";
-    const href = a.destino ? ` href="${a.destino}"` : "";
-    return `
-      <${tag} class="actividad"${href} style="display:flex;align-items:center;gap:14px;">
-        ${avatarMiniActividadUsuario(a.nombreAmigo)}
-        <div style="flex:1;min-width:0;">
-          <div>${textoActividadAmigo(a.nombreAmigo, a.tipo, a.detalle)}</div>
-          <div class="actividad-fecha">${a.fecha} · ${a.hora}</div>
-        </div>
-      </${tag}>
-    `;
-  }).join("");
+  contenedorActividadAmigosUsuario.innerHTML = actividadesAmigos.map(a =>
+    renderizarActividadHTML(a.nombreAmigo, a.tipo, a.detalle, a.fecha, a.hora, avatarMiniActividadUsuario)
+  ).join("");
 }
 
 renderActividadAmigosUsuario();

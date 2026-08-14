@@ -53,16 +53,17 @@ async function renderActividadReciente(){
     return;
   }
 
-  contenedor.innerHTML = lista.map(a => {
-    const tag = a.destino ? "a" : "div";
-    const href = a.destino ? ` href="${a.destino}"` : "";
-    return `
-      <${tag} class="actividad"${href}>
-        <div>${a.texto}</div>
-        <div class="actividad-fecha">${a.fecha} · ${a.hora}</div>
-      </${tag}>
-    `;
-  }).join("");
+  // FIX: avatarMiniActividad() lee el avatar de _cacheAvatares (js/core.js),
+  // una caché pensada para el avatar de OTROS usuarios (chat, comentarios,
+  // actividad de amigos). El propio nunca se guarda ahí, así que sin esta
+  // línea el nuevo encabezado con avatar (ver renderizarActividadHTML en
+  // js/motor/actividad.js) mostraría siempre el avatar por defecto en esta
+  // pestaña en vez del avatar real del dueño del perfil.
+  _cacheAvatares[datosUsuario.nombre] = normalizarAvatar(datosUsuario.avatar);
+
+  contenedor.innerHTML = lista.map(a =>
+    renderizarActividadHTML(datosUsuario.nombre, a.tipo, a.detalle, a.fecha, a.hora, avatarMiniActividad)
+  ).join("");
 }
 
 
@@ -102,19 +103,9 @@ async function renderActividadAmigos(){
     await cargarAvataresDeVarios(actividadesAmigos.map(a => a.nombreAmigo));
   }
 
-  contenedor.innerHTML = actividadesAmigos.map(a => {
-    const tag = a.destino ? "a" : "div";
-    const href = a.destino ? ` href="${a.destino}"` : "";
-    return `
-      <${tag} class="actividad"${href} style="display:flex;align-items:center;gap:14px;">
-        ${avatarMiniActividad(a.nombreAmigo)}
-        <div style="flex:1;min-width:0;">
-          <div>${textoActividadAmigo(a.nombreAmigo, a.tipo, a.detalle)}</div>
-          <div class="actividad-fecha">${a.fecha} · ${a.hora}</div>
-        </div>
-      </${tag}>
-    `;
-  }).join("");
+  contenedor.innerHTML = actividadesAmigos.map(a =>
+    renderizarActividadHTML(a.nombreAmigo, a.tipo, a.detalle, a.fecha, a.hora, avatarMiniActividad)
+  ).join("");
 }
 
 
