@@ -3,145 +3,20 @@
 
 <head>
 <meta charset="UTF-8">
-<script src="js/tema.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Comunidad MacroReborn - Conocé jugadores y hacé amigos</title>
+<title>Comunidad MacroReborn | MacroReborn</title>
 
-<!-- SEO -->
-<meta name="description" content="Descubrí quién está conectado ahora, explorá perfiles de otros jugadores y agregalos como amigos en la comunidad de MacroReborn.">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://www.macroreborn.com/comunidad.html">
-<meta name="theme-color" content="#0f172a">
-<link rel="icon" href="imagenes/logo.png" type="image/png">
-<link rel="apple-touch-icon" href="imagenes/logo.png">
-
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="MacroReborn">
-<meta property="og:locale" content="es_AR">
-<meta property="og:title" content="Comunidad MacroReborn - Conocé jugadores y hacé amigos">
-<meta property="og:description" content="Descubrí quién está conectado ahora, explorá perfiles de otros jugadores y agregalos como amigos en la comunidad de MacroReborn.">
-<meta property="og:url" content="https://www.macroreborn.com/comunidad.html">
-<meta property="og:image" content="https://www.macroreborn.com/imagenes/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="MacroReborn - Comunidad y catálogo de juegos gratis online">
-
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Comunidad MacroReborn - Conocé jugadores y hacé amigos">
-<meta name="twitter:description" content="Descubrí quién está conectado ahora, explorá perfiles de otros jugadores y agregalos como amigos en la comunidad de MacroReborn.">
-<meta name="twitter:image" content="https://www.macroreborn.com/imagenes/og-image.png">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="css/inicio.css">
-<link rel="stylesheet" href="css/comunidad.css">
-<link rel="stylesheet" href="css/insignias.css">
-<link rel="stylesheet" href="css/buscador.css">
+<!-- Esta página se unió con ranking.html en una sola:
+     comunidad-ranking.html. Se deja este archivo como redirección
+     (en vez de borrarlo) para no romper enlaces externos, marcadores
+     o resultados de búsqueda ya indexados a /comunidad.html. -->
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://www.macroreborn.com/comunidad-ranking.html">
+<meta http-equiv="refresh" content="0; url=comunidad-ranking.html">
+<script>location.replace("comunidad-ranking.html");</script>
 </head>
 
-<body class="mr-root">
-
-<nav class="navbar">
-  <a href="index.html" class="nav-logo">
-    <img src="imagenes/logo.png" alt="MacroReborn">
-    MacroReborn
-  </a>
-  <div class="nav-links">
-    <a href="index.html">🏠 Inicio</a>
-    <a href="comunidad.html" class="activa-nav">🌐 Comunidad</a>
-    <a href="perfil.html">👤 Perfil</a>
-    <a href="juegos.html">🎮 Juegos</a>
-    <a href="ranking.html">🏆 Ranking</a>
-    <a href="amigos.html">👥 Amigos</a>
-    <a href="chat.html">💬 Chat</a>
-    <a href="noticias.html">📰 Noticias</a>
-  </div>
-</nav>
-
-<div class="comunidad-header">
-  <h1>🌐 Comunidad MacroReborn</h1>
-  <p class="comunidad-subtitulo">Conocé jugadores, mirá perfiles y agregá amigos.</p>
-</div>
-
-<main class="comunidad-main">
-
-  <div class="comunidad-controles">
-    <input type="text" id="buscadorUsuarios" class="buscador" placeholder="🔍 Buscar jugador por nombre...">
-  </div>
-
-  <!-- USUARIOS CONECTADOS -->
-  <section class="seccion-conectados">
-    <h2 class="seccion-titulo">🟢 Usuarios conectados</h2>
-    <div id="listaConectados" class="grid-conectados"></div>
-  </section>
-
-  <!-- TODOS LOS USUARIOS -->
-  <section class="seccion-todos">
-    <h2 class="seccion-titulo">👥 Todos los jugadores</h2>
-    <p id="contadorUsuarios" class="contador-usuarios"></p>
-    <div id="listaUsuarios" class="grid-usuarios"></div>
-  </section>
-
-</main>
-
-<!-- FOOTER (mismo componente que el resto de MacroReborn) -->
-<footer class="pie-footer">
-  <div class="pie-contenido">
-    <div class="pie-marca">
-      <a href="index.html" class="nav-logo">
-        <img src="imagenes/logo.png" alt="MacroReborn">
-        MacroReborn
-      </a>
-      <p>Una comunidad de juegos con nostalgia de portal clásico y alma moderna.</p>
-      <p class="estado-servidor"><span class="punto"></span> Servidor en línea</p>
-    </div>
-
-    <div class="pie-columna">
-      <h4>Plataforma</h4>
-      <a href="juegos.html">Juegos</a>
-      <a href="ranking.html">Ranking</a>
-      <a href="comunidad.html">Comunidad</a>
-      <a href="noticias.html">Noticias</a>
-    </div>
-
-    <div class="pie-columna">
-      <h4>Cuenta</h4>
-      <a href="login.html">Iniciar sesión</a>
-      <a href="registro.html">Registrarse</a>
-      <a href="perfil.html">Mi perfil</a>
-      <a href="notificaciones.html">Notificaciones</a>
-    </div>
-
-    <div class="pie-columna">
-      <h4>Social</h4>
-      <a href="amigos.html">Amigos</a>
-      <a href="chat.html">Chat</a>
-    </div>
-  </div>
-
-  <div class="pie-inferior">
-    <span>© 2026 MacroReborn. Todos los derechos reservados.</span>
-    <span>Hecho con 💛 para la vieja escuela de los juegos web.</span>
-  </div>
-</footer>
-
-<script src="js/core.js"></script>
-
-<script src="js/motor/permisos.js"></script>
-<script src="js/motor/logros.js"></script>
-<script src="js/motor/insignias.js"></script>
-<script src="js/comunidad.js"></script>
-<script src="js/notificaciones.js"></script>
-<script src="https://js.pusher.com/8.4/pusher.min.js"></script>
-<script src="js/realtime.js"></script>
-<script src="js/navbar.js"></script>
-<script src="js/datos-juegos.js"></script>
-<script src="js/buscador.js"></script>
-<script src="js/nav-toggle.js"></script>
-
+<body>
+<p>Esta página se unió con la de Ranking. Redirigiendo a <a href="comunidad-ranking.html">comunidad-ranking.html</a>…</p>
 </body>
 </html>
