@@ -417,3 +417,24 @@
     text-align: center;
   }
 }
+
+/* ==========================================================================
+   TIEMPO JUGADO ESTA SEMANA (ranking por tiempo jugado, no por nivel)
+   Texto chico e informativo debajo del nombre, mismo tono que
+   .rk-mini-puesto / .rk-delta. Puramente aditivo: no toca ninguna
+   regla de arriba.
+   ========================================================================== */
+
+.rk-podio-stat {
+  font-size: 11px;
+  color: var(--rk-texto-muted);
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.rk-mini-stat {
+  font-size: 10.5px;
+  color: var(--rk-texto-muted);
+  font-weight: 700;
+  margin: 0 0 2px;
+}
