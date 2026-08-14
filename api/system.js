@@ -131,27 +131,26 @@ async function adminStats(req, res) {
 }
 
 // ==============================
-// /api/system?action=recalcular-ranking
+// RANKING POR TIEMPO JUGADO — cálculo compartido
 // ==============================
-// Recalcula la posición de TODOS los usuarios en el ranking
-// (comunidad-ranking.html y todo lo que reutiliza js/ranking.js:
-// perfil.html, usuario.html, admin.html). Reemplaza el criterio
-// anterior (nivel*100000 + xp + puntos de logros) por uno basado en
-// cuánto jugó cada usuario, qué tan seguido y qué tan variados son
-// los juegos que jugó.
+// La cuenta en sí (calcularYAplicarRanking) es una sola función que
+// usan DOS acciones distintas, cada una con su propia manera de
+// autorizarse:
 //
-// Se dispara SOLO una vez por semana, todos los lunes a las 5:00
-// (hora Argentina = 8:00 UTC), vía Vercel Cron (ver vercel.json).
-// No hay ningún otro lugar del código que la llame ni que recalcule
-// el ranking mientras tanto: entre lunes y lunes las posiciones
-// quedan fijas a propósito.
+//   - action=recalcular-ranking (GET): la dispara el cron de Vercel
+//     todos los lunes a las 5:00 hora Argentina (ver vercel.json).
+//     Se protege con CRON_SECRET.
 //
-// Protegida con CRON_SECRET (variable de entorno a crear en Vercel):
-// Vercel manda automáticamente el header
-// "Authorization: Bearer <CRON_SECRET>" en cada ejecución de cron, así
-// que si no coincide se rechaza. Si no se configura CRON_SECRET en el
-// proyecto, por seguridad la acción queda deshabilitada (no se ejecuta
-// sin protección).
+//   - action=recalcular-ranking-manual (POST): botón "🔄 Recalcular
+//     ranking ahora" en admin.html (pestaña Estadísticas), para poder
+//     probarlo o forzarlo sin esperar al próximo lunes. Se protege
+//     verificando que el usuario que lo pide tenga la insignia de
+//     administrador (misma tabla "badges" que ya usa el resto del
+//     panel), no con CRON_SECRET: ese secreto no debe viajar nunca al
+//     navegador.
+//
+// Ninguna otra parte del código llama a esto: entre una corrida y la
+// siguiente, las posiciones quedan fijas a propósito.
 //
 // ---- Cómo se puntúa cada usuario ----
 //
@@ -187,8 +186,16 @@ async function adminStats(req, res) {
 //    se guarda: rank_anterior = la posición que tenían, rank_actual =
 //    la posición nueva, rank_actualizado_at = ahora. Esto es lo mismo
 //    que ya usaba comunidad-ranking.html para mostrar "+2 / -1" junto
-//    a cada jugador (js/comunidad-ranking.js -> rkDeltaHTML()), solo
-//    que ahora se recalcula acá en vez de "sola" cada ~20hs.
+//    a cada jugador (js/comunidad-ranking.js -> rkDeltaHTML()).
+//
+// IMPORTANTE — si se llama dos veces la misma semana (por ejemplo,
+// probando el botón manual un miércoles): como todavía no pasó el
+// próximo lunes, "semana" da la misma que la última vez, así que
+// vuelve a mezclar la puntuación ya mezclada con la misma
+// puntuacionSemana de nuevo. No rompe nada, pero repetirlo varias
+// veces seguidas para la misma semana empuja la puntuación un poco
+// más de lo normal hacia esa semana. Pensado para probar el sistema,
+// no para spamear el botón.
 // ==============================
 
 const DIAS_POR_SEMANA = 7;
@@ -198,20 +205,7 @@ const PENALIZACION_DIVERSIDAD_MAX = 0.75; // 100% de juegos repetidos
 const PESO_PUNTUACION_ANTERIOR = 0.6;
 const PESO_PUNTUACION_SEMANA = 0.4;
 
-async function recalcularRanking(req, res) {
-
-  const secreto = process.env.CRON_SECRET;
-
-  if (!secreto) {
-    return res.status(503).json({
-      success: false,
-      error: "Falta configurar CRON_SECRET en las variables de entorno del proyecto."
-    });
-  }
-
-  if (req.headers["authorization"] !== `Bearer ${secreto}`) {
-    return res.status(401).json({ success: false, error: "No autorizado" });
-  }
+async function calcularYAplicarRanking() {
 
   // Semana recién terminada (el lunes anterior al lunes de hoy),
   // calculada en horario argentino para que coincida con el
@@ -256,7 +250,7 @@ async function recalcularRanking(req, res) {
   ]);
 
   if (usuarios.length === 0) {
-    return res.status(200).json({ success: true, semana, usuariosActualizados: 0 });
+    return { semana, usuariosActualizados: 0 };
   }
 
   const actividadPorUsuario = new Map();
@@ -335,17 +329,73 @@ async function recalcularRanking(req, res) {
     `;
   }
 
-  return res.status(200).json({
-    success: true,
-    semana,
-    usuariosActualizados: resultados.length
-  });
+  return { semana, usuariosActualizados: resultados.length };
+
+}
+
+// ==============================
+// /api/system?action=recalcular-ranking (GET, cron)
+// ==============================
+
+async function recalcularRanking(req, res) {
+
+  const secreto = process.env.CRON_SECRET;
+
+  if (!secreto) {
+    return res.status(503).json({
+      success: false,
+      error: "Falta configurar CRON_SECRET en las variables de entorno del proyecto."
+    });
+  }
+
+  if (req.headers["authorization"] !== `Bearer ${secreto}`) {
+    return res.status(401).json({ success: false, error: "No autorizado" });
+  }
+
+  const resultado = await calcularYAplicarRanking();
+
+  return res.status(200).json({ success: true, ...resultado });
+
+}
+
+// ==============================
+// /api/system?action=recalcular-ranking-manual (POST, panel admin)
+// ==============================
+// Mismo cálculo que el cron, pero disparado a mano desde el botón
+// "🔄 Recalcular ranking ahora" de admin.html. Se autoriza chequeando
+// del lado del servidor que el usuario que lo pide tenga la insignia
+// de administrador (tabla "badges"), no confiando solo en que el
+// panel esté oculto en el navegador.
+
+async function recalcularRankingManual(req, res) {
+
+  const { username } = req.body || {};
+
+  if (!username) {
+    return res.status(400).json({ success: false, error: "Falta username" });
+  }
+
+  const esAdmin = await sql`
+    SELECT 1
+    FROM users u
+    JOIN badges b ON b.user_id = u.id
+    WHERE u.username = ${username} AND b.badge_id = 'administrador'
+    LIMIT 1;
+  `;
+
+  if (esAdmin.length === 0) {
+    return res.status(403).json({ success: false, error: "Solo un administrador puede hacer esto" });
+  }
+
+  const resultado = await calcularYAplicarRanking();
+
+  return res.status(200).json({ success: true, ...resultado });
 
 }
 
 module.exports = async function handler(req, res) {
 
-  setCors(res, "GET, OPTIONS");
+  setCors(res, "GET, POST, OPTIONS");
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -358,6 +408,7 @@ module.exports = async function handler(req, res) {
     if (action === "test-db") return await testDb(req, res);
     if (action === "admin-stats") return await adminStats(req, res);
     if (action === "recalcular-ranking") return await recalcularRanking(req, res);
+    if (action === "recalcular-ranking-manual") return await recalcularRankingManual(req, res);
 
     return res.status(400).json({ success: false, error: "Acción inválida" });
 
