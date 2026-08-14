@@ -508,3 +508,41 @@
     align-items: flex-start;
   }
 }
+
+/* ---------- RANKING SEMANAL (botón de recálculo manual) ---------- */
+/* Aditivo: no modifica ninguna regla existente. .btn-admin-accion
+   ajusta .btn-admin-primario (pensado para un <a>) para que se vea
+   bien también como <button>. */
+
+.btn-admin-accion {
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+
+.btn-admin-accion:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.admin-ranking-manual {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 4px 0 8px;
+}
+
+.admin-ranking-estado {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.admin-ranking-estado.admin-ranking-ok {
+  color: var(--green);
+}
+
+.admin-ranking-estado.admin-ranking-error {
+  color: var(--red, #e05656);
+}
