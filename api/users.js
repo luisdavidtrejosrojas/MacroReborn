@@ -29,7 +29,7 @@ const sql = neon(process.env.DATABASE_URL);
 //   POST /api/users?action=update-avatar { username, avatar }
 //   POST /api/users?action=update-bio    { username, bio }
 //   POST /api/users?action=heartbeat     { username }
-//   POST /api/users?action=xp            { username, cantidad }
+//   POST /api/users?action=xp            { username, cantidad, gameId }
 //   POST /api/users?action=suspend       { username, motivo }
 //   POST /api/users?action=reactivate    { username }
 //   POST /api/users?action=change-password { username, currentPassword, newPassword }
@@ -48,98 +48,67 @@ function xpNecesaria(nivel) {
 }
 
 // ==============================
-// PUNTOS DE LOGROS (espejo del catálogo del cliente)
+// RANKING POR TIEMPO JUGADO
 // ==============================
-// Copia de los "puntos" de cada logro definidos en
-// js/motor/logros.js (LOGROS.<id>.puntos). Solo se usa acá para
-// poder calcular la MISMA puntuación total que ve el cliente
-// (nivel*100000 + xp + puntosLogros) y así guardar un historial de
-// posiciones correcto en actualizarSnapshotRanking().
+// El ranking (comunidad-ranking.html y demás lugares donde aparece)
+// YA NO se calcula por nivel/XP: se calcula una vez por semana, todos
+// los lunes a las 5:00 (hora Argentina), en api/system.js
+// (recalcularRankingSemanal(), disparada por un cron de Vercel — ver
+// vercel.json). Ese cálculo usa lo que se va guardando acá abajo.
 //
-// Si se agrega o cambia un logro nuevo en js/motor/logros.js, hay
-// que reflejar el mismo puntaje acá para que el historial de
-// posiciones no se desalinee. No afecta a nada más de la lógica
-// existente de este archivo.
-const PUNTOS_LOGROS = {
-  primerAvatar: 10,
-  primerJuego: 10,
-  explorador: 25,
-  coleccionista: 100,
-  primeraPalabra: 10,
-  primerAmigo: 10,
-  popular: 60,
-  leyendaSocial: 120,
-  nivel2: 10,
-  nivel5: 20,
-  nivel10: 35,
-  nivel25: 60,
-  nivel50: 100,
-  nivel100: 180,
-  nivel200: 300,
-  nivel300: 420,
-  nivel400: 540,
-  nivel500: 700,
-  nivel1000: 1500,
-  top100: 80,
-  top50: 150,
-  top10: 280,
-  top3: 450,
-  subcampeon: 700,
-  numeroUno: 1000
-};
+// Mientras el usuario está jugando (jugar.html tiene abierto
+// js/motor/xp.js), cada 60 segundos ya se llamaba a
+// POST /api/users?action=xp para sumar XP. Ahora ese mismo pulso de
+// 1 vez por minuto, si viaja con "gameId", también cuenta como
+// "1 minuto jugado a ese juego" para el ranking semanal. No hace
+// falta ningún pedido nuevo al servidor: se reusa el que ya existía.
+//
+// registrarTickTiempoJugado() actualiza dos tablas (ver migración
+// 011_ranking_tiempo_jugado.sql):
+//   - ranking_actividad_semanal: minutos totales y días distintos
+//     jugados esta semana (semana calculada en horario de Argentina).
+//   - ranking_juegos_semanales: minutos jugados esta semana, por
+//     cada juego (para medir diversidad: si siempre son los mismos
+//     juegos, el ranking semanal lo penaliza — ver api/system.js).
+//
+// Si falla (por lo que sea), no debe romper el XP en sí: se llama
+// siempre dentro de un try/catch, igual que ya se hacía con el aviso
+// de Pusher en heartbeat().
+async function registrarTickTiempoJugado(userId, gameId) {
 
-// ==============================
-// SNAPSHOT DEL RANKING (para mostrar +1/-1 en comunidad-ranking.html)
-// ==============================
-// Sin cron: cada vez que se pide la lista completa de usuarios (sin
-// filtro por "q" ni "username", que es como la usan el ranking y la
-// comunidad) se revisa cuándo fue el último cálculo. Si pasaron más
-// de ~20hs, se recalcula la posición de todos los usuarios y se
-// corre rank_actual -> rank_anterior antes de pisarlo con el nuevo
-// valor. Así el front puede mostrar "subiste 2 puestos" / "bajaste 1"
-// comparando ambas columnas, sin necesitar un cron aparte en Vercel.
-async function actualizarSnapshotRanking() {
+  if (!gameId) return; // sin juego asociado (no debería pasar, pero por las dudas)
 
-  const VEINTE_HORAS_MS = 20 * 60 * 60 * 1000;
+  const idJuego = String(gameId);
 
-  const [ultimo] = await sql`SELECT MAX(rank_actualizado_at) AS ts FROM users;`;
+  await sql`
+    INSERT INTO ranking_actividad_semanal (user_id, semana, minutos_jugados, dias_activos, ultimo_dia_registrado)
+    VALUES (
+      ${userId},
+      date_trunc('week', (now() AT TIME ZONE 'America/Argentina/Buenos_Aires'))::date,
+      1,
+      1,
+      (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
+    )
+    ON CONFLICT (user_id, semana) DO UPDATE SET
+      minutos_jugados = ranking_actividad_semanal.minutos_jugados + 1,
+      dias_activos = ranking_actividad_semanal.dias_activos + CASE
+        WHEN ranking_actividad_semanal.ultimo_dia_registrado IS DISTINCT FROM (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
+        THEN 1 ELSE 0
+      END,
+      ultimo_dia_registrado = (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date;
+  `;
 
-  if (ultimo && ultimo.ts && (Date.now() - new Date(ultimo.ts).getTime()) < VEINTE_HORAS_MS) {
-    return; // el snapshot todavía está fresco, no hace falta recalcular
-  }
-
-  const usuarios = await sql`SELECT id, level, xp FROM users;`;
-  if (usuarios.length === 0) return;
-
-  const logrosFilas = await sql`SELECT user_id, achievement_id FROM achievements;`;
-
-  const puntosLogrosPorUsuario = {};
-  logrosFilas.forEach(fila => {
-    const puntos = PUNTOS_LOGROS[fila.achievement_id] || 0;
-    puntosLogrosPorUsuario[fila.user_id] = (puntosLogrosPorUsuario[fila.user_id] || 0) + puntos;
-  });
-
-  const ordenados = usuarios
-    .map(u => ({
-      id: u.id,
-      puntuacion:
-        (Number(u.level) || 1) * 100000 +
-        (Number(u.xp) || 0) +
-        (puntosLogrosPorUsuario[u.id] || 0)
-    }))
-    .sort((a, b) => b.puntuacion - a.puntuacion);
-
-  // Se actualiza de a un usuario por vez (cantidad de jugadores
-  // acotada, no hace falta una sola query masiva).
-  for (let i = 0; i < ordenados.length; i++) {
-    await sql`
-      UPDATE users
-      SET rank_anterior = rank_actual,
-          rank_actual = ${i + 1},
-          rank_actualizado_at = now()
-      WHERE id = ${ordenados[i].id};
-    `;
-  }
+  await sql`
+    INSERT INTO ranking_juegos_semanales (user_id, semana, game_id, minutos)
+    VALUES (
+      ${userId},
+      date_trunc('week', (now() AT TIME ZONE 'America/Argentina/Buenos_Aires'))::date,
+      ${idJuego},
+      1
+    )
+    ON CONFLICT (user_id, semana, game_id) DO UPDATE SET
+      minutos = ranking_juegos_semanales.minutos + 1;
+  `;
 
 }
 
@@ -151,13 +120,23 @@ async function listarUsuarios(req, res) {
   // no solo los primeros 500.
   const tope = Math.min(Number(limit) || 300, 2000);
 
+  // Minutos/días jugados en la semana QUE ESTÁ EN CURSO ahora mismo
+  // (no la última puntuada). Es solo informativo para el front
+  // ("llevás X min esta semana"): la posición del ranking
+  // (rank_actual) no se mueve con esto, se recalcula recién el lunes.
+  const semanaActualSQL = sql`date_trunc('week', (now() AT TIME ZONE 'America/Argentina/Buenos_Aires'))::date`;
+
   if (username) {
     const usuario = await sql`
-      SELECT id, username, level, xp, status, bio, avatar, created_at, last_login,
-             suspendido, fecha_suspension, motivo_suspension,
-             rank_actual, rank_anterior
-      FROM users
-      WHERE username = ${username};
+      SELECT u.id, u.username, u.level, u.xp, u.status, u.bio, u.avatar, u.created_at, u.last_login,
+             u.suspendido, u.fecha_suspension, u.motivo_suspension,
+             u.rank_actual, u.rank_anterior, u.ranking_puntuacion,
+             COALESCE(ras.minutos_jugados, 0) AS minutos_semana_actual,
+             COALESCE(ras.dias_activos, 0) AS dias_activos_semana_actual
+      FROM users u
+      LEFT JOIN ranking_actividad_semanal ras
+        ON ras.user_id = u.id AND ras.semana = ${semanaActualSQL}
+      WHERE u.username = ${username};
     `;
 
     if (usuario.length === 0) {
@@ -172,30 +151,35 @@ async function listarUsuarios(req, res) {
   if (q && String(q).trim() !== "") {
     const buscado = "%" + String(q).trim() + "%";
     usuarios = await sql`
-      SELECT id, username, level, xp, status, bio, avatar, created_at, last_login,
-             suspendido, fecha_suspension, motivo_suspension,
-             rank_actual, rank_anterior
-      FROM users
-      WHERE username ILIKE ${buscado}
-      ORDER BY username ASC
+      SELECT u.id, u.username, u.level, u.xp, u.status, u.bio, u.avatar, u.created_at, u.last_login,
+             u.suspendido, u.fecha_suspension, u.motivo_suspension,
+             u.rank_actual, u.rank_anterior, u.ranking_puntuacion,
+             COALESCE(ras.minutos_jugados, 0) AS minutos_semana_actual,
+             COALESCE(ras.dias_activos, 0) AS dias_activos_semana_actual
+      FROM users u
+      LEFT JOIN ranking_actividad_semanal ras
+        ON ras.user_id = u.id AND ras.semana = ${semanaActualSQL}
+      WHERE u.username ILIKE ${buscado}
+      ORDER BY u.username ASC
       LIMIT ${tope};
     `;
   } else {
 
-    // Solo en el listado "completo" (el que usan ranking y comunidad)
-    // conviene chequear/refrescar el snapshot de posiciones.
-    try {
-      await actualizarSnapshotRanking();
-    } catch (error) {
-      console.warn("MacroReborn: no se pudo actualizar el snapshot de ranking.", error);
-    }
-
+    // Orden del ranking/comunidad: por posición ya calculada
+    // (rank_actual, la de la última corrida semanal del cron), no por
+    // nivel. Los usuarios que todavía no tienen posición calculada
+    // (recién registrados, antes de que corra el cron del próximo
+    // lunes) quedan al final, ordenados por nombre.
     usuarios = await sql`
-      SELECT id, username, level, xp, status, bio, avatar, created_at, last_login,
-             suspendido, fecha_suspension, motivo_suspension,
-             rank_actual, rank_anterior
-      FROM users
-      ORDER BY level DESC, xp DESC, username ASC
+      SELECT u.id, u.username, u.level, u.xp, u.status, u.bio, u.avatar, u.created_at, u.last_login,
+             u.suspendido, u.fecha_suspension, u.motivo_suspension,
+             u.rank_actual, u.rank_anterior, u.ranking_puntuacion,
+             COALESCE(ras.minutos_jugados, 0) AS minutos_semana_actual,
+             COALESCE(ras.dias_activos, 0) AS dias_activos_semana_actual
+      FROM users u
+      LEFT JOIN ranking_actividad_semanal ras
+        ON ras.user_id = u.id AND ras.semana = ${semanaActualSQL}
+      ORDER BY u.rank_actual ASC NULLS LAST, u.username ASC
       LIMIT ${tope};
     `;
   }
@@ -272,7 +256,7 @@ async function heartbeat(req, res) {
 }
 
 async function sumarXp(req, res) {
-  const { username, cantidad } = req.body;
+  const { username, cantidad, gameId } = req.body;
   const monto = Number(cantidad) || 0;
 
   if (!username || monto <= 0) {
@@ -304,6 +288,15 @@ async function sumarXp(req, res) {
     WHERE id = ${id}
     RETURNING id, username, level, xp;
   `;
+
+  // Ranking por tiempo jugado: cada pulso de XP mientras se está
+  // jugando (1 por minuto) también cuenta como 1 minuto jugado para
+  // el ranking semanal. No debe romper la respuesta de XP si falla.
+  try {
+    await registrarTickTiempoJugado(id, gameId);
+  } catch (error) {
+    console.warn("MacroReborn: no se pudo registrar el tiempo jugado para el ranking.", error);
+  }
 
   return res.status(200).json({
     success: true,
