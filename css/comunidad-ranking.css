@@ -1,0 +1,419 @@
+/* ==========================================================================
+   MACRO REBORN — COMUNIDAD + RANKING (página combinada)
+   Usa los tokens de css/inicio.css (:root, .navbar, .pie-footer, etc).
+   Esta hoja SOLO estiliza la parte nueva del ranking (".rk-*"); la parte
+   de comunidad de abajo sigue usando css/comunidad.css tal cual, sin
+   ningún cambio.
+   ========================================================================== */
+
+.mr-root {
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   BLOQUE "HERO" DEL RANKING — fondo púrpura oscuro, igual a la referencia
+   (independiente del modo claro/oscuro del sitio: la referencia es un
+   panel con identidad propia, como una vidriera dentro de la página).
+   ========================================================================== */
+
+.rk-hero {
+  --rk-fondo-1: #150a28;
+  --rk-fondo-2: #2a1150;
+  --rk-panel: #241145;
+  --rk-panel-borde: #3d2166;
+  --rk-texto: #f4f1fb;
+  --rk-texto-muted: #b6a9d6;
+  --rk-subida: #35d488;
+  --rk-bajada: #ff6b6b;
+  --rk-sin-cambio: #8b7fb0;
+
+  position: relative;
+  overflow: hidden;
+  padding: 40px 24px 56px;
+  background:
+    radial-gradient(ellipse 900px 460px at 50% -10%, rgba(240, 180, 41, 0.16), transparent 60%),
+    linear-gradient(160deg, var(--rk-fondo-2) 0%, var(--rk-fondo-1) 55%, #0c0616 100%);
+  border-bottom: 1px solid var(--rk-panel-borde);
+}
+
+.rk-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 0%, black 40%, transparent 90%);
+  pointer-events: none;
+}
+
+.rk-encabezado {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.rk-titulo {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 34px);
+  text-align: center;
+  margin: 0;
+  color: var(--rk-texto);
+  text-shadow: 0 0 22px rgba(240, 180, 41, 0.25);
+}
+
+.rk-boton-logros {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 13.5px;
+  color: #241804;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  border: none;
+  border-radius: 10px;
+  padding: 11px 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rk-boton-logros:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(240, 180, 41, 0.3);
+}
+
+.rk-boton-logros.rk-activo {
+  background: linear-gradient(135deg, var(--cyan), #0ea5e9 70%);
+  color: #04263a;
+}
+
+/* ---- Buscador ---- */
+
+.rk-buscador-caja {
+  position: relative;
+  max-width: 440px;
+  margin: 0 auto 34px;
+}
+
+.rk-buscador {
+  display: block;
+  width: 100%;
+  padding: 13px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--rk-panel-borde);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--rk-texto);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rk-buscador:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(240, 180, 41, 0.16);
+}
+
+.rk-buscador::placeholder {
+  color: var(--rk-texto-muted);
+}
+
+/* ==========================================================================
+   PODIO TOP 6
+   ========================================================================== */
+
+.rk-podio6 {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto 30px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+.rk-podio-card {
+  position: relative;
+  background: linear-gradient(180deg, var(--rk-panel), #180b31);
+  border: 2px solid var(--rk-panel-borde);
+  border-radius: 14px;
+  padding: 34px 12px 16px;
+  text-align: center;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rk-podio-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+}
+
+.rk-podio-numero {
+  position: absolute;
+  top: -12px;
+  left: 12px;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 14px;
+  border-radius: 8px;
+  color: #241804;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+.rk-podio-card[data-puesto="2"] .rk-podio-numero,
+.rk-podio-card[data-puesto="3"] .rk-podio-numero {
+  background: linear-gradient(135deg, #dbe3ee, #9fb0c9);
+}
+
+.rk-podio-card[data-puesto="4"] .rk-podio-numero,
+.rk-podio-card[data-puesto="5"] .rk-podio-numero,
+.rk-podio-card[data-puesto="6"] .rk-podio-numero {
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  color: #04182b;
+}
+
+.rk-podio-card[data-puesto="1"] {
+  border-color: var(--gold);
+  box-shadow: 0 16px 36px rgba(240, 180, 41, 0.22);
+}
+
+.rk-corona {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 26px;
+  filter: drop-shadow(0 0 10px rgba(240, 180, 41, 0.6));
+}
+
+.rk-podio-avatar {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 10px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 2px solid var(--rk-panel-borde);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(240, 180, 41, 0.14), transparent 65%),
+    #0c0616;
+}
+
+.rk-podio-card[data-puesto="1"] .rk-podio-avatar {
+  border-color: var(--gold);
+}
+
+.rk-podio-avatar .capa-rk {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.rk-podio-avatar img:not(.capa-rk) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rk-podio-nombre {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--rk-texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 4px;
+}
+
+.rk-delta {
+  font-size: 12px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-delta.rk-sube { color: var(--rk-subida); }
+.rk-delta.rk-baja { color: var(--rk-bajada); }
+.rk-delta.rk-neutro { color: var(--rk-sin-cambio); }
+
+/* ==========================================================================
+   RESTO DEL RANKING (grilla chica, puestos 7+)
+   ========================================================================== */
+
+.rk-lista-resto {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto 34px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 14px;
+}
+
+.rk-mini-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--rk-panel-borde);
+  border-radius: 12px;
+  padding: 12px 6px 10px;
+  text-align: center;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.rk-mini-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--gold-deep);
+}
+
+.rk-mini-avatar {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 8px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid var(--rk-panel-borde);
+  background: #0c0616;
+}
+
+.rk-mini-avatar .capa-rk-mini {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.rk-mini-avatar img:not(.capa-rk-mini) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rk-mini-nombre {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--rk-texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 2px;
+}
+
+.rk-mini-puesto {
+  font-size: 11px;
+  color: var(--rk-texto-muted);
+  font-weight: 700;
+  margin: 0 0 2px;
+}
+
+/* ==========================================================================
+   BANNER "ÚNETE Y DESAFÍA A LA COMUNIDAD"
+   ========================================================================== */
+
+.rk-banner-unite {
+  position: relative;
+  max-width: 900px;
+  margin: 10px auto 0;
+  background: linear-gradient(135deg, #4c2a8c, #7b3fb8);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 20px 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+}
+
+.rk-banner-unite p {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #f4f1fb;
+  max-width: 480px;
+}
+
+.rk-boton-unite {
+  display: inline-block;
+  white-space: nowrap;
+  background: #ffffff;
+  color: #4c2a8c;
+  font-weight: 900;
+  font-size: 13.5px;
+  letter-spacing: 0.3px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rk-boton-unite:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+/* Se oculta con JS (comunidad-ranking.js) cuando hay sesión iniciada */
+.rk-banner-unite.rk-oculto {
+  display: none;
+}
+
+/* ==========================================================================
+   INDICADOR DE PÁGINA ACTUAL EN LA NAVBAR (solo esta página)
+   ========================================================================== */
+
+.nav-links a.activo,
+.nav-links a.activa-nav {
+  color: var(--gold-bright);
+  background: var(--bg-panel-alt);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 980px) {
+  .rk-podio6 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .rk-hero {
+    padding: 30px 14px 40px;
+  }
+
+  .rk-podio6 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .rk-lista-resto {
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 10px;
+  }
+
+  .rk-mini-avatar {
+    width: 46px;
+    height: 46px;
+  }
+
+  .rk-banner-unite {
+    flex-direction: column;
+    text-align: center;
+  }
+}
