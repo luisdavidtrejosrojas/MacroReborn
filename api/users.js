@@ -47,6 +47,102 @@ function xpNecesaria(nivel) {
   return 100 + ((nivel - 2) * 200);
 }
 
+// ==============================
+// PUNTOS DE LOGROS (espejo del catálogo del cliente)
+// ==============================
+// Copia de los "puntos" de cada logro definidos en
+// js/motor/logros.js (LOGROS.<id>.puntos). Solo se usa acá para
+// poder calcular la MISMA puntuación total que ve el cliente
+// (nivel*100000 + xp + puntosLogros) y así guardar un historial de
+// posiciones correcto en actualizarSnapshotRanking().
+//
+// Si se agrega o cambia un logro nuevo en js/motor/logros.js, hay
+// que reflejar el mismo puntaje acá para que el historial de
+// posiciones no se desalinee. No afecta a nada más de la lógica
+// existente de este archivo.
+const PUNTOS_LOGROS = {
+  primerAvatar: 10,
+  primerJuego: 10,
+  explorador: 25,
+  coleccionista: 100,
+  primeraPalabra: 10,
+  primerAmigo: 10,
+  popular: 60,
+  leyendaSocial: 120,
+  nivel2: 10,
+  nivel5: 20,
+  nivel10: 35,
+  nivel25: 60,
+  nivel50: 100,
+  nivel100: 180,
+  nivel200: 300,
+  nivel300: 420,
+  nivel400: 540,
+  nivel500: 700,
+  nivel1000: 1500,
+  top100: 80,
+  top50: 150,
+  top10: 280,
+  top3: 450,
+  subcampeon: 700,
+  numeroUno: 1000
+};
+
+// ==============================
+// SNAPSHOT DEL RANKING (para mostrar +1/-1 en comunidad-ranking.html)
+// ==============================
+// Sin cron: cada vez que se pide la lista completa de usuarios (sin
+// filtro por "q" ni "username", que es como la usan el ranking y la
+// comunidad) se revisa cuándo fue el último cálculo. Si pasaron más
+// de ~20hs, se recalcula la posición de todos los usuarios y se
+// corre rank_actual -> rank_anterior antes de pisarlo con el nuevo
+// valor. Así el front puede mostrar "subiste 2 puestos" / "bajaste 1"
+// comparando ambas columnas, sin necesitar un cron aparte en Vercel.
+async function actualizarSnapshotRanking() {
+
+  const VEINTE_HORAS_MS = 20 * 60 * 60 * 1000;
+
+  const [ultimo] = await sql`SELECT MAX(rank_actualizado_at) AS ts FROM users;`;
+
+  if (ultimo && ultimo.ts && (Date.now() - new Date(ultimo.ts).getTime()) < VEINTE_HORAS_MS) {
+    return; // el snapshot todavía está fresco, no hace falta recalcular
+  }
+
+  const usuarios = await sql`SELECT id, level, xp FROM users;`;
+  if (usuarios.length === 0) return;
+
+  const logrosFilas = await sql`SELECT user_id, achievement_id FROM achievements;`;
+
+  const puntosLogrosPorUsuario = {};
+  logrosFilas.forEach(fila => {
+    const puntos = PUNTOS_LOGROS[fila.achievement_id] || 0;
+    puntosLogrosPorUsuario[fila.user_id] = (puntosLogrosPorUsuario[fila.user_id] || 0) + puntos;
+  });
+
+  const ordenados = usuarios
+    .map(u => ({
+      id: u.id,
+      puntuacion:
+        (Number(u.level) || 1) * 100000 +
+        (Number(u.xp) || 0) +
+        (puntosLogrosPorUsuario[u.id] || 0)
+    }))
+    .sort((a, b) => b.puntuacion - a.puntuacion);
+
+  // Se actualiza de a un usuario por vez (cantidad de jugadores
+  // acotada, no hace falta una sola query masiva).
+  for (let i = 0; i < ordenados.length; i++) {
+    await sql`
+      UPDATE users
+      SET rank_anterior = rank_actual,
+          rank_actual = ${i + 1},
+          rank_actualizado_at = now()
+      WHERE id = ${ordenados[i].id};
+    `;
+  }
+
+}
+
 async function listarUsuarios(req, res) {
   const { q, username, limit } = req.query;
   // Tope subido de 500 a 2000: el panel de administración
@@ -58,7 +154,8 @@ async function listarUsuarios(req, res) {
   if (username) {
     const usuario = await sql`
       SELECT id, username, level, xp, status, bio, avatar, created_at, last_login,
-             suspendido, fecha_suspension, motivo_suspension
+             suspendido, fecha_suspension, motivo_suspension,
+             rank_actual, rank_anterior
       FROM users
       WHERE username = ${username};
     `;
@@ -76,16 +173,27 @@ async function listarUsuarios(req, res) {
     const buscado = "%" + String(q).trim() + "%";
     usuarios = await sql`
       SELECT id, username, level, xp, status, bio, avatar, created_at, last_login,
-             suspendido, fecha_suspension, motivo_suspension
+             suspendido, fecha_suspension, motivo_suspension,
+             rank_actual, rank_anterior
       FROM users
       WHERE username ILIKE ${buscado}
       ORDER BY username ASC
       LIMIT ${tope};
     `;
   } else {
+
+    // Solo en el listado "completo" (el que usan ranking y comunidad)
+    // conviene chequear/refrescar el snapshot de posiciones.
+    try {
+      await actualizarSnapshotRanking();
+    } catch (error) {
+      console.warn("MacroReborn: no se pudo actualizar el snapshot de ranking.", error);
+    }
+
     usuarios = await sql`
       SELECT id, username, level, xp, status, bio, avatar, created_at, last_login,
-             suspendido, fecha_suspension, motivo_suspension
+             suspendido, fecha_suspension, motivo_suspension,
+             rank_actual, rank_anterior
       FROM users
       ORDER BY level DESC, xp DESC, username ASC
       LIMIT ${tope};
