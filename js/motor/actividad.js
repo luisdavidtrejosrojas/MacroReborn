@@ -319,3 +319,125 @@ async function obtenerActividadesDe(nombres){
     return [];
   }
 }
+
+
+// ==============================
+// RENDER ENRIQUECIDO (avatar + nombre del autor + mención clickeable
+// + tarjeta-cita) — agregado aparte, no reemplaza nada de arriba
+// ==============================
+// Antes cada fila de "Actividad reciente"/"Actividad de amigos" era
+// un solo <a> con un único destino (por ejemplo, todo el bloque
+// llevaba al perfil de la persona mencionada). Ahora, para que se vea
+// igual que las tarjetas de actividad "estilo clásico" (avatar
+// cuadrado propio + nombre del autor + nombre de la persona
+// mencionada, cada uno con su propio link, más una tarjeta-cita con
+// el texto citado), una sola fila necesita VARIOS links independientes
+// -algo que un único <a> envolvente no puede hacer (no se pueden
+// anidar <a> dentro de <a>)-, así que estas filas pasan a ser un
+// <div class="actividad actividad-rica"> con varios <a> sueltos
+// adentro. Las funciones de arriba (textoActividadPropia/Amigo,
+// destinoActividad) NO se tocan ni se dejan de exportar: se quedan
+// tal cual, por si algo las sigue necesitando; este bloque solo
+// agrega el criterio nuevo.
+
+function _actividadEscaparHTML(texto){
+  return _escapeHTMLActividad(texto);
+}
+
+function _actividadEnlaceUsuario(nombre){
+  return "usuario.html?usuario=" + encodeURIComponent(nombre);
+}
+
+// Arma la "acción" (siempre en 3ra persona, sin repetir el nombre del
+// autor: ese nombre ya se muestra aparte, en el encabezado con su
+// propio link) + la mención (si la hay) + el contexto + la cita.
+function _partesActividad(tipo, detalle){
+  switch(tipo){
+    case "juego":
+      return { accion: "🎮 jugó " + _actividadEscaparHTML(detalle) };
+    case "favorito":
+      return { accion: "❤️ agregó " + _actividadEscaparHTML(detalle) + " a favoritos" };
+    case "logro":
+      return { accion: "🏅 desbloqueó el logro \"" + _actividadEscaparHTML(detalle) + "\"" };
+    case "nivel":
+      return { accion: "⭐ subió al nivel " + _actividadEscaparHTML(detalle) };
+    case "amigo":
+      return { accion: "🤝 agregó a", mencion: detalle, contexto: "como amigo" };
+    case "comentario": {
+      const mencion = _primeraMencion(detalle);
+      const preview = previewComentario(detalle);
+      if(mencion){
+        return { accion: "📣 mencionó a", mencion, contexto: "en un comentario", cita: preview };
+      }
+      return { accion: preview ? "💬 comentó" : "💬 publicó un comentario", cita: preview };
+    }
+    case "resena": {
+      const info = _desempaquetarJuego(detalle);
+      const mencion = _primeraMencion(info.texto);
+      const preview = previewComentario(info.texto);
+      const juego = _actividadEscaparHTML(info.juego);
+      if(mencion){
+        return { accion: "📣 mencionó a", mencion, contexto: "en su reseña de " + juego, cita: preview };
+      }
+      return {
+        accion: preview ? ("📝 comentó sobre " + juego) : ("📝 dejó una reseña de " + juego),
+        cita: preview
+      };
+    }
+    case "like_juego": {
+      const info = _desempaquetarJuego(detalle);
+      return { accion: "👍 le dio me gusta a " + _actividadEscaparHTML(info.juego) };
+    }
+    default:
+      return { accion: (ICONOS_ACTIVIDAD[tipo] || "•") + " tuvo actividad" };
+  }
+}
+
+// nombreAutor: quién hizo la actividad (en "Actividad reciente" propia
+// es el dueño del perfil; en "Actividad de amigos" es cada amigo).
+// avatarHTMLFn: función (nombre) => HTML del avatar cuadrado de ese
+// nombre (cada pantalla arma su avatar con su propio criterio de
+// caché, así que se lo pasa como parámetro en vez de asumir uno).
+function renderizarActividadHTML(nombreAutor, tipo, detalle, fecha, hora, avatarHTMLFn){
+  const partes = _partesActividad(tipo, detalle);
+  const autorEscapado = _actividadEscaparHTML(nombreAutor);
+  const autorHref = _actividadEnlaceUsuario(nombreAutor);
+  const avatarHTML = typeof avatarHTMLFn === "function" ? avatarHTMLFn(nombreAutor) : "";
+
+  let lineaHTML = `<a href="${autorHref}" class="actividad-nombre-autor">${autorEscapado}</a> ${partes.accion}`;
+
+  if(partes.mencion){
+    const mencionEscapada = _actividadEscaparHTML(partes.mencion);
+    const mencionHref = _actividadEnlaceUsuario(partes.mencion);
+    lineaHTML += ` <a href="${mencionHref}" class="actividad-nombre-mencion">${mencionEscapada}</a>`;
+  }
+  if(partes.contexto){
+    lineaHTML += " " + partes.contexto;
+  }
+
+  let citaHTML = "";
+  if(partes.cita){
+    const destinoCita = partes.mencion ? _actividadEnlaceUsuario(partes.mencion) : null;
+    const tagCita = destinoCita ? "a" : "div";
+    const hrefCita = destinoCita ? ` href="${destinoCita}"` : "";
+    citaHTML = `
+      <${tagCita} class="actividad-cita"${hrefCita}>
+        ${avatarHTML}
+        <span class="actividad-cita-texto">${partes.cita}</span>
+      </${tagCita}>
+    `;
+  }
+
+  return `
+    <div class="actividad actividad-rica">
+      <div class="actividad-fila-principal">
+        <a href="${autorHref}" class="actividad-avatar-link" aria-label="Ver perfil de ${autorEscapado}">${avatarHTML}</a>
+        <div class="actividad-contenido">
+          <div class="actividad-linea">${lineaHTML}</div>
+          <div class="actividad-fecha">${fecha} · ${hora}</div>
+        </div>
+      </div>
+      ${citaHTML}
+    </div>
+  `;
+}
