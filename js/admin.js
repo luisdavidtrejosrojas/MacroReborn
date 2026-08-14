@@ -397,6 +397,79 @@
 
 
     // ==============================
+    // RANKING SEMANAL - RECALCULAR A MANO (solo administrador)
+    // ==============================
+    // Dispara el mismo cálculo que corre solo todos los lunes a las
+    // 5:00 (ver api/system.js -> recalcularRanking()), pero a pedido,
+    // vía POST /api/system?action=recalcular-ranking-manual. El
+    // servidor verifica de nuevo (con la insignia de administrador en
+    // Neon) que quien lo pide puede hacerlo, no confía solo en que
+    // este botón esté oculto para moderadores/usuarios comunes.
+
+    const botonRecalcularRanking = document.getElementById("botonRecalcularRanking");
+    const estadoRecalcularRanking = document.getElementById("estadoRecalcularRanking");
+
+    botonRecalcularRanking?.addEventListener("click", async () => {
+
+      const confirmar = confirm(
+        "¿Recalcular el ranking ahora? Esto va a actualizar la posición de todos los usuarios."
+      );
+      if (!confirmar) return;
+
+      botonRecalcularRanking.disabled = true;
+      botonRecalcularRanking.textContent = "⏳ Recalculando...";
+      estadoRecalcularRanking.textContent = "";
+      estadoRecalcularRanking.className = "admin-ranking-estado";
+
+      try {
+
+        const resp = await fetch("/api/system?action=recalcular-ranking-manual", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: activoAdmin.nombre })
+        });
+
+        const datos = await resp.json();
+
+        if (!datos || !datos.success) {
+          estadoRecalcularRanking.textContent = "❌ " + (datos?.error || "No se pudo recalcular el ranking.");
+          estadoRecalcularRanking.classList.add("admin-ranking-error");
+          return;
+        }
+
+        const fechaSemana = new Date(datos.semana + "T00:00:00").toLocaleDateString("es-AR");
+
+        estadoRecalcularRanking.textContent =
+          `✅ Listo. Se actualizaron ${datos.usuariosActualizados} usuarios (semana del ${fechaSemana}).`;
+        estadoRecalcularRanking.classList.add("admin-ranking-ok");
+
+        await registrarAccionModeracion({
+          accion: "recalcular_ranking",
+          usuarioAfectado: null,
+          motivo: `Semana del ${fechaSemana} · ${datos.usuariosActualizados} usuarios actualizados`
+        });
+
+        if (typeof renderHistorialModeracion === "function") {
+          await renderHistorialModeracion();
+        }
+
+      } catch (error) {
+
+        console.warn("MacroReborn: no se pudo recalcular el ranking.", error);
+        estadoRecalcularRanking.textContent = "❌ No se pudo recalcular el ranking.";
+        estadoRecalcularRanking.classList.add("admin-ranking-error");
+
+      } finally {
+
+        botonRecalcularRanking.disabled = false;
+        botonRecalcularRanking.textContent = "🔄 Recalcular ranking ahora";
+
+      }
+
+    });
+
+
+    // ==============================
     // REGISTRO DE ACCIONES DE MODERADORES (solo administrador)
     // ==============================
     // Usa js/motor/historial.js (registrarAccionModeracion ya se llama
