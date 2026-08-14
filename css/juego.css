@@ -580,16 +580,39 @@
   margin-bottom: 12px;
 }
 
+/* Antes era un círculo (border-radius:50%). Ahora usa el mismo marco
+   cuadrado ornamentado con destellos en las esquinas que el resto de
+   los avatares del sitio (ver la misma idea en css/perfil.css,
+   .avatar-mini). ".resena-avatar-simple" (más abajo) es una <img>
+   suelta -el avatar por defecto-, así que se queda solo con el marco
+   cuadrado: los navegadores no generan contenido ::before/::after
+   sobre <img>. */
 .resena-avatar {
   width: 50px;
   height: 50px;
   position: relative;
   overflow: hidden;
-  border-radius: 50%;
+  border-radius: 8px;
   flex-shrink: 0;
   background: var(--bg-base);
   border: 2px solid var(--gold);
+  box-shadow: inset 0 0 0 2px var(--gold-deep);
 }
+
+.resena-avatar::before,
+.resena-avatar::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle at 35% 35%, var(--gold-bright) 0%, var(--gold) 55%, var(--gold-deep) 100%);
+  clip-path: polygon(50% 0%, 61% 38%, 100% 50%, 61% 62%, 50% 100%, 39% 62%, 0% 50%, 39% 38%);
+  filter: drop-shadow(0 0 2px rgba(240, 180, 41, .8));
+  pointer-events: none;
+  z-index: 2;
+}
+.resena-avatar::before { top: 1px; left: 1px; }
+.resena-avatar::after { bottom: 1px; right: 1px; }
 
 .capa-resena {
   /* FIX: se reemplaza el recorte "a mano" por zoom fijo (que dejaba el
@@ -611,10 +634,11 @@
 .resena-avatar-simple {
   width: 50px;
   height: 50px;
-  border-radius: 50%;
+  border-radius: 8px;
   object-fit: cover;
   flex-shrink: 0;
   border: 2px solid var(--gold);
+  box-shadow: inset 0 0 0 2px var(--gold-deep);
 }
 
 .resena-datos {

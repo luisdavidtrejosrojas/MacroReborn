@@ -205,12 +205,21 @@
    AVATARES
    ========================================================================== */
 
+/* Antes eran círculos (border-radius:50%). Ahora usan el mismo marco
+   cuadrado ornamentado con destellos en las esquinas que el resto de
+   los avatares del sitio (ver la misma idea en css/perfil.css,
+   .avatar-mini). El destello con ::before/::after solo puede pintarse
+   sobre ".avatar-chat-personalizado" (es un <div>, contenedor real);
+   ".avatar-chat" es una <img> suelta (el avatar por defecto) y los
+   navegadores no generan contenido ::before/::after sobre <img>, así
+   que ahí se queda solo con el marco cuadrado, sin destello. */
 .avatar-chat {
   width: 46px;
   height: 46px;
-  border-radius: 50%;
+  border-radius: 8px;
   object-fit: cover;
   border: 2px solid var(--gold);
+  box-shadow: inset 0 0 0 2px var(--gold-deep);
   flex-shrink: 0;
 }
 
@@ -219,11 +228,27 @@
   width: 46px;
   height: 46px;
   flex-shrink: 0;
-  border-radius: 50%;
+  border-radius: 8px;
   overflow: hidden;
   background: var(--bg-deep);
   border: 2px solid var(--gold);
+  box-shadow: inset 0 0 0 2px var(--gold-deep);
 }
+
+.avatar-chat-personalizado::before,
+.avatar-chat-personalizado::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle at 35% 35%, var(--gold-bright) 0%, var(--gold) 55%, var(--gold-deep) 100%);
+  clip-path: polygon(50% 0%, 61% 38%, 100% 50%, 61% 62%, 50% 100%, 39% 62%, 0% 50%, 39% 38%);
+  filter: drop-shadow(0 0 2px rgba(240, 180, 41, .8));
+  pointer-events: none;
+  z-index: 2;
+}
+.avatar-chat-personalizado::before { top: 1px; left: 1px; }
+.avatar-chat-personalizado::after { bottom: 1px; right: 1px; }
 
 .avatar-chat-personalizado img,
 .capa-chat {
