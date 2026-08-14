@@ -5,27 +5,32 @@
 // (POST /api/xp), que es la fuente de verdad. Este archivo solo pide
 // el resultado, actualiza la caché local de sesión (usuarioActivo) y
 // dispara los mismos efectos visuales/logros/actividad que ya existían.
+//
+// Ranking por tiempo jugado: iniciarXP(idJuego) ahora recibe el id
+// del juego que se está jugando (jugar.js se lo pasa) y lo manda en
+// cada pulso a /api/users?action=xp. El servidor usa ese mismo pulso
+// de 1 vez por minuto para contar minutos jugados por juego, que es
+// lo que usa el ranking semanal (ver api/users.js y api/system.js).
+// No se agregó ningún pedido nuevo al servidor: es el mismo que ya
+// existía, con un dato más adentro.
 
 
 let intervaloXP;
+let _xpJuegoActual = null; // id del juego que se está jugando ahora
 
 
 
-function iniciarXP(){
+function iniciarXP(idJuego){
 
     clearInterval(intervaloXP);
 
-
+    _xpJuegoActual = (idJuego !== undefined && idJuego !== null) ? idJuego : null;
 
     intervaloXP = setInterval(()=>{
 
-
         ganarXP(10);
 
-
     },60000); // 1 minuto
-
-
 
 }
 
@@ -65,7 +70,8 @@ async function ganarXP(cantidad){
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 username: usuario.nombre,
-                cantidad: cantidad
+                cantidad: cantidad,
+                gameId: _xpJuegoActual
             })
         });
 
