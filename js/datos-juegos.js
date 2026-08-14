@@ -1205,6 +1205,17 @@ const juegos = [
     iframe: "https://www.play-games.com/iframe/11113.html"
 },
 
+{
+    id: 110,
+    nombre: "Pokémon Emerald Rogue",
+    imagen: "imagenes/juegos/emeraldrogue.png",
+    categoria: "RPG",
+    estado: "⭐ Nuevo",
+    tipo: "destacado",
+    descripcion: "Explorá una aventura estilo roguelike en la región de Hoenn, capturá y entrená Pokémon, enfrentate a distintos entrenadores y superá desafíos en cada partida.",
+    iframe: "./html/juegos/emeraldrogue.html"
+},
+
 ];
 
 
