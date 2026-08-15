@@ -324,6 +324,193 @@ html {
   background: var(--bg-panel-alt);
 }
 
+/* ---- "Usuario temporal" (invitado): abre un login rápido desplegable,
+   mismo patrón que la campanita de notificaciones. ---- */
+
+.user-guest-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.user-guest-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 14px 5px 5px;
+  font: inherit;
+  cursor: pointer;
+  color: var(--text-main);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.user-guest-boton:hover {
+  border-color: var(--gold);
+  background: var(--bg-panel-alt);
+}
+
+.user-guest-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--line);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.user-guest-badge {
+  position: absolute;
+  bottom: -3px;
+  left: -3px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: var(--green);
+  color: #06280f;
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 15px;
+  text-align: center;
+  border: 2px solid var(--navbar-bg);
+}
+
+.user-guest-nombre {
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.user-guest-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 260px;
+  max-width: 88vw;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--sombra-suave);
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 200;
+  overflow: hidden;
+  text-align: left;
+}
+
+.user-guest-dropdown.abierto {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.user-guest-dropdown-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.user-guest-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+}
+
+.user-guest-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.user-guest-input::placeholder {
+  color: var(--text-placeholder);
+}
+
+.user-guest-input:focus {
+  border-color: var(--gold);
+}
+
+.user-guest-mensaje {
+  display: none;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 2px 0;
+}
+
+.user-guest-mensaje.visible {
+  display: block;
+}
+
+.user-guest-mensaje.error {
+  color: var(--danger);
+}
+
+.user-guest-mensaje.exito {
+  color: var(--success-light);
+}
+
+.user-guest-login-boton {
+  align-self: flex-start;
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  color: #1a1204;
+  font-weight: 800;
+  font-size: 12.5px;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.user-guest-login-boton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(240, 180, 41, 0.35);
+}
+
+.user-guest-login-boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+.user-guest-dropdown-footer {
+  padding: 10px 14px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.user-guest-dropdown-footer a {
+  font-weight: 700;
+  color: var(--gold-bright);
+}
+
+.user-guest-dropdown-footer a:hover {
+  text-decoration: underline;
+}
+
 /* ---- Fila inferior: categorías / navegación del sitio ---- */
 /* Barra ancha tipo "menú de secciones", con la sección activa
    resaltada en naranja (misma idea que la referencia). */
@@ -517,6 +704,40 @@ html {
     font-size: 14px;
     font-weight: 600;
     color: var(--text-secondary);
+  }
+
+  /* "Usuario temporal" dentro del desplegable hamburguesa: el botón pasa
+     a ocupar todo el ancho como el resto de los ítems, y su propio
+     desplegable de login se despliega hacia abajo en vez de flotar. */
+  .user-guest-wrap {
+    width: 100%;
+  }
+
+  .user-guest-boton {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 10px 14px;
+    border-radius: 8px;
+  }
+
+  .user-guest-dropdown {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 8px;
+    opacity: 1;
+    transform: none;
+    pointer-events: none;
+    max-height: 0;
+    border: none;
+    box-shadow: none;
+    transition: max-height 0.2s ease;
+  }
+
+  .user-guest-dropdown.abierto {
+    pointer-events: auto;
+    max-height: 400px;
+    border: 1px solid var(--line);
   }
 }
 
