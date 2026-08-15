@@ -1146,6 +1146,37 @@ a.actividad-cita:hover {
   font-size: 13px;
 }
 
+/* ---- Prendas de la tienda del Centro de avatares (no compradas) ---- */
+/* Mismo .opcion-item de siempre, solo agrega el candado + opacidad.
+   No toca ninguna categoría que no esté en la tienda. */
+
+.opcion-item.cr-bloqueada {
+  opacity: 0.45;
+  cursor: pointer;
+  position: relative;
+}
+
+.opcion-item.cr-bloqueada:hover {
+  border-color: var(--line);
+  transform: none;
+}
+
+.opcion-item.cr-bloqueada::after {
+  content: "🔒";
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 13px;
+}
+
+.opcion-item.cr-bloqueada .cr-precio-prenda {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--gold-bright, #f0b429);
+}
+
 /* ---- Acciones del editor ---- */
 
 .editor-acciones {

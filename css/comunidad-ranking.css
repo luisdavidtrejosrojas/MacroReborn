@@ -291,16 +291,78 @@ html[data-tema="claro"] {
 .rk-delta.rk-neutro { color: var(--rk-sin-cambio); }
 
 /* ==========================================================================
-   RESTO DEL RANKING (grilla chica, puestos 7+)
+   CUERPO EN 2 COLUMNAS (podio a la izquierda, panel lateral a la
+   derecha) — layout nuevo, mismo alto nivel que el video de
+   referencia. Con el sitio ya angosto (pantallas chicas) colapsa a
+   una sola columna, ver @media más abajo.
    ========================================================================== */
+
+.rk-cuerpo {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 22px;
+  align-items: start;
+}
+
+.rk-columna-podio {
+  min-width: 0;
+}
+
+.rk-columna-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: sticky;
+  top: 84px;
+}
+
+/* ==========================================================================
+   RESTO DEL RANKING (puestos 7+), ahora PAGINADO de a 20 (2 filas de
+   10) con flechas ▲ / ▼ en vez de mostrar todo en un scroll largo.
+   ========================================================================== */
+
+.rk-resto-paginado {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rk-flecha {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--rk-panel-borde);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--rk-texto);
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.rk-flecha:hover:not(:disabled) {
+  background: var(--bg-panel-alt);
+  border-color: var(--gold-deep);
+}
+
+.rk-flecha:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
 
 .rk-lista-resto {
   position: relative;
-  max-width: 1180px;
-  margin: 0 auto 34px;
+  flex: 1 1 auto;
+  min-width: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 12px;
 }
 
 .rk-mini-card {
@@ -433,6 +495,487 @@ html[data-tema="claro"] {
 }
 
 /* ==========================================================================
+   PANEL GENÉRICO (tarjeta base reusada por el panel de pestañas,
+   conectados, centro de avatares, tienda y ayuda)
+   ========================================================================== */
+
+.cr-panel {
+  background: linear-gradient(180deg, var(--bg-panel), #180b31);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.cr-titulo-seccion {
+  font-family: var(--font-display);
+  font-size: 15px;
+  margin: 0 0 8px;
+  color: var(--text-main);
+}
+
+.cr-texto-suave {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.cr-subtitulo {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  margin: 16px 0 10px;
+}
+
+/* ---- Pestañas General / Moderación / Rangos ---- */
+
+.cr-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.cr-tab {
+  flex: 1 1 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 7px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cr-tab:hover {
+  color: var(--text-main);
+}
+
+.cr-tab.cr-tab-activa {
+  background: var(--bg-panel-alt);
+  border-color: var(--line-hover);
+  color: var(--gold-bright);
+}
+
+.cr-tab-panel {
+  display: none;
+}
+
+.cr-tab-panel.cr-tab-panel-activo {
+  display: block;
+}
+
+.cr-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+
+.cr-stat:last-of-type {
+  border-bottom: none;
+}
+
+.cr-stat-label {
+  color: var(--text-muted);
+}
+
+.cr-stat-valor {
+  font-weight: 900;
+  font-family: var(--font-display);
+  color: var(--text-main);
+}
+
+.cr-stat-verde {
+  color: var(--green);
+}
+
+.cr-recien-llegados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cr-recien-llegados .cr-avatar-chico,
+.cr-lista-staff .cr-avatar-chico {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid var(--line);
+  background: #0c0616;
+  flex: 0 0 auto;
+}
+
+.cr-recien-llegados .cr-avatar-chico img,
+.cr-lista-staff .cr-avatar-chico img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.cr-recien-llegados .cr-avatar-chico .cr-capa-chica {
+  object-fit: contain;
+}
+
+.cr-vacio {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  padding: 6px 0;
+}
+
+/* ---- Moderación ---- */
+
+.cr-lista-staff {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cr-fila-staff {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cr-fila-staff .cr-staff-info {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.cr-fila-staff .cr-staff-nombre {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cr-fila-staff .cr-staff-rol {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cr-punto-estado {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: var(--text-placeholder);
+}
+
+.cr-punto-estado.cr-conectado {
+  background: var(--green);
+  box-shadow: 0 0 6px rgba(53, 212, 136, 0.6);
+}
+
+/* ---- Rangos ---- */
+
+.cr-lista-rangos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cr-fila-rango {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+}
+
+.cr-fila-rango .cr-rango-nombre {
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.cr-fila-rango .cr-rango-rango {
+  color: var(--text-muted);
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+
+/* ---- Conectados (panel lateral) ---- */
+
+.cr-panel-titulo {
+  font-family: var(--font-display);
+  font-size: 14px;
+  margin: 0 0 12px;
+  color: var(--text-main);
+}
+
+.cr-grid-conectados {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  padding-right: 2px;
+}
+
+.cr-grid-conectados a {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border: 2px solid var(--line);
+  background: #0c0616;
+}
+
+.cr-grid-conectados img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.cr-grid-conectados .cr-capa-chica {
+  object-fit: contain;
+}
+
+.cr-buscar-usuarios {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+  font-size: 12.5px;
+  outline: none;
+}
+
+.cr-buscar-usuarios:focus {
+  border-color: var(--gold);
+}
+
+/* ==========================================================================
+   CENTRO DE AVATARES + TIENDA + AYUDA (3 columnas)
+   ========================================================================== */
+
+.cr-seccion-media {
+  max-width: 1180px;
+  margin: 0 auto 40px;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 260px;
+  gap: 18px;
+  align-items: start;
+}
+
+.cr-monedas {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 900;
+  font-family: var(--font-display);
+  color: var(--gold-bright);
+  background: rgba(240, 180, 41, 0.1);
+  border: 1px solid rgba(240, 180, 41, 0.3);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.cr-boton-avatares {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  font-weight: 900;
+  font-size: 13px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: transform 0.15s ease;
+}
+
+.cr-boton-avatares:hover {
+  transform: translateY(-2px);
+}
+
+.cr-boton-secundario {
+  background: linear-gradient(135deg, var(--cyan), #0ea5e9 70%);
+  color: #04263a;
+}
+
+.cr-grid-tienda {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.cr-item-tienda {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+}
+
+.cr-item-tienda-imagen {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  background: #0c0616;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cr-item-tienda-imagen img {
+  max-width: 82%;
+  max-height: 82%;
+  object-fit: contain;
+}
+
+.cr-item-tienda-nombre {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cr-item-tienda-precio {
+  font-size: 11px;
+  color: var(--gold-bright);
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.cr-item-tienda-boton {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 4px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold) 60%, var(--gold-deep));
+  color: #241804;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.cr-item-tienda-boton:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.cr-item-tienda-boton:disabled {
+  background: var(--bg-panel-alt);
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.cr-item-tienda-boton.cr-comprada {
+  background: rgba(53, 212, 136, 0.16);
+  color: var(--green);
+}
+
+/* ==========================================================================
+   FEED "¿QUÉ ESTÁ OCURRIENDO AHORA?"
+   ========================================================================== */
+
+.cr-seccion-actividad {
+  max-width: 1180px;
+  margin: 0 auto 50px;
+  padding: 0 24px;
+}
+
+.cr-titulo-actividad {
+  font-family: var(--font-display);
+  font-size: 18px;
+  text-align: center;
+  margin: 0 0 20px;
+  color: var(--text-main);
+}
+
+.cr-feed-actividad {
+  column-count: 3;
+  column-gap: 18px;
+}
+
+.cr-feed-item {
+  break-inside: avoid;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 10px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.cr-feed-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid var(--line);
+  background: #0c0616;
+  flex: 0 0 auto;
+}
+
+.cr-feed-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.cr-feed-avatar .cr-capa-chica {
+  object-fit: contain;
+}
+
+.cr-feed-texto {
+  min-width: 0;
+}
+
+.cr-feed-texto p {
+  margin: 0 0 4px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.cr-feed-texto strong {
+  color: var(--text-main);
+}
+
+.cr-feed-hora {
+  font-size: 10.5px;
+  color: var(--text-placeholder);
+}
+
+/* ==========================================================================
    AJUSTE DE CONTRASTE (bug pre-existente, no de esta página)
    ========================================================================== */
 /* css/comunidad.css define ".btn-ver-perfil { color: #241804 }" con un
@@ -463,6 +1006,26 @@ html[data-tema="claro"] {
   .rk-podio6 {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .rk-cuerpo {
+    grid-template-columns: 1fr;
+  }
+
+  .rk-columna-lateral {
+    position: static;
+  }
+
+  .rk-lista-resto {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .cr-seccion-media {
+    grid-template-columns: 1fr;
+  }
+
+  .cr-feed-actividad {
+    column-count: 2;
+  }
 }
 
 @media (max-width: 620px) {
@@ -488,5 +1051,17 @@ html[data-tema="claro"] {
   .rk-banner-unite {
     flex-direction: column;
     text-align: center;
+  }
+
+  .rk-resto-paginado {
+    flex-wrap: wrap;
+  }
+
+  .cr-grid-conectados {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .cr-feed-actividad {
+    column-count: 1;
   }
 }
