@@ -8,7 +8,7 @@
 <title>Ranking y Comunidad - Nivel, XP y jugadores online | MacroReborn</title>
 
 <!-- SEO -->
-<meta name="description" content="Mirá el ranking de MacroReborn, descubrí quién está conectado ahora y explorá los perfiles de la comunidad. ¿Llegás al podio?">
+<meta name="description" content="Mirá el ranking de MacroReborn, descubrí quién está conectado ahora, mirá qué está pasando en la comunidad y explorá el Centro de Avatares. ¿Llegás al podio?">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.macroreborn.com/comunidad-ranking.html">
 <meta name="theme-color" content="#150a28">
@@ -20,7 +20,7 @@
 <meta property="og:site_name" content="MacroReborn">
 <meta property="og:locale" content="es_AR">
 <meta property="og:title" content="Ranking y Comunidad | MacroReborn">
-<meta property="og:description" content="Mirá el ranking de MacroReborn, descubrí quién está conectado ahora y explorá los perfiles de la comunidad. ¿Llegás al podio?">
+<meta property="og:description" content="Mirá el ranking de MacroReborn, descubrí quién está conectado ahora, mirá qué está pasando en la comunidad y explorá el Centro de Avatares.">
 <meta property="og:url" content="https://www.macroreborn.com/comunidad-ranking.html">
 <meta property="og:image" content="https://www.macroreborn.com/imagenes/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -30,7 +30,7 @@
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Ranking y Comunidad | MacroReborn">
-<meta name="twitter:description" content="Mirá el ranking de MacroReborn, descubrí quién está conectado ahora y explorá los perfiles de la comunidad. ¿Llegás al podio?">
+<meta name="twitter:description" content="Mirá el ranking de MacroReborn, descubrí quién está conectado ahora, mirá qué está pasando en la comunidad y explorá el Centro de Avatares.">
 <meta name="twitter:image" content="https://www.macroreborn.com/imagenes/og-image.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -64,7 +64,8 @@
 </nav>
 
 <!-- ============================================================
-     RANKING (rediseño estilo "foto de referencia")
+     RANKING — podio fijo (top 6) + resto paginado de a 20 con
+     flechas ▲ / ▼ (mismo comportamiento que el video de referencia)
      ============================================================ -->
 <section class="rk-hero">
 
@@ -81,32 +82,126 @@
       placeholder="🔍 Buscar jugador...">
   </div>
 
-  <div id="podioTop6" class="rk-podio6"></div>
+  <div class="rk-cuerpo">
 
-  <div id="listaRankingResto" class="rk-lista-resto"></div>
+    <!-- Columna principal: podio + resto paginado -->
+    <div class="rk-columna-podio">
 
-  <div id="rkBannerUnite" class="rk-banner-unite">
-    <p>¿Te gustaría aparecer públicamente en el ranking y adquirir popularidad?</p>
-    <a href="registro.html" class="rk-boton-unite">¡Únete y desafía a la comunidad!</a>
+      <div id="podioTop6" class="rk-podio6"></div>
+
+      <div class="rk-resto-paginado">
+        <button type="button" id="rkFlechaArriba" class="rk-flecha" aria-label="Puestos anteriores">▲</button>
+        <div id="listaRankingResto" class="rk-lista-resto"></div>
+        <button type="button" id="rkFlechaAbajo" class="rk-flecha" aria-label="Puestos siguientes">▼</button>
+      </div>
+
+      <div id="rkBannerUnite" class="rk-banner-unite">
+        <p>¿Te gustaría aparecer públicamente en el ranking y adquirir popularidad?</p>
+        <a href="registro.html" class="rk-boton-unite">¡Únete y desafía a la comunidad!</a>
+      </div>
+
+    </div>
+
+    <!-- Columna lateral: estadísticas / moderación / rangos + conectados -->
+    <aside class="rk-columna-lateral">
+
+      <div class="cr-panel cr-panel-tabs">
+
+        <div class="cr-tabs" role="tablist">
+          <button type="button" class="cr-tab cr-tab-activa" data-tab="general" role="tab">General</button>
+          <button type="button" class="cr-tab" data-tab="moderacion" role="tab">Moderación</button>
+          <button type="button" class="cr-tab" data-tab="rangos" role="tab">Rangos</button>
+        </div>
+
+        <div id="crTabGeneral" class="cr-tab-panel cr-tab-panel-activo">
+          <div class="cr-stat">
+            <span class="cr-stat-label">Registrados en total</span>
+            <span id="crStatRegistrados" class="cr-stat-valor">—</span>
+          </div>
+          <div class="cr-stat">
+            <span class="cr-stat-label">Conectados ahora</span>
+            <span id="crStatConectados" class="cr-stat-valor cr-stat-verde">—</span>
+          </div>
+          <div class="cr-stat">
+            <span class="cr-stat-label">Comentarios / hora</span>
+            <span id="crStatComentarios" class="cr-stat-valor">—</span>
+          </div>
+
+          <p class="cr-subtitulo">Recién llegados (hoy)</p>
+          <div id="crRecienLlegados" class="cr-recien-llegados"></div>
+        </div>
+
+        <div id="crTabModeracion" class="cr-tab-panel">
+          <p class="cr-subtitulo">Mentores y administradores</p>
+          <div id="crListaModeracion" class="cr-lista-staff"></div>
+        </div>
+
+        <div id="crTabRangos" class="cr-tab-panel">
+          <p class="cr-subtitulo">Tramos del ranking general</p>
+          <div id="crListaRangos" class="cr-lista-rangos"></div>
+        </div>
+
+      </div>
+
+      <div class="cr-panel cr-panel-conectados">
+        <h3 class="cr-panel-titulo">🟢 Conectados</h3>
+        <div id="crGridConectados" class="cr-grid-conectados"></div>
+        <input id="crBuscarConectado" type="text" class="cr-buscar-usuarios" placeholder="🔍 Buscar usuarios...">
+      </div>
+
+    </aside>
+
   </div>
 
 </section>
 
 <!-- ============================================================
-     COMUNIDAD (misma estructura/clases que tenía comunidad.html,
-     para reusar css/comunidad.css tal cual está)
+     CENTRO DE AVATARES + AYUDA
+     ============================================================ -->
+<section class="cr-seccion-media">
+
+  <div class="cr-panel cr-centro-avatares">
+    <h2 class="cr-titulo-seccion">👕 Centro de avatares</h2>
+    <p class="cr-texto-suave">Personalizá tu avatar con prendas nuevas. Se pagan con monedas 🪙.</p>
+
+    <div id="crMonedasUsuario" class="cr-monedas"></div>
+
+    <a href="perfil.html" class="cr-boton-avatares">Ir a mi avatar</a>
+  </div>
+
+  <div class="cr-panel cr-avatares-recientes">
+    <h2 class="cr-titulo-seccion">✨ Añadidas recientemente</h2>
+    <div id="crGridTienda" class="cr-grid-tienda"></div>
+  </div>
+
+  <div class="cr-panel cr-necesitas-ayuda">
+    <h2 class="cr-titulo-seccion">💬 ¿Necesitas ayuda?</h2>
+    <p class="cr-texto-suave">
+      ¿Dudas? ¿Preguntas? Si necesitás ayuda con algo de la página no dudes en preguntar
+      a los mentores, administradores o a los más veteranos. La comunidad te ayudará.
+    </p>
+    <a href="chat.html" class="cr-boton-avatares cr-boton-secundario">Ir al chat</a>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     ¿QUÉ ESTÁ OCURRIENDO AHORA? — feed global de actividad
+     ============================================================ -->
+<section class="cr-seccion-actividad">
+  <h2 class="cr-titulo-actividad">📡 ¿Qué está ocurriendo ahora?</h2>
+  <div id="crFeedActividad" class="cr-feed-actividad"></div>
+</section>
+
+<!-- ============================================================
+     COMUNIDAD — listado completo de jugadores (se mantiene igual
+     que antes: misma estructura/clases que comunidad.css)
      ============================================================ -->
 <main class="comunidad-main">
 
   <div class="comunidad-controles">
     <input type="text" id="buscadorUsuarios" class="buscador" placeholder="🔍 Buscar jugador por nombre...">
   </div>
-
-  <!-- USUARIOS CONECTADOS -->
-  <section class="seccion-conectados">
-    <h2 class="seccion-titulo">🟢 Usuarios conectados</h2>
-    <div id="listaConectados" class="grid-conectados"></div>
-  </section>
 
   <!-- TODOS LOS USUARIOS -->
   <section class="seccion-todos">
@@ -161,6 +256,7 @@
 <script src="js/core.js"></script>
 
 <script src="js/motor/permisos.js"></script>
+<script src="js/motor/actividad.js"></script>
 <script src="js/motor/logros.js"></script>
 <script src="js/motor/insignias.js"></script>
 <script src="js/comunidad-ranking.js"></script>
