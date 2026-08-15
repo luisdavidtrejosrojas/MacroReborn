@@ -4,7 +4,7 @@ const juegos = [
 {
     id: 2,
     nombre: "Brawl Stars",
-    imagen: "imagenes/juegos/brawlstars.png",
+    imagen: "imagenes/juegos/brawlstars.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -15,7 +15,7 @@ const juegos = [
 {
     id: 11,
     nombre: "Dragon Ball Devolution",
-    imagen: "imagenes/juegos/dbzdevolution.png",
+    imagen: "imagenes/juegos/dbzdevolution.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -26,7 +26,7 @@ const juegos = [
 {
     id: 13,
     nombre: "Mario Combat",
-    imagen: "imagenes/juegos/mariocombat.png",
+    imagen: "imagenes/juegos/mariocombat.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -37,7 +37,7 @@ const juegos = [
 {
     id: 30,
     nombre: "The Binding of Isaac: Wrath of the Lamb - Eternal Edition",
-    imagen: "imagenes/juegos/isaacwratheternal.png",
+    imagen: "imagenes/juegos/isaacwratheternal.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -48,7 +48,7 @@ const juegos = [
 {
     id: 39,
     nombre: "LEGO Batman",
-    imagen: "imagenes/juegos/legobatman.png",
+    imagen: "imagenes/juegos/legobatman.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -59,7 +59,7 @@ const juegos = [
 {
     id: 44,
     nombre: "Counter-Strike",
-    imagen: "imagenes/juegos/counterstrike.png",
+    imagen: "imagenes/juegos/counterstrike.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -70,7 +70,7 @@ const juegos = [
 {
     id: 46,
     nombre: "Half-Life",
-    imagen: "imagenes/juegos/halflife.png",
+    imagen: "imagenes/juegos/halflife.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -81,7 +81,7 @@ const juegos = [
 {
     id: 54,
     nombre: "Mega Man: The Wily Wars",
-    imagen: "imagenes/juegos/megamanwilywars.png",
+    imagen: "imagenes/juegos/megamanwilywars.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -92,7 +92,7 @@ const juegos = [
 {
     id: 64,
     nombre: "Ben 10: Protector of Earth",
-    imagen: "imagenes/juegos/ben10protector.png",
+    imagen: "imagenes/juegos/ben10protector.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -103,7 +103,7 @@ const juegos = [
 {
     id: 68,
     nombre: "Brotato",
-    imagen: "imagenes/juegos/brotato.png",
+    imagen: "imagenes/juegos/brotato.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -114,7 +114,7 @@ const juegos = [
 {
     id: 99,
     nombre: "Spider-Man",
-    imagen: "imagenes/juegos/spidermanps1.png",
+    imagen: "imagenes/juegos/spidermanps1.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -125,7 +125,7 @@ const juegos = [
 {
     id: 100,
     nombre: "Doom 64",
-    imagen: "imagenes/juegos/doom64.png",
+    imagen: "imagenes/juegos/doom64.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -136,7 +136,7 @@ const juegos = [
 {
     id: 103,
     nombre: "GoldenEye 007",
-    imagen: "imagenes/juegos/goldeneye64.png",
+    imagen: "imagenes/juegos/goldeneye64.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -147,7 +147,7 @@ const juegos = [
 {
     id: 29,
     nombre: "Henry Stickmin: Escaping the Prison",
-    imagen: "imagenes/juegos/henrystickminescapingprison.png",
+    imagen: "imagenes/juegos/henrystickminescapingprison.jpg",
     categoria: "Aventura",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -158,7 +158,7 @@ const juegos = [
 {
     id: 51,
     nombre: "Henry Stickmin: Fleeing the Complex",
-    imagen: "imagenes/juegos/henrystickmincomplex.png",
+    imagen: "imagenes/juegos/henrystickmincomplex.jpg",
     categoria: "Aventura",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -169,7 +169,7 @@ const juegos = [
 {
     id: 62,
     nombre: "The Legend of Zelda: Majora's Mask",
-    imagen: "imagenes/juegos/majorasmask.png",
+    imagen: "imagenes/juegos/majorasmask.jpg",
     categoria: "Aventura",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -180,7 +180,7 @@ const juegos = [
 {
     id: 78,
     nombre: "Schoolboy Runaway",
-    imagen: "imagenes/juegos/schoolboyrunaway.png",
+    imagen: "imagenes/juegos/schoolboyrunaway.jpg",
     categoria: "Aventura",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -191,7 +191,7 @@ const juegos = [
 {
     id: 95,
     nombre: "The Legend of Zelda: A Link to the Past",
-    imagen: "imagenes/juegos/zeldalinktothepast.png",
+    imagen: "imagenes/juegos/zeldalinktothepast.jpg",
     categoria: "Aventura",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -202,7 +202,7 @@ const juegos = [
 {
     id: 3,
     nombre: "Deltarune",
-    imagen: "imagenes/juegos/deltarune.png",
+    imagen: "imagenes/juegos/deltarune.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -213,7 +213,7 @@ const juegos = [
 {
     id: 34,
     nombre: "Pokémon FireRed",
-    imagen: "imagenes/juegos/pokemonfirered.png",
+    imagen: "imagenes/juegos/pokemonfirered.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -224,7 +224,7 @@ const juegos = [
 {
     id: 35,
     nombre: "Pokémon Emerald",
-    imagen: "imagenes/juegos/pokemonemerald.png",
+    imagen: "imagenes/juegos/pokemonemerald.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -235,7 +235,7 @@ const juegos = [
 {
     id: 36,
     nombre: "Pokémon: Team Rocket Edition",
-    imagen: "imagenes/juegos/pokemonrocketedition.png",
+    imagen: "imagenes/juegos/pokemonrocketedition.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -246,7 +246,7 @@ const juegos = [
 {
     id: 40,
     nombre: "Mario & Luigi: Bowser's Inside Story",
-    imagen: "imagenes/juegos/marioyluigibowserinside.png",
+    imagen: "imagenes/juegos/marioyluigibowserinside.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -257,7 +257,7 @@ const juegos = [
 {
     id: 41,
     nombre: "Mario & Luigi: Partners in Time",
-    imagen: "imagenes/juegos/marioyluigipartnersintime.png",
+    imagen: "imagenes/juegos/marioyluigipartnersintime.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -268,7 +268,7 @@ const juegos = [
 {
     id: 42,
     nombre: "Pokémon Black Version",
-    imagen: "imagenes/juegos/pokemonblack.png",
+    imagen: "imagenes/juegos/pokemonblack.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -279,7 +279,7 @@ const juegos = [
 {
     id: 56,
     nombre: "Pokémon Gaia",
-    imagen: "imagenes/juegos/pokegaia.png",
+    imagen: "imagenes/juegos/pokegaia.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -290,7 +290,7 @@ const juegos = [
 {
     id: 57,
     nombre: "Pokémon Unbound",
-    imagen: "imagenes/juegos/pokemonunbound.png",
+    imagen: "imagenes/juegos/pokemonunbound.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -301,7 +301,7 @@ const juegos = [
 {
     id: 58,
     nombre: "Super Mariomon",
-    imagen: "imagenes/juegos/mariomon.png",
+    imagen: "imagenes/juegos/mariomon.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -312,7 +312,7 @@ const juegos = [
 {
     id: 61,
     nombre: "Paper Mario 64",
-    imagen: "imagenes/juegos/papermario64.png",
+    imagen: "imagenes/juegos/papermario64.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -323,7 +323,7 @@ const juegos = [
 {
     id: 83,
     nombre: "Pokémon Stadium 2",
-    imagen: "imagenes/juegos/pokemonstadium2.png",
+    imagen: "imagenes/juegos/pokemonstadium2.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -334,7 +334,7 @@ const juegos = [
 {
     id: 85,
     nombre: "Final Fantasy Sonic X: Chapter 1",
-    imagen: "imagenes/juegos/finalsonic1.png",
+    imagen: "imagenes/juegos/finalsonic1.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -345,7 +345,7 @@ const juegos = [
 {
     id: 89,
     nombre: "Final Fantasy",
-    imagen: "imagenes/juegos/finalfantasy.png",
+    imagen: "imagenes/juegos/finalfantasy.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -356,7 +356,7 @@ const juegos = [
 {
     id: 90,
     nombre: "Final Fantasy II",
-    imagen: "imagenes/juegos/finalfantasy2.png",
+    imagen: "imagenes/juegos/finalfantasy2.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -367,7 +367,7 @@ const juegos = [
 {
     id: 92,
     nombre: "Chrono Trigger",
-    imagen: "imagenes/juegos/chronotrigger.png",
+    imagen: "imagenes/juegos/chronotrigger.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -378,7 +378,7 @@ const juegos = [
 {
     id: 96,
     nombre: "Final Fantasy IX",
-    imagen: "imagenes/juegos/finalfantasyix.png",
+    imagen: "imagenes/juegos/finalfantasyix.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -389,7 +389,7 @@ const juegos = [
 {
     id: 8,
     nombre: "Koopa's Revenge",
-    imagen: "imagenes/juegos/kooparevenge.png",
+    imagen: "imagenes/juegos/kooparevenge.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -400,7 +400,7 @@ const juegos = [
 {
     id: 10,
     nombre: "Koopa's Revenge 2",
-    imagen: "imagenes/juegos/kooparevenge2.png",
+    imagen: "imagenes/juegos/kooparevenge2.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -411,7 +411,7 @@ const juegos = [
 {
     id: 16,
     nombre: "Super Mario Crossover",
-    imagen: "imagenes/juegos/mariocrossover.png",
+    imagen: "imagenes/juegos/mariocrossover.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -422,7 +422,7 @@ const juegos = [
 {
     id: 17,
     nombre: "Super Mario 63",
-    imagen: "imagenes/juegos/mario63.png",
+    imagen: "imagenes/juegos/mario63.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -433,7 +433,7 @@ const juegos = [
 {
     id: 21,
     nombre: "Geometry Dash",
-    imagen: "imagenes/juegos/geometrydashlite.png",
+    imagen: "imagenes/juegos/geometrydashlite.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -444,7 +444,7 @@ const juegos = [
 {
     id: 24,
     nombre: "Meat Boy",
-    imagen: "imagenes/juegos/meatboy.png",
+    imagen: "imagenes/juegos/meatboy.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -455,7 +455,7 @@ const juegos = [
 {
     id: 28,
     nombre: "Fancy Pants Adventure",
-    imagen: "imagenes/juegos/fancypants.png",
+    imagen: "imagenes/juegos/fancypants.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -466,7 +466,7 @@ const juegos = [
 {
     id: 32,
     nombre: "Crash Bandicoot",
-    imagen: "imagenes/juegos/crashbandicoot.png",
+    imagen: "imagenes/juegos/crashbandicoot.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -477,7 +477,7 @@ const juegos = [
 {
     id: 33,
     nombre: "Super Mario Bros",
-    imagen: "imagenes/juegos/mariobros.png",
+    imagen: "imagenes/juegos/mariobros.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -488,7 +488,7 @@ const juegos = [
 {
     id: 38,
     nombre: "Super Mario 64",
-    imagen: "imagenes/juegos/mario64.png",
+    imagen: "imagenes/juegos/mario64.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -499,7 +499,7 @@ const juegos = [
 {
     id: 50,
     nombre: "Fancy Pants Adventure 2",
-    imagen: "imagenes/juegos/fancypants2.png",
+    imagen: "imagenes/juegos/fancypants2.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -510,7 +510,7 @@ const juegos = [
 {
     id: 53,
     nombre: "Super Mario Bros. 3",
-    imagen: "imagenes/juegos/mariobros3.png",
+    imagen: "imagenes/juegos/mariobros3.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -521,7 +521,7 @@ const juegos = [
 {
     id: 55,
     nombre: "Sonic the Hedgehog",
-    imagen: "imagenes/juegos/sonic.png",
+    imagen: "imagenes/juegos/sonic.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -532,7 +532,7 @@ const juegos = [
 {
     id: 66,
     nombre: "New Super Mario Bros",
-    imagen: "imagenes/juegos/newsupermario.png",
+    imagen: "imagenes/juegos/newsupermario.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -543,7 +543,7 @@ const juegos = [
 {
     id: 69,
     nombre: "Cat Mario",
-    imagen: "imagenes/juegos/catmario.png",
+    imagen: "imagenes/juegos/catmario.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -565,7 +565,7 @@ const juegos = [
 {
     id: 76,
     nombre: "Pizza Tower",
-    imagen: "imagenes/juegos/pizzatower.png",
+    imagen: "imagenes/juegos/pizzatower.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -576,7 +576,7 @@ const juegos = [
 {
     id: 77,
     nombre: "Red Ball 4",
-    imagen: "imagenes/juegos/redball4.png",
+    imagen: "imagenes/juegos/redball4.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -587,7 +587,7 @@ const juegos = [
 {
     id: 80,
     nombre: "Sonic Robo Blast 2",
-    imagen: "imagenes/juegos/sonicroboblast2.png",
+    imagen: "imagenes/juegos/sonicroboblast2.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -598,7 +598,7 @@ const juegos = [
 {
     id: 87,
     nombre: "Ultimate Flash Sonic",
-    imagen: "imagenes/juegos/flashsonic.png",
+    imagen: "imagenes/juegos/flashsonic.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -609,7 +609,7 @@ const juegos = [
 {
     id: 88,
     nombre: "Castlevania",
-    imagen: "imagenes/juegos/castlevania.png",
+    imagen: "imagenes/juegos/castlevania.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -620,7 +620,7 @@ const juegos = [
 {
     id: 91,
     nombre: "Kirby's Adventure",
-    imagen: "imagenes/juegos/kirbysadventure.png",
+    imagen: "imagenes/juegos/kirbysadventure.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -631,7 +631,7 @@ const juegos = [
 {
     id: 93,
     nombre: "Donkey Kong Country",
-    imagen: "imagenes/juegos/dkcountry.png",
+    imagen: "imagenes/juegos/dkcountry.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -642,7 +642,7 @@ const juegos = [
 {
     id: 94,
     nombre: "Super Mario World",
-    imagen: "imagenes/juegos/marioworld.png",
+    imagen: "imagenes/juegos/marioworld.jpg",
     categoria: "Plataformas",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -653,7 +653,7 @@ const juegos = [
 {
     id: 5,
     nombre: "Grindcraft",
-    imagen: "imagenes/juegos/grindcraft.png",
+    imagen: "imagenes/juegos/grindcraft.jpg",
     categoria: "Estrategia",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -664,7 +664,7 @@ const juegos = [
 {
     id: 14,
     nombre: "Minecraft Tower Defense",
-    imagen: "imagenes/juegos/minecrafttowerdefense.png",
+    imagen: "imagenes/juegos/minecrafttowerdefense.jpg",
     categoria: "Estrategia",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -675,7 +675,7 @@ const juegos = [
 {
     id: 15,
     nombre: "Plantas vs. Zombies",
-    imagen: "imagenes/juegos/plantasvszombies.png",
+    imagen: "imagenes/juegos/plantasvszombies.jpg",
     categoria: "Estrategia",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -686,7 +686,7 @@ const juegos = [
 {
     id: 26,
     nombre: "Pokémon Tower Defense",
-    imagen: "imagenes/juegos/pokemontowerdefense.png",
+    imagen: "imagenes/juegos/pokemontowerdefense.jpg",
     categoria: "Estrategia",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -697,7 +697,7 @@ const juegos = [
 {
     id: 37,
     nombre: "Pokémon Stadium",
-    imagen: "imagenes/juegos/pokemonstadium.png",
+    imagen: "imagenes/juegos/pokemonstadium.jpg",
     categoria: "Estrategia",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -708,7 +708,7 @@ const juegos = [
 {
     id: 70,
     nombre: "Chess Classic",
-    imagen: "imagenes/juegos/chess.png",
+    imagen: "imagenes/juegos/chess.jpg",
     categoria: "Estrategia",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -719,7 +719,7 @@ const juegos = [
 {
     id: 12,
     nombre: "Douchebag Life",
-    imagen: "imagenes/juegos/douchebaglife.png",
+    imagen: "imagenes/juegos/douchebaglife.jpg",
     categoria: "Simulación",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -730,7 +730,7 @@ const juegos = [
 {
     id: 25,
     nombre: "Papa's Pizzeria",
-    imagen: "imagenes/juegos/papaspizzeria.png",
+    imagen: "imagenes/juegos/papaspizzeria.jpg",
     categoria: "Simulación",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -741,7 +741,7 @@ const juegos = [
 {
     id: 43,
     nombre: "BitLife",
-    imagen: "imagenes/juegos/bitlife.png",
+    imagen: "imagenes/juegos/bitlife.jpg",
     categoria: "Simulación",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -752,7 +752,7 @@ const juegos = [
 {
     id: 52,
     nombre: "Papa's Freezeria",
-    imagen: "imagenes/juegos/papasfreezeria.png",
+    imagen: "imagenes/juegos/papasfreezeria.jpg",
     categoria: "Simulación",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -763,7 +763,7 @@ const juegos = [
 {
     id: 63,
     nombre: "Animal Crossing: Wild World",
-    imagen: "imagenes/juegos/animalcrossingwildworld.png",
+    imagen: "imagenes/juegos/animalcrossingwildworld.jpg",
     categoria: "Simulación",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -774,7 +774,7 @@ const juegos = [
 {
     id: 65,
     nombre: "Cooking Mama",
-    imagen: "imagenes/juegos/cookingmama.png",
+    imagen: "imagenes/juegos/cookingmama.jpg",
     categoria: "Simulación",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -785,7 +785,7 @@ const juegos = [
 {
     id: 75,
     nombre: "Pou",
-    imagen: "imagenes/juegos/pou.png",
+    imagen: "imagenes/juegos/pou.jpg",
     categoria: "Simulación",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -796,7 +796,7 @@ const juegos = [
 {
     id: 84,
     nombre: "Duck Life 5",
-    imagen: "imagenes/juegos/ducklife5.png",
+    imagen: "imagenes/juegos/ducklife5.jpg",
     categoria: "Simulación",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -807,7 +807,7 @@ const juegos = [
 {
     id: 9,
     nombre: "NBA Live 2003",
-    imagen: "imagenes/juegos/nbalive2003.png",
+    imagen: "imagenes/juegos/nbalive2003.jpg",
     categoria: "Deportes",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -818,7 +818,7 @@ const juegos = [
 {
     id: 67,
     nombre: "Basketball Legends 2020",
-    imagen: "imagenes/juegos/basketlegends.png",
+    imagen: "imagenes/juegos/basketlegends.jpg",
     categoria: "Deportes",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -829,7 +829,7 @@ const juegos = [
 {
     id: 97,
     nombre: "Gran Turismo",
-    imagen: "imagenes/juegos/granturismo.png",
+    imagen: "imagenes/juegos/granturismo.jpg",
     categoria: "Deportes",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -840,7 +840,7 @@ const juegos = [
 {
     id: 101,
     nombre: "FIFA 99",
-    imagen: "imagenes/juegos/fifa99.png",
+    imagen: "imagenes/juegos/fifa99.jpg",
     categoria: "Deportes",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -851,7 +851,7 @@ const juegos = [
 {
     id: 102,
     nombre: "Mario Kart 64",
-    imagen: "imagenes/juegos/mariokart64.png",
+    imagen: "imagenes/juegos/mariokart64.jpg",
     categoria: "Deportes",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -862,7 +862,7 @@ const juegos = [
 {
     id: 105,
     nombre: "Mario Tennis 64",
-    imagen: "imagenes/juegos/mariotennis64.png",
+    imagen: "imagenes/juegos/mariotennis64.jpg",
     categoria: "Deportes",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -875,7 +875,7 @@ const juegos = [
 {
     id: 18,
     nombre: "Super Smash Flash",
-    imagen: "imagenes/juegos/supersmashflash.png",
+    imagen: "imagenes/juegos/supersmashflash.jpg",
     categoria: "Lucha",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -886,7 +886,7 @@ const juegos = [
 {
     id: 27,
     nombre: "Fairy Tail vs One Piece",
-    imagen: "imagenes/juegos/fairytailvsonepiece.png",
+    imagen: "imagenes/juegos/fairytailvsonepiece.jpg",
     categoria: "Lucha",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -897,7 +897,7 @@ const juegos = [
 {
     id: 31,
     nombre: "Bleach vs Naruto",
-    imagen: "imagenes/juegos/bleachvsnaruto.png",
+    imagen: "imagenes/juegos/bleachvsnaruto.jpg",
     categoria: "Lucha",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -908,7 +908,7 @@ const juegos = [
 {
     id: 60,
     nombre: "Mortal Kombat 4",
-    imagen: "imagenes/juegos/mortalkombat4.png",
+    imagen: "imagenes/juegos/mortalkombat4.jpg",
     categoria: "Lucha",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -919,7 +919,7 @@ const juegos = [
 {
     id: 86,
     nombre: "Super Smash Flash 2",
-    imagen: "imagenes/juegos/smashflash2.png",
+    imagen: "imagenes/juegos/smashflash2.jpg",
     categoria: "Lucha",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -930,7 +930,7 @@ const juegos = [
 {
     id: 6,
     nombre: "Paper.io",
-    imagen: "imagenes/juegos/paperio.png",
+    imagen: "imagenes/juegos/paperio.jpg",
     categoria: "Arcade",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -941,7 +941,7 @@ const juegos = [
 {
     id: 7,
     nombre: "Snake.io",
-    imagen: "imagenes/juegos/snakeio.png",
+    imagen: "imagenes/juegos/snakeio.jpg",
     categoria: "Arcade",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -952,7 +952,7 @@ const juegos = [
 {
     id: 48,
     nombre: "Subway Surfers",
-    imagen: "imagenes/juegos/subwaysurfers.png",
+    imagen: "imagenes/juegos/subwaysurfers.jpg",
     categoria: "Arcade",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -963,7 +963,7 @@ const juegos = [
 {
     id: 49,
     nombre: "Bad Ice Cream",
-    imagen: "imagenes/juegos/badicecream.png",
+    imagen: "imagenes/juegos/badicecream.jpg",
     categoria: "Arcade",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -974,7 +974,7 @@ const juegos = [
 {
     id: 81,
     nombre: "Temple Run 2",
-    imagen: "imagenes/juegos/templerun2.png",
+    imagen: "imagenes/juegos/templerun2.jpg",
     categoria: "Arcade",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -985,7 +985,7 @@ const juegos = [
 {
     id: 20,
     nombre: "The World's Hardest Game",
-    imagen: "imagenes/juegos/theworldhardestgame.png",
+    imagen: "imagenes/juegos/theworldhardestgame.jpg",
     categoria: "Puzzles",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -996,7 +996,7 @@ const juegos = [
 {
     id: 22,
     nombre: "Trollface Quest",
-    imagen: "imagenes/juegos/trollfacequest.png",
+    imagen: "imagenes/juegos/trollfacequest.jpg",
     categoria: "Puzzles",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1007,7 +1007,7 @@ const juegos = [
 {
     id: 23,
     nombre: "Trollface Quest 2",
-    imagen: "imagenes/juegos/trollfacequest2.png",
+    imagen: "imagenes/juegos/trollfacequest2.jpg",
     categoria: "Puzzles",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1018,7 +1018,7 @@ const juegos = [
 {
     id: 47,
     nombre: "Infinite Craft",
-    imagen: "imagenes/juegos/infinitecraft.png",
+    imagen: "imagenes/juegos/infinitecraft.jpg",
     categoria: "Puzzles",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1029,7 +1029,7 @@ const juegos = [
 {
     id: 19,
     nombre: "Whack Your Boss",
-    imagen: "imagenes/juegos/whackyourboss.png",
+    imagen: "imagenes/juegos/whackyourboss.jpg",
     categoria: "Casual",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1040,7 +1040,7 @@ const juegos = [
 {
     id: 82,
     nombre: "UNO",
-    imagen: "imagenes/juegos/uno.png",
+    imagen: "imagenes/juegos/uno.jpg",
     categoria: "Casual",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1051,7 +1051,7 @@ const juegos = [
 {
     id: 104,
     nombre: "Mario Party 64",
-    imagen: "imagenes/juegos/marioparty64.png",
+    imagen: "imagenes/juegos/marioparty64.jpg",
     categoria: "Casual",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1062,7 +1062,7 @@ const juegos = [
 {
     id: 4,
     nombre: "Fireboy and Watergirl 2",
-    imagen: "imagenes/juegos/fireboyandwatergirl2.png",
+    imagen: "imagenes/juegos/fireboyandwatergirl2.jpg",
     categoria: "Cooperativo",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1076,7 +1076,7 @@ const juegos = [
 {
     id: 1,
     nombre: "Baldi's Basics",
-    imagen: "imagenes/juegos/baldibasics.png",
+    imagen: "imagenes/juegos/baldibasics.jpg",
     categoria: "Terror",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1087,7 +1087,7 @@ const juegos = [
 {
     id: 45,
     nombre: "Five Nights at Freddy's",
-    imagen: "imagenes/juegos/fnaf.png",
+    imagen: "imagenes/juegos/fnaf.jpg",
     categoria: "Terror",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1098,7 +1098,7 @@ const juegos = [
 {
     id: 59,
     nombre: "Resident Evil",
-    imagen: "imagenes/juegos/residentevil.png",
+    imagen: "imagenes/juegos/residentevil.jpg",
     categoria: "Terror",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1109,7 +1109,7 @@ const juegos = [
 {
     id: 71,
     nombre: "Doki Doki Literature Club!",
-    imagen: "imagenes/juegos/dokiliterature.png",
+    imagen: "imagenes/juegos/dokiliterature.jpg",
     categoria: "Terror",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1120,7 +1120,7 @@ const juegos = [
 {
     id: 72,
     nombre: "Five Nights at Freddy's 2",
-    imagen: "imagenes/juegos/fnaf2.png",
+    imagen: "imagenes/juegos/fnaf2.jpg",
     categoria: "Terror",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1131,7 +1131,7 @@ const juegos = [
 {
     id: 73,
     nombre: "Granny",
-    imagen: "imagenes/juegos/granny.png",
+    imagen: "imagenes/juegos/granny.jpg",
     categoria: "Terror",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1142,7 +1142,7 @@ const juegos = [
 {
     id: 79,
     nombre: "Slender: The Eight Pages",
-    imagen: "imagenes/juegos/slenderman.png",
+    imagen: "imagenes/juegos/slenderman.jpg",
     categoria: "Terror",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1153,7 +1153,7 @@ const juegos = [
 {
     id: 98,
     nombre: "Silent Hill",
-    imagen: "imagenes/juegos/silenthill.png",
+    imagen: "imagenes/juegos/silenthill.jpg",
     categoria: "Terror",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1164,7 +1164,7 @@ const juegos = [
 {
     id: 106,
     nombre: "Crazy Zombie 9",
-    imagen: "imagenes/juegos/crazyzombie9.png",
+    imagen: "imagenes/juegos/crazyzombie9.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1175,7 +1175,7 @@ const juegos = [
 {
     id: 107,
     nombre: "Crazy Zombie 8",
-    imagen: "imagenes/juegos/crazyzombie8.png",
+    imagen: "imagenes/juegos/crazyzombie8.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1186,7 +1186,7 @@ const juegos = [
 {
     id: 108,
     nombre: "Earn to Die",
-    imagen: "imagenes/juegos/earntodie.png",
+    imagen: "imagenes/juegos/earntodie.jpg",
     categoria: "Acción",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1197,7 +1197,7 @@ const juegos = [
 {
     id: 109,
     nombre: "Sports Head Football",
-    imagen: "imagenes/juegos/headsfootball.png",
+    imagen: "imagenes/juegos/headsfootball.jpg",
     categoria: "Deportes",
     estado: "⭐ Nuevo",
     tipo: "destacado",
@@ -1208,7 +1208,7 @@ const juegos = [
 {
     id: 110,
     nombre: "Pokémon Emerald Rogue",
-    imagen: "imagenes/juegos/emeraldrogue.png",
+    imagen: "imagenes/juegos/emeraldrogue.jpg",
     categoria: "RPG",
     estado: "⭐ Nuevo",
     tipo: "destacado",
