@@ -13,47 +13,14 @@
 }
 
 /* ==========================================================================
-   NAVBAR — versión simplificada solo para esta página
-   Acá el nav-links original (Inicio/Comunidad/etc) se vació en el HTML.
-   Lo único que queda ahí son la campanita, el perfil, cerrar sesión y el
-   modo oscuro/claro (los sigue inyectando js/navbar.js y js/tema.js, en
-   ese mismo orden). Esta sección solo reacomoda el layout: logo a la
-   izquierda, buscador centrado en el medio de la barra, y ese grupo
-   pegado a la derecha (esquina opuesta al logo).
+   NAVBAR
+   Ya no necesita nada especial acá: usa el layout estándar de 2 filas
+   de css/inicio.css (el mismo que el resto del sitio). La versión vieja
+   de este bloque centraba el buscador a mano con position:absolute
+   pensada para cuando .nav-links quedaba vacío; con .nav-categorias
+   ese caso ya no existe, así que se sacó para no pisar el layout nuevo.
    ========================================================================== */
 
-@media (min-width: 769px) {
-
-  .navbar {
-    position: relative; /* ancla para centrar el buscador respecto a TODA la barra */
-    justify-content: space-between; /* logo a la izquierda, nav-links a la derecha */
-  }
-
-  .navbar .nav-logo {
-    order: 1;
-  }
-
-  /* Grupo (campanita, perfil, cerrar sesión, tema) pegado a la
-     esquina derecha, después del buscador. */
-  .navbar .nav-links {
-    order: 3;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: 10px;
-  }
-
-  /* Centrado real: se posiciona respecto al ancho total de .navbar,
-     no respecto al espacio que sobra entre logo y nav-links. */
-  .navbar .nav-buscador {
-    order: 2;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 420px;
-    max-width: 90%;
-  }
-
-}
 
 /* ==========================================================================
    ENCABEZADO DEL CATÁLOGO

@@ -200,13 +200,11 @@ html {
 .navbar {
   background: var(--navbar-bg);
   backdrop-filter: blur(8px);
-  min-height: 70px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
-  gap: 8px 16px;
-  padding: 14px 32px;
+  gap: 8px 14px;
+  padding: 12px 32px;
   border-bottom: 2px solid var(--gold);
   position: sticky;
   top: 0;
@@ -232,11 +230,38 @@ html {
   filter: drop-shadow(0 0 6px rgba(240, 180, 41, 0.6));
 }
 
+/* ---- Botón "Comunidad" (pastilla violeta, igual que la referencia) ---- */
+
+.nav-boton-comunidad {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #9333ea, #7e22ce);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav-boton-comunidad:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(147, 51, 234, 0.4);
+}
+
+/* ---- Fila superior derecha: sesión / monedas / ayuda ---- */
+/* .nav-links queda casi vacío en el HTML: navbar.js inyecta acá adentro
+   la campanita + monedas + ayuda + usuario (o Entrar/Registrarse). */
+
 .nav-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
+  align-items: center;
   justify-content: flex-end;
+  margin-left: auto;
 }
 
 .nav-links a {
@@ -260,6 +285,84 @@ html {
 
 .nav-links a.sesion-extra:hover {
   border-color: var(--gold);
+}
+
+/* Monedas (🪙) — mismo saldo que se gasta en el Centro de avatares */
+.nav-monedas {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 12.5px;
+  color: var(--gold-bright);
+  background: rgba(240, 180, 41, 0.1);
+  border: 1px solid rgba(240, 180, 41, 0.3);
+  border-radius: 999px;
+  padding: 7px 12px;
+  white-space: nowrap;
+}
+
+/* Botón de ayuda (❔) */
+.nav-ayuda {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  color: var(--text-secondary);
+  font-weight: 800;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.nav-ayuda:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  background: var(--bg-panel-alt);
+}
+
+/* ---- Fila inferior: categorías / navegación del sitio ---- */
+/* Barra ancha tipo "menú de secciones", con la sección activa
+   resaltada en naranja (misma idea que la referencia). */
+
+.nav-categorias {
+  flex: 1 0 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 6px;
+  margin-top: 2px;
+}
+
+.nav-categorias a {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 7px;
+  white-space: nowrap;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.nav-categorias a:hover {
+  color: var(--text-main);
+  background: var(--bg-panel);
+}
+
+.nav-categorias a.activa-nav {
+  background: linear-gradient(135deg, #fb923c, #ea580c);
+  color: #fff;
+}
+
+.nav-categorias a.activa-nav:hover {
+  color: #fff;
+  background: linear-gradient(135deg, #fb923c, #ea580c);
 }
 
 /* ==========================================================================
@@ -337,14 +440,22 @@ html {
     order: 1;
   }
 
-  .nav-buscador {
-    order: 3;
+  .nav-boton-comunidad {
+    order: 2;
   }
 
-  /* El panel de links pasa a ser un desplegable a todo lo ancho,
-     oculto hasta que se toca el botón hamburguesa. */
-  .nav-links {
-    order: 4;
+  .nav-buscador {
+    order: 3;
+    flex: 1 1 100%;
+  }
+
+  /* El panel de links + categorías pasa a ser un desplegable a todo
+     lo ancho, oculto hasta que se toca el botón hamburguesa. Los dos
+     quedan dentro del mismo desplegable (js/nav-toggle.js togglea
+     ambos a la vez), uno arriba del otro. */
+  .nav-links,
+  .nav-categorias {
+    order: 5;
     display: none;
     width: 100%;
     flex-direction: column;
@@ -355,16 +466,27 @@ html {
     border: 1px solid var(--line);
     border-radius: 12px;
     padding: 8px;
-    margin-top: 10px;
-    max-height: calc(100vh - 90px);
-    overflow-y: auto;
+    margin-top: 0;
   }
 
-  .nav-links.nav-abierto {
+  .nav-links {
+    order: 5;
+    margin-top: 10px;
+    max-height: none;
+  }
+
+  .nav-categorias {
+    order: 6;
+    margin-top: 6px;
+  }
+
+  .nav-links.nav-abierto,
+  .nav-categorias.nav-abierto {
     display: flex;
   }
 
   .nav-links a,
+  .nav-categorias a,
   .nav-links button.boton-tema {
     width: 100%;
     box-sizing: border-box;
@@ -373,6 +495,10 @@ html {
     padding: 13px 14px;
     font-size: 15px;
     border-radius: 8px;
+  }
+
+  .nav-categorias a.activa-nav {
+    background: linear-gradient(135deg, #fb923c, #ea580c);
   }
 
   /* El botón de tema (sol/luna) se ve como un ítem más de la lista,
