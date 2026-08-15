@@ -22,6 +22,14 @@
    algunos colores puntuales vía .style.*), pero como ya no pisa un
    style="" cargado desde el HTML, esta base siempre se respeta. */
 
+/* Dentro de .perfil-acciones (fila de la cabecera, ver css/perfil.css)
+   los botones van en línea, sin el margen superior que tenían cuando
+   se apilaban debajo de la biografía. */
+.perfil-acciones #agregarAmigo,
+.perfil-acciones #bloquearUsuario {
+  margin-top: 0;
+}
+
 #agregarAmigo {
   margin-top: 18px;
   background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 65%, var(--gold-deep) 100%);
