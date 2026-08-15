@@ -393,6 +393,78 @@ async function recalcularRankingManual(req, res) {
 
 }
 
+// ==============================
+// /api/system?action=community-stats
+// ==============================
+// Panel "Estadísticas de usuarios" de comunidad-ranking.html (pestaña
+// General): registrados en total, conectados ahora, comentarios en
+// la última hora y avatares de los últimos usuarios registrados hoy.
+// Mismos criterios que ya usa adminStats() (conectado = last_login en
+// los últimos 5 minutos), solo que acá es un endpoint público liviano
+// (sin el resto de las métricas de admin).
+// ==============================
+
+async function communityStats(req, res) {
+
+  const [
+    registradosTotal,
+    conectadosAhora,
+    comentariosUltimaHora,
+    recienLlegados
+  ] = await Promise.all([
+
+    sql`SELECT COUNT(*)::int AS n FROM users;`,
+    sql`SELECT COUNT(*)::int AS n FROM users WHERE last_login > now() - interval '5 minutes';`,
+    sql`SELECT COUNT(*)::int AS n FROM profile_comments WHERE created_at > now() - interval '1 hour';`,
+    sql`SELECT username, avatar FROM users WHERE created_at > now() - interval '1 day' ORDER BY created_at DESC LIMIT 12;`
+
+  ]);
+
+  return res.status(200).json({
+    success: true,
+    registradosTotal: registradosTotal[0].n,
+    conectadosAhora: conectadosAhora[0].n,
+    comentariosPorHora: comentariosUltimaHora[0].n,
+    recienLlegados
+  });
+}
+
+// ==============================
+// /api/system?action=moderators-status
+// ==============================
+// Pestaña "Moderación" del panel de comunidad-ranking.html: lista de
+// administradores/moderadores/colaboradores (mismo criterio de rol
+// que adminStats: badge_id en la tabla "badges") con si están
+// conectados ahora o no.
+// ==============================
+
+async function moderatorsStatus(req, res) {
+
+  const filas = await sql`
+    SELECT u.username, u.avatar, u.last_login, b.badge_id AS rol
+    FROM badges b
+    JOIN users u ON u.id = b.user_id
+    WHERE b.badge_id IN ('administrador','moderador','colaborador')
+    ORDER BY
+      CASE b.badge_id
+        WHEN 'administrador' THEN 0
+        WHEN 'moderador' THEN 1
+        ELSE 2
+      END,
+      u.username ASC;
+  `;
+
+  const cincoMin = 5 * 60 * 1000;
+  const staff = filas.map(f => ({
+    username: f.username,
+    avatar: f.avatar,
+    rol: f.rol,
+    conectado: !!(f.last_login && (Date.now() - new Date(f.last_login).getTime()) <= cincoMin)
+  }));
+
+  return res.status(200).json({ success: true, staff });
+}
+
 module.exports = async function handler(req, res) {
 
   setCors(res, "GET, POST, OPTIONS");
@@ -409,6 +481,8 @@ module.exports = async function handler(req, res) {
     if (action === "admin-stats") return await adminStats(req, res);
     if (action === "recalcular-ranking") return await recalcularRanking(req, res);
     if (action === "recalcular-ranking-manual") return await recalcularRankingManual(req, res);
+    if (action === "community-stats") return await communityStats(req, res);
+    if (action === "moderators-status") return await moderatorsStatus(req, res);
 
     return res.status(400).json({ success: false, error: "Acción inválida" });
 

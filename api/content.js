@@ -1324,6 +1324,141 @@ async function moderationLog(req, res) {
   return res.status(405).json({ success: false, error: "Método no permitido" });
 }
 
+// ==============================
+// /api/content?action=community-feed
+// ==============================
+// Fase "Ranking y comunidad": feed global "¿Qué está ocurriendo
+// ahora?" — a diferencia de activity()/activityFriends(), NO filtra
+// por un usuario puntual: junta lo último de TODOS los usuarios.
+// Reusa la misma tabla activity_log y los mismos "tipo" que ya
+// registra js/motor/actividad.js (comentario, favorito, resena,
+// like_juego, amigo, logro), no crea nada nuevo.
+//
+// GET /api/content?action=community-feed&limit=18
+
+async function communityFeed(req, res) {
+
+  if (req.method !== "GET") {
+    return res.status(405).json({ success: false, error: "Método no permitido" });
+  }
+
+  const limite = Math.min(parseInt(req.query.limit, 10) || 18, 60);
+
+  const filas = await sql`
+    SELECT a.tipo, a.detalle, a.created_at,
+           u.username, u.avatar
+    FROM activity_log a
+    JOIN users u ON u.id = a.user_id
+    WHERE a.tipo IN ('comentario','favorito','resena','like_juego','amigo','logro')
+    ORDER BY a.id DESC
+    LIMIT ${limite};
+  `;
+
+  return res.status(200).json({ success: true, actividades: filas });
+}
+
+
+// ==============================
+// /api/content?action=avatar-shop
+// ==============================
+// Fase "Ranking y comunidad" / Centro de Avatares: catálogo de
+// prendas comprables con monedas (users.monedas) y qué prendas ya
+// tiene cada usuario. Las prendas reusan el mismo sistema de capas
+// del editor de avatar (ver ORDEN_CAPAS_AVATAR en js/core.js):
+// "valorCapa" queda listo para guardarse tal cual en el objeto
+// avatar del usuario.
+//
+// GET  /api/content?action=avatar-shop&username=X
+//   -> catálogo completo + cuáles ya compró X (si se manda username)
+//
+// GET  /api/content?action=avatar-shop-buy&username=X&itemId=Y
+//   (se resuelve como POST más abajo)
+// POST /api/content?action=avatar-shop-buy { username, itemId }
+//   -> descuenta el precio de users.monedas e inserta la compra.
+//   Falla si ya la tiene o si no le alcanzan las monedas.
+
+async function avatarShop(req, res) {
+
+  if (req.method !== "GET") {
+    return res.status(405).json({ success: false, error: "Método no permitido" });
+  }
+
+  const { username } = req.query;
+
+  const items = await sql`
+    SELECT id, categoria, modelo, valor_capa AS "valorCapa", nombre, precio, created_at AS "creadoEl"
+    FROM avatar_shop_items
+    ORDER BY created_at DESC, id DESC;
+  `;
+
+  let comprados = [];
+  let monedas = null;
+
+  if (username) {
+    const userId = await getUserId(username);
+    if (userId) {
+      const filasUsuario = await sql`SELECT monedas FROM users WHERE id = ${userId};`;
+      monedas = filasUsuario.length ? filasUsuario[0].monedas : null;
+
+      const filasCompras = await sql`
+        SELECT item_id FROM avatar_shop_purchases WHERE user_id = ${userId};
+      `;
+      comprados = filasCompras.map(f => f.item_id);
+    }
+  }
+
+  return res.status(200).json({ success: true, items, comprados, monedas });
+}
+
+async function avatarShopBuy(req, res) {
+
+  if (req.method !== "POST") {
+    return res.status(405).json({ success: false, error: "Método no permitido" });
+  }
+
+  const { username, itemId } = req.body || {};
+  if (!username || !itemId) {
+    return res.status(400).json({ success: false, error: "Datos incompletos" });
+  }
+
+  const userId = await getUserId(username);
+  if (!userId) {
+    return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+  }
+
+  const filasItem = await sql`SELECT id, nombre, precio FROM avatar_shop_items WHERE id = ${itemId};`;
+  if (!filasItem.length) {
+    return res.status(404).json({ success: false, error: "La prenda no existe" });
+  }
+  const item = filasItem[0];
+
+  const yaLaTiene = await sql`
+    SELECT 1 FROM avatar_shop_purchases WHERE user_id = ${userId} AND item_id = ${itemId};
+  `;
+  if (yaLaTiene.length) {
+    return res.status(200).json({ success: false, error: "Ya tenés esta prenda" });
+  }
+
+  const filasSaldo = await sql`SELECT monedas FROM users WHERE id = ${userId};`;
+  const saldo = filasSaldo.length ? filasSaldo[0].monedas : 0;
+
+  if (saldo < item.precio) {
+    return res.status(200).json({ success: false, error: "No te alcanzan las monedas" });
+  }
+
+  await sql`UPDATE users SET monedas = monedas - ${item.precio} WHERE id = ${userId};`;
+  await sql`INSERT INTO avatar_shop_purchases (user_id, item_id) VALUES (${userId}, ${itemId});`;
+
+  const filasNuevoSaldo = await sql`SELECT monedas FROM users WHERE id = ${userId};`;
+
+  return res.status(200).json({
+    success: true,
+    itemComprado: item.nombre,
+    monedas: filasNuevoSaldo[0].monedas
+  });
+}
+
+
 module.exports = async function handler(req, res) {
 
   setCors(res, "GET, POST, DELETE, OPTIONS");
@@ -1353,6 +1488,9 @@ module.exports = async function handler(req, res) {
     if (action === "avatar-gallery") return await avatarGallery(req, res);
     if (action === "avatar-vote") return await avatarVote(req, res);
     if (action === "moderation-log") return await moderationLog(req, res);
+    if (action === "community-feed") return await communityFeed(req, res);
+    if (action === "avatar-shop") return await avatarShop(req, res);
+    if (action === "avatar-shop-buy") return await avatarShopBuy(req, res);
 
     return res.status(400).json({ success: false, error: "Acción inválida" });
 
