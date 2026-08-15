@@ -23,11 +23,11 @@ button {
 
 .perfil {
   --clasico-fuente: Verdana, Geneva, Tahoma, sans-serif;
-  --clasico-borde: #38bdf8;
+  --clasico-borde: #6d3fd1;
   --clasico-radio: 10px;
-  --clasico-plate: linear-gradient(180deg, #2f6fb0 0%, #163f6e 100%);
-  --clasico-header: linear-gradient(180deg, #1b2740 0%, #141d31 100%);
-  --clasico-avatar-fondo: linear-gradient(180deg, #101a2c 0%, #0a1220 100%);
+  --clasico-plate: linear-gradient(180deg, #5b3aa0 0%, #2a1150 100%);
+  --clasico-header: linear-gradient(180deg, #2f1a5c 0%, #241145 100%);
+  --clasico-avatar-fondo: linear-gradient(180deg, #1f0f3d 0%, #0c0616 100%);
   max-width: 1180px;
   margin: 0 auto;
   padding: 40px 24px 80px;
@@ -37,10 +37,10 @@ button {
 /* En modo claro (html[data-tema="claro"]) se ve prácticamente igual al
    portal clásico original: celeste vivo sobre paneles blancos. */
 html[data-tema="claro"] .perfil {
-  --clasico-borde: #4c7fc4;
-  --clasico-plate: linear-gradient(180deg, #5088cc 0%, #2f5ea3 100%);
-  --clasico-header: linear-gradient(180deg, #eef5ff 0%, #cfe0f7 100%);
-  --clasico-avatar-fondo: linear-gradient(180deg, #e3efff 0%, #a9cbf2 100%);
+  --clasico-borde: #6d3fd1;
+  --clasico-plate: linear-gradient(180deg, #5b3aa0 0%, #2a1150 100%);
+  --clasico-header: linear-gradient(180deg, #2f1a5c 0%, #241145 100%);
+  --clasico-avatar-fondo: linear-gradient(180deg, #1f0f3d 0%, #0c0616 100%);
 }
 
 /* ==========================================================================
