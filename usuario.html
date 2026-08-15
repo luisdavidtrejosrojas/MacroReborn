@@ -66,62 +66,88 @@
 
 <main class="perfil">
 
-  <div class="perfil-superior">
+  <!-- MIGA DE PAN ESTILO "PORTAL CLÁSICO" -->
+  <div class="perfil-migas">
+    <a href="comunidad.html" class="perfil-volver" aria-label="Volver a comunidad">←</a>
+    <span class="perfil-migas-texto">Juegos » Comunidad » <strong>Perfil de usuario</strong></span>
+  </div>
 
-    <div class="avatar" id="avatarUsuario">
-      <img src="imagenes/avatar.png" alt="Avatar del jugador">
-    </div>
+  <div class="perfil-cuerpo">
 
-    <div class="datos">
-      <h1 id="nombreUsuario">Usuario</h1>
+    <!-- COLUMNA IZQUIERDA: tarjeta de avatar + estadísticas -->
+    <aside class="perfil-sidebar">
+
+      <div class="tarjeta-avatar">
+
+        <div class="tarjeta-avatar-chapas">
+          <span id="nivel" class="nivel tarjeta-chapa-nivel">⭐ Nivel 1</span>
+          <span id="estado" class="estado tarjeta-chapa-estado">🟢 En línea</span>
+        </div>
+
+        <div class="avatar" id="avatarUsuario">
+          <img src="imagenes/avatar.png" alt="Avatar del jugador">
+        </div>
+
+        <div class="tarjeta-avatar-pie">
+          <span class="tarjeta-avatar-nombre" id="tarjetaAvatarNombre">Usuario</span>
+        </div>
+
+      </div>
 
       <div class="insignias-usuario" id="insigniasPerfil"></div>
 
-      <div class="perfil-badges">
-        <p id="estado" class="estado">🟢 En línea</p>
-        <p id="nivel" class="nivel">⭐ Nivel 1</p>
+      <div class="tarjeta-stats">
+        <h3 class="tarjeta-stats-titulo">Estadísticas de <span id="statsNombreUsuario">Usuario</span></h3>
+        <div class="estadisticas">
+          <div><h3>Registrado</h3><p id="registro">Desconocido</p></div>
+          <div class="fila-etiqueta-propia"><h3>Última conexión</h3><p id="ultimaConexion">Última conexión: Nunca</p></div>
+          <div><h3>Experiencia</h3><p id="xp">0 XP</p></div>
+          <div><h3>Ranking</h3><p id="ranking">Sin clasificar</p></div>
+          <div><h3>Logros</h3><p id="logros">0</p></div>
+        </div>
       </div>
 
-      <p id="biografia" class="biografia">Todavía no escribió una biografía.</p>
+    </aside>
 
-      <p id="ultimaConexion" class="meta-conexion">Última conexión: Nunca</p>
+    <!-- COLUMNA DERECHA: pestañas + info + comentarios -->
+    <div class="perfil-principal">
 
-      <!-- BOTÓN AMIGO - estado dinámico desde usuario.js (estilo base en css/usuario.css) -->
-      <button id="agregarAmigo">🤝 Agregar amigo</button>
+      <!-- ACCIONES: petición de amistad / bloqueo, estilo botón clásico -->
+      <div class="perfil-acciones">
+        <!-- BOTÓN AMIGO - estado dinámico desde usuario.js (estilo base en css/usuario.css) -->
+        <button id="agregarAmigo">🤝 Enviar petición de amistad</button>
 
-      <!-- BOTÓN BLOQUEAR - solo visible para quien visita el perfil de
-           otra persona (oculto en el propio, lo maneja usuario.js) -->
-      <button id="bloquearUsuario">🚫 Bloquear a este usuario</button>
-    </div>
+        <!-- BOTÓN BLOQUEAR - solo visible para quien visita el perfil de
+             otra persona (oculto en el propio, lo maneja usuario.js) -->
+        <button id="bloquearUsuario">🚫 Bloquear a este usuario</button>
 
-  </div>
+        <div id="avisoPerfilBloqueado" class="aviso-perfil-bloqueado" hidden>Has sido bloqueado por este usuario, tu acceso es limitado.</div>
+      </div>
 
-  <div class="estadisticas">
-    <div><h3>⭐ XP</h3><p id="xp">0 XP</p></div>
-    <div><h3>🏅 Logros</h3><p id="logros">0</p></div>
-    <div><h3>🏆 Ranking</h3><p id="ranking">Sin clasificar</p></div>
-    <div><h3>📅 Registrado</h3><p id="registro">Desconocido</p></div>
-  </div>
+      <!-- MENÚ DE PESTAÑAS -->
+      <nav class="menu-perfil">
+        <button class="tab activa" data-tab="inicio">🏠 Home</button>
+        <button class="tab" data-tab="actividad-amigos">👥 Actividad de amigos</button>
+        <button class="tab" data-tab="actividad">📜 Actividad Reciente</button>
+        <button class="tab" data-tab="favoritos">❤️ Favoritos</button>
+        <button class="tab" data-tab="ultimos">🎮 Últimos Jugados</button>
+        <button class="tab" data-tab="amigos">🤝 Amigos</button>
+        <button class="tab" data-tab="logros-tab">🏅 Logros</button>
+        <button class="tab" data-tab="avatares-usuario">🧑 Avatar</button>
+        <button class="tab" data-tab="comentarios">💬 Comentarios</button>
+      </nav>
 
-  <!-- MENÚ DE PESTAÑAS -->
-  <div class="menu-perfil">
-    <button class="tab activa" data-tab="inicio">🏠 Inicio</button>
-    <div id="avisoPerfilBloqueado" class="aviso-perfil-bloqueado" hidden>Has sido bloqueado por este usuario, tu acceso es limitado.</div>
-    <button class="tab" data-tab="actividad-amigos">👥 Actividad de amigos</button>
-    <button class="tab" data-tab="actividad">📜 Actividad reciente</button>
-    <button class="tab" data-tab="favoritos">❤️ Juegos favoritos</button>
-    <button class="tab" data-tab="ultimos">🎮 Últimos jugados</button>
-    <button class="tab" data-tab="amigos">🤝 Amigos</button>
-    <button class="tab" data-tab="logros-tab">🏅 Logros</button>
-    <button class="tab" data-tab="avatares-usuario">🖼️ Avatares</button>
-    <button class="tab" data-tab="comentarios">💬 Comentarios</button>
-  </div>
+      <div class="perfil-datos-cabecera">
+        <h1 id="nombreUsuario">Usuario</h1>
+      </div>
 
-  <!-- INICIO -->
-  <section id="inicio" class="contenido-tab activo">
-    <h2>Información general</h2>
-    <p id="descripcionInicio">Todavía no escribió una biografía.</p>
-  </section>
+      <!-- INICIO -->
+      <section id="inicio" class="contenido-tab activo">
+        <div class="perfil-caja-info datos">
+          <p id="biografia" class="biografia">Todavía no escribió una biografía.</p>
+          <p id="descripcionInicio" class="perfil-oculto-visual">Todavía no escribió una biografía.</p>
+        </div>
+      </section>
 
   <!-- ACTIVIDAD AMIGOS -->
   <!-- Contenido pintado por js/usuario-actividad.js. Muestra la
@@ -192,6 +218,12 @@
     <div id="listaComentarios"></div>
   </section>
 
+    </div>
+    <!-- /.perfil-principal -->
+
+  </div>
+  <!-- /.perfil-cuerpo -->
+
 </main>
 
 <!-- FOOTER (mismo componente que el resto de MacroReborn) -->
@@ -254,6 +286,7 @@
 <script src="js/usuario-favoritos.js"></script>
 <script src="js/usuario-historial.js"></script>
 <script src="js/usuario-avatares-galeria.js"></script>
+<script src="js/perfil-tarjeta-clasica.js"></script>
 <script src="js/navbar.js"></script>
 <script src="js/buscador.js"></script>
 <script src="js/nav-toggle.js"></script>

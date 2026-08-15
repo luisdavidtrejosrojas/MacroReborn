@@ -79,67 +79,86 @@ MacroReborn
 
 <main class="perfil">
 
-  <!-- PERFIL SUPERIOR -->
-  <div class="perfil-superior">
+  <!-- MIGA DE PAN ESTILO "PORTAL CLÁSICO" -->
+  <div class="perfil-migas">
+    <a href="comunidad.html" class="perfil-volver" aria-label="Volver a comunidad">←</a>
+    <span class="perfil-migas-texto">Juegos » Comunidad » <strong>Mi perfil</strong></span>
+  </div>
 
-    <div class="avatar">
-      <img src="imagenes/avatar.png" id="avatarPrincipal" alt="Tu avatar en MacroReborn">
-    </div>
+  <div class="perfil-cuerpo">
 
-    <div class="datos">
-      <h1 id="nombreUsuario">Usuario</h1>
+    <!-- COLUMNA IZQUIERDA: tarjeta de avatar + estadísticas -->
+    <aside class="perfil-sidebar">
+
+      <div class="tarjeta-avatar">
+
+        <div class="tarjeta-avatar-chapas">
+          <span class="nivel tarjeta-chapa-nivel">⭐ Nivel 1</span>
+          <span class="estado tarjeta-chapa-estado">🟢 En línea</span>
+        </div>
+
+        <div class="avatar">
+          <img src="imagenes/avatar.png" id="avatarPrincipal" alt="Tu avatar en MacroReborn">
+        </div>
+
+        <div class="tarjeta-avatar-pie">
+          <span class="tarjeta-avatar-nombre" id="tarjetaAvatarNombre">Usuario</span>
+        </div>
+
+      </div>
 
       <div class="insignias-usuario" id="insigniasPerfil"></div>
 
-      <div class="perfil-badges">
-        <p class="estado">🟢 En línea</p>
-        <p class="nivel">⭐ Nivel 1</p>
+      <!-- ESTADÍSTICAS -->
+      <div class="tarjeta-stats">
+        <h3 class="tarjeta-stats-titulo">Estadísticas de <span id="statsNombreUsuario">Usuario</span></h3>
+        <div class="estadisticas">
+          <div><h3>Registrado</h3><p id="fechaRegistro">27/06/2026</p></div>
+          <div><h3>Última conexión</h3><p id="ultimaConexion">Hace unos segundos</p></div>
+          <div class="fila-xp">
+            <div class="fila-xp-cabecera"><h3>Experiencia</h3><p id="xp">0 XP</p></div>
+            <div class="barra-xp"><div id="progresoXP"></div></div>
+            <p id="textoXP"></p>
+          </div>
+          <div><h3>Ranking</h3><p id="ranking">Sin clasificar</p></div>
+          <div><h3>Logros</h3><p id="puntosLogros">0 puntos</p></div>
+        </div>
       </div>
 
-      <p class="biografia" id="biografia">Todavía no escribió una biografía.</p>
+    </aside>
 
-      <button>✏️ Editar descripción</button>
-    </div>
+    <!-- COLUMNA DERECHA: pestañas + info + comentarios -->
+    <div class="perfil-principal">
 
-  </div>
+      <!-- MENÚ DE PESTAÑAS -->
+      <nav class="menu-perfil">
+        <button class="tab activa" data-tab="inicio">🏠 Home</button>
+        <button class="tab" data-tab="actividad-amigos">👥 Actividad de amigos</button>
+        <button class="tab" data-tab="actividad">📜 Actividad Reciente</button>
+        <button class="tab" data-tab="comentarios">💬 Comentarios</button>
+        <button class="tab" data-tab="favoritos">❤️ Favoritos</button>
+        <button class="tab" data-tab="ultimos">🎮 Últimos Jugados</button>
+        <button class="tab" data-tab="amigos">🤝 Amigos</button>
+        <button class="tab" data-tab="avatares">🧑 Avatar</button>
+        <button class="tab" data-tab="logros">🏅 Logros</button>
+        <button class="tab" data-tab="config-cuenta">⚙️ Configuración</button>
+      </nav>
 
-  <!-- ESTADÍSTICAS -->
-  <div class="estadisticas">
-    <div><h3>Registrado</h3><p id="fechaRegistro">27/06/2026</p></div>
-    <div><h3>Última conexión</h3><p id="ultimaConexion">Hace unos segundos</p></div>
-    <div>
-      <h3>Experiencia</h3>
-      <p id="xp">0 XP</p>
-      <div class="barra-xp"><div id="progresoXP"></div></div>
-      <p id="textoXP"></p>
-    </div>
-    <div><h3>Ranking</h3><p id="ranking">Sin clasificar</p></div>
-    <div><h3>Logros</h3><p id="puntosLogros">0 puntos</p></div>
-  </div>
+      <div class="perfil-datos-cabecera">
+        <h1 id="nombreUsuario">Usuario</h1>
+      </div>
 
-  <!-- MENÚ DE PESTAÑAS -->
-  <div class="menu-perfil">
-    <button class="tab activa" data-tab="inicio">🏠 Inicio</button>
-    <button class="tab" data-tab="actividad-amigos">👥 Actividad de amigos</button>
-    <button class="tab" data-tab="actividad">📜 Actividad reciente</button>
-    <button class="tab" data-tab="comentarios">💬 Comentarios</button>
-    <button class="tab" data-tab="favoritos">❤️ Juegos favoritos</button>
-    <button class="tab" data-tab="ultimos">🎮 Últimos jugados</button>
-    <button class="tab" data-tab="amigos">🤝 Amigos</button>
-    <button class="tab" data-tab="avatares">👤 Avatar</button>
-    <button class="tab" data-tab="logros">🏅 Logros</button>
-    <button class="tab" data-tab="config-cuenta">⚙️ Configuración</button>
-  </div>
-
-  <!-- INICIO -->
-  <section id="inicio" class="contenido-tab activo">
-    <h2>Información general</h2>
-    <p id="bienvenidaPerfil">Bienvenido al perfil de MacroReborn.</p>
-    <h3>Descripción</h3>
-    <p id="descripcionInicio">Todavía no hay descripción.</p>
-    <h3>Últimos comentarios</h3>
-    <div id="ultimosComentariosInicio"></div>
-  </section>
+      <!-- INICIO -->
+      <section id="inicio" class="contenido-tab activo">
+        <p id="bienvenidaPerfil" class="perfil-oculto-visual">Bienvenido al perfil de MacroReborn.</p>
+        <div class="perfil-caja-info datos">
+          <p class="biografia" id="biografia">Todavía no escribió una biografía.</p>
+          <p id="descripcionInicio" class="perfil-oculto-visual">Todavía no hay descripción.</p>
+          <button class="perfil-btn-editar">✏️ Editar descripción</button>
+        </div>
+        <button type="button" class="perfil-barra-comentarios">💬 Últimos Comentarios</button>
+        <div id="ultimosComentariosInicio" class="perfil-preview-comentarios"></div>
+      </section>
 
   <!-- ACTIVIDAD AMIGOS -->
   <section id="actividad-amigos" class="contenido-tab">
@@ -600,6 +619,12 @@ MacroReborn
     </div>
   </section>
 
+    </div>
+    <!-- /.perfil-principal -->
+
+  </div>
+  <!-- /.perfil-cuerpo -->
+
 </main>
 
 <!-- FOOTER (mismo componente que el resto de MacroReborn) -->
@@ -672,6 +697,8 @@ MacroReborn
 <script src="js/perfil-eliminar-cuenta.js"></script>
 
 <script src="js/perfil-avatares-galeria.js"></script>
+
+<script src="js/perfil-tarjeta-clasica.js"></script>
 
 <script src="js/navbar.js"></script>
 <script src="js/buscador.js"></script>
