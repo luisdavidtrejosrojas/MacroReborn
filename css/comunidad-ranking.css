@@ -7,13 +7,13 @@
    con solo cambiar el VALOR de esas variables toda la página (navbar,
    footer, tarjetas de comunidad, buscador...) adopta el mismo look, sin
    tocar ni un archivo de esos.
-   Esta página siempre se ve así, sin importar si el botón de modo
-   claro/oscuro del sitio está activado (la foto de referencia tiene un
-   solo aspecto posible), por eso se pisa también "html[data-tema=claro]".
+   El botón de modo claro/oscuro del sitio sigue funcionando acá: :root
+   pinta el oscuro (paleta de la foto de referencia) y "html[data-tema=
+   claro]" pinta su propia variante clara, ambas dentro de la misma
+   identidad púrpura.
    ========================================================================== */
 
-:root,
-html[data-tema="claro"] {
+:root {
   --bg-deep: #0c0616;
   --bg-base: #150a28;
   --bg-panel: #241145;
@@ -47,6 +47,42 @@ html[data-tema="claro"] {
   --clasico-plate: linear-gradient(180deg, #5b3aa0 0%, #2a1150 100%);
   --clasico-header: linear-gradient(180deg, #2f1a5c 0%, #241145 100%);
   --clasico-avatar-fondo: linear-gradient(180deg, #1f0f3d 0%, #0c0616 100%);
+}
+
+html[data-tema="claro"] {
+  --bg-deep: #ece7f5;
+  --bg-base: #f6f3fb;
+  --bg-panel: #ffffff;
+  --bg-panel-alt: #f1ecfa;
+  --line: #ddd0f0;
+  --line-hover: #c7b3e8;
+  --navbar-bg: rgba(255, 255, 255, 0.92);
+
+  --gold: #92600a;
+  --gold-bright: #b8790d;
+  --gold-deep: #7a5108;
+  --cyan: #0284c7;
+  --green: #15803d;
+
+  --text-main: #241145;
+  --text-muted: #6d5a94;
+  --text-secondary: #4a3a72;
+  --text-placeholder: #9484b8;
+
+  --danger: #dc2626;
+  --danger-light: #b91c1c;
+  --success-light: #15803d;
+
+  --podio-plata: #7c6a9c;
+  --podio-bronce: #b45309;
+
+  --sombra-suave: 0 10px 26px rgba(60, 30, 90, 0.12);
+  --chip-bg: rgba(255, 255, 255, 0.75);
+
+  --clasico-borde: #8b5cf6;
+  --clasico-plate: linear-gradient(180deg, #8b6fd1 0%, #5b3aa0 100%);
+  --clasico-header: linear-gradient(180deg, #f3eefb 0%, #e0d3f7 100%);
+  --clasico-avatar-fondo: linear-gradient(180deg, #ede4fa 0%, #c9adf0 100%);
 }
 
 .mr-root {
