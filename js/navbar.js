@@ -214,15 +214,159 @@ if(nav){
 
             <a class="sesion-extra nav-ayuda" href="chat.html" title="¿Necesitás ayuda? Preguntá en el chat">❔</a>
 
-            <a class="sesion-extra" href="login.html">
-                🔑 Iniciar sesión
-            </a>
+            <div class="user-guest-wrap" id="userGuestWrap">
+                <button type="button" class="sesion-extra user-guest-boton" id="botonUsuarioTemporal" aria-haspopup="true" aria-expanded="false">
+                    <span class="user-guest-avatar">
+                        👤
+                        <span class="user-guest-badge">1</span>
+                    </span>
+                    <span class="user-guest-nombre">Usuario temporal</span>
+                </button>
 
-            <a class="sesion-extra" href="registro.html">
-                📝 Registrarse
-            </a>
+                <div class="user-guest-dropdown" id="dropdownUsuarioTemporal">
+                    <div class="user-guest-dropdown-header">
+                        <span>Iniciar sesión</span>
+                    </div>
+
+                    <form id="formLoginNav" class="user-guest-form" novalidate>
+                        <input type="text" id="navLoginUsuario" class="user-guest-input" placeholder="Usuario" autocomplete="username">
+                        <input type="password" id="navLoginPassword" class="user-guest-input" placeholder="Contraseña" autocomplete="current-password">
+                        <div id="navLoginMensaje" class="user-guest-mensaje" role="alert"></div>
+                        <button type="submit" class="user-guest-login-boton">Login</button>
+                    </form>
+
+                    <div class="user-guest-dropdown-footer">
+                        ¿No tenés cuenta? <a href="registro.html">Registrarse</a>
+                    </div>
+                </div>
+            </div>
 
         `);
+
+        // ---------- DESPLEGABLE DE "USUARIO TEMPORAL" (login rápido) ----------
+        // Mismo patrón que el desplegable de notificaciones de más arriba:
+        // se abre/cierra al tocar el botón, se cierra al hacer click afuera
+        // o al apretar Escape.
+
+        const botonGuest = document.getElementById("botonUsuarioTemporal");
+        const dropdownGuest = document.getElementById("dropdownUsuarioTemporal");
+
+        function cerrarDropdownGuest(){
+            if(!dropdownGuest) return;
+            dropdownGuest.classList.remove("abierto");
+            if(botonGuest) botonGuest.setAttribute("aria-expanded", "false");
+        }
+
+        function abrirDropdownGuest(){
+            if(!dropdownGuest) return;
+            dropdownGuest.classList.add("abierto");
+            if(botonGuest) botonGuest.setAttribute("aria-expanded", "true");
+
+            const inputUsuario = document.getElementById("navLoginUsuario");
+            if(inputUsuario) inputUsuario.focus();
+        }
+
+        if(botonGuest && dropdownGuest){
+
+            botonGuest.addEventListener("click", (e)=>{
+                e.stopPropagation();
+                dropdownGuest.classList.contains("abierto")
+                    ? cerrarDropdownGuest()
+                    : abrirDropdownGuest();
+            });
+
+            document.addEventListener("click", (e)=>{
+                if(!dropdownGuest.classList.contains("abierto")) return;
+                if(e.target.closest("#userGuestWrap")) return;
+                cerrarDropdownGuest();
+            });
+
+            document.addEventListener("keydown", (e)=>{
+                if(e.key === "Escape") cerrarDropdownGuest();
+            });
+
+        }
+
+        // ---------- LOGIN RÁPIDO DESDE LA NAVBAR ----------
+        // Misma llamada a /api/auth?action=login que ya usa js/login.js
+        // en login.html: se reutiliza la misma lógica para no duplicar
+        // el sistema de autenticación en dos lugares distintos.
+
+        const formLoginNav = document.getElementById("formLoginNav");
+        const mensajeLoginNav = document.getElementById("navLoginMensaje");
+
+        function mostrarMensajeLoginNav(texto, tipo){
+            if(!mensajeLoginNav) return;
+
+            mensajeLoginNav.textContent = texto;
+            mensajeLoginNav.classList.remove("error", "exito", "visible");
+
+            void mensajeLoginNav.offsetWidth;
+
+            mensajeLoginNav.classList.add(tipo, "visible");
+        }
+
+        if(formLoginNav){
+
+            formLoginNav.addEventListener("submit", async (e)=>{
+
+                e.preventDefault();
+
+                const usuario = document.getElementById("navLoginUsuario").value.trim();
+                const password = document.getElementById("navLoginPassword").value;
+
+                if(!usuario || !password){
+                    mostrarMensajeLoginNav("Completá usuario y contraseña", "error");
+                    return;
+                }
+
+                const botonSubmit = formLoginNav.querySelector(".user-guest-login-boton");
+                if(botonSubmit) botonSubmit.disabled = true;
+
+                try{
+
+                    const respuesta = await fetch("/api/auth?action=login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username: usuario, password: password })
+                    });
+
+                    const datos = await respuesta.json();
+
+                    if(datos.success){
+
+                        // Mismo normalizado que usa js/login.js, para que el
+                        // resto del sitio (navbar, chat, ranking, favoritos...)
+                        // siga leyendo "nombre" y "nivel" sin adaptarse.
+                        const usuarioNormalizado = {
+                            ...datos.user,
+                            nombre: datos.user.username,
+                            nivel: datos.user.level
+                        };
+
+                        localStorage.setItem("usuarioActivo", JSON.stringify(usuarioNormalizado));
+
+                        mostrarMensajeLoginNav("Bienvenido " + datos.user.username, "exito");
+
+                        setTimeout(()=>{ window.location.reload(); }, 600);
+
+                    }else{
+
+                        mostrarMensajeLoginNav(datos.error || "No se pudo iniciar sesión", "error");
+                        if(botonSubmit) botonSubmit.disabled = false;
+
+                    }
+
+                }catch(error){
+
+                    mostrarMensajeLoginNav("Error de conexión", "error");
+                    if(botonSubmit) botonSubmit.disabled = false;
+
+                }
+
+            });
+
+        }
 
     }
 
