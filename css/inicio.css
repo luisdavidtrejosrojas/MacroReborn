@@ -75,43 +75,44 @@
    contraste sobre blanco. */
 
 html[data-tema="claro"] {
-  /* Misma paleta púrpura que :root — comunidad-ranking.css hace exactamente
-     esto (pisa también el modo claro) para que la página se vea siempre
-     igual sin importar el botón de tema. Se replica acá para que TODO el
-     sitio tenga ese mismo comportamiento y esos mismos colores. */
-  --bg-deep: #0c0616;
-  --bg-base: #150a28;
-  --bg-panel: #241145;
-  --bg-panel-alt: #2f1a5c;
-  --line: #3d2166;
-  --line-hover: #55348f;
-  --navbar-bg: rgba(21, 10, 40, 0.92);
+  /* Variante clara de la misma identidad púrpura: fondo lavanda muy
+     claro, paneles blancos, texto violeta oscuro. Así el botón de
+     tema vuelve a tener efecto visible mientras se mantiene la
+     paleta de comunidad-ranking (en vez de volver al celeste/gris
+     original). */
+  --bg-deep: #ece7f5;
+  --bg-base: #f6f3fb;
+  --bg-panel: #ffffff;
+  --bg-panel-alt: #f1ecfa;
+  --line: #ddd0f0;
+  --line-hover: #c7b3e8;
+  --navbar-bg: rgba(255, 255, 255, 0.92);
 
-  --gold: #f0b429;
-  --gold-bright: #ffd666;
-  --gold-deep: #a8710f;
-  --cyan: #38bdf8;
-  --green: #35d488;
+  --gold: #92600a;
+  --gold-bright: #b8790d;
+  --gold-deep: #7a5108;
+  --cyan: #0284c7;
+  --green: #15803d;
 
-  --text-main: #f4f1fb;
-  --text-muted: #b6a9d6;
-  --text-secondary: #d8cff0;
-  --text-placeholder: #8b7fb0;
+  --text-main: #241145;
+  --text-muted: #6d5a94;
+  --text-secondary: #4a3a72;
+  --text-placeholder: #9484b8;
 
-  --danger: #ff6b6b;
-  --danger-light: #fca5a5;
-  --success-light: #86efac;
+  --danger: #dc2626;
+  --danger-light: #b91c1c;
+  --success-light: #15803d;
 
-  --podio-plata: #dbe3ee;
-  --podio-bronce: #e3a374;
+  --podio-plata: #7c6a9c;
+  --podio-bronce: #b45309;
 
-  --sombra-suave: 0 14px 30px rgba(0, 0, 0, 0.45);
-  --chip-bg: rgba(36, 17, 69, 0.6);
+  --sombra-suave: 0 10px 26px rgba(60, 30, 90, 0.12);
+  --chip-bg: rgba(255, 255, 255, 0.75);
 
-  --clasico-borde: #6d3fd1;
-  --clasico-plate: linear-gradient(180deg, #5b3aa0 0%, #2a1150 100%);
-  --clasico-header: linear-gradient(180deg, #2f1a5c 0%, #241145 100%);
-  --clasico-avatar-fondo: linear-gradient(180deg, #1f0f3d 0%, #0c0616 100%);
+  --clasico-borde: #8b5cf6;
+  --clasico-plate: linear-gradient(180deg, #8b6fd1 0%, #5b3aa0 100%);
+  --clasico-header: linear-gradient(180deg, #f3eefb 0%, #e0d3f7 100%);
+  --clasico-avatar-fondo: linear-gradient(180deg, #ede4fa 0%, #c9adf0 100%);
 }
 
 /* Transición suave al alternar entre modo oscuro y claro */
