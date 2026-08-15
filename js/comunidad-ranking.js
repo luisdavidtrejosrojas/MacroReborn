@@ -30,10 +30,17 @@ const rkResto = document.getElementById("listaRankingResto");
 const rkBuscador = document.getElementById("buscarRankingJugador");
 const rkBotonLogros = document.getElementById("botonRankingLogros");
 const rkBanner = document.getElementById("rkBannerUnite");
+const rkFlechaArriba = document.getElementById("rkFlechaArriba");
+const rkFlechaAbajo = document.getElementById("rkFlechaAbajo");
+
+// Cuántos puestos se muestran por página (2 filas de 10, igual que
+// el video de referencia) y desde qué puesto (0 = el 7º) arranca la
+// ventana visible ahora mismo.
+const RK_TAMANIO_PAGINA = 20;
+let _rkInicioVentana = 0;
 
 // ---------- ELEMENTOS: COMUNIDAD ----------
 
-const comListaConectados = document.getElementById("listaConectados");
 const comListaUsuarios = document.getElementById("listaUsuarios");
 const comContador = document.getElementById("contadorUsuarios");
 const comBuscador = document.getElementById("buscadorUsuarios");
@@ -160,7 +167,20 @@ function rkRenderizar(filtro = "") {
   }
 
   const top6 = lista.slice(0, 6);
-  const resto = lista.slice(6, 60);
+  const restoCompleto = lista.slice(6);
+
+  // Ventana paginada: no se pinta TODO el resto de una — se muestra
+  // de a RK_TAMANIO_PAGINA (20) puestos, y las flechas ▲/▼ mueven esa
+  // ventana. Si el buscador deja menos gente que la ventana actual,
+  // se acomoda para no mostrar una página vacía.
+  const maxInicio = Math.max(0, restoCompleto.length - RK_TAMANIO_PAGINA);
+  if (_rkInicioVentana > maxInicio) _rkInicioVentana = maxInicio;
+  if (_rkInicioVentana < 0) _rkInicioVentana = 0;
+
+  const resto = restoCompleto.slice(_rkInicioVentana, _rkInicioVentana + RK_TAMANIO_PAGINA);
+
+  if (rkFlechaArriba) rkFlechaArriba.disabled = _rkInicioVentana <= 0;
+  if (rkFlechaAbajo) rkFlechaAbajo.disabled = _rkInicioVentana >= maxInicio;
 
   // ---- Podio (top 6) ----
 
@@ -195,7 +215,7 @@ function rkRenderizar(filtro = "") {
 
   rkResto.innerHTML = resto.map((usuario, i) => {
 
-    const puesto = i + 7;
+    const puesto = _rkInicioVentana + i + 7;
 
     return `
       <a href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}" class="rk-mini-card">
@@ -223,7 +243,20 @@ function rkRenderizar(filtro = "") {
 // ---- Buscador del ranking ----
 
 rkBuscador?.addEventListener("input", () => {
+  _rkInicioVentana = 0;
   rkRenderizar(rkBuscador.value);
+});
+
+// ---- Flechas de paginado del resto del ranking ----
+
+rkFlechaArriba?.addEventListener("click", () => {
+  _rkInicioVentana = Math.max(0, _rkInicioVentana - RK_TAMANIO_PAGINA);
+  rkRenderizar(rkBuscador?.value || "");
+});
+
+rkFlechaAbajo?.addEventListener("click", () => {
+  _rkInicioVentana += RK_TAMANIO_PAGINA;
+  rkRenderizar(rkBuscador?.value || "");
 });
 
 // ---- Botón "Ver Ranking de Logros" ----
@@ -234,6 +267,7 @@ rkBuscador?.addEventListener("input", () => {
 rkBotonLogros?.addEventListener("click", () => {
 
   _rkOrdenarPorLogros = !_rkOrdenarPorLogros;
+  _rkInicioVentana = 0;
 
   rkBotonLogros.textContent = _rkOrdenarPorLogros
     ? "Ver Ranking General"
@@ -267,29 +301,6 @@ function comEstadoRelacion(nombreOtro) {
   if (_comSolicitudesRecibidas.includes(nombreOtro)) return `<span class="rel-recibida">📩 Te mandó solicitud</span>`;
 
   return "";
-}
-
-function comRenderConectados(lista) {
-
-  if (!comListaConectados) return;
-
-  const conectados = lista.filter(comEstaConectado);
-
-  if (conectados.length === 0) {
-    comListaConectados.innerHTML = `<p class="sin-datos">No hay usuarios conectados en este momento.</p>`;
-    return;
-  }
-
-  comListaConectados.innerHTML = conectados.map(usuario => `
-    <a href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}" class="tarjeta-mini">
-      ${rkAvatarHTML(usuario.avatar, "avatar-mini-conectado", "capa-mini")}
-      <div class="mini-info">
-        <p class="mini-nombre">${usuario.nombre}</p>
-        <p class="mini-estado">🟢 En línea</p>
-      </div>
-    </a>
-  `).join("");
-
 }
 
 function comRenderUsuarios(lista) {
@@ -364,6 +375,319 @@ comBuscador?.addEventListener("input", () => {
 
 
 // ==============================
+// PANEL LATERAL — pestañas General / Moderación / Rangos
+// ==============================
+
+const crStatRegistrados = document.getElementById("crStatRegistrados");
+const crStatConectados = document.getElementById("crStatConectados");
+const crStatComentarios = document.getElementById("crStatComentarios");
+const crRecienLlegados = document.getElementById("crRecienLlegados");
+const crListaModeracion = document.getElementById("crListaModeracion");
+const crListaRangos = document.getElementById("crListaRangos");
+const crGridConectados = document.getElementById("crGridConectados");
+const crBuscarConectado = document.getElementById("crBuscarConectado");
+const crMonedasUsuario = document.getElementById("crMonedasUsuario");
+const crGridTienda = document.getElementById("crGridTienda");
+const crFeedActividad = document.getElementById("crFeedActividad");
+
+// Mismas capas/rutas que ya usa rkAvatarHTML más arriba, pero devuelve
+// solo las <img> sueltas (sin div contenedor) para insertarlas dentro
+// de un <a> que YA trae position:relative + overflow:hidden por CSS
+// (ver .cr-grid-conectados a, .cr-avatar-chico en comunidad-ranking.css).
+
+function crAvatarCapasHTML(avatarCrudo, claseCapa) {
+  const avatar = normalizarAvatar(avatarCrudo);
+  if (!avatar) {
+    return `<img src="imagenes/avatar.png" alt="" loading="lazy">`;
+  }
+  let html = "";
+  RK_ORDEN_CAPAS.forEach(tipo => {
+    const ruta = rkRutaCapa(avatar[tipo]);
+    if (ruta) html += `<img class="${claseCapa}" src="${ruta}" alt="" loading="lazy">`;
+  });
+  return html || `<img src="imagenes/avatar.png" alt="" loading="lazy">`;
+}
+
+// ---- Pestañas ----
+
+document.querySelectorAll(".cr-tab").forEach(boton => {
+  boton.addEventListener("click", () => {
+    document.querySelectorAll(".cr-tab").forEach(b => b.classList.remove("cr-tab-activa"));
+    boton.classList.add("cr-tab-activa");
+
+    const tab = boton.dataset.tab; // "general" | "moderacion" | "rangos"
+    const idPanel = "crTab" + tab.charAt(0).toUpperCase() + tab.slice(1);
+
+    document.querySelectorAll(".cr-tab-panel").forEach(p => p.classList.remove("cr-tab-panel-activo"));
+    document.getElementById(idPanel)?.classList.add("cr-tab-panel-activo");
+  });
+});
+
+// ---- General: estadísticas de la comunidad ----
+
+async function crCargarEstadisticas() {
+  try {
+    const resp = await fetch("/api/system?action=community-stats");
+    const datos = await resp.json();
+    if (!datos || !datos.success) return;
+
+    if (crStatRegistrados) crStatRegistrados.textContent = datos.registradosTotal;
+    if (crStatConectados) crStatConectados.textContent = datos.conectadosAhora;
+    if (crStatComentarios) crStatComentarios.textContent = datos.comentariosPorHora;
+
+    if (crRecienLlegados) {
+      const llegados = datos.recienLlegados || [];
+      crRecienLlegados.innerHTML = llegados.length
+        ? llegados.map(u => `
+            <a href="usuario.html?usuario=${encodeURIComponent(u.username)}" class="cr-avatar-chico" title="${u.username}">
+              ${crAvatarCapasHTML(u.avatar, "cr-capa-chica")}
+            </a>
+          `).join("")
+        : `<p class="cr-vacio">Todavía no se registró nadie hoy.</p>`;
+    }
+  } catch (error) {
+    console.warn("MacroReborn: no se pudieron cargar las estadísticas de la comunidad.", error);
+  }
+}
+
+// ---- Moderación: staff conectado ----
+
+async function crCargarModeracion() {
+  if (!crListaModeracion) return;
+
+  const ICONO_ROL = { administrador: "👑", moderador: "🛡️", colaborador: "🎗️" };
+
+  try {
+    const resp = await fetch("/api/system?action=moderators-status");
+    const datos = await resp.json();
+    if (!datos || !datos.success) return;
+
+    if (!datos.staff.length) {
+      crListaModeracion.innerHTML = `<p class="cr-vacio">Todavía no hay staff asignado.</p>`;
+      return;
+    }
+
+    crListaModeracion.innerHTML = datos.staff.map(s => `
+      <div class="cr-fila-staff">
+        <a href="usuario.html?usuario=${encodeURIComponent(s.username)}" class="cr-avatar-chico" title="${s.username}">
+          ${crAvatarCapasHTML(s.avatar, "cr-capa-chica")}
+        </a>
+        <div class="cr-staff-info">
+          <p class="cr-staff-nombre">${s.username}</p>
+          <p class="cr-staff-rol">${ICONO_ROL[s.rol] || "•"} ${s.rol}</p>
+        </div>
+        <span class="cr-punto-estado ${s.conectado ? "cr-conectado" : ""}" title="${s.conectado ? "Conectado" : "Desconectado"}"></span>
+      </div>
+    `).join("");
+  } catch (error) {
+    console.warn("MacroReborn: no se pudo cargar el staff conectado.", error);
+  }
+}
+
+// ---- Rangos: tramos del ranking general (estático, no pide nada al servidor) ----
+
+function crRenderRangos() {
+  if (!crListaRangos) return;
+
+  const TRAMOS = [
+    { nombre: "🏆 Leyenda", rango: "Puestos 1 a 3" },
+    { nombre: "💎 Élite", rango: "Puestos 4 a 10" },
+    { nombre: "🥇 Veterano", rango: "Puestos 11 a 30" },
+    { nombre: "🥈 Avanzado", rango: "Puestos 31 a 60" },
+    { nombre: "🥉 Novato", rango: "Puesto 61 en adelante" }
+  ];
+
+  crListaRangos.innerHTML = TRAMOS.map(t => `
+    <div class="cr-fila-rango">
+      <span class="cr-rango-nombre">${t.nombre}</span>
+      <span class="cr-rango-rango">${t.rango}</span>
+    </div>
+  `).join("");
+}
+
+// ---- Conectados (panel lateral) ----
+
+function crRenderConectados(lista, filtro = "") {
+  if (!crGridConectados) return;
+
+  let conectados = lista.filter(comEstaConectado);
+
+  if (filtro) {
+    const texto = filtro.toLowerCase();
+    conectados = conectados.filter(u => u.nombre.toLowerCase().includes(texto));
+  }
+
+  if (!conectados.length) {
+    crGridConectados.innerHTML = `<p class="cr-vacio">Nadie conectado ahora mismo.</p>`;
+    return;
+  }
+
+  crGridConectados.innerHTML = conectados.slice(0, 24).map(u => `
+    <a href="usuario.html?usuario=${encodeURIComponent(u.nombre)}" title="${u.nombre}">
+      ${crAvatarCapasHTML(u.avatar, "cr-capa-chica")}
+    </a>
+  `).join("");
+}
+
+crBuscarConectado?.addEventListener("input", () => {
+  crRenderConectados(_rkUsuarios, crBuscarConectado.value.trim());
+});
+
+
+// ==============================
+// CENTRO DE AVATARES (tienda de prendas, se paga con monedas)
+// ==============================
+
+async function crCargarTienda() {
+  if (!crGridTienda) return;
+
+  try {
+    const url = activoComRk
+      ? "/api/content?action=avatar-shop&username=" + encodeURIComponent(activoComRk.nombre)
+      : "/api/content?action=avatar-shop";
+
+    const resp = await fetch(url);
+    const datos = await resp.json();
+    if (!datos || !datos.success) return;
+
+    if (crMonedasUsuario) {
+      if (activoComRk) {
+        crMonedasUsuario.style.display = "";
+        crMonedasUsuario.textContent = "🪙 " + (datos.monedas != null ? datos.monedas : 0) + " monedas";
+      } else {
+        crMonedasUsuario.style.display = "none";
+      }
+    }
+
+    const comprados = new Set(datos.comprados || []);
+    const items = (datos.items || []).slice(0, 12);
+
+    if (!items.length) {
+      crGridTienda.innerHTML = `<p class="cr-vacio">Todavía no hay prendas cargadas en la tienda.</p>`;
+      return;
+    }
+
+    crGridTienda.innerHTML = items.map(item => {
+
+      const yaLaTiene = comprados.has(item.id);
+      const ruta = rkRutaCapa(item.valorCapa);
+
+      let boton;
+      if (!activoComRk) {
+        boton = `<a href="login.html" class="cr-item-tienda-boton" style="display:block;text-decoration:none;box-sizing:border-box;">Iniciar sesión</a>`;
+      } else if (yaLaTiene) {
+        boton = `<button type="button" class="cr-item-tienda-boton cr-comprada" disabled>✅ La tenés</button>`;
+      } else {
+        boton = `<button type="button" class="cr-item-tienda-boton" data-item-id="${item.id}">Comprar</button>`;
+      }
+
+      return `
+        <div class="cr-item-tienda">
+          <div class="cr-item-tienda-imagen">
+            ${ruta ? `<img src="${ruta}" alt="${item.nombre}" loading="lazy">` : ""}
+          </div>
+          <p class="cr-item-tienda-nombre">${item.nombre}</p>
+          <p class="cr-item-tienda-precio">🪙 ${item.precio}</p>
+          ${boton}
+        </div>
+      `;
+
+    }).join("");
+
+    crGridTienda.querySelectorAll("button[data-item-id]").forEach(boton => {
+      boton.addEventListener("click", () => crComprarPrenda(boton));
+    });
+
+  } catch (error) {
+    console.warn("MacroReborn: no se pudo cargar el Centro de Avatares.", error);
+  }
+}
+
+async function crComprarPrenda(boton) {
+  if (!activoComRk) return;
+
+  const itemId = boton.dataset.itemId;
+  const textoOriginal = boton.textContent;
+  boton.disabled = true;
+  boton.textContent = "Comprando...";
+
+  try {
+    const resp = await fetch("/api/content?action=avatar-shop-buy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: activoComRk.nombre, itemId })
+    });
+    const datos = await resp.json();
+
+    if (!datos || !datos.success) {
+      alert((datos && datos.error) || "No se pudo comprar la prenda.");
+      boton.disabled = false;
+      boton.textContent = textoOriginal;
+      return;
+    }
+
+    if (crMonedasUsuario) {
+      crMonedasUsuario.textContent = "🪙 " + datos.monedas + " monedas";
+    }
+    boton.textContent = "✅ La tenés";
+    boton.classList.add("cr-comprada");
+
+  } catch (error) {
+    console.warn("MacroReborn: no se pudo completar la compra.", error);
+    boton.disabled = false;
+    boton.textContent = textoOriginal;
+  }
+}
+
+
+// ==============================
+// "¿QUÉ ESTÁ OCURRIENDO AHORA?" — feed global de actividad
+// ==============================
+
+async function crCargarFeed() {
+  if (!crFeedActividad) return;
+
+  try {
+    const resp = await fetch("/api/content?action=community-feed&limit=18");
+    const datos = await resp.json();
+    if (!datos || !datos.success) return;
+
+    if (!datos.actividades.length) {
+      crFeedActividad.innerHTML = `<p class="cr-vacio">Todavía no hay actividad reciente en la comunidad.</p>`;
+      return;
+    }
+
+    crFeedActividad.innerHTML = datos.actividades.map(item => {
+
+      const texto = typeof textoActividadAmigo === "function"
+        ? textoActividadAmigo(item.username, item.tipo, item.detalle)
+        : (item.username + " tuvo actividad");
+
+      const hace = typeof tiempoRelativo === "function"
+        ? tiempoRelativo(item.created_at, "")
+        : "";
+
+      return `
+        <div class="cr-feed-item">
+          <a href="usuario.html?usuario=${encodeURIComponent(item.username)}" class="cr-feed-avatar" title="${item.username}">
+            ${crAvatarCapasHTML(item.avatar, "cr-capa-chica")}
+          </a>
+          <div class="cr-feed-texto">
+            <p>${texto}</p>
+            <span class="cr-feed-hora">${hace}</span>
+          </div>
+        </div>
+      `;
+
+    }).join("");
+
+  } catch (error) {
+    console.warn("MacroReborn: no se pudo cargar la actividad de la comunidad.", error);
+  }
+}
+
+
+// ==============================
 // CARGA INICIAL (una sola vez para ranking + comunidad)
 // ==============================
 
@@ -420,8 +744,16 @@ async function iniciarComunidadRanking() {
   }
 
   rkRenderizar();
-  comRenderConectados(usuarios);
   comRenderUsuarios(usuarios);
+  crRenderConectados(usuarios);
+  crRenderRangos();
+
+  // Estas 3 no dependen de /api/users: se piden en paralelo aparte
+  // para no atrasar el resto del render si tardan o fallan.
+  crCargarEstadisticas();
+  crCargarModeracion();
+  crCargarTienda();
+  crCargarFeed();
 
 }
 

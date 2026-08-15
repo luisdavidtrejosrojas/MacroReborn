@@ -462,6 +462,67 @@ async function guardarAvatar(avatar){
 }
 
 
+// ---------- CENTRO DE AVATARES (tienda) ----------
+// Integración con la tienda de comunidad-ranking.html: las prendas que
+// están en el catálogo (avatar_shop_items) y el usuario TODAVÍA no
+// compró quedan bloqueadas acá (🔒), en vez de estar libres como el
+// resto del guardarropa. Si no hay conexión o la tienda está vacía,
+// simplemente no se bloquea nada (se comporta como antes).
+
+let _tiendaPremiumPrecio = new Map(); // valorCapa -> precio
+let _tiendaComprados = new Set();     // valorCapa ya comprado por este usuario
+
+async function cargarEstadoTiendaAvatares(){
+  try{
+
+    const resp = await fetch("/api/content?action=avatar-shop&username=" + encodeURIComponent(datosUsuario.nombre));
+    const datos = await resp.json();
+    if(!datos || !datos.success) return;
+
+    const comprados = new Set(datos.comprados || []);
+    _tiendaPremiumPrecio = new Map();
+    _tiendaComprados = new Set();
+
+    (datos.items || []).forEach(item=>{
+      _tiendaPremiumPrecio.set(item.valorCapa, item.precio);
+      if(comprados.has(item.id)) _tiendaComprados.add(item.valorCapa);
+    });
+
+    aplicarBloqueosTienda();
+
+  }catch(error){
+    console.warn("MacroReborn: no se pudo cargar el estado del Centro de avatares.", error);
+  }
+}
+
+function aplicarBloqueosTienda(){
+  document.querySelectorAll(".opcion-item[data-capa]").forEach(opcion=>{
+
+    if(opcion.dataset.capa === "modelo") return; // el modelo nunca se vende
+
+    const valor = opcion.dataset.valor;
+    const esPremium = _tiendaPremiumPrecio.has(valor);
+    const laTiene = _tiendaComprados.has(valor);
+
+    if(esPremium && !laTiene){
+      opcion.classList.add("cr-bloqueada");
+      if(!opcion.querySelector(".cr-precio-prenda")){
+        const precio = document.createElement("span");
+        precio.className = "cr-precio-prenda";
+        precio.textContent = "🪙 " + _tiendaPremiumPrecio.get(valor);
+        opcion.appendChild(precio);
+      }
+    } else {
+      opcion.classList.remove("cr-bloqueada");
+      opcion.querySelector(".cr-precio-prenda")?.remove();
+    }
+
+  });
+}
+
+cargarEstadoTiendaAvatares();
+
+
 // ---------- PREVIEW EDITOR ----------
 
 function actualizarPreview(){
@@ -613,6 +674,7 @@ document.getElementById("botonCrearAvatar")?.addEventListener("click",()=>{
 
   sincronizarSeleccionadas();
   filtrarTodosLosGrupos();
+  aplicarBloqueosTienda();
   actualizarPreview();
 });
 
@@ -686,6 +748,19 @@ document.querySelectorAll(".opcion-item").forEach(opcion=>{
   opcion.onclick=()=>{
     const capa = opcion.dataset.capa;
     const valor = opcion.dataset.valor;
+
+    // Prenda de la tienda que todavía no compró: no se deja EQUIPAR.
+    // (Si ya la tenía puesta de antes de que existiera la tienda, se
+    // la deja desequipar con normalidad más abajo, no se la trabamos).
+    if(opcion.classList.contains("cr-bloqueada") && editorCapas[capa] !== valor){
+      const precio = _tiendaPremiumPrecio.get(valor) || 0;
+      const irATienda = confirm(
+        "Esta prenda cuesta 🪙 " + precio + " y todavía no la compraste.\n" +
+        "¿Querés ir al Centro de avatares para comprarla?"
+      );
+      if(irATienda) window.location.href = "comunidad-ranking.html";
+      return;
+    }
 
     if(capa === "modelo"){
       // Cambiar de personaje: el modelo siempre queda seleccionado,
