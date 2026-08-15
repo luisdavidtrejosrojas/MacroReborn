@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script src="js/tema.js"></script>
-<script src="js/seo.js"></script>
+<script defer src="js/seo.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Juegos gratis online - Catálogo completo | MacroReborn</title>
 
@@ -143,19 +143,19 @@
   </div>
 </footer>
 
-<script src="js/core.js"></script>
+<script defer src="js/core.js"></script>
 
-<script src="js/motor/permisos.js"></script>
-<script src="js/datos-juegos.js"></script>
+<script defer src="js/motor/permisos.js"></script>
+<script defer src="js/datos-juegos.js"></script>
 
-<script src="js/juegos.js"></script>
+<script defer src="js/juegos.js"></script>
 
-<script src="js/notificaciones.js"></script>
-<script src="https://js.pusher.com/8.4/pusher.min.js"></script>
-<script src="js/realtime.js"></script>
-<script src="js/navbar.js"></script>
-<script src="js/buscador.js"></script>
-<script src="js/nav-toggle.js"></script>
+<script defer src="js/notificaciones.js"></script>
+<script defer src="https://js.pusher.com/8.4/pusher.min.js"></script>
+<script defer src="js/realtime.js"></script>
+<script defer src="js/navbar.js"></script>
+<script defer src="js/buscador.js"></script>
+<script defer src="js/nav-toggle.js"></script>
 
 <script>
 // ==============================================================
@@ -164,6 +164,11 @@
 // reales existentes) para mostrar cuántos juegos hay. No agrega
 // ni modifica ningún juego ni ningún dato.
 // ==============================================================
+// NOTA RENDIMIENTO: los scripts externos de esta página ahora cargan
+// con el atributo "defer". Como esto depende de "juegos" (definido por
+// datos-juegos.js), se espera a "DOMContentLoaded" para no leerlo
+// antes de que exista.
+document.addEventListener("DOMContentLoaded", function () {
 (function () {
   try {
     var el = document.getElementById("statTotalJuegos");
@@ -172,6 +177,7 @@
     }
   } catch (e) {}
 })();
+});
 </script>
 
 </body>

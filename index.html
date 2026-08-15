@@ -229,16 +229,16 @@
   </div>
 </footer>
 
-<script src="js/core.js"></script>
+<script defer src="js/core.js"></script>
 
-<script src="js/motor/permisos.js"></script>
-<script src="js/notificaciones.js"></script>
-<script src="https://js.pusher.com/8.4/pusher.min.js"></script>
-<script src="js/realtime.js"></script>
-<script src="js/navbar.js"></script>
-<script src="js/datos-juegos.js"></script>
-<script src="js/buscador.js"></script>
-<script src="js/nav-toggle.js"></script>
+<script defer src="js/motor/permisos.js"></script>
+<script defer src="js/notificaciones.js"></script>
+<script defer src="https://js.pusher.com/8.4/pusher.min.js"></script>
+<script defer src="js/realtime.js"></script>
+<script defer src="js/navbar.js"></script>
+<script defer src="js/datos-juegos.js"></script>
+<script defer src="js/buscador.js"></script>
+<script defer src="js/nav-toggle.js"></script>
 
 <script>
 // ==============================================================
@@ -247,6 +247,14 @@
 // "usuarioActivo" (igual que navbar.js) para decidir qué bloque
 // de bienvenida mostrar en el hero.
 // ==============================================================
+// NOTA RENDIMIENTO: los scripts externos de esta página ahora cargan
+// con el atributo "defer" (no bloquean el pintado inicial). Como este
+// bloque depende
+// de avatarMiniaturaHTML() de js/core.js, se espera a
+// "DOMContentLoaded" (momento en el que TODOS los scripts con defer
+// ya terminaron de ejecutarse) antes de correr, para no perder esa
+// dependencia.
+document.addEventListener("DOMContentLoaded", function () {
 (function () {
   try {
     var usuario = JSON.parse(localStorage.getItem("usuarioActivo") || "null");
@@ -279,6 +287,7 @@
     // Si algo falla, se mantiene la vista de invitado por defecto.
   }
 })();
+});
 </script>
 
 </body>
