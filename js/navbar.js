@@ -66,6 +66,10 @@ if(nav){
 
         nav.insertAdjacentHTML("beforeend",`
 
+            <a class="sesion-extra nav-ayuda" href="chat.html" title="¿Necesitás ayuda? Preguntá en el chat">❔</a>
+
+            <span class="nav-monedas" id="navMonedas" title="Tus monedas"></span>
+
             <div class="notif-bell-wrap" id="notifBellWrap">
                 <button type="button" class="sesion-extra notif-bell-boton" id="botonNotificaciones" aria-haspopup="true" aria-expanded="false">
                     🔔 <span id="contadorNotificaciones"></span>
@@ -92,6 +96,21 @@ if(nav){
             </a>
 
         `);
+
+        // Monedas del usuario (mismo saldo que se gasta en el Centro de
+        // avatares de comunidad-ranking.html). Se reusa ese mismo
+        // endpoint porque ya devuelve el saldo actual; no hace falta
+        // pedir nada nuevo al servidor solo para mostrar el numerito acá.
+        fetch("/api/content?action=avatar-shop&username=" + encodeURIComponent(usuarioNav.nombre))
+            .then(resp => resp.json())
+            .then(datos => {
+                if(!datos || !datos.success) return;
+                const spanMonedas = document.getElementById("navMonedas");
+                if(spanMonedas) spanMonedas.textContent = "🪙 " + (datos.monedas != null ? datos.monedas : 0);
+            })
+            .catch(error => {
+                console.warn("MacroReborn: no se pudo cargar el saldo de monedas.", error);
+            });
 
         // Contador de notificaciones (Neon)
         fetch("/api/content?action=notifications&username=" + encodeURIComponent(usuarioNav.nombre))
@@ -192,6 +211,8 @@ if(nav){
     }else{
 
         nav.insertAdjacentHTML("beforeend",`
+
+            <a class="sesion-extra nav-ayuda" href="chat.html" title="¿Necesitás ayuda? Preguntá en el chat">❔</a>
 
             <a class="sesion-extra" href="login.html">
                 🔑 Iniciar sesión

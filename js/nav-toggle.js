@@ -16,6 +16,11 @@
     const links = nav.querySelector(".nav-links");
     if (!links) return;
 
+    // Bottom bar de categorías/secciones del sitio (ver comunidad-ranking
+    // y el resto de las páginas): si existe, se abre/cierra junto con
+    // .nav-links con el mismo botón de hamburguesa, no es un menú aparte.
+    const categorias = nav.querySelector(".nav-categorias");
+
     if (!links.id) {
       contadorNav += 1;
       links.id = "navLinksPrincipal" + contadorNav;
@@ -33,12 +38,14 @@
 
     function cerrarMenu() {
       links.classList.remove("nav-abierto");
+      if (categorias) categorias.classList.remove("nav-abierto");
       boton.setAttribute("aria-expanded", "false");
       boton.setAttribute("aria-label", "Abrir menú de navegación");
     }
 
     function abrirMenu() {
       links.classList.add("nav-abierto");
+      if (categorias) categorias.classList.add("nav-abierto");
       boton.setAttribute("aria-expanded", "true");
       boton.setAttribute("aria-label", "Cerrar menú de navegación");
     }
@@ -61,6 +68,12 @@
     links.addEventListener("click", function (e) {
       if (e.target.closest("a")) cerrarMenu();
     });
+
+    if (categorias) {
+      categorias.addEventListener("click", function (e) {
+        if (e.target.closest("a")) cerrarMenu();
+      });
+    }
 
     document.addEventListener("click", function (e) {
       if (!nav.contains(e.target)) cerrarMenu();
