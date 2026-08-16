@@ -1,8 +1,8 @@
 # JUEGOS — cómo agregar un juego al catálogo
 
 Guía para agregar un juego nuevo al catálogo de MacroReborn.
-Documenta el proceso completo, con el ejemplo real de Superfighters
-(id 111).
+Documenta el proceso completo, con dos casos reales: Superfighters
+(id 111, Flash) e I Am Hall Security (id 112, HTML5/Unity).
 
 ---
 
@@ -11,8 +11,10 @@ Documenta el proceso completo, con el ejemplo real de Superfighters
 - Cómo está armado el catálogo de juegos (dónde vive cada pieza).
 - El proceso paso a paso para agregar un juego nuevo.
 - Cómo probarlo localmente sin tocar la base real ni el servidor.
-- Notas sobre Ruffle y CORS (por qué el SWF de Superfighters se sirve
-  desde jsdelivr y no desde archive.org).
+- Los dos formatos de juego usados en el catálogo, con sus notas:
+  SWF con Ruffle (y por qué el SWF se sirve desde jsdelivr y no desde
+  archive.org) y HTML5/Unity embebido por iframe a una URL externa
+  (y el tema de los permisos del iframe: fullscreen y pointer-lock).
 
 ## 2. Cómo está armado el catálogo
 
@@ -36,21 +38,32 @@ no código.
 
 ### 3.1 Conseguir el juego
 
-Tres formatos posibles, todos ya usados en el catálogo:
+Cuatro formatos posibles, todos ya usados en el catálogo:
 
 - **HTML embebible** (con `<base href>` a un CDN), como `chess.html`.
 - **Juego HTML5 completo** (canvas + scripts), como
   `brawl-stars-remake.html`.
 - **SWF con Ruffle** (para juegos Flash), como `superfighters.html`.
+- **HTML5/Unity embebido por iframe a una URL externa**, como
+  `i-am-hall-security.html` (el juego vive en un CDN ajeno que bloquea
+  el acceso directo, y se enlaza a través de un proxy).
 
 En el caso de un SWF, el archivo se reproduce con Ruffle
 (`https://cdn.jsdelivr.net/npm/@ruffle-rs/ruffle@0.2.0-nightly.2025.10.2/ruffle.min.js`,
 la misma versión que usan los demás juegos Flash del catálogo).
 
+En el caso de un HTML5/Unity que solo se puede jugar dentro de una
+plataforma (como Poki), el juego original suele estar en un CDN que
+bloquea el acceso directo (403) y tiene "sitelock" (una redirección
+anti-embedding). Se enlaza en vivo a través de un proxy que manda
+CORS, bloquea el sitelock y oculta que el juego corre dentro de un
+iframe. No se sube ningún binario al repo: se referencia la URL
+externa, igual que el resto del catálogo.
+
 ### 3.2 Guardar el archivo del juego
 
 Crear `html/juegos/<slug>.html`. El `<slug>` suele coincidir con el
-nombre del juego (ej: `superfighters.html`).
+nombre del juego (ej: `superfighters.html`, `i-am-hall-security.html`).
 
 **Nota CORS para SWF (importante):** Ruffle descarga el SWF con
 `fetch()` desde el navegador, y para eso el servidor que lo aloja
@@ -59,8 +72,16 @@ archive.org **no** lo envía (verificado), así que un SWF enlazado
 directo a archive.org no carga en el navegador. jsdelivr **sí** lo
 envía (`access-control-allow-origin: *`), por eso los SWF del
 catálogo se sirven desde jsdelivr (a través de mirrors de GitHub),
-igual que el resto del catálogo con CDNs de terceros. Ningún binario
-se sube al repo.
+igual que el resto del catálogo con CDNs de terceros.
+
+**Nota iframe para HTML5/Unity (importante):** si el juego se embebe
+con un `<iframe>` a una URL externa, el iframe debe declarar los
+permisos que el juego usa con el atributo `allow`, porque la página
+del juego es cross-origin y el navegador los niega por defecto. Como
+mínimo suele hacer falta `allow="autoplay; fullscreen"` y, si el
+juego tiene cámara en primera persona, `pointer-lock` (sin él, el
+cursor no queda capturado y se ve por afuera del iframe mientras la
+cámara se mueve).
 
 ### 3.3 Agregar la portada
 
@@ -75,18 +96,18 @@ hasta que se agregue el campo `imagen`.
 ### 3.4 Agregar la entrada en el catálogo
 
 En `js/datos-juegos.js`, agregar un objeto al array `juegos`. El `id`
-debe ser el máximo existente + 1 (hoy: 111). Ejemplo real:
+debe ser el máximo existente + 1 (hoy: 112). Ejemplo real:
 
 ```js
 {
-    id: 111,
-    nombre: "Superfighters",
-    imagen: "imagenes/juegos/superfighters.jpg",
-    categoria: "Lucha",
+    id: 112,
+    nombre: "I Am Hall Security",
+    imagen: "imagenes/juegos/i-am-hall-security.jpg",
+    categoria: "Simulación",
     estado: "⭐ Nuevo",
     tipo: "destacado",
-    descripcion: "Controlá a pequeños luchadores y enfrentate en combates 2D llenos de acción...",
-    iframe: "./html/juegos/superfighters.html"
+    descripcion: "Convertite en el guardia de una escuela llena de caos...",
+    iframe: "./html/juegos/i-am-hall-security.html"
 },
 ```
 
@@ -97,16 +118,18 @@ debe ser el máximo existente + 1 (hoy: 111). Ejemplo real:
   `tipo: "destacado"`.
 - `iframe` puede ser un archivo local (`./html/juegos/x.html`) o una
   URL externa embebible.
+- Si la portada todavía no existe, se omite el campo `imagen` y el
+  sistema muestra el placeholder.
 
 ### 3.5 Actualizar el sitemap
 
 En `sitemap.xml`, agregar la URL de la ficha con el mismo formato que
-las demás (nota: el sitemap no está al día con los 110 juegos — solo
+las demás (nota: el sitemap no está al día con los 112 juegos — solo
 llega hasta el id 42 —, se agrega el juego nuevo nada más):
 
 ```xml
 <url>
-  <loc>https://www.macroreborn.com/juego.html?id=111</loc>
+  <loc>https://www.macroreborn.com/juego.html?id=112</loc>
   <lastmod>2026-08-16</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.5</priority>
@@ -128,9 +151,10 @@ npm run db:local   # sitio local en http://localhost:3001
 | Qué probar | URL | Qué verificar |
 |---|---|---|
 | El juego solo (sin catálogo) | `http://localhost:3001/html/juegos/superfighters.html` | El juego corre dentro de Ruffle; sin CORS el texto muestra "Error al cargar el juego" |
+| El juego solo (sin catálogo) | `http://localhost:3001/html/juegos/i-am-hall-security.html` | La página del juego carga y el juego 3D corre; su carga es pesada (~46 MB), primero aparece la pantalla de carga propia del juego |
 | Catálogo | `http://localhost:3001/juegos.html` | La tarjeta aparece (con portada o placeholder) sin romper el layout |
-| Ficha | `http://localhost:3001/juego.html?id=111` | Título, categoría, descripción, portada |
-| Jugar | `http://localhost:3001/jugar.html?id=111` | El iframe monta el juego y arranca el sistema de XP |
+| Ficha | `http://localhost:3001/juego.html?id=112` | Título, categoría, descripción, portada |
+| Jugar | `http://localhost:3001/jugar.html?id=112` | El iframe monta el juego y arranca el sistema de XP |
 
 Notas:
 
@@ -138,11 +162,17 @@ Notas:
   actividad: solo imprime el aviso de migración de contraseñas del
   usuario `demo` (de la rama de contraseñas). Para ver el XP, abrir la
   pestaña Network del navegador (F12): cada 60 segundos aparece un
-  POST a `/api/users?action=xp` con `gameId: 111`.
+  POST a `/api/users?action=xp` con `gameId: 112`.
 - En modo local solo están activos `/api/auth` y `/api/users`; las
   secciones que usan `/api/content` se ven vacías (esperado).
+- En un juego embebido por iframe a una URL externa, la página del
+  juego es cross-origin: el texto "Cargando juego..." del wrapper
+  desaparece cuando carga la *página* (liviana), y después el juego
+  muestra su propia pantalla de carga mientras descarga el build.
 
-## 5. Caso real: Superfighters (id 111)
+## 5. Casos reales
+
+### 5.1 Superfighters (id 111, Flash)
 
 - Juego original gratuito de MythoLogic Interactive (2011), NO la
   secuela de pago "Superfighters Deluxe" (Steam).
@@ -153,6 +183,32 @@ Notas:
 - Fuente: mirror de GitHub servido por jsdelivr (CORS OK). Motivo
   documentado en el propio `html/juegos/superfighters.html`.
 
+### 5.2 I Am Hall Security (id 112, HTML5/Unity)
+
+- Juego gratuito de simulación 3D (guardia de una escuela) de
+  GeniGames (2025), hecho con Unity WebGL (2022.3.39f1). Es HTML5,
+  no Flash: no usa Ruffle ni `.swf`.
+- El juego original vive en el CDN de Poki (`poki-gdn.com`), que
+  bloquea el acceso directo (403) y tiene sitelock. Se enlaza en vivo
+  a través del proxy `gamecdn.onl` (el mismo que usa Chicken Clicker
+  para este juego): el proxy manda CORS, bloquea el sitelock, bloquea
+  anuncios y oculta que el juego corre dentro de un iframe. Verificado:
+  el index del juego y los 4 archivos del build (`Build2.*`) responden
+  200 vía el proxy, y el master-loader de Poki no hace chequeos de
+  host. No se sube ningún binario al repo.
+- El wrapper es un iframe a pantalla completa; la página del juego se
+  encarga del escalado y las cajas negras (resolución original 960x600,
+  16:10).
+- El iframe lleva `allow="autoplay; fullscreen; pointer-lock"`. Sin
+  `pointer-lock`, el modo primera persona se buguea (la cámara gira
+  pero el cursor no queda capturado y se ve por afuera del iframe).
+  Nota: con el permiso puesto, el cursor puede seguir comportándose
+  raro según el navegador — es un capricho del juego o del proxy, no
+  de la integración, y se dejó así.
+- El juego pesa ~46 MB: la primera carga tarda (1-3 min según la
+  conexión) y aparece la pantalla de carga propia de Poki antes del
+  juego.
+
 ## 6. Convenciones del proyecto
 
 - **Idioma**: comentarios y mensajes en español, explicando el "por
@@ -162,5 +218,5 @@ Notas:
 - **Commits**: un cambio lógico por commit, sin firmas ni pies de
   autoría automáticos.
 - **Reutilizar**: seguir el patrón de los juegos existentes (Ruffle
-  desde jsdelivr, portadas 480x270, entrada en `datos-juegos.js`);
-  no inventar un sistema paralelo.
+  desde jsdelivr, iframe con permisos, portadas 480x270, entrada en
+  `datos-juegos.js`); no inventar un sistema paralelo.
