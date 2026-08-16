@@ -18,10 +18,27 @@
 const Pusher = require("pusher");
 
 let _instancia = null;
+let _instanciaMuda = null;
 
 function getPusher() {
 
   if (_instancia) return _instancia;
+
+  // Si faltan las credenciales (típico en desarrollo local, donde no
+  // existen las variables PUSHER_*), devolvemos un "Pusher mudo" que
+  // no hace nada en vez de una instancia rota que explota con un
+  // TypeError en cada aviso (y ensucia la consola). En producción
+  // estas variables SIEMPRE están definidas, así que ahí el
+  // comportamiento es exactamente el de siempre.
+  if (!process.env.PUSHER_APP_ID || !process.env.PUSHER_KEY ||
+      !process.env.PUSHER_SECRET || !process.env.PUSHER_CLUSTER) {
+    if (!_instanciaMuda) {
+      _instanciaMuda = {
+        trigger: async () => {}
+      };
+    }
+    return _instanciaMuda;
+  }
 
   _instancia = new Pusher({
     appId: process.env.PUSHER_APP_ID,
