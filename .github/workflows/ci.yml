@@ -1,0 +1,23 @@
+# CI — MacroReborn
+# Corre los tests automáticos en cada push y en cada pull request,
+# sobre las versiones de Node que usa el proyecto (18, 20 y 22).
+
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npm test
