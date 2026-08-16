@@ -1,7 +1,9 @@
-const { neon } = require("@neondatabase/serverless");
 const { setCors } = require("./_utils");
+const { obtenerSql } = require("./_db");
+const { PasswordService } = require("./_password");
 
-const sql = neon(process.env.DATABASE_URL);
+const sql = obtenerSql();
+const passwordService = new PasswordService(sql);
 
 // ==============================
 // /api/auth?action=login|register|delete-account
@@ -12,6 +14,11 @@ const sql = neon(process.env.DATABASE_URL);
 // cada acción es EXACTAMENTE la misma que tenían los archivos
 // originales, solo cambia cómo se elige cuál correr.
 //
+// SEGURIDAD (migración hash de contraseñas): las contraseñas ya no se
+// guardan en texto plano en users.password. Se guarda SOLO el hash
+// bcrypt en users.password_hash (ver api/_password.js). Los usuarios
+// que todavía tienen texto plano se migran solos en su próximo login.
+//
 // POST /api/auth?action=login           { username, password }
 // POST /api/auth?action=register        { username, password }
 // POST /api/auth?action=delete-account  { username, password }
@@ -20,14 +27,12 @@ const sql = neon(process.env.DATABASE_URL);
 async function login(req, res) {
   const { username, password } = req.body;
 
-  const usuarios = await sql`
-    SELECT id, username, level, xp, created_at, bio, avatar, status
-    FROM users
-    WHERE username = ${username}
-    AND password = ${password};
-  `;
+  // verificar() valida la contraseña (contra el hash, o contra el
+  // texto plano restante migrándolo al vuelo) y devuelve el usuario
+  // sin campos de contraseña, o null si las credenciales no sirven.
+  const usuario = await passwordService.verificar(username, password);
 
-  if (usuarios.length === 0) {
+  if (!usuario) {
     return res.status(200).json({
       success: false,
       error: "Usuario o contraseña incorrectos"
@@ -37,13 +42,13 @@ async function login(req, res) {
   const actualizado = await sql`
     UPDATE users
     SET last_login = now()
-    WHERE id = ${usuarios[0].id}
+    WHERE id = ${usuario.id}
     RETURNING last_login;
   `;
 
   return res.status(200).json({
     success: true,
-    user: { ...usuarios[0], last_login: actualizado[0].last_login }
+    user: { ...usuario, last_login: actualizado[0].last_login }
   });
 }
 
@@ -66,22 +71,15 @@ async function register(req, res) {
     });
   }
 
-  // FIX: last_login arrancaba en now() al registrarse, como si la
-  // persona ya hubiera iniciado sesión. Eso hacía que un usuario recién
-  // registrado (que todavía nunca inició sesión) apareciera "En línea"
-  // en Comunidad y con "Última conexión" reciente en su perfil. Queda
-  // en NULL hasta el primer login real (login() más arriba sí lo
-  // actualiza a now()). Se agrega también a RETURNING para que el
-  // frontend (perfil.js) pueda leerlo igual que hace con el de login.
-  const user = await sql`
-    INSERT INTO users (username, password, level, xp, status, created_at, last_login)
-    VALUES (${username}, ${password}, 1, 0, 'active', now(), NULL)
-    RETURNING id, username, level, xp, bio, avatar, status, created_at, last_login;
-  `;
+  // registrar() guarda SOLO el hash de la contraseña, nunca el texto
+  // plano. El resto del comportamiento es idéntico al original:
+  // last_login arranca en NULL (un usuario recién registrado todavía
+  // no inició sesión, así que no debe aparecer "En línea").
+  const user = await passwordService.registrar(username, password);
 
   return res.status(200).json({
     success: true,
-    user: user[0]
+    user
   });
 }
 
@@ -92,33 +90,16 @@ async function deleteAccount(req, res) {
     return res.status(400).json({ success: false, error: "Faltan datos" });
   }
 
-  const usuarios = await sql`
-    SELECT id FROM users
-    WHERE username = ${username}
-    AND password = ${password};
-  `;
+  // eliminarCuenta() verifica la contraseña (migrando si hace falta)
+  // y borra al usuario. Gracias a las FK "ON DELETE CASCADE" de las
+  // migraciones 001-006, borra en cascada sus logros, amistades,
+  // comentarios, mensajes, notificaciones, historial, reseñas, etc.
+  // "likes" y "moderation_log" se manejan aparte (ver la clase).
+  const resultado = await passwordService.eliminarCuenta(username, password);
 
-  if (usuarios.length === 0) {
+  if (!resultado.ok) {
     return res.status(200).json({ success: false, error: "Contraseña incorrecta" });
   }
-
-  // Gracias a las FK "ON DELETE CASCADE" de migrations/001_fase1.sql,
-  // migrations/002_fase2_comentarios_likes_reportes.sql,
-  // migrations/003_fase2_chat.sql, migrations/004_fase2_notificaciones_actividad.sql,
-  // migrations/005_fase2_favoritos_historial.sql y
-  // migrations/006_fase2_resenas_moderacion.sql, esto borra en
-  // cascada: achievements, badges, friend_requests, friendships,
-  // profile_comments, chat_messages, notifications, activity_log,
-  // game_favorites, game_history, games_played, game_reviews,
-  // game_ratings y game_votes del usuario.
-  // "likes" y "moderation_log" no tienen FK (guardan el username tal
-  // cual, igual que "comment_reports"), así que "likes" se limpia a
-  // mano acá. "moderation_log" queda intacto a propósito: es un
-  // historial de auditoría y debe sobrevivir aunque se borre la cuenta
-  // del moderador o del usuario afectado.
-  await sql`DELETE FROM likes WHERE username = ${username};`;
-
-  await sql`DELETE FROM users WHERE id = ${usuarios[0].id};`;
 
   return res.status(200).json({ success: true });
 }
