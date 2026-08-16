@@ -102,6 +102,7 @@ debe ser el máximo existente + 1 (hoy: 112). Ejemplo real:
 {
     id: 112,
     nombre: "I Am Hall Security",
+    imagen: "imagenes/juegos/i-am-hall-security.jpg",
     categoria: "Simulación",
     estado: "⭐ Nuevo",
     tipo: "destacado",
