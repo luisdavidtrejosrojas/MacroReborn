@@ -1227,6 +1227,16 @@ const juegos = [
     iframe: "./html/juegos/superfighters.html"
 },
 
+{
+    id: 112,
+    nombre: "I Am Hall Security",
+    categoria: "Simulación",
+    estado: "⭐ Nuevo",
+    tipo: "destacado",
+    descripcion: "Convertite en el guardia de una escuela llena de caos: escaneá estudiantes, buscá objetos prohibidos, atrapá a los bromistas y mantené el orden en los pasillos.",
+    iframe: "./html/juegos/i-am-hall-security.html"
+},
+
 ];
 
 
