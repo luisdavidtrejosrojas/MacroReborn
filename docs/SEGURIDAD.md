@@ -1,8 +1,8 @@
-# SEGURIDAD — trabajo de la rama `hash-contrasenas`
+# SEGURIDAD — sistema de contraseñas
 
-Documentación del trabajo de seguridad realizado en esta rama: el
-sistema de hash de contraseñas, la migración de los datos existentes y
-el plan para activarlo en producción. Solo cubre lo que se hizo acá.
+Documentación del sistema de seguridad de contraseñas del proyecto:
+el hash con bcrypt, la migración de los datos existentes y el plan
+para activarlo en producción.
 
 ---
 
@@ -116,10 +116,10 @@ Si se despliega el código sin la 013, registro y login fallan (la
 columna `password_hash` no existe). Por eso el orden importa:
 migración primero, código después.
 
-## 6. Alcance de este trabajo (qué NO incluyó)
+## 6. Alcance (qué NO incluyó)
 
-Esta rama solo tocó el hash de contraseñas. Quedaron fuera (y no se
-modificaron): sesiones/autenticación real, verificación de permisos de
-moderación en los endpoints, rate limiting en login/registro y el
-escapado de contenido generado por usuarios. Son candidatos para
-futuras iteraciones, no parte de este trabajo.
+El sistema de hash de contraseñas no incluye (ni modifica):
+sesiones/autenticación real, verificación de permisos de moderación en
+los endpoints, rate limiting en login/registro y el escapado de
+contenido generado por usuarios. Son candidatos para futuras
+iteraciones.

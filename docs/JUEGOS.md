@@ -1,8 +1,7 @@
-# Cómo agregar un juego al catálogo
+# JUEGOS — cómo agregar un juego al catálogo
 
-Guía para desarrollar el trabajo de la rama `juego/superfighters` y,
-en general, para agregar un juego nuevo al catálogo de MacroReborn.
-Documenta el proceso completo con el ejemplo real de Superfighters
+Guía para agregar un juego nuevo al catálogo de MacroReborn.
+Documenta el proceso completo, con el ejemplo real de Superfighters
 (id 111).
 
 ---
@@ -153,20 +152,15 @@ Notas:
   manejo de errores).
 - Fuente: mirror de GitHub servido por jsdelivr (CORS OK). Motivo
   documentado en el propio `html/juegos/superfighters.html`.
-- Commit: `460b735` — "Agregar Superfighters (2011) al catálogo de
-  juegos" (4 archivos: juego, portada, catálogo, sitemap).
 
-## 6. Convenciones de este trabajo
-
-Las mismas que el resto de la documentación:
+## 6. Convenciones del proyecto
 
 - **Idioma**: comentarios y mensajes en español, explicando el "por
   qué".
 - **Sin emojis**: en código, consola, commits y documentación nueva.
   Lo preexistente no se toca.
-- **Commits**: autor "Luis David Trejos Rojas"
-  `<luisdavid.trejosrojas@gmail.com>`, sin firmas ni pies de autoría
-  automáticos, un cambio lógico por commit.
+- **Commits**: un cambio lógico por commit, sin firmas ni pies de
+  autoría automáticos.
 - **Reutilizar**: seguir el patrón de los juegos existentes (Ruffle
   desde jsdelivr, portadas 480x270, entrada en `datos-juegos.js`);
   no inventar un sistema paralelo.
