@@ -55,23 +55,24 @@ node scripts/migrar-passwords.js --local --simular   # ver qué haría el backfi
 Todo corre en esta máquina; nada toca la base real ni el proyecto
 original.
 
-## Registro de commits (los 13 de esta rama)
+## Registro de commits (los 14 de esta rama)
 
 | Commit | Descripción |
 |---|---|
-| `ed91a1c` | Agregar dependencias `bcryptjs` y `@electric-sql/pglite` |
-| `ecda777` | Crear `api/_db.js`, conector único de base de datos |
-| `d860259` | Crear `api/_password.js` (hash + migración perezosa) y migración 013 |
-| `b6dc25d` | Usar hash en login, registro y borrado de cuenta (`api/auth.js`) |
-| `4004ba9` | Usar hash en el cambio de contraseña (`api/users.js`) |
-| `33573a4` | Base local PGlite y tests de contraseñas |
-| `38b6c8f` | Servidor local para probar en el navegador |
-| `0888bef` | Script de backfill para hashear contraseñas existentes |
-| `d396f08` | Endurecer el backfill (bandera `--produccion`, confirmación, `--simular`) |
-| `7de7591` | Silenciar Pusher cuando faltan credenciales (modo local) |
-| `ab7a2fa` | Soportar fragmentos SQL anidados en el adaptador local |
-| `189a189` | Mensaje de migración preciso en el servidor local y sin emojis |
-| `b85d5c8` | Documentación (esta) |
+| `55e81c5` | Agregar dependencias `bcryptjs` y `@electric-sql/pglite` |
+| `3e31f75` | Crear `api/_db.js`, conector único de base de datos |
+| `4c7ee9e` | Crear `api/_password.js` (hash + migración perezosa) y migración 013 |
+| `ed3b43c` | Usar hash en login, registro y borrado de cuenta (`api/auth.js`) |
+| `94c0cac` | Usar hash en el cambio de contraseña (`api/users.js`) |
+| `7912175` | Base local PGlite y tests de contraseñas |
+| `939ac22` | Servidor local para probar en el navegador |
+| `790e023` | Script de backfill para hashear contraseñas existentes |
+| `c7ee822` | Endurecer el backfill (bandera `--produccion`, confirmación, `--simular`) |
+| `5db7d59` | Silenciar Pusher cuando faltan credenciales (modo local) |
+| `96065c8` | Soportar fragmentos SQL anidados en el adaptador local |
+| `7f35dc7` | Mensaje de migración preciso en el servidor local y sin emojis |
+| `27fa742` | Agregar README y guías de desarrollo y seguridad |
+| `92a6372` | Acotar la documentación a lo realizado en esta rama |
 
 ## Documentación relacionada
 
