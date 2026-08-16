@@ -9,10 +9,11 @@
 -- entrando con su contraseña actual mientras el login la va migrando
 -- a hash de a uno ("migración perezosa", ver api/_password.js).
 --
--- Recién cuando se confirme que no queda ningún password en claro
--- (verificable con el script scripts/migrar-passwords.js y una
--- consulta COUNT), la columna "password" se elimina del todo en la
--- migración 014.
+-- La migración 014 le quita el NOT NULL a "password" (necesario para
+-- que el registro/login nuevo no fallen). Recién cuando se confirme
+-- que no queda ningún password en claro (verificable con el script
+-- scripts/migrar-passwords.js y una consulta COUNT), la columna
+-- "password" se elimina del todo en la migración 015.
 --
 -- Seguro de re-ejecutar (usa IF NOT EXISTS).
 -- ============================================

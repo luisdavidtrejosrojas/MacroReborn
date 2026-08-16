@@ -128,18 +128,24 @@ duplicado.
 
 Orden estricto (la migración SIEMPRE antes que el código que la usa):
 
-1. Aplicar la migración 013 a la base de producción.
-2. Desplegar el código nuevo (todo el repo).
-3. Verificar: registrar un usuario de prueba y entrar con un usuario
+1. Aplicar la migración 013 a la base de producción (agrega
+   `users.password_hash`).
+2. Aplicar la migración 014 (quita el NOT NULL de `users.password`;
+   sin ella, registro y login fallan con el error de not-null
+   constraint — ver `docs/SEGURIDAD.md`).
+3. Desplegar el código nuevo (todo el repo).
+4. Verificar: registrar un usuario de prueba y entrar con un usuario
    existente (se migra solo).
-4. Correr el backfill con `--produccion` (cubre a los que no entran).
-5. Verificar que no quede texto plano:
+5. Correr el backfill con `--produccion` (cubre a los que no entran).
+6. Verificar que no quede texto plano:
    `SELECT COUNT(*) FROM users WHERE password IS NOT NULL;` → 0.
-6. Recién entonces planificar la migración 014 (borrar `users.password`
+7. Recién entonces planificar la migración 015 (borrar `users.password`
    y la rama legacy de `api/_password.js`).
 
 Si se despliega el código sin la 013, registro y login fallan (la
-columna `password_hash` no existe).
+columna `password_hash` no existe). Si se despliega sin la 014,
+fallan por la restricción NOT NULL de `password`. Las dos migraciones
+van antes que el código.
 
 ## 5. Convenciones del proyecto
 

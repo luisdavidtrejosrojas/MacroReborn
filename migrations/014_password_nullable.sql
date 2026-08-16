@@ -1,0 +1,23 @@
+-- ============================================
+-- MacroReborn — Migración 014: password opcional
+-- ============================================
+-- La columna vieja "users.password" (texto plano) quedó definida como
+-- NOT NULL en la tabla original. Desde la migración 013 el código ya
+-- no escribe en esa columna (guarda solo el hash en password_hash),
+-- así que la restricción NOT NULL hace fallar el registro y el login
+-- de usuarios existentes con:
+--
+--   null value in column "password" of relation "users" violates
+--   not-null constraint
+--
+-- Esta migración le quita la restricción: la columna puede quedar
+-- vacía. No borra datos ni cambia contraseñas existentes; solo
+-- permite que el nuevo flujo (hash) funcione sin escribir texto plano.
+--
+-- Aplicar ANTES de desplegar el código que usa password_hash si la
+-- base real todavía no tiene este cambio aplicado a mano.
+--
+-- Seguro de re-ejecutar.
+-- ============================================
+
+ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
