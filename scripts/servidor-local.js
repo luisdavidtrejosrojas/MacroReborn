@@ -108,21 +108,28 @@ async function main() {
         end() { if (!res.writableEnded) res.end(); }
       };
 
-      // Avísame en consola cuando un usuario legacy se migra a hash
-      // (útil para ver la migración perezosa funcionando). Solo se
-      // muestra si el login fue exitoso.
+      // Antes de ejecutar el login, miramos cómo estaba guardada la
+      // contraseña del usuario en la base local. Si tenía TEXTO PLANO
+      // (usuario viejo) y el login tiene éxito, imprimimos el aviso de
+      // migración. Los usuarios que ya tenían hash desde el registro
+      // no imprimen nada: no hay nada que migrar.
       const esLogin = url.pathname === "/api/auth" && query.action === "login";
+      let estadoPrevioLogin = null;
+      if (esLogin && cuerpo && cuerpo.username) {
+        const filasAntes = await db.query(
+          "SELECT password, password_hash FROM users WHERE username = $1",
+          [cuerpo.username]
+        );
+        if (filasAntes.rows[0]) {
+          estadoPrevioLogin = { teniaTextoPlano: filasAntes.rows[0].password !== null };
+        }
+      }
+
       try {
         await handler(reqSim, resSim);
-        if (esLogin && resSim.ultimaRespuesta && resSim.ultimaRespuesta.success && cuerpo && cuerpo.username) {
-          const filas = await db.query(
-            "SELECT username, password, password_hash FROM users WHERE username = $1",
-            [cuerpo.username]
-          );
-          const u = filas.rows[0];
-          if (u && u.password === null && u.password_hash) {
-            console.log(`\n✔ "${u.username}" entró y su contraseña quedó migrada a hash (texto plano borrado).`);
-          }
+        if (esLogin && resSim.ultimaRespuesta && resSim.ultimaRespuesta.success &&
+            estadoPrevioLogin && estadoPrevioLogin.teniaTextoPlano && cuerpo && cuerpo.username) {
+          console.log(`\n"${cuerpo.username}" entró: su contraseña en texto plano fue migrada a hash.`);
         }
       } catch (error) {
         console.error("Error en el handler local:", error);

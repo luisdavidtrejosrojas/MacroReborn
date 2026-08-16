@@ -141,7 +141,7 @@ async function main() {
     // Modo simulación: solo informar, no tocar nada.
     console.log("\nMODO SIMULACIÓN: no se cambió nada. Se haría esto:");
     for (const usuario of validos) {
-      console.log(`  · ${usuario.username} -> se picaría su contraseña y se borraría el texto plano`);
+      console.log(`  - ${usuario.username} -> se picaría su contraseña y se borraría el texto plano`);
     }
     console.log(`\nFin de la simulación (${validos.length} usuario(s) pendientes).`);
     return;
@@ -150,7 +150,7 @@ async function main() {
   if (!esLocal) {
     // Base real: confirmación escrita obligatoria.
     const respuesta = await preguntar(
-      `\n⚠️  Vas a picar las contraseñas de la BASE REAL (${validos.length} usuario(s)).\n` +
+      `\nVas a picar las contraseñas de la BASE REAL (${validos.length} usuario(s)).\n` +
       "    Es el cambio de seguridad buscado (nadie pierde acceso), pero no se puede deshacer.\n" +
       "    Escribí SI para continuar: "
     );
@@ -172,7 +172,7 @@ async function main() {
     `;
 
     migrados++;
-    console.log(`  ✔ ${usuario.username} -> migrado`);
+    console.log(`  - ${usuario.username} -> migrado`);
   }
 
   const restantes = await sql`
