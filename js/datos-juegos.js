@@ -1216,6 +1216,17 @@ const juegos = [
     iframe: "./html/juegos/emeraldrogue.html"
 },
 
+{
+    id: 111,
+    nombre: "Superfighters",
+    imagen: "imagenes/juegos/superfighters.jpg",
+    categoria: "Lucha",
+    estado: "⭐ Nuevo",
+    tipo: "destacado",
+    descripcion: "Controlá a pequeños luchadores y enfrentate en combates 2D llenos de acción: usá puños, patadas y armas, y aprovechá el escenario para ser el último en pie.",
+    iframe: "./html/juegos/superfighters.html"
+},
+
 ];
 
 
