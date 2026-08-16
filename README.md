@@ -55,7 +55,7 @@ node scripts/migrar-passwords.js --local --simular   # ver qué haría el backfi
 Todo corre en esta máquina; nada toca la base real ni el proyecto
 original.
 
-## Registro de commits (los 14 de esta rama)
+## Registro de commits (los 16 de esta rama)
 
 | Commit | Descripción |
 |---|---|
@@ -73,6 +73,8 @@ original.
 | `7f35dc7` | Mensaje de migración preciso en el servidor local y sin emojis |
 | `27fa742` | Agregar README y guías de desarrollo y seguridad |
 | `92a6372` | Acotar la documentación a lo realizado en esta rama |
+| `cfe9644` | Actualizar el registro de commits del README con los hashes nuevos |
+| `59f6d8d` | Agregar GitHub Actions (CI) que corre los tests en cada push y PR |
 
 ## Documentación relacionada
 
