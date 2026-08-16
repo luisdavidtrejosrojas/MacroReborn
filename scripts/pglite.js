@@ -22,20 +22,87 @@ const { PGlite } = require("@electric-sql/pglite");
 const fs = require("fs");
 const path = require("path");
 
+// Marca para reconocer los "fragmentos" de SQL que arma este adaptador.
+const SIMBOLO_FRAGMENTO = Symbol("fragmentoSQL");
+
+// El driver de Neon permite componer consultas en pedazos:
+//
+//   const pedazo = sql`date_trunc('week', now())`;   // NO se ejecuta aún
+//   await sql`SELECT ... WHERE x = ${pedazo} ...`;   // el pedazo se incrusta
+//
+// Este adaptador replica ese comportamiento:
+//   - sql`...` devuelve un "fragmento" (objeto thenable) que recién se
+//     ejecuta cuando se espera con await.
+//   - Si un fragmento aparece interpolado dentro de otro sql`...`, se
+//     incrusta su texto SQL y sus parámetros (renumbrándolos) en vez
+//     de tratarlo como un valor común.
+//
+// La API de producción usa esto en api/users.js (semanaActualSQL): sin
+// este soporte, cualquier GET /api/users fallaba en el modo local con
+// un error de sintaxis en date_trunc.
+
+// Renumera los placeholders $k de un fragmento según la posición que
+// le toca dentro de la consulta que lo contiene.
+function renumbrarFragmento(texto, cantidadParams, base) {
+  if (cantidadParams === 0) return texto;
+  let contador = 0;
+  return texto.replace(/\$\d+/g, (coincidencia) => {
+    const n = parseInt(coincidencia.slice(1), 10);
+    if (n <= cantidadParams) {
+      contador++;
+      return `$${base + contador}`;
+    }
+    return coincidencia;
+  });
+}
+
+// Arma el texto SQL final: los valores comunes se convierten en
+// placeholders $1, $2... y los fragmentos se incrustan tal cual (con
+// sus parámetros renumerados al final de los ya acumulados).
+function compilar(plantilla, valores) {
+  let texto = "";
+  const params = [];
+
+  for (let i = 0; i < plantilla.length; i++) {
+    texto += plantilla[i];
+    if (i >= valores.length) continue;
+
+    const valor = valores[i];
+
+    if (valor && typeof valor === "object" && valor[SIMBOLO_FRAGMENTO]) {
+      texto += renumbrarFragmento(valor.texto, valor.params.length, params.length);
+      params.push(...valor.params);
+    } else {
+      params.push(valor);
+      texto += `$${params.length}`;
+    }
+  }
+
+  return { texto, params };
+}
+
 // Convierte el uso `sql\`...\`` (estilo Neon) en consultas de PGlite.
-// Neon reemplaza cada ${valor} por un placeholder $1, $2... y devuelve
-// un array de filas; acá se replica exactamente ese comportamiento.
+// Neon devuelve un array de filas; acá se replica ese comportamiento.
 function crearSqlPGlite(db) {
 
-  const sql = async function (plantilla, ...valores) {
-    let texto = "";
-    for (let i = 0; i < plantilla.length; i++) {
-      texto += plantilla[i];
-      if (i < plantilla.length - 1) texto += `$${i + 1}`;
-    }
-    const resultado = await db.query(texto, valores);
-    return resultado.rows;
-  };
+  function sql(plantilla, ...valores) {
+    const { texto, params } = compilar(plantilla, valores);
+
+    // Objeto "thenable": SIEMPRE es un fragmento, y si se espera con
+    // await se ejecuta. Así un pedazo suelto se puede incrustar en
+    // otro sql`...` sin ejecutarse antes de tiempo.
+    return {
+      [SIMBOLO_FRAGMENTO]: true,
+      texto,
+      params,
+      then(resolve, reject) {
+        return db.query(texto, params).then(
+          (resultado) => resolve(resultado.rows),
+          reject
+        );
+      }
+    };
+  }
 
   // api/content.js usa sql.query(texto, parametros) en el registro de
   // moderación; se expone también por compatibilidad.
