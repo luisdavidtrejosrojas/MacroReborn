@@ -1,82 +1,81 @@
-# MacroReborn
+# MacroReborn — trabajo de la rama `hash-contrasenas`
 
-Portal web de juegos retro y gratis para jugar online, con comunidad:
-registro y perfiles con avatar en capas, chat general en tiempo real,
-amigos, notificaciones, reseñas y valoraciones de juegos, ranking
-semanal por tiempo jugado, moderación, panel de administración y una
-tienda de prendas para avatares con monedas.
+Documentación del trabajo realizado sobre el proyecto MacroReborn:
+**hash de contraseñas** (fin de las contraseñas en texto plano) y la
+**infraestructura local para probarlo** (base de práctica PGlite,
+servidor local, tests y backfill).
 
-## Stack
+Esta documentación cubre **únicamente lo que se hizo en esta rama**:
+los archivos creados o modificados, los commits y cómo verificar que
+todo funciona. El resto del proyecto quedó intacto y no se documenta
+acá.
 
-| Capa | Tecnología |
+---
+
+## Qué se hizo (resumen)
+
+1. **Contraseñas con hash bcrypt**: registro, login, cambio de
+   contraseña y borrado de cuenta ya no guardan ni comparan texto
+   plano; se guarda solo el hash (`users.password_hash`, migración
+   013).
+2. **Migración perezosa**: los usuarios existentes (con texto plano)
+   se migran solos al entrar con su contraseña correcta, sin que
+   noten nada.
+3. **Backfill protegido**: script para picar las contraseñas de los
+   usuarios que nunca más entran, con candados contra corridas
+   accidentales.
+4. **Todo 100% local**: base de práctica PGlite, servidor local y
+   tests que corren en esta máquina sin tocar la base real.
+
+## Archivos creados y modificados
+
+| Tipo | Archivo | Qué es |
+|---|---|---|
+| Creado | `api/_db.js` | Conector único de base (Neon en producción, local en desarrollo) |
+| Creado | `api/_password.js` | Hash/verificación de contraseñas + clase `PasswordService` |
+| Creado | `scripts/pglite.js` | Base local de práctica (PGlite) y adaptador de la interfaz de Neon |
+| Creado | `scripts/servidor-local.js` | Servidor local para probar en el navegador (`npm run db:local`) |
+| Creado | `scripts/migrar-passwords.js` | Backfill de contraseñas a hash |
+| Creado | `tests/password.test.js` | Tests automáticos del flujo de contraseñas |
+| Creado | `migrations/013_hash_contrasenas.sql` | Columna `users.password_hash` |
+| Modificado | `api/auth.js` | Login, registro y borrado usan hash |
+| Modificado | `api/users.js` | Cambio de contraseña usa hash |
+| Modificado | `api/_pusher.js` | Instancia "muda" cuando faltan credenciales (modo local) |
+| Modificado | `package.json` | Dependencias `bcryptjs`, `@electric-sql/pglite` y scripts `test`, `db:local` |
+
+## Cómo verificar el trabajo
+
+```bash
+npm install          # instala las dependencias nuevas
+npm test             # 6 tests del flujo de contraseñas (base local)
+npm run db:local     # sitio local en http://localhost:3001 (usuario demo / demo1234)
+node scripts/migrar-passwords.js --local --simular   # ver qué haría el backfill
+```
+
+Todo corre en esta máquina; nada toca la base real ni el proyecto
+original.
+
+## Registro de commits (los 13 de esta rama)
+
+| Commit | Descripción |
 |---|---|
-| Frontend | HTML, CSS y JavaScript vanilla (sin frameworks, sin build) |
-| Backend | Serverless Functions en Vercel (`api/`) |
-| Base de datos | PostgreSQL en Neon (`@neondatabase/serverless`) |
-| Tiempo real | Pusher (chat, notificaciones, actividad) |
-| Base local de desarrollo | PGlite (Postgres embebido en WASM, sin servidor) |
+| `ed91a1c` | Agregar dependencias `bcryptjs` y `@electric-sql/pglite` |
+| `ecda777` | Crear `api/_db.js`, conector único de base de datos |
+| `d860259` | Crear `api/_password.js` (hash + migración perezosa) y migración 013 |
+| `b6dc25d` | Usar hash en login, registro y borrado de cuenta (`api/auth.js`) |
+| `4004ba9` | Usar hash en el cambio de contraseña (`api/users.js`) |
+| `33573a4` | Base local PGlite y tests de contraseñas |
+| `38b6c8f` | Servidor local para probar en el navegador |
+| `0888bef` | Script de backfill para hashear contraseñas existentes |
+| `d396f08` | Endurecer el backfill (bandera `--produccion`, confirmación, `--simular`) |
+| `7de7591` | Silenciar Pusher cuando faltan credenciales (modo local) |
+| `ab7a2fa` | Soportar fragmentos SQL anidados en el adaptador local |
+| `189a189` | Mensaje de migración preciso en el servidor local y sin emojis |
+| `b85d5c8` | Documentación (esta) |
 
-## Estructura del proyecto
-
-```
-├── *.html                Páginas del sitio (index, juegos, perfil, chat, admin, ...)
-├── css/                  Hojas de estilo por página
-├── js/                   Scripts del frontend
-│   ├── core.js           Utilidades compartidas (avatares, fechas, presencia)
-│   └── motor/            Módulos de dominio (xp, logros, insignias, permisos, ...)
-├── html/juegos/          Páginas de cada juego embebido (iframes)
-├── api/                  Backend (Serverless Functions)
-│   ├── auth.js           Login, registro, borrado de cuenta
-│   ├── users.js          Perfiles, XP, suspensión, cambio de contraseña
-│   ├── content.js        Comentarios, chat, reseñas, reportes, tienda, ...
-│   ├── social.js         Amigos, logros, insignias, bloqueos
-│   ├── system.js         Estadísticas, ranking semanal
-│   ├── _utils.js         Helpers compartidos (CORS, ids, bloqueos)
-│   ├── _db.js            Conector único de base de datos
-│   ├── _password.js      Hash y verificación de contraseñas (bcrypt)
-│   └── _pusher.js        Cliente Pusher (con instancia "muda" en local)
-├── migrations/           Migraciones SQL de la base, numeradas (001-013)
-├── scripts/              Herramientas de desarrollo
-│   ├── pglite.js         Base local de práctica (PGlite) + adaptador Neon
-│   ├── servidor-local.js Servidor local para probar en el navegador
-│   └── migrar-passwords.js  Backfill de contraseñas a hash
-├── tests/                Tests automáticos (node:test)
-├── docs/                 Documentación (SEO, desarrollo, seguridad)
-└── imagenes/             Imágenes, avatares y portadas de juegos
-```
-
-## Comandos útiles
-
-```bash
-npm install          # instala dependencias (bcryptjs, pglite, pusher, neon)
-npm test             # corre los tests automáticos (node:test)
-npm run db:local     # levanta el sitio local en http://localhost:3001
-```
-
-### Probar el sitio localmente (sin tocar producción)
-
-```bash
-npm run db:local
-```
-
-Abrí `http://localhost:3001`. Todo corre dentro de tu computadora con
-una base de práctica (PGlite): el sitio, `/api/auth` y `/api/users`
-funcionan con los mismos handlers de producción. El resto de los
-endpoints de la API no están activados en el modo local a propósito
-(ver `docs/DESARROLLO.md`).
-
-## Documentación
+## Documentación relacionada
 
 | Guía | Contenido |
 |---|---|
-| `docs/DESARROLLO.md` | Arquitectura, referencia de la API, base de datos, desarrollo local, tests, convenciones y despliegue |
-| `docs/SEGURIDAD.md` | Sistema de contraseñas (hash bcrypt), migración, backfill y plan de activación |
-| `docs/SEO.md` | Guía de mantenimiento SEO (dominio, sitemap, robots, metadatos) |
-
-## Notas
-
-- El proyecto original usa contraseñas con hash bcrypt (ver
-  `docs/SEGURIDAD.md`). El frontend es HTML estático y el backend
-  vive en Vercel + Neon.
-- La documentación está escrita en español, en el mismo estilo que el
-  resto del proyecto.
+| `docs/SEGURIDAD.md` | Sistema de contraseñas: problema, solución, backfill, pruebas y plan de activación en producción |
+| `docs/DESARROLLO.md` | Desarrollo de estos cambios: módulos, infraestructura local, tests, despliegue y convenciones |
