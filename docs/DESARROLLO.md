@@ -1,20 +1,20 @@
-# DESARROLLO de los cambios de la rama `hash-contrasenas`
+# DESARROLLO — backend e infraestructura local
 
-Guía para desarrollar y probar **el trabajo de esta rama**: el hash de
-contraseñas y la infraestructura local asociada. No cubre el resto del
-proyecto (para eso está el código existente, que quedó intacto).
+Guía técnica del backend del proyecto y de la infraestructura local
+para desarrollar y probar: la conexión a la base de datos, el sistema
+de contraseñas, y las herramientas locales (PGlite, servidor local,
+backfill y tests).
 
 ---
 
 ## 1. Qué cubre esta guía
 
-- Los módulos nuevos del backend (`api/_db.js`, `api/_password.js`) y
-  los cambios en `api/auth.js`, `api/users.js` y `api/_pusher.js`.
+- Los módulos compartidos del backend (`api/_db.js`, `api/_password.js`,
+  `api/_pusher.js`) y los cambios en `api/auth.js` y `api/users.js`.
 - La infraestructura local: `scripts/pglite.js`,
   `scripts/servidor-local.js`, `scripts/migrar-passwords.js` y
   `tests/password.test.js`.
-- Cómo correr, probar y desplegar estos cambios, y las convenciones
-  que se siguen.
+- Cómo correr, probar y desplegar, y las convenciones del proyecto.
 
 ## 2. Módulos nuevos del backend
 
@@ -141,14 +141,13 @@ Orden estricto (la migración SIEMPRE antes que el código que la usa):
 Si se despliega el código sin la 013, registro y login fallan (la
 columna `password_hash` no existe).
 
-## 5. Convenciones de este trabajo
+## 5. Convenciones del proyecto
 
 - **Idioma**: comentarios y mensajes en español, explicando el "por
   qué".
 - **Sin emojis**: en código, consola, commits y documentación nueva.
   Lo preexistente no se toca.
-- **Commits**: autor "Luis David Trejos Rojas"
-  `<luisdavid.trejosrojas@gmail.com>`, sin firmas ni pies de autoría
-  automáticos, un cambio lógico por commit.
+- **Commits**: un cambio lógico por commit, sin firmas ni pies de
+  autoría automáticos.
 - **Reutilizar**: la lógica compartida va en `api/_*.js`; no duplicar
   lo que ya existe.

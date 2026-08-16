@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Superfighters - MacroReborn</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+    #flash-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: black;
+      overflow: hidden;
+    }
+    ruffle-player {
+      width: 100%;
+      height: 100%;
+      background: black;
+      display: block;
+    }
+    .black-box {
+      position: fixed;
+      background: black;
+      z-index: 10;
+    }
+    #box-top {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+    }
+    #box-bottom {
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+    }
+    #box-left {
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+    }
+    #box-right {
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 100%;
+    }
+    #loading-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      text-align: center;
+      z-index: 1000;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@ruffle-rs/ruffle@0.2.0-nightly.2025.10.2/ruffle.min.js"></script>
+</head>
+<body>
+  <div id="loading-text">Cargando juego...</div>
+  <div id="flash-container"></div>
+  <div class="black-box" id="box-top"></div>
+  <div class="black-box" id="box-bottom"></div>
+  <div class="black-box" id="box-left"></div>
+  <div class="black-box" id="box-right"></div>
+  <script>
+    // Superfighters (2011, MythoLogic Interactive) - juego original gratuito,
+    // NO es la secuela de pago "Superfighters Deluxe".
+    // El .swf se reproduce con Ruffle y se enlaza en vivo desde un CDN
+    // externo (jsdelivr sirviendo un mirror de GitHub), igual que el resto
+    // del catalogo: no se sube ningun binario al repo. jsdelivr envia CORS,
+    // que Ruffle necesita para descargar el SWF desde el navegador.
+    // Fuente verificada: el SWF es Flash 9 con escenario 800x600 (4:3),
+    // consistente con el original publicado en 2011.
+    const SWF_URL = "https://cdn.jsdelivr.net/gh/swfdimension/swfrunner.github.io@master/games/superfighters.swf";
+
+    const container = document.getElementById("flash-container");
+    const loadingText = document.getElementById("loading-text");
+    const boxTop = document.getElementById("box-top");
+    const boxBottom = document.getElementById("box-bottom");
+    const boxLeft = document.getElementById("box-left");
+    const boxRight = document.getElementById("box-right");
+
+    // El escenario original del juego es 800x600 (proporcion 4:3).
+    const aspectRatio = 4 / 3;
+
+    function resizeGame() {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      let width = Math.floor(windowWidth);
+      let height = Math.floor(width / aspectRatio);
+
+      if (height > windowHeight) {
+        height = Math.floor(windowHeight);
+        width = Math.floor(height * aspectRatio);
+      }
+
+      container.style.width = `${width}px`;
+      container.style.height = `${height}px`;
+
+      // Barras negras para respetar la proporcion 4:3 sin deformar el juego.
+      const topMargin = (windowHeight - height) / 2;
+      const leftMargin = (windowWidth - width) / 2;
+
+      boxTop.style.height = `${topMargin}px`;
+      boxBottom.style.height = `${topMargin}px`;
+      boxLeft.style.width = `${leftMargin}px`;
+      boxRight.style.width = `${leftMargin}px`;
+    }
+
+    window.addEventListener("resize", resizeGame);
+
+    window.addEventListener("DOMContentLoaded", () => {
+      resizeGame();
+
+      const ruffle = window.RufflePlayer?.newest() || window.RufflePlayer?.createPlayer();
+
+      if (!ruffle || !container) {
+        loadingText.textContent = "No se pudo cargar Ruffle.";
+        return;
+      }
+
+      const player = ruffle.createPlayer();
+      player.style.width = "100%";
+      player.style.height = "100%";
+      player.style.background = "black";
+      container.appendChild(player);
+
+      player.load(SWF_URL)
+        .then(() => {
+          if (loadingText) {
+            loadingText.remove();
+          }
+        })
+        .catch(err => {
+          console.error("MacroReborn: no se pudo cargar Superfighters.", err);
+          if (loadingText) {
+            loadingText.textContent = "Error al cargar el juego: " + err.message;
+          }
+        });
+    });
+  </script>
+</body>
+</html>
