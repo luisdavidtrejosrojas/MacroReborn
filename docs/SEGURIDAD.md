@@ -19,8 +19,9 @@ más grave y fue lo primero que se resolvió.
 - **bcryptjs**: se guarda solo un hash de la contraseña (no se puede
   revertir), con costo de trabajo 10.
 - **Columna nueva `users.password_hash`** (migración 013). La columna
-  vieja `password` se conserva durante la transición y se borra recién
-  en una futura migración 014.
+  vieja `password` se conserva durante la transición (sin su
+  restricción NOT NULL, ver migración 014) y se borra recién en una
+  futura migración 015.
 - **Módulo `api/_password.js`**: funciones puras (`hashContrasena`,
   `verificarHash`, `verificarContrasenaYMigrar`) + clase
   `PasswordService`.
@@ -102,19 +103,26 @@ práctica y ejercita los handlers reales:
 Orden estricto:
 
 1. Aplicar la migración 013 (agrega `users.password_hash`).
-2. Desplegar el código nuevo (`api/_db.js`, `api/_password.js`,
+2. Aplicar la migración 014 (quita el NOT NULL de `users.password`).
+   Este paso es OBLIGATORIO: sin él, el registro y el login fallan con
+   `null value in column "password" violates not-null constraint`,
+   porque el código nuevo ya no escribe en `password` pero la columna
+   sigue marcada como obligatoria (fue el error que se vio en
+   producción).
+3. Desplegar el código nuevo (`api/_db.js`, `api/_password.js`,
    `api/auth.js`, `api/users.js`, `api/_pusher.js`).
-3. Verificar: registrar un usuario de prueba y entrar con un usuario
+4. Verificar: registrar un usuario de prueba y entrar con un usuario
    existente (se migra solo).
-4. Correr el backfill con `--produccion` (cubre a los que no entran).
-5. Verificar que no quede texto plano:
+5. Correr el backfill con `--produccion` (cubre a los que no entran).
+6. Verificar que no quede texto plano:
    `SELECT COUNT(*) FROM users WHERE password IS NOT NULL;` → 0.
-6. Tras un período de gracia: migración 014 (borrar `users.password`)
+7. Tras un período de gracia: migración 015 (borrar `users.password`)
    y quitar la rama de comparación legacy de `api/_password.js`.
 
 Si se despliega el código sin la 013, registro y login fallan (la
-columna `password_hash` no existe). Por eso el orden importa:
-migración primero, código después.
+columna `password_hash` no existe). Si se despliega sin la 014,
+registro y login fallan por la restricción NOT NULL de `password`.
+Por eso el orden importa: migraciones primero, código después.
 
 ## 6. Alcance (qué NO incluyó)
 
