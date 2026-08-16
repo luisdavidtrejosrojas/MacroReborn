@@ -1,11 +1,14 @@
-# MacroReborn — trabajo de la rama `hash-contrasenas`
+# MacroReborn — documentación del trabajo realizado
 
-Documentación del trabajo realizado sobre el proyecto MacroReborn:
-**hash de contraseñas** (fin de las contraseñas en texto plano) y la
-**infraestructura local para probarlo** (base de práctica PGlite,
-servidor local, tests y backfill).
+Documentación del trabajo realizado sobre el proyecto MacroReborn en
+dos frentes:
 
-Esta documentación cubre **únicamente lo que se hizo en esta rama**:
+1. **Hash de contraseñas** (fin de las contraseñas en texto plano) y
+   la infraestructura local para probarlo — rama `hash-contrasenas`.
+2. **Agregar juegos al catálogo** (proceso completo, con el ejemplo
+   real de Superfighters) — rama `juego/superfighters`.
+
+Esta documentación cubre **únicamente lo que se hizo en estas ramas**:
 los archivos creados o modificados, los commits y cómo verificar que
 todo funciona. El resto del proyecto quedó intacto y no se documenta
 acá.
@@ -76,9 +79,25 @@ original.
 | `cfe9644` | Actualizar el registro de commits del README con los hashes nuevos |
 | `59f6d8d` | Agregar GitHub Actions (CI) que corre los tests en cada push y PR |
 
+## Trabajo de la rama `juego/superfighters` (juegos)
+
+Agregado **Superfighters (2011)** al catálogo (id 111): juego original
+gratuito de MythoLogic Interactive, reproducido con Ruffle desde un
+CDN externo (jsdelivr), sin subir ningún binario al repo. Portada
+480x270 como el resto del catálogo. El proceso completo para agregar
+un juego está documentado en `docs/JUEGOS.md`.
+
+Archivos: `html/juegos/superfighters.html` (juego con Ruffle),
+`imagenes/juegos/superfighters.jpg` (portada), `js/datos-juegos.js`
+(entrada id 111) y `sitemap.xml` (URL de la ficha).
+
+Commit: `460b735` — "Agregar Superfighters (2011) al catálogo de
+juegos".
+
 ## Documentación relacionada
 
 | Guía | Contenido |
 |---|---|
 | `docs/SEGURIDAD.md` | Sistema de contraseñas: problema, solución, backfill, pruebas y plan de activación en producción |
-| `docs/DESARROLLO.md` | Desarrollo de estos cambios: módulos, infraestructura local, tests, despliegue y convenciones |
+| `docs/DESARROLLO.md` | Desarrollo de los cambios de contraseñas: módulos, infraestructura local, tests, despliegue y convenciones |
+| `docs/JUEGOS.md` | Cómo agregar un juego al catálogo: proceso completo, prueba local, notas de Ruffle/CORS y el caso Superfighters |
