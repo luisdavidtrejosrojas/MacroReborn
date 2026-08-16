@@ -1,0 +1,20 @@
+-- ============================================
+-- MacroReborn — Migración 013: hash de contraseñas
+-- ============================================
+-- Agrega la columna "password_hash" a "users", donde se van a guardar
+-- las contraseñas PICADAS (hash bcrypt) en vez del texto plano actual.
+--
+-- La columna vieja "password" (texto plano) se CONSERVA durante la
+-- transición a propósito: así los usuarios existentes pueden seguir
+-- entrando con su contraseña actual mientras el login la va migrando
+-- a hash de a uno ("migración perezosa", ver api/_password.js).
+--
+-- Recién cuando se confirme que no queda ningún password en claro
+-- (verificable con el script scripts/migrar-passwords.js y una
+-- consulta COUNT), la columna "password" se elimina del todo en la
+-- migración 014.
+--
+-- Seguro de re-ejecutar (usa IF NOT EXISTS).
+-- ============================================
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash TEXT;

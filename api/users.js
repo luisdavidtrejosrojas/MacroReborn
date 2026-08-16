@@ -1,8 +1,10 @@
-const { neon } = require("@neondatabase/serverless");
 const { setCors } = require("./_utils");
 const { getPusher, canalNotificaciones } = require("./_pusher");
+const { obtenerSql } = require("./_db");
+const { PasswordService } = require("./_password");
 
-const sql = neon(process.env.DATABASE_URL);
+const sql = obtenerSql();
+const passwordService = new PasswordService(sql);
 
 // ==============================
 // /api/users
@@ -359,15 +361,13 @@ async function changePassword(req, res) {
     return res.status(200).json({ success: false, error: "La nueva contraseña debe tener al menos 6 caracteres" });
   }
 
-  const usuarios = await sql`
-    SELECT id FROM users WHERE username = ${username} AND password = ${currentPassword};
-  `;
+  // Verifica la contraseña actual (migrando al hash si el usuario
+  // todavía tenía texto plano) y guarda SOLO el hash de la nueva.
+  const resultado = await passwordService.cambiarContrasena(username, currentPassword, newPassword);
 
-  if (usuarios.length === 0) {
-    return res.status(200).json({ success: false, error: "La contraseña actual no es correcta" });
+  if (!resultado.ok) {
+    return res.status(200).json({ success: false, error: resultado.error });
   }
-
-  await sql`UPDATE users SET password = ${newPassword} WHERE id = ${usuarios[0].id};`;
 
   return res.status(200).json({ success: true });
 }
