@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>I Am Hall Security - MacroReborn</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+    #game-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    #loading-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      text-align: center;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading-text">Cargando juego...</div>
+  <iframe
+    id="game-frame"
+    allowfullscreen
+    allow="autoplay; fullscreen"
+    title="I Am Hall Security"
+  ></iframe>
+  <script>
+    // I Am Hall Security (2025, GeniGames) - juego gratuito de simulacion 3D
+    // donde sos el guardia de una escuela (escanear estudiantes, atrapar
+    // bromistas). Es un juego HTML5 hecho con Unity WebGL (2022.3.39f1),
+    // no Flash: no usa Ruffle ni .swf.
+    //
+    // El juego original vive en el CDN de Poki (poki-gdn.com), que bloquea
+    // el acceso directo (403). Se enlaza en vivo a traves del proxy
+    // gamecdn.onl, el mismo que usa Chicken Clicker para este juego: el
+    // proxy manda CORS, bloquea el "sitelock" de Poki (la redireccion
+    // anti-embedding), bloquea anuncios y oculta que el juego corre dentro
+    // de un iframe. No se sube ningun binario al repo, igual que el resto
+    // del catalogo que referencia CDNs externos.
+    //
+    // Fuente verificada: index del juego 200, los 4 archivos del build
+    // (Build2.*) responden 200 via el proxy, y el master-loader de Poki
+    // no hace chequeos de host.
+    const GAME_URL = "https://gamecdn.onl/proxy/4e6f047f-8c46-48fb-a957-9ef6e6caba01.poki-gdn.com/bf96eb6e-9d38-4cc1-897c-b303e591a23f/index.html";
+
+    const loadingText = document.getElementById("loading-text");
+    const gameFrame = document.getElementById("game-frame");
+
+    // La pagina del juego (el proxy) es cross-origin, asi que no podemos
+    // leer su contenido: nos apoyamos en los eventos de carga del iframe.
+    gameFrame.addEventListener("load", () => {
+      if (loadingText) {
+        loadingText.remove();
+      }
+    });
+
+    gameFrame.addEventListener("error", () => {
+      console.error("MacroReborn: no se pudo cargar I Am Hall Security.");
+      if (loadingText) {
+        loadingText.textContent = "Error al cargar el juego.";
+      }
+    });
+
+    // El src se asigna despues de registrar los eventos para no perder el
+    // evento de carga si el proxy respondiera demasiado rapido.
+    gameFrame.src = GAME_URL;
+  </script>
+</body>
+</html>
