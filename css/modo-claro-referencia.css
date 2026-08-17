@@ -1,0 +1,114 @@
+/* ==========================================================================
+   MACRO REBORN — AJUSTES "MODO CLARO" (para igualar la foto de referencia)
+   --------------------------------------------------------------------------
+   Este archivo es ADITIVO: no reemplaza nada de lo que ya tenés.
+   Solo pisa, con más especificidad, algunos valores puntuales que el
+   modo claro actual (css/inicio.css + css/perfil.css) resuelve distinto
+   a la foto:
+
+     1) La franja superior de la navbar (logo, buscador, monedas, ayuda,
+        usuario, campanita, botón sol/luna) se queda oscura en modo
+        claro, en vez de ponerse blanca. La fila de abajo (Chat / Amigos
+        / Juegos) NO se toca: ya se pone clara sola y coincide con la foto.
+     2) Los botones "pelados" de la navbar (ayuda ❔, usuario, cerrar
+        sesión, campanita) pasan a verse como píldora/círculo blanco,
+        igual que en la foto, en vez de quedar transparentes sobre el
+        fondo oscuro.
+     3) La tarjeta de perfil usa borde dorado (en vez de violeta) y el
+        menú de pestañas (Home / Actividad de amigos / ...) se mantiene
+        oscuro, igual que en la foto, en vez de aclararse.
+
+   No modifica el modo oscuro (todo está dentro de
+   html[data-tema="claro"]) ni cambia ningún ID/clase que use JS.
+
+   CÓMO INSTALARLO
+   --------------------------------------------------------------------------
+   1. Copiá este archivo a la carpeta  css/  de tu proyecto
+      (queda como  css/modo-claro-referencia.css).
+   2. En perfil.html, agregá esta línea justo DESPUÉS de las otras hojas
+      de estilo, antes de cerrar </head>:
+
+        <link rel="stylesheet" href="css/modo-claro-referencia.css">
+
+      (tiene que ir el ÚLTIMO <link> de CSS de la página, para que sus
+      reglas ganen por orden de aparición).
+   ========================================================================== */
+
+
+/* ---- 1) Franja superior de la navbar: oscura también en modo claro ---- */
+
+html[data-tema="claro"] .navbar {
+  --navbar-bg: rgba(21, 10, 40, 0.94);
+  border-bottom-color: #f0b429;
+}
+
+html[data-tema="claro"] .navbar > .nav-logo {
+  color: #ffd666;
+}
+
+html[data-tema="claro"] .navbar .nav-logo img {
+  filter: drop-shadow(0 0 6px rgba(240, 180, 41, 0.6));
+}
+
+/* Links sueltos que pudieran caer directo en la franja oscura */
+html[data-tema="claro"] .navbar > .nav-links > a:not(.sesion-extra) {
+  color: #d8cff0;
+}
+
+html[data-tema="claro"] .navbar > .nav-links > a:not(.sesion-extra):hover {
+  color: #ffd666;
+}
+
+/* ---- 2) Botones "pelados" (ayuda, usuario, cerrar sesión, campanita):
+   se ven como píldora/círculo blanco sobre la navbar oscura ---- */
+
+html[data-tema="claro"] .navbar .nav-ayuda,
+html[data-tema="claro"] .navbar a.sesion-extra,
+html[data-tema="claro"] .navbar .notif-bell-boton,
+html[data-tema="claro"] .navbar .user-guest-boton {
+  background: #ffffff;
+  border-color: #ddd0f0;
+  color: #241145;
+}
+
+html[data-tema="claro"] .navbar .nav-ayuda:hover,
+html[data-tema="claro"] .navbar a.sesion-extra:hover,
+html[data-tema="claro"] .navbar .user-guest-boton:hover {
+  border-color: #f0b429;
+  background: #ffffff;
+}
+
+/* El botón sol/luna (.boton-tema) ya usa --bg-panel-alt (blanco/lavanda
+   en modo claro): no necesita ajuste, queda bien tal cual sobre la
+   navbar oscura, igual que en la foto. */
+
+
+/* ---- 3) Tarjeta de perfil: borde dorado en vez de violeta ---- */
+
+html[data-tema="claro"] .perfil {
+  --clasico-borde: #d99a1f;
+  --clasico-plate: linear-gradient(180deg, #5b3aa0 0%, #2a1150 100%);
+}
+
+/* ---- 4) Menú de pestañas (Home / Actividad de amigos / ...): se
+   mantiene oscuro en vez de ponerse blanco, igual que en la foto ---- */
+
+html[data-tema="claro"] .menu-perfil {
+  background: linear-gradient(180deg, #2f1a5c 0%, #241145 100%);
+}
+
+html[data-tema="claro"] .menu-perfil button {
+  background: transparent;
+  color: #d8cff0;
+  border-color: rgba(216, 207, 240, 0.25);
+}
+
+html[data-tema="claro"] .menu-perfil button:hover {
+  color: #ffd666;
+  border-color: #f0b429;
+}
+
+html[data-tema="claro"] .menu-perfil .activa {
+  background: var(--clasico-plate);
+  color: #ffffff;
+}
