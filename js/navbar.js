@@ -87,15 +87,74 @@ if(nav){
                 </div>
             </div>
 
-            <a class="sesion-extra" href="perfil.html">
-                👤 ${usuarioNav.nombre}
-            </a>
+            <div class="user-guest-wrap" id="userMenuWrap">
+                <button type="button" class="sesion-extra user-guest-boton" id="botonUsuarioMenu" aria-haspopup="true" aria-expanded="false">
+                    <span class="user-guest-avatar">👤</span>
+                    <span class="user-guest-nombre">${usuarioNav.nombre}</span>
+                </button>
 
-            <a class="sesion-extra" href="#" id="cerrarSesion">
-                🚪 Cerrar sesión
-            </a>
+                <div class="user-guest-dropdown" id="dropdownUsuarioMenu">
+                    <div class="user-guest-dropdown-header">${usuarioNav.nombre}</div>
+
+                    <div class="user-menu-lista">
+                        <a href="perfil.html">🏠 Home</a>
+                        <a href="perfil.html#actividad-amigos">👥 Actividad de amigos</a>
+                        <a href="perfil.html#actividad">📜 Actividad reciente</a>
+                        <a href="perfil.html#comentarios">💬 Comentarios</a>
+                        <a href="perfil.html#favoritos">❤️ Favoritos</a>
+                        <a href="perfil.html#ultimos">🎮 Últimos jugados</a>
+                        <a href="perfil.html#amigos">🤝 Amigos</a>
+                        <a href="perfil.html#logros">🏅 Logros</a>
+                    </div>
+
+                    <div class="user-guest-dropdown-footer">
+                        <a href="#" id="cerrarSesion">🚪 Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
 
         `);
+
+        // ---------- DESPLEGABLE DEL MENÚ DE USUARIO (perfil) ----------
+        // Mismo patrón que el desplegable de "Usuario temporal" (invitado)
+        // y el de notificaciones: togglea al tocar el botón, se cierra al
+        // hacer click afuera o al apretar Escape.
+
+        const botonUsuarioMenu = document.getElementById("botonUsuarioMenu");
+        const dropdownUsuarioMenu = document.getElementById("dropdownUsuarioMenu");
+
+        function cerrarDropdownUsuarioMenu(){
+            if(!dropdownUsuarioMenu) return;
+            dropdownUsuarioMenu.classList.remove("abierto");
+            if(botonUsuarioMenu) botonUsuarioMenu.setAttribute("aria-expanded", "false");
+        }
+
+        function abrirDropdownUsuarioMenu(){
+            if(!dropdownUsuarioMenu) return;
+            dropdownUsuarioMenu.classList.add("abierto");
+            if(botonUsuarioMenu) botonUsuarioMenu.setAttribute("aria-expanded", "true");
+        }
+
+        if(botonUsuarioMenu && dropdownUsuarioMenu){
+
+            botonUsuarioMenu.addEventListener("click", (e)=>{
+                e.stopPropagation();
+                dropdownUsuarioMenu.classList.contains("abierto")
+                    ? cerrarDropdownUsuarioMenu()
+                    : abrirDropdownUsuarioMenu();
+            });
+
+            document.addEventListener("click", (e)=>{
+                if(!dropdownUsuarioMenu.classList.contains("abierto")) return;
+                if(e.target.closest("#userMenuWrap")) return;
+                cerrarDropdownUsuarioMenu();
+            });
+
+            document.addEventListener("keydown", (e)=>{
+                if(e.key === "Escape") cerrarDropdownUsuarioMenu();
+            });
+
+        }
 
         // Monedas del usuario (mismo saldo que se gasta en el Centro de
         // avatares de comunidad-ranking.html). Se reusa ese mismo

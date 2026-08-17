@@ -17,6 +17,21 @@ botones.forEach(boton=>{
   });
 });
 
+// Permite llegar directo a una pestaña puntual desde afuera de esta
+// página (por ejemplo, desde el menú de usuario de la navbar:
+// "perfil.html#amigos"), simulando el click sobre el botón de esa
+// pestaña. Si el hash no coincide con ninguna pestaña, no hace nada
+// y queda la pestaña "Home" que ya viene activa por defecto.
+function activarPestañaDesdeHash(){
+  const idPestaña = location.hash.replace("#", "");
+  if(!idPestaña) return;
+  const boton = document.querySelector('.tab[data-tab="' + idPestaña + '"]');
+  if(boton) boton.click();
+}
+
+activarPestañaDesdeHash();
+window.addEventListener("hashchange", activarPestañaDesdeHash);
+
 
 // ---------- PERFIL ----------
 
