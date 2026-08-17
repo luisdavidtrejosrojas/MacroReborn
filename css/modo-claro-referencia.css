@@ -1,37 +1,60 @@
 /* ==========================================================================
-   MACRO REBORN — AJUSTES "MODO CLARO" (para igualar la foto de referencia)
+   MACRO REBORN — AJUSTES "MODO CLARO" PARA TODO EL SITIO
    --------------------------------------------------------------------------
-   Este archivo es ADITIVO: no reemplaza nada de lo que ya tenés.
-   Solo pisa, con más especificidad, algunos valores puntuales que el
-   modo claro actual (css/inicio.css + css/perfil.css) resuelve distinto
-   a la foto:
+   Este archivo es ADITIVO: no reemplaza nada de lo que ya tenés. Se carga
+   en TODAS las páginas y pisa, con más especificidad, algunos valores
+   puntuales que el modo claro actual resuelve distinto a la foto de
+   referencia (que es la de perfil.html):
 
-     1) La franja superior de la navbar (logo, buscador, monedas, ayuda,
-        usuario, campanita, botón sol/luna) se queda oscura en modo
-        claro, en vez de ponerse blanca. La fila de abajo (Chat / Amigos
-        / Juegos) NO se toca: ya se pone clara sola y coincide con la foto.
-     2) Los botones "pelados" de la navbar (ayuda ❔, usuario, cerrar
-        sesión, campanita) pasan a verse como píldora/círculo blanco,
-        igual que en la foto, en vez de quedar transparentes sobre el
-        fondo oscuro.
-     3) La tarjeta de perfil usa borde dorado (en vez de violeta) y el
-        menú de pestañas (Home / Actividad de amigos / ...) se mantiene
-        oscuro, igual que en la foto, en vez de aclararse.
+     1) NAVBAR (afecta a TODAS las páginas, porque el navbar es el mismo
+        componente en todos lados): la franja superior (logo, buscador,
+        monedas, ayuda, usuario, campanita, botón sol/luna) se queda
+        oscura en modo claro, en vez de ponerse blanca. La fila de abajo
+        (Chat / Amigos / Juegos) NO se toca: ya se pone clara sola.
+
+     2) BOTONES "PELADOS" del navbar (ayuda ❔, usuario, cerrar sesión,
+        campanita): pasan a verse como píldora/círculo blanco sobre la
+        navbar oscura, igual que en la foto, en vez de quedar
+        transparentes.
+
+     3) y 4) TARJETA DE PERFIL Y MENÚ DE PESTAÑAS: borde dorado (en vez
+        de violeta) y el menú "Home / Actividad de amigos / ..." se
+        mantiene oscuro. Esto solo tiene efecto en las páginas que usan
+        esas clases: perfil.html y usuario.html (comparten el mismo
+        css/perfil.css). En el resto de las páginas estas reglas
+        simplemente no encuentran esos elementos y no hacen nada — no
+        rompen nada por estar de más.
+
+   El resto de las páginas (comunidad-ranking, chat, amigos, juegos,
+   juego, jugar, noticias, notificaciones, admin, login, registro) ya
+   arman su modo claro a partir de las mismas variables de
+   css/inicio.css (fondos, texto, bordes), así que con el arreglo del
+   navbar (punto 1 y 2) quedan visualmente coherentes con la foto sin
+   necesitar reglas propias. Si alguna en particular no te convence una
+   vez que la veas en el navegador, mandame una captura de ESA página y
+   te preparo un ajuste puntual para ella, igual que hice con perfil.
 
    No modifica el modo oscuro (todo está dentro de
    html[data-tema="claro"]) ni cambia ningún ID/clase que use JS.
 
    CÓMO INSTALARLO
    --------------------------------------------------------------------------
-   1. Copiá este archivo a la carpeta  css/  de tu proyecto
-      (queda como  css/modo-claro-referencia.css).
-   2. En perfil.html, agregá esta línea justo DESPUÉS de las otras hojas
-      de estilo, antes de cerrar </head>:
+   1. Copiá este archivo a la carpeta  css/  de tu proyecto, como
+      css/modo-claro-global.css  (reemplaza al modo-claro-referencia.css
+      que te había pasado antes: usá este en vez de ese).
 
-        <link rel="stylesheet" href="css/modo-claro-referencia.css">
+   2. Agregá esta línea como el ÚLTIMO <link> de CSS, antes de </head>,
+      en CADA una de estas páginas:
 
-      (tiene que ir el ÚLTIMO <link> de CSS de la página, para que sus
-      reglas ganen por orden de aparición).
+        index.html, juegos.html, juego.html, jugar.html,
+        comunidad-ranking.html, chat.html, amigos.html, perfil.html,
+        usuario.html, noticias.html, notificaciones.html, admin.html,
+        login.html, registro.html
+
+        <link rel="stylesheet" href="css/modo-claro-global.css">
+
+      (comunidad.html y ranking.html son solo redirecciones a
+      comunidad-ranking.html, no hace falta tocarlas).
    ========================================================================== */
 
 
@@ -83,7 +106,8 @@ html[data-tema="claro"] .navbar .user-guest-boton:hover {
    navbar oscura, igual que en la foto. */
 
 
-/* ---- 3) Tarjeta de perfil: borde dorado en vez de violeta ---- */
+/* ---- 3) Tarjeta de perfil: borde dorado en vez de violeta ----
+   (solo tiene efecto en perfil.html / usuario.html) */
 
 html[data-tema="claro"] .perfil {
   --clasico-borde: #d99a1f;
@@ -91,7 +115,8 @@ html[data-tema="claro"] .perfil {
 }
 
 /* ---- 4) Menú de pestañas (Home / Actividad de amigos / ...): se
-   mantiene oscuro en vez de ponerse blanco, igual que en la foto ---- */
+   mantiene oscuro en vez de ponerse blanco, igual que en la foto ----
+   (solo tiene efecto en perfil.html / usuario.html) */
 
 html[data-tema="claro"] .menu-perfil {
   background: linear-gradient(180deg, #2f1a5c 0%, #241145 100%);
