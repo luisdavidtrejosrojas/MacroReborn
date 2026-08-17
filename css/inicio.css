@@ -511,6 +511,35 @@ html {
   text-decoration: underline;
 }
 
+/* ---- Menú de usuario logueado: mismo desplegable de "Usuario temporal",
+   pero con los accesos a las secciones del perfil en vez del login. ---- */
+
+.user-menu-lista {
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.user-menu-lista a {
+  display: block;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--line);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.user-menu-lista a:last-child {
+  border-bottom: none;
+}
+
+.user-menu-lista a:hover {
+  background: var(--bg-panel-alt);
+  color: var(--gold-bright);
+}
+
 /* ---- Fila inferior: categorías / navegación del sitio ---- */
 /* Barra ancha tipo "menú de secciones", con la sección activa
    resaltada en naranja (misma idea que la referencia). */
