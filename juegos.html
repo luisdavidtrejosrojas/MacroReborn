@@ -41,7 +41,6 @@
 <link rel="stylesheet" href="css/juegos.css">
 <link rel="stylesheet" href="css/descubrimiento.css">
 <link rel="stylesheet" href="css/buscador.css">
-<link rel="stylesheet" href="css/portal-growth.css">
     <link rel="stylesheet" href="css/finalizacion.css">
   <link rel="manifest" href="site.webmanifest">
 </head>
@@ -84,26 +83,52 @@
   </div>
 </header>
 
-<div class="mr-discovery-tools" style="max-width:1200px;margin:0 auto;padding:0 22px 10px;">
-  <a class="mr-chip" href="categoria.html">🎯 Explorar categorías</a>
-  <a class="mr-chip" href="coleccion.html?coleccion=retro">👾 Colecciones retro</a>
-  <a class="mr-chip" href="coleccion.html?coleccion=pokemon">⚡ Pokémon</a>
-  <a class="mr-chip" href="coleccion.html?coleccion=mario">🍄 Mario</a>
+<div class="mr-discovery-tools mr-catalogo-herramientas">
+  <div class="mr-catalogo-vistas" aria-label="Descubrimiento rápido">
+    <a class="mr-chip activo" href="juegos.html">🎮 Todos</a>
+    <a class="mr-chip" href="juegos.html?orden=jugados">🔥 Más jugados</a>
+    <a class="mr-chip" href="juegos.html?orden=trending">📈 Tendencias</a>
+    <a class="mr-chip" href="juegos.html?orden=valorados">⭐ Mejor valorados</a>
+    <a class="mr-chip" href="juegos.html?orden=favoritos">❤️ Más favoritos</a>
+    <a class="mr-chip" href="juegos.html?orden=nuevos">🆕 Nuevos</a>
+  </div>
+
+  <div class="mr-filtros-catalogo" id="filtrosJuegos" aria-label="Filtrar catálogo">
+    <label class="mr-buscador-catalogo">
+      <span aria-hidden="true">🔎</span>
+      <input id="filtroBusquedaJuegos" type="search" placeholder="Buscar juegos, géneros o palabras clave…" autocomplete="off">
+    </label>
+
+    <label class="mr-select-catalogo">
+      <span>Categoría</span>
+      <select id="filtroCategoria">
+        <option value="">Todas las categorías</option>
+      </select>
+    </label>
+
+    <label class="mr-select-catalogo">
+      <span>Ordenar</span>
+      <select id="filtroOrden">
+        <option value="destacados">Destacados</option>
+        <option value="jugados">Más jugados</option>
+        <option value="trending">Tendencias</option>
+        <option value="valorados">Mejor valorados</option>
+        <option value="favoritos">Más favoritos</option>
+        <option value="nuevos">Más nuevos</option>
+        <option value="az">A–Z</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="mr-catalogo-enlaces">
+    <a href="categoria.html">🎯 Todas las categorías</a>
+    <a href="coleccion.html?coleccion=retro">👾 Retro</a>
+    <a href="coleccion.html?coleccion=pokemon">⚡ Pokémon</a>
+    <a href="coleccion.html?coleccion=mario">🍄 Mario</a>
+  </div>
 </div>
-<section id="mrCatalogoGrowth" class="mr-growth-toolbar" aria-label="Herramientas de descubrimiento">
-  <div class="mr-growth-toolbar-head">
-    <div><span class="mr-growth-kicker">DESCUBRIMIENTO</span><h2>Encontrá tu próximo juego</h2></div>
-    <span class="mr-growth-count" id="mrGrowthResultados">Explorá por popularidad, tendencia o género</span>
-  </div>
-  <div class="mr-growth-controls">
-    <label class="mr-growth-search">🔎 <input id="filtroBusquedaJuegos" type="search" placeholder="Buscar por nombre, género o descripción…" autocomplete="off"></label>
-    <label><span>📂</span><select id="filtroCategoria"><option value="">Todas las categorías</option></select></label>
-    <label><span>↕️</span><select id="filtroOrden"><option value="destacados">Destacados</option><option value="jugados">Más jugados</option><option value="trending">Tendencias</option><option value="valorados">Mejor valorados</option><option value="favoritos">Más favoritos</option><option value="nuevos">Nuevos</option><option value="az">A–Z</option></select></label>
-  </div>
-  <div class="mr-growth-shortcuts">
-    <a href="juegos.html?orden=trending">🔥 Tendencias</a><a href="juegos.html?orden=jugados">👑 Más jugados</a><a href="juegos.html?orden=nuevos">🆕 Nuevos</a><a href="juegos.html?orden=valorados">⭐ Mejor valorados</a>
-  </div>
-</section>
+
+<div class="mr-resultados-catalogo" id="infoResultadosJuegos" role="status" aria-live="polite">Cargando catálogo…</div>
 <main class="contenido-principal">
 
   <section class="seccion-juegos" id="seccionDestacados">
@@ -186,7 +211,6 @@
 <script defer src="js/navbar.js"></script>
 <script defer src="js/buscador.js"></script>
 <script defer src="js/nav-toggle.js"></script>
-<script defer src="js/portal-growth.js"></script>
 
 <script>
 // ==============================================================
