@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MacroReborn Originals — Competición</title>
+  <link rel="stylesheet" href="/css/originales-competicion.css">
+</head>
+<body>
+  <main class="mr-originals-page">
+    <section class="mr-originals-hero">
+      <div class="mr-panel">
+        <div class="mr-kicker">MacroReborn Originals</div>
+        <h1 class="mr-originals-title">Compite por el récord.</h1>
+        <p class="mr-originals-subtitle">
+          Esta sección está preparada para convertir nuestros juegos propios en una competición real:
+          récord personal, clasificación y progreso de comunidad.
+        </p>
+        <div class="mr-actions">
+          <a class="mr-btn primary" id="abrirMacroSnake" href="/html/juegos/macro-snake.html">Jugar Macro Snake</a>
+          <a class="mr-btn" href="/macro-originals.html">Volver a Originals</a>
+        </div>
+      </div>
+
+      <div class="mr-panel mr-stat">
+        <span>Original activo</span>
+        <strong id="originalesPlayers">0</strong>
+        <span><b id="originalesGameName">Macro Snake</b> · ID <span id="originalesGameId">113</span></span>
+      </div>
+    </section>
+
+    <section class="mr-grid">
+      <div class="mr-panel">
+        <h2 class="mr-section-title">🏆 Top 20 · Macro Snake</h2>
+        <div class="mr-list" id="originalesRanking"></div>
+        <p class="mr-note">Cada usuario ocupa una sola posición usando su mejor puntuación registrada.</p>
+      </div>
+
+      <div class="mr-panel">
+        <h2 class="mr-section-title">🚀 Hoja de ruta de Originals</h2>
+        <div class="mr-list">
+          <div class="mr-row"><div class="mr-position">01</div><div class="mr-user"><strong>Récord personal</strong><small>Mejor puntuación por jugador</small></div></div>
+          <div class="mr-row"><div class="mr-position">02</div><div class="mr-user"><strong>Ranking global</strong><small>Competición permanente</small></div></div>
+          <div class="mr-row"><div class="mr-position">03</div><div class="mr-user"><strong>Logros por juego</strong><small>Objetivos exclusivos</small></div></div>
+          <div class="mr-row"><div class="mr-position">04</div><div class="mr-user"><strong>Temporadas</strong><small>Clasificaciones semanales y mensuales</small></div></div>
+        </div>
+        <p class="mr-note">El endpoint de puntuaciones queda separado para poder conectar cada Original sin tocar el motor general de juegos.</p>
+      </div>
+    </section>
+  </main>
+  <script src="/js/originales-competicion.js"></script>
+</body>
+</html>
