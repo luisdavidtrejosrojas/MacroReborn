@@ -237,20 +237,15 @@ async function updateBio(req, res) {
 async function heartbeat(req, res) {
   const auth = requerirAuth(req, res);
   if (!auth) return;
-  const { username } = req.body;
-  if (String(auth.username).toLowerCase() !== String(username || '').toLowerCase()) {
-    return res.status(403).json({ success: false, error: "Sesión no corresponde al usuario" });
-  }
 
-  if (!username) {
-    return res.status(400).json({ success: false, error: "Falta username" });
-  }
-
+  // La identidad válida viene del token firmado, no del body del navegador.
+  // El frontend puede seguir enviando username por compatibilidad, pero no
+  // se utiliza para decidir qué usuario actualizar.
   const actualizado = await sql`
     UPDATE users
     SET last_login = now()
-    WHERE username = ${username}
-    RETURNING last_login;
+    WHERE id = ${auth.sub}
+    RETURNING username, last_login;
   `;
 
   if (actualizado.length === 0) {
@@ -262,7 +257,7 @@ async function heartbeat(req, res) {
   // actualizarse solos, sin recargar.
   try {
     await getPusher().trigger(
-      canalNotificaciones(username),
+      canalNotificaciones(actualizado[0].username),
       "latido",
       { last_login: actualizado[0].last_login }
     );
