@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explorar juegos | MacroReborn</title>
+<meta name="description" content="Descubrí juegos, tendencias, actividad de amigos y nuevas experiencias en MacroReborn.">
+<link rel="icon" href="imagenes/logo.png" type="image/png">
+<link rel="stylesheet" href="css/inicio.css">
+<link rel="stylesheet" href="css/explorar.css">
+</head>
+<body class="mr-root">
+<nav class="navbar">
+  <a href="index.html" class="nav-logo"><img src="imagenes/logo.png" alt="MacroReborn">MacroReborn</a>
+  <a href="comunidad-ranking.html" class="nav-boton-comunidad">Comunidad</a>
+  <div class="nav-links"></div>
+  <div class="nav-categorias">
+    <a href="explorar.html" class="activa-nav">🧭 Explorar</a>
+    <a href="juegos.html">🎮 Juegos</a>
+    <a href="chat.html">💬 Chat</a>
+  </div>
+</nav>
+
+<main class="explorar-shell">
+  <header class="explorar-hero">
+    <div>
+      <span class="eyebrow"><span class="punto"></span> Descubrimiento</span>
+      <h1>Encontrá tu próximo juego.</h1>
+      <p>Una portada dinámica para descubrir lo que se juega, lo que acaba de llegar y lo que tus amigos están probando.</p>
+    </div>
+    <div class="explorar-acciones">
+      <a class="explorar-boton principal" href="juegos.html">🎮 Ver catálogo</a>
+      <a class="explorar-boton" href="progreso.html">🎯 Mi progreso</a>
+      <a class="explorar-boton" href="comunidad-ranking.html">🏆 Rankings</a>
+    </div>
+  </header>
+
+  <section class="explorar-busqueda">
+    <label for="explorarBuscar">¿Qué querés jugar?</label>
+    <div class="explorar-search-row">
+      <input id="explorarBuscar" type="search" placeholder="Mario, carreras, terror, Pokémon..." autocomplete="off">
+      <button id="explorarBuscarBtn" type="button">Buscar</button>
+    </div>
+    <div id="explorarCategorias" class="explorar-chips"></div>
+  </section>
+
+  <section class="explorar-seccion" id="seccionRecomendados">
+    <div class="explorar-titulo"><div><span>Para empezar</span><h2>🔥 Tendencias</h2></div><a href="juegos.html?orden=tendencias">Ver todo →</a></div>
+    <div id="explorarTrending" class="explorar-grid"></div>
+  </section>
+
+  <section class="explorar-seccion" id="seccionNuevos">
+    <div class="explorar-titulo"><div><span>Recién llegados</span><h2>🆕 Nuevos juegos</h2></div><a href="juegos.html?orden=nuevos">Ver todo →</a></div>
+    <div id="explorarNuevos" class="explorar-grid"></div>
+  </section>
+
+  <section class="explorar-doble">
+    <article class="explorar-panel" id="panelAmigos">
+      <div class="explorar-titulo"><div><span>Tu círculo</span><h2>👥 Amigos jugando</h2></div><a href="amigos.html">Ver amigos →</a></div>
+      <div id="explorarAmigos" class="explorar-lista"></div>
+    </article>
+    <article class="explorar-panel">
+      <div class="explorar-titulo"><div><span>Comunidad</span><h2>🏆 En movimiento</h2></div><a href="comunidad-ranking.html">Abrir comunidad →</a></div>
+      <div class="explorar-pulse">
+        <div><strong>Retos diarios</strong><span>Convertí cada visita en progreso.</span><a href="progreso.html">Ver retos</a></div>
+        <div><strong>Ranking</strong><span>Subí posiciones con el tiempo jugado.</span><a href="comunidad-ranking.html">Ver ranking</a></div>
+        <div><strong>Chat</strong><span>Encontrá gente conectada.</span><a href="chat.html">Entrar al chat</a></div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<footer class="pie-footer">
+  <div class="pie-inferior"><span>© 2026 MacroReborn</span><span>Jugar · Descubrir · Conectar</span></div>
+</footer>
+
+<script defer src="js/core.js"></script>
+<script defer src="js/datos-juegos.js"></script>
+<script defer src="js/navbar.js"></script>
+<script defer src="js/explorar.js"></script>
+</body>
+</html>
