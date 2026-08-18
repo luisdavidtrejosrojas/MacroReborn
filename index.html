@@ -85,6 +85,117 @@
   </div>
 </nav>
 
+
+<!-- PORTAL DE JUEGOS 2.0
+     Bloque nuevo: no elimina el Hero ni las secciones originales.
+     Se coloca primero para que la portada funcione como portal de juegos
+     y las secciones existentes sigan intactas debajo. -->
+<section class="portal-home-header" aria-labelledby="portalHomeTitulo">
+  <div class="portal-home-grid" aria-hidden="true"></div>
+  <div class="portal-home-glow portal-home-glow-1" aria-hidden="true"></div>
+  <div class="portal-home-glow portal-home-glow-2" aria-hidden="true"></div>
+  <div class="portal-home-contenido">
+    <span class="portal-kicker">🎮 MACROREBORN · PORTAL DE JUEGOS</span>
+    <h1 id="portalHomeTitulo" class="portal-home-titulo">JUGÁ. SUBÍ DE NIVEL. COMPETÍ.</h1>
+    <p class="portal-home-subtitulo">Descubrí juegos nuevos, retomá tus favoritos, competí con la comunidad y convertí cada partida en progreso para tu perfil.</p>
+    <form class="portal-home-busqueda" id="portalHomeBusqueda" role="search">
+      <span aria-hidden="true">🔍</span>
+      <input id="portalHomeBusquedaInput" name="q" type="search" autocomplete="off" placeholder="Buscar juegos, categorías o clásicos..." aria-label="Buscar juegos, categorías o clásicos">
+      <button type="submit">Buscar</button>
+    </form>
+    <div class="portal-home-accesos" aria-label="Accesos rápidos">
+      <a href="juegos.html?orden=jugados">🔥 Más jugados</a>
+      <a href="juegos.html?orden=nuevos">🆕 Nuevos</a>
+      <a href="juegos.html?orden=valorados">⭐ Mejor valorados</a>
+      <a href="juegos.html?orden=trending">📈 Tendencias</a>
+      <a href="juegos.html?categoria=Acción">⚔️ Acción</a>
+      <a href="juegos.html?categoria=RPG">🧙 RPG</a>
+      <a href="juegos.html?categoria=Carreras">🏎️ Carreras</a>
+      <a href="juegos.html?categoria=Retro">👾 Retro</a>
+    </div>
+  </div>
+</section>
+
+<main class="portal-home-main" id="portalHomeMain">
+  <section class="portal-seccion" id="portalSeccionContinuar" hidden>
+    <div class="portal-seccion-header">
+      <div><span class="portal-kicker">TU ACTIVIDAD</span><h2>▶ Continuar jugando</h2></div>
+      <a href="perfil.html">Ver mi historial →</a>
+    </div>
+    <div class="portal-juego-grid" id="homeContinuar"></div>
+  </section>
+
+  <section class="portal-seccion">
+    <div class="portal-seccion-header">
+      <div><span class="portal-kicker">DESTACADOS</span><h2>🌟 Juegos que deberías probar</h2></div>
+      <a href="juegos.html">Ver catálogo →</a>
+    </div>
+    <div class="portal-juego-grid portal-juego-grid-feature" id="homeDestacados"></div>
+  </section>
+
+  <section class="portal-seccion">
+    <div class="portal-seccion-header">
+      <div><span class="portal-kicker">AHORA MISMO</span><h2>🔥 Tendencias</h2></div>
+      <a href="juegos.html?orden=trending">Ver tendencias →</a>
+    </div>
+    <div class="portal-juego-grid" id="homeTrending"></div>
+  </section>
+
+  <section class="portal-seccion">
+    <div class="portal-seccion-header">
+      <div><span class="portal-kicker">POPULARIDAD</span><h2>👑 Más jugados</h2></div>
+      <a href="juegos.html?orden=jugados">Ver ranking de juegos →</a>
+    </div>
+    <div class="portal-juego-grid" id="homeMasJugados"></div>
+  </section>
+
+  <section class="portal-seccion">
+    <div class="portal-seccion-header">
+      <div><span class="portal-kicker">CATÁLOGO</span><h2>🆕 Recién llegados</h2></div>
+      <span class="portal-catalogo-total">Más de <b id="homeTotalJuegos">0</b> juegos disponibles</span>
+    </div>
+    <div class="portal-juego-grid" id="homeNuevos"></div>
+  </section>
+
+  <section class="portal-seccion">
+    <div class="portal-seccion-header">
+      <div><span class="portal-kicker">COMUNIDAD</span><h2>⭐ Mejor valorados</h2></div>
+      <a href="juegos.html?orden=valorados">Ver todos →</a>
+    </div>
+    <div class="portal-juego-grid" id="homeMejorValorados"></div>
+  </section>
+
+  <section class="portal-seccion">
+    <div class="portal-seccion-header">
+      <div><span class="portal-kicker">DESCUBRÍ</span><h2>🧭 Explorar por categoría</h2></div>
+      <a href="categoria.html">Todas las categorías →</a>
+    </div>
+    <div class="portal-categorias-grid" id="homeCategorias"></div>
+  </section>
+
+  <section class="portal-seccion portal-seccion-personal" id="portalSeccionPersonal" hidden>
+    <div class="portal-seccion-header">
+      <div><span class="portal-kicker">TU CUENTA</span><h2>🎮 Tu centro gamer</h2></div>
+      <a href="perfil.html">Abrir perfil →</a>
+    </div>
+    <div class="portal-dashboard" id="homeDashboard"></div>
+  </section>
+
+  <section class="portal-home-community" aria-label="Comunidad MacroReborn">
+    <div>
+      <span class="portal-kicker">COMUNIDAD VIVA</span>
+      <h2>👥 Tu partida también puede ser social</h2>
+      <p>Agregá amigos, mirá su actividad, competí en el ranking, desbloqueá logros y mantené tu identidad gamer creciendo mientras jugás.</p>
+    </div>
+    <div class="portal-community-actions">
+      <a href="comunidad-ranking.html">🏆 Ranking</a>
+      <a href="amigos.html">👥 Amigos</a>
+      <a href="chat.html">💬 Chat</a>
+      <a href="comunidad.html">🌐 Comunidad</a>
+    </div>
+  </section>
+</main>
+
 <!-- HERO -->
 <header class="hero" id="pantalla-inicio">
   <div class="orbe orbe-1"></div>
@@ -242,6 +353,7 @@
 <script defer src="js/realtime.js"></script>
 <script defer src="js/navbar.js"></script>
 <script defer src="js/datos-juegos.js"></script>
+<script defer src="js/home-portal.js"></script>
 <script defer src="js/buscador.js"></script>
 <script defer src="js/nav-toggle.js"></script>
 <script defer src="js/personalizacion.js"></script>

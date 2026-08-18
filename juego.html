@@ -92,6 +92,15 @@
         <button class="boton-favorito">☆ Agregar favorito</button>
       </div>
 
+      <div class="ficha-badges-extra" id="juegoBadgesExtra" hidden aria-live="polite"></div>
+
+      <div class="juego-metricas" aria-label="Métricas del juego">
+        <span><b>🎮 <span id="juegoMetricasPartidas">0</span></b><small>jugadores registrados</small></span>
+        <span><b>❤️ <span id="juegoMetricasFavoritos">0</span></b><small>favoritos</small></span>
+        <span><b>⭐ <span id="juegoMetricasRating">0.0</span></b><small><span id="juegoMetricasVotos">0</span> valoraciones</small></span>
+      </div>
+      <p class="juego-popularidad" id="juegoPopularidadTexto">Descubrílo y dejá tu marca.</p>
+
     </div>
 
   </div>
@@ -165,6 +174,18 @@
 
     <div class="lista-resenas" id="listaResenas"></div>
 
+  </section>
+
+  <section class="panel-relacionados mr-notched" id="seccionRelacionados" hidden>
+    <div class="panel-relacionados-cabecera">
+      <div><span class="portal-kicker">SEGUÍ DESCUBRIENDO</span><h2>🎮 Juegos relacionados</h2></div>
+      <div class="juego-flujo" id="juegoFlujoNavegacion">
+        <a href="#" id="juegoAnterior"><span>Anterior</span></a>
+        <a href="#" id="juegoCategoria"><span>Más de esta categoría</span></a>
+        <a href="#" id="juegoSiguiente"><span>Siguiente</span></a>
+      </div>
+    </div>
+    <div class="juegos-relacionados-grid" id="juegosRelacionados"></div>
   </section>
 
 </main>
