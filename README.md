@@ -59,3 +59,4 @@ servidor de producción. Detalles en `docs/DESARROLLO.md`.
   automáticos.
 - Reutilizar lo que ya existe (helpers compartidos, patrones del
   catálogo) en lugar de crear sistemas paralelos.
+
