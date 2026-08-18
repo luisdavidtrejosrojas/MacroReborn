@@ -264,11 +264,12 @@ function registrarActividad(nombre, tipo, detalle){
 // y "hora" armados, igual que antes armaba registrarActividad() al
 // guardar en localStorage.
 
-async function obtenerActividades(nombre){
+async function obtenerActividades(nombre, viewer){
   if(!nombre) return [];
 
   try{
-    const resp = await fetch("/api/content?action=activity&username=" + encodeURIComponent(nombre));
+    const viewerQuery = viewer ? "&viewer=" + encodeURIComponent(viewer) : "";
+    const resp = await fetch("/api/content?action=activity&username=" + encodeURIComponent(nombre) + viewerQuery);
     const datos = await resp.json();
     if(!datos || !datos.success) return [];
 

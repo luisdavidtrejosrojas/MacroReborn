@@ -245,3 +245,6 @@
     font-size: 16px;
   }
 }
+
+.buscador-ver-todos { display:block; margin:6px 4px 2px; padding:10px 11px; border-top:1px solid var(--line); color:var(--gold-bright); font-size:12px; font-weight:800; }
+.buscador-ver-todos:hover { background:var(--bg-panel-alt); border-radius:8px; }

@@ -29,6 +29,8 @@ const rkPodio = document.getElementById("podioTop6");
 const rkResto = document.getElementById("listaRankingResto");
 const rkBuscador = document.getElementById("buscarRankingJugador");
 const rkBotonLogros = document.getElementById("botonRankingLogros");
+const rkMiPosicion = document.getElementById("rkMiPosicion");
+const rkModos = Array.from(document.querySelectorAll(".rk-modo"));
 const rkBanner = document.getElementById("rkBannerUnite");
 const rkFlechaArriba = document.getElementById("rkFlechaArriba");
 const rkFlechaAbajo = document.getElementById("rkFlechaAbajo");
@@ -49,6 +51,7 @@ const comBuscador = document.getElementById("buscadorUsuarios");
 const activoComRk = leerJSON(localStorage.getItem("usuarioActivo") || "null");
 
 let _rkOrdenarPorLogros = false;
+let _rkModo = "general";
 let _rkUsuarios = [];       // lista completa ya con puntosLogros
 let _comAmigos = [];
 let _comSolicitudesEnviadas = [];
@@ -144,26 +147,36 @@ function rkRenderizar(filtro = "") {
 
   lista.sort((a, b) => {
 
-    if (_rkOrdenarPorLogros) {
-      return b.puntosLogros - a.puntosLogros;
+    if (_rkModo === "logros" || _rkOrdenarPorLogros) {
+      return (Number(b.puntosLogros) || 0) - (Number(a.puntosLogros) || 0);
     }
 
-    // Orden normal: por posición ya calculada por el servidor
-    // (rank_actual, 1 = primer puesto). Sin posición todavía (usuario
-    // nuevo, antes del próximo lunes) queda al final, desempatado por
-    // minutos jugados esta semana.
+    if (_rkModo === "semana") {
+      const minutosA = Number(a.minutos_semana_actual) || 0;
+      const minutosB = Number(b.minutos_semana_actual) || 0;
+      if (minutosB !== minutosA) return minutosB - minutosA;
+      const diasA = Number(a.dias_activos_semana_actual) || 0;
+      const diasB = Number(b.dias_activos_semana_actual) || 0;
+      if (diasB !== diasA) return diasB - diasA;
+    }
+
     const posA = Number(a.rank_actual) || Infinity;
     const posB = Number(b.rank_actual) || Infinity;
-
     if (posA !== posB) return posA - posB;
-
     return (Number(b.minutos_semana_actual) || 0) - (Number(a.minutos_semana_actual) || 0);
-
   });
 
   if (filtro) {
     const texto = filtro.toLowerCase();
     lista = lista.filter(u => u.nombre.toLowerCase().includes(texto));
+  }
+
+  if (rkMiPosicion) {
+    const nombreActivo = activoComRk?.nombre;
+    const posicion = nombreActivo ? lista.findIndex(u => u.nombre === nombreActivo) + 1 : 0;
+    rkMiPosicion.textContent = posicion > 0
+      ? `Tu posición: #${posicion}`
+      : nombreActivo ? "Tu posición: fuera del listado" : "Iniciá sesión para competir";
   }
 
   const top6 = lista.slice(0, 6);
@@ -184,6 +197,14 @@ function rkRenderizar(filtro = "") {
 
   // ---- Podio (top 6) ----
 
+// Escapa texto no confiable antes de insertarlo en HTML.
+function escaparHTML(texto) {
+  const div = document.createElement("div");
+  div.textContent = texto == null ? "" : String(texto);
+  return div.innerHTML;
+}
+
+
   rkPodio.innerHTML = top6.map((usuario, i) => {
 
     const puesto = i + 1;
@@ -197,14 +218,13 @@ function rkRenderizar(filtro = "") {
 
         ${rkAvatarHTML(usuario.avatar, "rk-podio-avatar", "capa-rk")}
 
-        <p class="rk-podio-nombre">${usuario.nombre}</p>
+        <p class="rk-podio-nombre">${escaparHTML(usuario.nombre)}</p>
 
-        ${_rkOrdenarPorLogros
-          ? `<span class="rk-delta rk-neutro">🏅 ${usuario.puntosLogros}</span>`
-          : `
-            <p class="rk-podio-stat">⏱️ ${usuario.minutos_semana_actual || 0} min esta semana</p>
-            ${rkDeltaHTML(usuario)}
-          `}
+        ${_rkModo === "logros" || _rkOrdenarPorLogros
+          ? `<span class="rk-delta rk-neutro">🏅 ${usuario.puntosLogros} puntos</span>`
+          : _rkModo === "semana"
+            ? `<p class="rk-podio-stat">🔥 ${usuario.minutos_semana_actual || 0} min · ${usuario.dias_activos_semana_actual || 0} días</p>`
+            : `<p class="rk-podio-stat">⏱️ ${usuario.minutos_semana_actual || 0} min esta semana</p>${rkDeltaHTML(usuario)}`}
 
       </div>
     `;
@@ -222,15 +242,14 @@ function rkRenderizar(filtro = "") {
 
         ${rkAvatarHTML(usuario.avatar, "rk-mini-avatar", "capa-rk-mini")}
 
-        <p class="rk-mini-nombre">${usuario.nombre}</p>
+        <p class="rk-mini-nombre">${escaparHTML(usuario.nombre)}</p>
         <p class="rk-mini-puesto">${puesto}º</p>
 
-        ${_rkOrdenarPorLogros
-          ? `<span class="rk-delta rk-neutro">🏅 ${usuario.puntosLogros}</span>`
-          : `
-            <p class="rk-mini-stat">⏱️ ${usuario.minutos_semana_actual || 0} min</p>
-            ${rkDeltaHTML(usuario)}
-          `}
+        ${_rkModo === "logros" || _rkOrdenarPorLogros
+          ? `<span class="rk-delta rk-neutro">🏅 ${usuario.puntosLogros} pts</span>`
+          : _rkModo === "semana"
+            ? `<p class="rk-mini-stat">🔥 ${usuario.minutos_semana_actual || 0} min · ${usuario.dias_activos_semana_actual || 0} días</p>`
+            : `<p class="rk-mini-stat">⏱️ ${usuario.minutos_semana_actual || 0} min</p>${rkDeltaHTML(usuario)}`}
 
       </a>
     `;
@@ -239,6 +258,21 @@ function rkRenderizar(filtro = "") {
 
 }
 
+
+// ---- Modos del ranking ----
+rkModos.forEach((boton) => {
+  boton.addEventListener("click", () => {
+    _rkModo = boton.dataset.rankingModo || "general";
+    _rkOrdenarPorLogros = _rkModo === "logros";
+    _rkInicioVentana = 0;
+    rkModos.forEach(b => b.classList.toggle("activo", b === boton));
+    if (rkBotonLogros) {
+      rkBotonLogros.classList.toggle("rk-activo", _rkModo === "logros");
+      rkBotonLogros.textContent = _rkModo === "logros" ? "Ver Ranking General" : "Ver Ranking de Logros";
+    }
+    rkRenderizar(rkBuscador?.value || "");
+  });
+});
 
 // ---- Buscador del ranking ----
 
@@ -267,6 +301,7 @@ rkFlechaAbajo?.addEventListener("click", () => {
 rkBotonLogros?.addEventListener("click", () => {
 
   _rkOrdenarPorLogros = !_rkOrdenarPorLogros;
+  _rkModo = _rkOrdenarPorLogros ? "logros" : "general";
   _rkInicioVentana = 0;
 
   rkBotonLogros.textContent = _rkOrdenarPorLogros
@@ -336,7 +371,7 @@ function comRenderUsuarios(lista) {
 
         ${rkAvatarHTML(usuario.avatar, "avatar-tarjeta", "capa-tarjeta")}
 
-        <h3 class="usuario-nombre">${usuario.nombre}</h3>
+        <h3 class="usuario-nombre">${escaparHTML(usuario.nombre)}</h3>
 
         ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(usuario.nombre, true) : ""}
 
@@ -354,7 +389,7 @@ function comRenderUsuarios(lista) {
           </div>` : ""}
         </div>
 
-        ${usuario.bio ? `<p class="usuario-bio">${usuario.bio}</p>` : ""}
+        ${usuario.bio ? `<p class="usuario-bio">${escaparHTML(usuario.bio)}</p>` : ""}
 
         <a href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}" class="btn-ver-perfil">👤 Ver perfil</a>
 
@@ -439,7 +474,7 @@ async function crCargarEstadisticas() {
       const llegados = datos.recienLlegados || [];
       crRecienLlegados.innerHTML = llegados.length
         ? llegados.map(u => `
-            <a href="usuario.html?usuario=${encodeURIComponent(u.username)}" class="cr-avatar-chico" title="${u.username}">
+            <a href="usuario.html?usuario=${encodeURIComponent(u.username)}" class="cr-avatar-chico" title="${escaparHTML(u.username)}">
               ${crAvatarCapasHTML(u.avatar, "cr-capa-chica")}
             </a>
           `).join("")
@@ -469,11 +504,11 @@ async function crCargarModeracion() {
 
     crListaModeracion.innerHTML = datos.staff.map(s => `
       <div class="cr-fila-staff">
-        <a href="usuario.html?usuario=${encodeURIComponent(s.username)}" class="cr-avatar-chico" title="${s.username}">
+        <a href="usuario.html?usuario=${encodeURIComponent(s.username)}" class="cr-avatar-chico" title="${escaparHTML(s.username)}">
           ${crAvatarCapasHTML(s.avatar, "cr-capa-chica")}
         </a>
         <div class="cr-staff-info">
-          <p class="cr-staff-nombre">${s.username}</p>
+          <p class="cr-staff-nombre">${escaparHTML(s.username)}</p>
           <p class="cr-staff-rol">${ICONO_ROL[s.rol] || "•"} ${s.rol}</p>
         </div>
         <span class="cr-punto-estado ${s.conectado ? "cr-conectado" : ""}" title="${s.conectado ? "Conectado" : "Desconectado"}"></span>
@@ -523,7 +558,7 @@ function crRenderConectados(lista, filtro = "") {
   }
 
   crGridConectados.innerHTML = conectados.slice(0, 24).map(u => `
-    <a href="usuario.html?usuario=${encodeURIComponent(u.nombre)}" title="${u.nombre}">
+    <a href="usuario.html?usuario=${encodeURIComponent(u.nombre)}" title="${escaparHTML(u.nombre)}">
       ${crAvatarCapasHTML(u.avatar, "cr-capa-chica")}
     </a>
   `).join("");
@@ -586,7 +621,7 @@ async function crCargarTienda() {
           <div class="cr-item-tienda-imagen">
             ${ruta ? `<img src="${ruta}" alt="${item.nombre}" loading="lazy">` : ""}
           </div>
-          <p class="cr-item-tienda-nombre">${item.nombre}</p>
+          <p class="cr-item-tienda-nombre">${escaparHTML(item.nombre)}</p>
           <p class="cr-item-tienda-precio">🪙 ${item.precio}</p>
           ${boton}
         </div>
@@ -673,7 +708,7 @@ async function crCargarFeed() {
             ${crAvatarCapasHTML(item.avatar, "cr-capa-chica")}
           </a>
           <div class="cr-feed-texto">
-            <p>${texto}</p>
+            <p>${escaparHTML(texto)}</p>
             <span class="cr-feed-hora">${hace}</span>
           </div>
         </div>

@@ -26,8 +26,15 @@ async function renderActividadUsuario(){
 
     if(!contenedorActividadUsuario || !idUsuarioActividad) return;
 
+    const viewerActividad = (() => {
+      try {
+        const activo = typeof leerJSON === "function" ? leerJSON(localStorage.getItem("usuarioActivo") || "null") : null;
+        return activo && activo.nombre ? activo.nombre : "";
+      } catch (_) { return ""; }
+    })();
+
     const lista = typeof obtenerActividades === "function"
-        ? await obtenerActividades(idUsuarioActividad)
+        ? await obtenerActividades(idUsuarioActividad, viewerActividad)
         : [];
 
     if(lista.length === 0){

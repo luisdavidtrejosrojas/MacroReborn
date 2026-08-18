@@ -113,6 +113,22 @@ async function renderNotificacionesDropdown(){
 }
 
 
+// ---------- FILTRO ----------
+
+let _filtroNotificaciones = 'todas';
+
+function categoriaNotificacion(n){
+    const texto = ((n.titulo || '') + ' ' + (n.mensaje || '')).toLowerCase();
+    if(/logro|nivel|xp|insignia|premio|trofeo/.test(texto)) return 'logros';
+    if(/juego|jugó|partida|favorito|game/.test(texto)) return 'juegos';
+    return 'social';
+}
+
+function filtrarNotificaciones(lista){
+    if(_filtroNotificaciones === 'todas') return lista;
+    return lista.filter(n => categoriaNotificacion(n) === _filtroNotificaciones);
+}
+
 // ---------- MOSTRAR ----------
 
 async function renderNotificaciones(){
@@ -149,9 +165,17 @@ async function renderNotificaciones(){
 
     }
 
+    const listaFiltrada = filtrarNotificaciones(lista);
+
+    if(listaFiltrada.length === 0){
+        contenedor.innerHTML = `<div class="vacio">No hay notificaciones en esta categoría.</div>`;
+        actualizarContador();
+        return;
+    }
+
     contenedor.innerHTML = "";
 
-    lista.forEach(noti=>{
+    listaFiltrada.forEach(noti=>{
 
         contenedor.innerHTML += `
 
@@ -248,6 +272,15 @@ document.getElementById("borrarTodas")?.addEventListener("click", async ()=>{
 
 });
 
+
+document.querySelectorAll('[data-notif-filtro]').forEach(boton => {
+    boton.addEventListener('click', () => {
+        _filtroNotificaciones = boton.dataset.notifFiltro || 'todas';
+        document.querySelectorAll('[data-notif-filtro]').forEach(b => b.classList.remove('activo'));
+        boton.classList.add('activo');
+        renderNotificaciones();
+    });
+});
 
 // ---------- ACTUALIZAR AL ENFOCAR LA PESTAÑA ----------
 

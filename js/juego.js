@@ -269,3 +269,145 @@ window.location.href =
 });
 
 }
+
+// ============================================================================
+// MÉTRICAS + JUEGOS RELACIONADOS
+// Usa el agregado público del catálogo para que la ficha deje de ser solo
+// una descripción y se convierta en un centro de descubrimiento.
+// ============================================================================
+(function cargarDatosDeFicha() {
+    if (!juego) return;
+
+    function escapar(texto) {
+        return (texto || "").toString()
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;");
+    }
+
+    function renderMetricas(resumen) {
+        const datos = resumen[String(juego.id)] || {};
+    function marcarEstadoFicha(resumen) {
+        const datos = resumen[String(juego.id)] || {};
+        const host = document.getElementById("juegoBadgesExtra");
+        if (!host) return;
+        const tags = [];
+        if (juego.tipo === "destacado") tags.push(["⭐", "Destacado", "destacado"]);
+        if (Number(datos.tendencia || 0) >= 15) tags.push(["🔥", "Trending", "trending"]);
+        if (Number(datos.partidas || 0) >= 100) tags.push(["👑", "Popular", "popular"]);
+        if (juego.estado && /nuevo/i.test(String(juego.estado))) tags.push(["🆕", "Nuevo", "nuevo"]);
+        host.innerHTML = tags.slice(0, 3).map(t => `<span class="ficha-tag ${t[2]}">${t[0]} ${t[1]}</span>`).join("");
+        host.hidden = !tags.length;
+    }
+
+        const set = (id, valor) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = valor;
+        };
+        set("juegoMetricasPartidas", Number(datos.partidas || 0).toLocaleString("es-AR"));
+        set("juegoMetricasFavoritos", Number(datos.favoritos || 0).toLocaleString("es-AR"));
+        set("juegoMetricasRating", Number(datos.promedio || 0).toFixed(1));
+        set("juegoMetricasVotos", Number(datos.valoraciones || 0).toLocaleString("es-AR"));
+        const popularidad = document.getElementById("juegoPopularidadTexto");
+        if (popularidad) {
+            const partidas = Number(datos.partidas || 0);
+            const tendencia = Number(datos.tendencia || 0);
+            popularidad.textContent = tendencia >= 15 ? "Está en tendencia entre la comunidad" : (partidas >= 100 ? "Uno de los juegos más jugados" : "Descubrílo y dejá tu marca");
+        }
+        marcarEstadoFicha(resumen);
+    }
+
+    function prepararNavegacionFlujo() {
+        const host = document.getElementById("juegoFlujoNavegacion");
+        const anterior = document.getElementById("juegoAnterior");
+        const siguiente = document.getElementById("juegoSiguiente");
+        const categoriaBtn = document.getElementById("juegoCategoria");
+        const categoriaNombre = document.getElementById("flujoCategoriaNombre");
+        if (!host || !categoriaBtn || !Array.isArray(window.juegos) || !juego) return;
+
+        const categoria = String(juego.categoria || "Juegos");
+        const categoriaUrl = `categoria.html?categoria=${encodeURIComponent(categoria)}`;
+        categoriaBtn.href = categoriaUrl;
+        if (categoriaNombre) categoriaNombre.textContent = `Más juegos de ${categoria}`;
+
+        const mismaCategoria = juegos
+            .filter(item => item && item.id !== juego.id && String(item.categoria || "") === categoria)
+            .sort((a, b) => (Number(a.id) || 0) - (Number(b.id) || 0));
+
+        const indice = mismaCategoria.findIndex(item => Number(item.id) > Number(juego.id));
+        const siguienteItem = indice >= 0 ? mismaCategoria[indice] : mismaCategoria[0];
+        const anteriorCandidates = mismaCategoria.filter(item => Number(item.id) < Number(juego.id));
+        const anteriorItem = anteriorCandidates.length ? anteriorCandidates[anteriorCandidates.length - 1] : mismaCategoria[mismaCategoria.length - 1];
+
+        function prepararEnlace(el, item, etiqueta) {
+            if (!el) return;
+            if (!item) {
+                el.hidden = true;
+                el.removeAttribute("href");
+                return;
+            }
+            el.hidden = false;
+            el.href = `juego.html?id=${encodeURIComponent(item.id)}`;
+            el.title = `${etiqueta}: ${item.nombre || "juego"}`;
+            const span = el.querySelector("span");
+            if (span) span.textContent = `${etiqueta}: ${item.nombre || "juego"}`;
+        }
+
+        prepararEnlace(anterior, anteriorItem, "Anterior");
+        prepararEnlace(siguiente, siguienteItem, "Siguiente");
+        host.hidden = false;
+    }
+
+    function crearRelacionado(item, resumen) {
+        const datos = resumen[String(item.id)] || {};
+        const rating = Number(datos.promedio || 0).toFixed(1);
+        return `
+          <article class="juego-relacionado-card">
+            <a href="juego.html?id=${encodeURIComponent(item.id)}">
+              <div class="juego-relacionado-imagen">
+                ${typeof crearImagenJuego === "function" ? crearImagenJuego(item) : "🎮"}
+                <span>▶ Jugar</span>
+              </div>
+              <div class="juego-relacionado-info">
+                <strong>${escapar(item.nombre)}</strong>
+                <small>${escapar(item.categoria || "Juegos")} · ⭐ ${rating}</small>
+              </div>
+            </a>
+          </article>`;
+    }
+
+    function renderRelacionados(resumen) {
+        const contenedor = document.getElementById("juegosRelacionados");
+        const seccion = document.getElementById("seccionRelacionados");
+        if (!contenedor || !seccion) return;
+
+        const candidatos = juegos
+            .filter(item => item.id !== juego.id)
+            .sort((a, b) => {
+                const aMismo = a.categoria === juego.categoria ? 0 : 1;
+                const bMismo = b.categoria === juego.categoria ? 0 : 1;
+                if (aMismo !== bMismo) return aMismo - bMismo;
+                const aP = Number((resumen[String(a.id)] || {}).partidas || 0);
+                const bP = Number((resumen[String(b.id)] || {}).partidas || 0);
+                return bP - aP || (Number(b.id) || 0) - (Number(a.id) || 0);
+            })
+            .slice(0, 6);
+
+        if (!candidatos.length) return;
+        contenedor.innerHTML = candidatos.map(item => crearRelacionado(item, resumen)).join("");
+        seccion.hidden = false;
+    }
+
+    fetch("/api/content?action=games-overview")
+        .then(resp => resp.json())
+        .then(datos => {
+            const resumen = datos && datos.success ? (datos.juegos || {}) : {};
+            renderMetricas(resumen);
+            prepararNavegacionFlujo();
+            renderRelacionados(resumen);
+        })
+        .catch(() => {
+            renderMetricas({});
+        });
+})();

@@ -1,0 +1,77 @@
+
+/* MacroReborn — Pulido final: accesibilidad, móvil y pequeños detalles UX. */
+:root { --mr-focus: #22d3ee; }
+
+html { scroll-behavior: smooth; }
+body { min-width: 0; }
+
+/* Teclado: foco visible en enlaces, botones y campos. */
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--mr-focus) 82%, white 18%);
+  outline-offset: 3px;
+}
+
+button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+
+/* Evita desbordes horizontales en tarjetas y tablas largas. */
+:where(img, video, iframe) { max-width: 100%; }
+:where(pre, table) { max-width: 100%; overflow-x: auto; }
+
+/* Navegación compacta en pantallas pequeñas. */
+@media (max-width: 820px) {
+  .navbar,
+  .barra-navegacion,
+  .nav-bar {
+    gap: 10px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .contenido-principal,
+  main.contenido-principal {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  .nav-logo { font-size: 20px; }
+  .nav-links { gap: 8px; }
+  .nav-links a { font-size: 12px; }
+
+  .section-header,
+  .mr-section-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .grid-juegos,
+  .lista-juegos {
+    min-width: 0;
+  }
+}
+
+/* Respeta la preferencia del sistema para usuarios sensibles al movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Ayuda visual para regiones importantes cuando reciben foco programático. */
+[data-focus-target]:focus {
+  outline: 3px solid color-mix(in srgb, var(--mr-focus) 70%, white 30%);
+  outline-offset: 4px;
+}
+
+/* Respeto a iOS: evita zoom involuntario en controles táctiles. */
+@media (max-width: 768px) {
+  :where(input, textarea, select, button) { font-size: 16px; }
+}

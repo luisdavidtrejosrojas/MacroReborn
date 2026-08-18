@@ -338,7 +338,7 @@ if (!usuario) {
             ${avatarHTML}
           </div>
 
-          <h3 class="usuario-nombre">${nombreAmigo}</h3>
+          <h3 class="usuario-nombre">${escaparHTML(nombreAmigo)}</h3>
 
           <div class="usuario-stats">
             <div class="stat-item">
@@ -693,6 +693,14 @@ if (avatar && caja) {
 
   // ---------- COMENTARIOS ----------
 
+// Escapa texto no confiable antes de insertarlo en HTML.
+function escaparHTML(texto) {
+  const div = document.createElement("div");
+  div.textContent = texto == null ? "" : String(texto);
+  return div.innerHTML;
+}
+
+
   function obtenerAvatarComentario(nombre) {
     // El avatar viaja embebido en el usuario (users.avatar, Neon); se
     // lee de la caché en memoria de js/core.js, precargada antes de
@@ -722,7 +730,8 @@ if (avatar && caja) {
 
   async function obtenerListaComentarios() {
     try{
-      const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(usuario.nombre));
+      const viewerQuery = activo && activo.nombre ? "&viewer=" + encodeURIComponent(activo.nombre) : "";
+      const resp = await fetch("/api/content?action=comments&username=" + encodeURIComponent(usuario.nombre) + viewerQuery);
       const datos = await resp.json();
       _comentariosCacheUsuario = (datos && datos.success) ? datos.comentarios : [];
     }catch(error){
@@ -758,12 +767,12 @@ if (avatar && caja) {
       <div class="comentario">
         <div class="usuario-comentario" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
           ${obtenerAvatarComentario(c.usuario)}
-          <b style="color:#f0b429;">${c.usuario}</b>
+          <b style="color:#f0b429;">${escaparHTML(c.usuario)}</b>
         </div>
         ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(c.usuario, true) : ""}
-        <p style="color:#cbd5e1;margin:0 0 10px;">${c.texto}</p>
+        <p style="color:#cbd5e1;margin:0 0 10px;">${escaparHTML(c.texto)}</p>
         ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, activo ? activo.nombre : null) : ""}
-        <button class="boton-responder" data-usuario="${c.usuario}">Responder</button>
+        <button class="boton-responder" data-usuario="${escaparHTML(c.usuario)}">Responder</button>
         ${puedeEliminar ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
         <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>

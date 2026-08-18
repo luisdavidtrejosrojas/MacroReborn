@@ -666,6 +666,17 @@ renderEnviadas(activo);
 
 actualizarBadges(activo);
 
+  const totalEl = document.getElementById('resumenAmigosTotal');
+  const solicitudesEl = document.getElementById('resumenSolicitudes');
+  const onlineEl = document.getElementById('resumenEnLinea');
+  if(totalEl) totalEl.textContent = String(_datosAmigos.amigos.length);
+  if(solicitudesEl) solicitudesEl.textContent = String(_datosAmigos.solicitudesEntrantes.length);
+  if(onlineEl){
+    const activos = _datosAmigos.amigos.filter(a =>
+      typeof usuarioEstaConectado === 'function' ? usuarioEstaConectado(a) : false
+    ).length;
+    onlineEl.textContent = String(activos);
+  }
 
 }
 

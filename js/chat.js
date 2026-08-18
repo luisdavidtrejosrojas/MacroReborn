@@ -64,6 +64,14 @@ function rutaImagenCapa(valor){
 
 // ---------- AVATAR HTML ----------
 
+// Escapa texto no confiable antes de insertarlo en HTML.
+function escaparHTML(texto) {
+  const div = document.createElement("div");
+  div.textContent = texto == null ? "" : String(texto);
+  return div.innerHTML;
+}
+
+
 function obtenerAvatarHTML(nombre){
 
     // El avatar viaja embebido en el usuario (users.avatar, Neon), ya
@@ -137,17 +145,17 @@ async function renderChat(){
             <div class="cabecera-mensaje">
                 ${obtenerAvatarHTML(msg.usuario)}
                 <div>
-                    <b>${msg.usuario}</b>
+                    <b>${escaparHTML(msg.usuario)}</b>
                     <div class="fecha-chat">${fecha}</div>
                 </div>
             </div>
 
-            <p class="texto-chat">${msg.texto}</p>
+            <p class="texto-chat">${escaparHTML(msg.texto)}</p>
 
             <div class="acciones-chat">
                 ${typeof botonLikeHTML === "function" ? botonLikeHTML("chat", msg.id, miNombre) : ""}
 
-                <button class="btn-responder" onclick="responder('${msg.usuario}')">
+                <button class="btn-responder" data-usuario="${escaparHTML(msg.usuario)}">
                     Responder
                 </button>
 
@@ -164,6 +172,11 @@ async function renderChat(){
         `;
 
         contenedor.appendChild(div);
+
+        const btnResponder = div.querySelector(".btn-responder");
+        if (btnResponder) {
+            btnResponder.addEventListener("click", () => responder(btnResponder.dataset.usuario));
+        }
     });
 
     // La API entrega los mensajes del más viejo al más nuevo (ORDER BY

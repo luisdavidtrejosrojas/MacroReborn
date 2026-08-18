@@ -26,7 +26,9 @@ async function renderFavoritosUsuario(){
     let favoritos = [];
 
     try{
-        const resp = await fetch("/api/content?action=favorites&username=" + encodeURIComponent(idUsuario));
+        const activo = typeof leerJSON === "function" ? leerJSON(localStorage.getItem("usuarioActivo") || "null") : null;
+        const viewerQuery = activo && activo.nombre ? "&viewer=" + encodeURIComponent(activo.nombre) : "";
+        const resp = await fetch("/api/content?action=favorites&username=" + encodeURIComponent(idUsuario) + viewerQuery);
         const datos = await resp.json();
         favoritos = (datos && datos.success) ? datos.favoritos : [];
     }catch(error){

@@ -1,6 +1,7 @@
 const { neon } = require("@neondatabase/serverless");
 const { setCors, hayBloqueoEntreUsuarios } = require("./_utils");
 const { getPusher, canalNotificaciones } = require("./_pusher");
+const { requerirAuth } = require("./_auth");
 
 const sql = neon(process.env.DATABASE_URL);
 
@@ -74,12 +75,34 @@ async function getUserId(username) {
   return filas.length ? filas[0].id : null;
 }
 
+
+async function accesoPerfilPermitido(username, viewer) {
+  if (!viewer || !username) return true;
+  if (String(username).toLowerCase() === String(viewer).toLowerCase()) return true;
+  return !(await hayBloqueoEntreUsuarios(sql, username, viewer));
+}
+
+// A viewer supplied by the browser is only trusted when it matches
+// the signed session. Without this guard a blocked user could forge
+// ?viewer=otroUsuario and bypass the profile visibility checks.
+function validarViewer(req, res, viewer) {
+  if (!viewer) return true;
+  const auth = requerirAuth(req, res);
+  if (!auth) return false;
+  if (String(auth.username).toLowerCase() !== String(viewer).toLowerCase()) {
+    res.status(403).json({ success: false, error: "La sesión no corresponde al visor" });
+    return false;
+  }
+  return true;
+}
+
 // ============== COMMENTS ==============
 
 async function comments(req, res) {
 
   if (req.method === "GET") {
     const { username, viewer } = req.query;
+    if (!validarViewer(req, res, viewer)) return;
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
     }
@@ -87,6 +110,11 @@ async function comments(req, res) {
     const profileId = await getUserId(username);
     if (!profileId) {
       return res.status(404).json({ success: false, error: "Usuario no encontrado" });
+    }
+
+    const viewerPermitido = await accesoPerfilPermitido(username, viewer);
+    if (!viewerPermitido) {
+      return res.status(200).json({ success: true, comentarios: [] });
     }
 
     const viewerEsElPropioPerfil = !!(
@@ -328,6 +356,7 @@ async function chat(req, res) {
 
   if (req.method === "GET") {
     const { username: viewer } = req.query;
+    if (!validarViewer(req, res, viewer)) return;
     // Se traen los 200 mensajes más recientes, del más nuevo al más
     // viejo (misma consulta simple que ya funcionaba antes). El orden
     // para mostrarlos de más viejo a más nuevo se resuelve en
@@ -403,6 +432,12 @@ async function notifications(req, res) {
     const { username } = req.query;
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
+    }
+
+    const auth = requerirAuth(req, res);
+    if (!auth) return;
+    if (String(auth.username).toLowerCase() !== String(username).toLowerCase()) {
+      return res.status(403).json({ success: false, error: "No podés consultar las notificaciones de otro usuario" });
     }
 
     const userId = await getUserId(username);
@@ -507,9 +542,15 @@ async function notificationsMarkRead(req, res) {
 async function activity(req, res) {
 
   if (req.method === "GET") {
-    const { username } = req.query;
+    const { username, viewer } = req.query;
+    if (!validarViewer(req, res, viewer)) return;
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
+    }
+
+    if (viewer) {
+      const permitido = await accesoPerfilPermitido(username, viewer);
+      if (!permitido) return res.status(200).json({ success: true, actividades: [] });
     }
 
     const userId = await getUserId(username);
@@ -606,9 +647,14 @@ async function activityFriends(req, res) {
 async function favorites(req, res) {
 
   if (req.method === "GET") {
-    const { username } = req.query;
+    const { username, viewer } = req.query;
+    if (!validarViewer(req, res, viewer)) return;
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
+    }
+
+    if (viewer && !(await accesoPerfilPermitido(username, viewer))) {
+      return res.status(200).json({ success: true, favoritos: [] });
     }
 
     const userId = await getUserId(username);
@@ -662,9 +708,14 @@ async function favorites(req, res) {
 async function gameHistory(req, res) {
 
   if (req.method === "GET") {
-    const { username } = req.query;
+    const { username, viewer } = req.query;
+    if (!validarViewer(req, res, viewer)) return;
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
+    }
+
+    if (viewer && !(await accesoPerfilPermitido(username, viewer))) {
+      return res.status(200).json({ success: true, historial: [] });
     }
 
     const userId = await getUserId(username);
@@ -742,6 +793,10 @@ async function gameHistory(req, res) {
 async function reports(req, res) {
 
   if (req.method === "GET") {
+    const auth = requerirAuth(req, res);
+    if (!auth) return;
+    const rolAuth = await sql`SELECT 1 FROM badges WHERE user_id = ${auth.sub} AND badge_id IN ('administrador','moderador') LIMIT 1;`;
+    if (!rolAuth.length) return res.status(403).json({ success:false,error:"No tenés permisos para ver reportes" });
     const filas = await sql`
       SELECT id, target_type, target_id, origen, content_username AS usuario,
              content_texto AS texto, reported_by AS "reportadoPor", motivo,
@@ -783,6 +838,8 @@ async function resolveReport(req, res) {
   }
 
   const { reportId, resolution } = req.body || {};
+  const rol = await sql`SELECT 1 FROM badges WHERE user_id = ${req.auth.sub} AND badge_id IN ('administrador','moderador') LIMIT 1;`;
+  if (!rol.length) return res.status(403).json({ success:false,error:"Solo moderadores o administradores pueden resolver reportes" });
 
   if (!reportId || !resolution) {
     return res.status(400).json({ success: false, error: "Datos incompletos" });
@@ -1266,6 +1323,10 @@ async function avatarVote(req, res) {
 async function moderationLog(req, res) {
 
   if (req.method === "GET") {
+    const auth = requerirAuth(req, res);
+    if (!auth) return;
+    const rolAuth = await sql`SELECT 1 FROM badges WHERE user_id = ${auth.sub} AND badge_id IN ('administrador','moderador','colaborador') LIMIT 1;`;
+    if (!rolAuth.length) return res.status(403).json({ success:false,error:"No tenés permisos para ver el historial de moderación" });
     const { rol, accion, texto } = req.query;
 
     // Se arma el WHERE a mano (sql.query, con placeholders $1, $2...)
@@ -1302,6 +1363,8 @@ async function moderationLog(req, res) {
 
   if (req.method === "POST") {
     const { moderatorUsername, moderatorRole, accion, usuarioAfectado, motivo } = req.body || {};
+    const rol = await sql`SELECT badge_id FROM badges WHERE user_id = ${req.auth.sub} AND badge_id IN ('administrador','moderador','colaborador') LIMIT 1;`;
+    if (!rol.length) return res.status(403).json({ success:false,error:"No tenés permisos de moderación" });
 
     if (!moderatorUsername || !moderatorRole || !accion) {
       return res.status(400).json({ success: false, error: "Datos incompletos" });
@@ -1310,7 +1373,7 @@ async function moderationLog(req, res) {
     const filas = await sql`
       INSERT INTO moderation_log (moderator_username, moderator_role, accion, usuario_afectado, motivo)
       VALUES (
-        ${moderatorUsername}, ${moderatorRole}, ${accion},
+        ${moderatorUsername}, ${rol[0].badge_id}, ${accion},
         ${usuarioAfectado || null},
         ${(motivo && String(motivo).trim()) ? String(motivo).trim() : "No especificado"}
       )
@@ -1470,6 +1533,23 @@ module.exports = async function handler(req, res) {
   const action = req.query.action;
 
   try {
+    if (req.method === "POST" || req.method === "DELETE") {
+      const auth = requerirAuth(req, res);
+      if (!auth) return;
+      req.auth = auth;
+      const body = req.body || {};
+      // La mayoría de las escrituras ya llevan "username" como actor.
+      // Lo fijamos al usuario autenticado para impedir suplantaciones.
+      if (body.username && String(body.username).toLowerCase() !== String(auth.username).toLowerCase()) {
+        return res.status(403).json({ success:false,error:"Sesión no corresponde al usuario" });
+      }
+      if (body.reportedBy && String(body.reportedBy).toLowerCase() !== String(auth.username).toLowerCase()) {
+        return res.status(403).json({ success:false,error:"Sesión no corresponde al reportante" });
+      }
+      if (body.moderatorUsername && String(body.moderatorUsername).toLowerCase() !== String(auth.username).toLowerCase()) {
+        return res.status(403).json({ success:false,error:"Sesión no corresponde al moderador" });
+      }
+    }
 
     if (action === "comments") return await comments(req, res);
     if (action === "likes") return await likes(req, res);
@@ -1495,6 +1575,7 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ success: false, error: "Acción inválida" });
 
   } catch (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    console.error("/api/content:", error);
+    return res.status(500).json({ success: false, error: "Error interno del servidor" });
   }
 };

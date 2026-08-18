@@ -129,6 +129,14 @@ function estaConectado(usuario) {
 
 // ---------- RENDER: USUARIOS CONECTADOS ----------
 
+// Escapa texto no confiable antes de insertarlo en HTML.
+function escaparHTML(texto) {
+  const div = document.createElement("div");
+  div.textContent = texto == null ? "" : String(texto);
+  return div.innerHTML;
+}
+
+
 function renderConectados(lista) {
   const conectados = lista.filter(estaConectado);
 
@@ -143,7 +151,7 @@ function renderConectados(lista) {
         ${avatarHTML(usuario.avatar, "capa-mini")}
       </div>
       <div class="mini-info">
-        <p class="mini-nombre">${usuario.nombre}</p>
+        <p class="mini-nombre">${escaparHTML(usuario.nombre)}</p>
         <p class="mini-estado">🟢 En línea</p>
       </div>
     </a>
@@ -184,7 +192,7 @@ function renderUsuarios(lista) {
           ${avatarHTML(usuario.avatar, "capa-tarjeta")}
         </div>
 
-        <h3 class="usuario-nombre">${usuario.nombre}</h3>
+        <h3 class="usuario-nombre">${escaparHTML(usuario.nombre)}</h3>
 
         ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(usuario.nombre, true) : ""}
 
@@ -207,7 +215,7 @@ function renderUsuarios(lista) {
           </div>` : ""}
         </div>
 
-        ${usuario.bio ? `<p class="usuario-bio">${usuario.bio}</p>` : ""}
+        ${usuario.bio ? `<p class="usuario-bio">${escaparHTML(usuario.bio)}</p>` : ""}
 
         <a href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}" class="btn-ver-perfil">👤 Ver perfil</a>
 

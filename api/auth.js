@@ -1,6 +1,7 @@
 const { setCors } = require("./_utils");
 const { obtenerSql } = require("./_db");
 const { PasswordService } = require("./_password");
+const { crearToken, requerirAuth } = require("./_auth");
 
 const sql = obtenerSql();
 const passwordService = new PasswordService(sql);
@@ -46,9 +47,11 @@ async function login(req, res) {
     RETURNING last_login;
   `;
 
+  const usuarioSesion = { ...usuario, last_login: actualizado[0].last_login };
   return res.status(200).json({
     success: true,
-    user: { ...usuario, last_login: actualizado[0].last_login }
+    user: usuarioSesion,
+    token: crearToken(usuarioSesion)
   });
 }
 
@@ -84,18 +87,29 @@ async function register(req, res) {
 }
 
 async function deleteAccount(req, res) {
-  const { username, password } = req.body;
+  const auth = requerirAuth(req, res);
+  if (!auth) return;
 
-  if (!username || !password) {
+  const { password } = req.body || {};
+
+  if (!password) {
     return res.status(400).json({ success: false, error: "Faltan datos" });
   }
 
-  // eliminarCuenta() verifica la contraseña (migrando si hace falta)
-  // y borra al usuario. Gracias a las FK "ON DELETE CASCADE" de las
-  // migraciones 001-006, borra en cascada sus logros, amistades,
-  // comentarios, mensajes, notificaciones, historial, reseñas, etc.
-  // "likes" y "moderation_log" se manejan aparte (ver la clase).
-  const resultado = await passwordService.eliminarCuenta(username, password);
+  // El token firmado identifica a la cuenta; el username enviado por
+  // el navegador ya no decide qué fila puede borrarse.
+  const usuario = await sql`
+    SELECT id, username
+    FROM users
+    WHERE id = ${auth.sub}
+    LIMIT 1;
+  `;
+
+  if (usuario.length === 0) {
+    return res.status(401).json({ success: false, error: "La sesión ya no es válida" });
+  }
+
+  const resultado = await passwordService.eliminarCuenta(usuario[0].username, password);
 
   if (!resultado.ok) {
     return res.status(200).json({ success: false, error: "Contraseña incorrecta" });
@@ -127,6 +141,7 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ success: false, error: "Acción inválida" });
 
   } catch (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    console.error("/api/auth:", error);
+    return res.status(500).json({ success: false, error: "Error interno del servidor" });
   }
 };

@@ -42,6 +42,8 @@
 <link rel="stylesheet" href="css/comunidad.css">
 <link rel="stylesheet" href="css/insignias.css">
 <link rel="stylesheet" href="css/buscador.css">
+    <link rel="stylesheet" href="css/finalizacion.css">
+  <link rel="manifest" href="site.webmanifest">
 </head>
 
 <body class="mr-root">
@@ -68,9 +70,31 @@
 <section class="rk-hero">
 
   <div class="rk-encabezado">
-    <h1 class="rk-titulo">🏆 Ranking de la comunidad</h1>
-    <button type="button" id="botonRankingLogros" class="rk-boton-logros">Ver Ranking de Logros</button>
+    <div>
+      <span class="rk-kicker">COMPETICIÓN</span>
+      <h1 class="rk-titulo">🏆 Ranking de la comunidad</h1>
+      <p class="rk-subtitulo-hero">Subí en la tabla jugando, desbloqueando logros y manteniendo tu racha de actividad.</p>
+    </div>
+    <div class="rk-acciones-hero">
+      <span id="rkMiPosicion" class="rk-mi-posicion">Tu posición: —</span>
+      <button type="button" id="botonRankingLogros" class="rk-boton-logros">Ver Ranking de Logros</button>
+    </div>
   </div>
+
+  <div class="rk-modos" role="tablist" aria-label="Modo del ranking">
+    <button type="button" class="rk-modo activo" data-ranking-modo="general">🏆 General</button>
+    <button type="button" class="rk-modo" data-ranking-modo="semana">🔥 Esta semana</button>
+    <button type="button" class="rk-modo" data-ranking-modo="logros">🏅 Logros</button>
+  </div>
+
+  <section class="rk-evento" aria-label="Evento actual">
+    <div>
+      <span class="rk-evento-badge">EVENTO ACTIVO</span>
+      <h2>🎯 Semana de la variedad</h2>
+      <p>Jugá distintos juegos durante la semana para subir tu actividad y descubrir más del catálogo.</p>
+    </div>
+    <a href="juegos.html" class="rk-evento-cta">Explorar juegos →</a>
+  </section>
 
   <div class="rk-buscador-caja">
     <input

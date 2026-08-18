@@ -21,7 +21,9 @@ async function renderHistorialUsuario(){
     let historial = [];
 
     try{
-        const resp = await fetch("/api/content?action=game-history&username=" + encodeURIComponent(idUsuarioHistorial));
+        const activo = typeof leerJSON === "function" ? leerJSON(localStorage.getItem("usuarioActivo") || "null") : null;
+        const viewerQuery = activo && activo.nombre ? "&viewer=" + encodeURIComponent(activo.nombre) : "";
+        const resp = await fetch("/api/content?action=game-history&username=" + encodeURIComponent(idUsuarioHistorial) + viewerQuery);
         const datos = await resp.json();
         historial = (datos && datos.success) ? datos.historial : [];
     }catch(error){

@@ -77,7 +77,7 @@
     }
 
     const juegosEncontrados = obtenerJuegos()
-      .filter(j => normalizar(j.nombre).includes(q) || normalizar(j.categoria).includes(q))
+      .filter(j => [j.nombre, j.categoria, j.descripcion].some(valor => normalizar(valor).includes(q)))
       .slice(0, LIMITE_POR_CATEGORIA);
 
     const usuariosEncontrados = await obtenerUsuarios(termino);
@@ -161,7 +161,7 @@
     return `<img src="imagenes/avatar.png" alt="">`;
   }
 
-  function renderResultados(panel, resultados) {
+  function renderResultados(panel, resultados, termino) {
     const total = resultados.juegos.length + resultados.usuarios.length + resultados.noticias.length;
 
     if (total === 0) {
@@ -202,6 +202,8 @@
       });
       html += `</div>`;
     }
+
+    html += `<a class="buscador-ver-todos" href="juegos.html?q=${encodeURIComponent(termino)}">🔎 Ver todos los resultados para “${escaparHTML(termino)}” →</a>`;
 
     if (resultados.noticias.length) {
       html += `<div class="buscador-grupo"><span class="buscador-grupo-titulo">📰 Noticias</span>`;
@@ -288,7 +290,7 @@
         // Si el usuario siguió tipeando mientras esperábamos la
         // respuesta, no pisamos el resultado de la búsqueda más nueva.
         if (inputEl.value !== valor) return;
-        renderResultados(panelEl, resultados);
+        renderResultados(panelEl, resultados, valor);
       }, 120);
     });
 

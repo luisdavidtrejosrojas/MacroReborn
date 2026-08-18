@@ -136,3 +136,14 @@
     text-align: center;
   }
 }
+
+/* =====================================================================
+   PORTAL 2.ª TANDA — FILTROS
+   ===================================================================== */
+.notif-filtros{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px;padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--bg-panel)}
+.notif-filtro{border:0;background:transparent;color:var(--text-muted);font-weight:800;font-size:12px;padding:9px 13px;border-radius:9px;cursor:pointer}
+.notif-filtro:hover{background:var(--bg-panel-alt);color:var(--text-main)}
+.notif-filtro.activo{background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#241804}
+.notificacion{display:grid;grid-template-columns:1fr auto;gap:4px 16px}
+.notificacion p,.notificacion .fecha{grid-column:1/-1}
+@media(max-width:560px){.notificacion{grid-template-columns:1fr}.notif-filtros{display:grid;grid-template-columns:repeat(2,1fr)}}

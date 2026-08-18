@@ -2,6 +2,7 @@ const { setCors } = require("./_utils");
 const { getPusher, canalNotificaciones } = require("./_pusher");
 const { obtenerSql } = require("./_db");
 const { PasswordService } = require("./_password");
+const { requerirAuth } = require("./_auth");
 
 const sql = obtenerSql();
 const passwordService = new PasswordService(sql);
@@ -190,7 +191,12 @@ async function listarUsuarios(req, res) {
 }
 
 async function updateAvatar(req, res) {
+  const auth = requerirAuth(req, res);
+  if (!auth) return;
   const { username, avatar } = req.body;
+  if (String(auth.username).toLowerCase() !== String(username || '').toLowerCase()) {
+    return res.status(403).json({ success: false, error: "No podés modificar otro usuario" });
+  }
 
   const user = await sql`
     UPDATE users
@@ -207,7 +213,12 @@ async function updateAvatar(req, res) {
 }
 
 async function updateBio(req, res) {
+  const auth = requerirAuth(req, res);
+  if (!auth) return;
   const { username, bio } = req.body;
+  if (String(auth.username).toLowerCase() !== String(username || '').toLowerCase()) {
+    return res.status(403).json({ success: false, error: "No podés modificar otro usuario" });
+  }
 
   const user = await sql`
     UPDATE users
@@ -224,7 +235,12 @@ async function updateBio(req, res) {
 }
 
 async function heartbeat(req, res) {
+  const auth = requerirAuth(req, res);
+  if (!auth) return;
   const { username } = req.body;
+  if (String(auth.username).toLowerCase() !== String(username || '').toLowerCase()) {
+    return res.status(403).json({ success: false, error: "Sesión no corresponde al usuario" });
+  }
 
   if (!username) {
     return res.status(400).json({ success: false, error: "Falta username" });
@@ -258,7 +274,12 @@ async function heartbeat(req, res) {
 }
 
 async function sumarXp(req, res) {
+  const auth = requerirAuth(req, res);
+  if (!auth) return;
   const { username, cantidad, gameId } = req.body;
+  if (String(auth.username).toLowerCase() !== String(username || '').toLowerCase()) {
+    return res.status(403).json({ success: false, error: "Sesión no corresponde al usuario" });
+  }
   const monto = Number(cantidad) || 0;
 
   if (!username || monto <= 0) {
@@ -308,11 +329,18 @@ async function sumarXp(req, res) {
 }
 
 async function suspend(req, res) {
+  const auth = requerirAuth(req, res);
+  if (!auth) return;
   const { username, motivo } = req.body || {};
 
   if (!username) {
     return res.status(400).json({ success: false, error: "Falta username" });
   }
+
+  const admin = await sql`
+    SELECT 1 FROM badges WHERE user_id = ${auth.sub} AND badge_id = 'administrador' LIMIT 1;
+  `;
+  if (!admin.length) return res.status(403).json({ success: false, error: "Solo un administrador puede suspender usuarios" });
 
   const usuario = await sql`
     UPDATE users
@@ -330,11 +358,18 @@ async function suspend(req, res) {
 }
 
 async function reactivate(req, res) {
+  const auth = requerirAuth(req, res);
+  if (!auth) return;
   const { username } = req.body || {};
 
   if (!username) {
     return res.status(400).json({ success: false, error: "Falta username" });
   }
+
+  const admin = await sql`
+    SELECT 1 FROM badges WHERE user_id = ${auth.sub} AND badge_id = 'administrador' LIMIT 1;
+  `;
+  if (!admin.length) return res.status(403).json({ success: false, error: "Solo un administrador puede reactivar usuarios" });
 
   const usuario = await sql`
     UPDATE users
@@ -351,7 +386,12 @@ async function reactivate(req, res) {
 }
 
 async function changePassword(req, res) {
+  const auth = requerirAuth(req, res);
+  if (!auth) return;
   const { username, currentPassword, newPassword } = req.body || {};
+  if (String(auth.username).toLowerCase() !== String(username || '').toLowerCase()) {
+    return res.status(403).json({ success: false, error: "Sesión no corresponde al usuario" });
+  }
 
   if (!username || !currentPassword || !newPassword) {
     return res.status(400).json({ success: false, error: "Faltan datos" });
@@ -403,6 +443,7 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ success: false, error: "Método no permitido" });
 
   } catch (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    console.error("/api/users:", error);
+    return res.status(500).json({ success: false, error: "Error interno del servidor" });
   }
 };

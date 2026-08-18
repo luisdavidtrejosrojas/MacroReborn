@@ -1,5 +1,6 @@
 const { neon } = require("@neondatabase/serverless");
 const { setCors } = require("./_utils");
+const { requerirAuth } = require("./_auth");
 
 const sql = neon(process.env.DATABASE_URL);
 
@@ -39,6 +40,11 @@ async function testDb(req, res) {
 // ==============================
 
 async function adminStats(req, res) {
+
+  const auth = requerirAuth(req, res);
+  if (!auth) return;
+  const admin = await sql`SELECT 1 FROM badges WHERE user_id = ${auth.sub} AND badge_id = 'administrador' LIMIT 1;`;
+  if (!admin.length) return res.status(403).json({ success:false,error:"Solo un administrador puede consultar estas estadísticas" });
 
   const [
     usuariosTotal,
@@ -369,17 +375,12 @@ async function recalcularRanking(req, res) {
 
 async function recalcularRankingManual(req, res) {
 
-  const { username } = req.body || {};
-
-  if (!username) {
-    return res.status(400).json({ success: false, error: "Falta username" });
-  }
+  const auth = requerirAuth(req, res);
+  if (!auth) return;
 
   const esAdmin = await sql`
-    SELECT 1
-    FROM users u
-    JOIN badges b ON b.user_id = u.id
-    WHERE u.username = ${username} AND b.badge_id = 'administrador'
+    SELECT 1 FROM badges b
+    WHERE b.user_id = ${auth.sub} AND b.badge_id = 'administrador'
     LIMIT 1;
   `;
 
@@ -487,6 +488,7 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ success: false, error: "Acción inválida" });
 
   } catch (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    console.error("/api/system:", error);
+    return res.status(500).json({ success: false, error: "Error interno del servidor" });
   }
 };

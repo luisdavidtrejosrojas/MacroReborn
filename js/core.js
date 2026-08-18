@@ -76,6 +76,38 @@ function tiempoRelativo(fechaOTimestamp, porDefecto) {
 
 
 
+
+
+// ==============================
+// SESIÓN API — token firmado
+// ==============================
+// El navegador sigue usando localStorage para la interfaz, pero las
+// escrituras contra la API llevan además el token de sesión firmado
+// que devuelve /api/auth. Así el backend puede comprobar quién está
+// haciendo realmente una modificación y no confiar en un username
+// enviado por el cliente.
+(function instalarInterceptorApi() {
+  if (window.__macroRebornFetchProtegido) return;
+  window.__macroRebornFetchProtegido = true;
+
+  const fetchOriginal = window.fetch.bind(window);
+  window.fetch = function(url, options = {}) {
+    try {
+      const destino = new URL(url, window.location.href);
+      const esApi = destino.origin === window.location.origin && destino.pathname.startsWith('/api/');
+      if (esApi) {
+        const token = localStorage.getItem('macroSessionToken');
+        if (token) {
+          const headers = new Headers(options.headers || {});
+          if (!headers.has('Authorization')) headers.set('Authorization', 'Bearer ' + token);
+          options = { ...options, headers };
+        }
+      }
+    } catch (_) {}
+    return fetchOriginal(url, options);
+  };
+})();
+
 // ==============================
 // PRESENCIA (usuarios "conectados ahora")
 // ==============================

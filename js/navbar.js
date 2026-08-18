@@ -260,6 +260,7 @@ if(nav){
                 e.preventDefault();
 
                 localStorage.removeItem("usuarioActivo");
+                localStorage.removeItem("macroSessionToken");
 
                 window.location.href="index.html";
 
@@ -403,6 +404,7 @@ if(nav){
                             nivel: datos.user.level
                         };
 
+                        if (datos.token) localStorage.setItem("macroSessionToken", datos.token);
                         localStorage.setItem("usuarioActivo", JSON.stringify(usuarioNormalizado));
 
                         mostrarMensajeLoginNav("Bienvenido " + datos.user.username, "exito");

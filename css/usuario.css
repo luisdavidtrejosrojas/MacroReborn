@@ -122,3 +122,8 @@
     text-align: center;
   }
 }
+
+/* Perfil público: cabecera orientada a descubrimiento */
+.perfil .perfil-datos-cabecera .perfil-resumen-rapido > div{background:linear-gradient(180deg,var(--bg-panel),var(--bg-deep))}
+.perfil-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
+.perfil-acciones .aviso-perfil-bloqueado{flex-basis:auto}

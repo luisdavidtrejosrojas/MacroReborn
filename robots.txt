@@ -7,6 +7,7 @@ User-agent: *
 # ningún navbar ni link interno), así que bloquearlo acá es seguro y
 # evita que un bot le dedique tiempo de rastreo.
 Disallow: /admin.html
+Disallow: /api/
 
 # El resto de las páginas privadas/utilitarias (chat, perfil, amigos,
 # notificaciones, login, registro, jugar) usan <meta name="robots"

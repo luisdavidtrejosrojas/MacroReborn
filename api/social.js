@@ -1,6 +1,7 @@
 const { neon } = require("@neondatabase/serverless");
 const { setCors, hayBloqueoEntreUsuarios, usuarioBloqueaA } = require("./_utils");
 const { getPusher, canalNotificaciones } = require("./_pusher");
+const { requerirAuth } = require("./_auth");
 
 const sql = neon(process.env.DATABASE_URL);
 
@@ -110,6 +111,7 @@ async function friends(req, res) {
 
     if (action === "request") {
       const { from, to } = req.body;
+      if (String(req.auth.username).toLowerCase() !== String(from || '').toLowerCase()) return res.status(403).json({ success:false,error:"Sesión no corresponde al remitente" });
       const fromId = await getUserId(from);
       const toId = await getUserId(to);
 
@@ -158,6 +160,7 @@ async function friends(req, res) {
       }
 
       const solicitud = filas[0];
+      if (Number(req.auth.sub) !== Number(solicitud.to_user_id)) return res.status(403).json({ success:false,error:"No podés responder esa solicitud" });
 
       if (action === "reject") {
         await sql`UPDATE friend_requests SET status = 'rechazada', responded_at = now() WHERE id = ${requestId};`;
@@ -172,13 +175,14 @@ async function friends(req, res) {
       const { requestId } = req.body;
       await sql`
         UPDATE friend_requests SET status = 'cancelada', responded_at = now()
-        WHERE id = ${requestId} AND status = 'pendiente';
+        WHERE id = ${requestId} AND status = 'pendiente' AND from_user_id = ${req.auth.sub};
       `;
       return res.status(200).json({ success: true });
     }
 
     if (action === "remove") {
       const { username, friendUsername } = req.body;
+      if (String(req.auth.username).toLowerCase() !== String(username || '').toLowerCase()) return res.status(403).json({success:false,error:"Sesión no corresponde al usuario"});
       const userId = await getUserId(username);
       const friendId = await getUserId(friendUsername);
 
@@ -238,6 +242,7 @@ async function favoriteFriends(req, res) {
   if (req.method === "POST") {
 
     const { action, username, friendUsername } = req.body || {};
+    if (String(req.auth.username).toLowerCase() !== String(username || '').toLowerCase()) return res.status(403).json({success:false,error:"Sesión no corresponde al usuario"});
 
     if (!username || !friendUsername) {
       return res.status(400).json({ success: false, error: "Datos incompletos" });
@@ -339,6 +344,7 @@ async function achievements(req, res) {
 
   if (req.method === "POST") {
     const { username, achievementId } = req.body;
+    if (String(req.auth.username).toLowerCase() !== String(username || '').toLowerCase()) return res.status(403).json({success:false,error:"Sesión no corresponde al usuario"});
 
     if (!username || !achievementId) {
       return res.status(400).json({ success: false, error: "Datos incompletos" });
@@ -430,6 +436,8 @@ async function badges(req, res) {
 
   if (req.method === "POST") {
     const { username, badgeId, assignedBy } = req.body;
+    const admin = await sql`SELECT 1 FROM badges WHERE user_id = ${req.auth.sub} AND badge_id = 'administrador' LIMIT 1;`;
+    if (!admin.length) return res.status(403).json({ success:false,error:"Solo un administrador puede asignar insignias" });
 
     if (!username || !badgeId) {
       return res.status(400).json({ success: false, error: "Datos incompletos" });
@@ -440,11 +448,7 @@ async function badges(req, res) {
       return res.status(404).json({ success: false, error: "Usuario no encontrado" });
     }
 
-    let assignedById = null;
-    if (assignedBy) {
-      const admin = await sql`SELECT id FROM users WHERE username = ${assignedBy};`;
-      if (admin.length) assignedById = admin[0].id;
-    }
+    const assignedById = Number(req.auth.sub);
 
     await sql`
       INSERT INTO badges (user_id, badge_id, assigned_by)
@@ -457,6 +461,8 @@ async function badges(req, res) {
 
   if (req.method === "DELETE") {
     const { username, badgeId } = req.body || {};
+    const admin = await sql`SELECT 1 FROM badges WHERE user_id = ${req.auth.sub} AND badge_id = 'administrador' LIMIT 1;`;
+    if (!admin.length) return res.status(403).json({ success:false,error:"Solo un administrador puede quitar insignias" });
 
     if (!username || !badgeId) {
       return res.status(400).json({ success: false, error: "Datos incompletos" });
@@ -490,6 +496,14 @@ async function blocks(req, res) {
     const { username, viewer } = req.query;
     if (!username) {
       return res.status(400).json({ success: false, error: "Falta username" });
+    }
+
+    if (viewer) {
+      const auth = requerirAuth(req, res);
+      if (!auth) return;
+      if (String(auth.username).toLowerCase() !== String(viewer).toLowerCase()) {
+        return res.status(403).json({ success: false, error: "Sesión no coincide con el visitante" });
+      }
     }
 
     const userId = await getUserId(username);
@@ -532,6 +546,7 @@ async function blocks(req, res) {
   if (req.method === "POST") {
 
     const { action, username, targetUsername } = req.body || {};
+    if (String(req.auth.username).toLowerCase() !== String(username || '').toLowerCase()) return res.status(403).json({success:false,error:"Sesión no corresponde al usuario"});
 
     if (!username || !targetUsername) {
       return res.status(400).json({ success: false, error: "Datos incompletos" });
@@ -602,6 +617,11 @@ module.exports = async function handler(req, res) {
   const action = req.query.action;
 
   try {
+    if (req.method === "POST" || req.method === "DELETE") {
+      const auth = requerirAuth(req, res);
+      if (!auth) return;
+      req.auth = auth;
+    }
 
     if (action === "friends") return await friends(req, res);
     if (action === "favoriteFriends") return await favoriteFriends(req, res);
@@ -612,6 +632,7 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ success: false, error: "Acción inválida" });
 
   } catch (error) {
-    return res.status(500).json({ success: false, error: error.message });
+    console.error("/api/social:", error);
+    return res.status(500).json({ success: false, error: "Error interno del servidor" });
   }
 };

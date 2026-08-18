@@ -102,6 +102,7 @@ formulario.addEventListener("submit", async function(e){
                 nivel: datos.user.level
             };
 
+            if (datos.token) localStorage.setItem("macroSessionToken", datos.token);
             localStorage.setItem(
                 "usuarioActivo",
                 JSON.stringify(usuarioNormalizado)

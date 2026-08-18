@@ -1495,3 +1495,81 @@ html {
   z-index: 500;
   box-shadow: var(--sombra-suave);
 }
+
+/* ============================================================================
+   PORTAL HOME — nueva portada orientada a descubrir juegos
+   ============================================================================ */
+.portal-home-header {
+  position: relative;
+  overflow: hidden;
+  min-height: 390px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 22px 58px;
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(240,180,41,.18), transparent 38%),
+    radial-gradient(circle at 15% 80%, rgba(56,189,248,.10), transparent 28%),
+    linear-gradient(180deg, var(--bg-deep), var(--bg-base));
+}
+.portal-home-grid {
+  position:absolute; inset:0; opacity:.35; pointer-events:none;
+  background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:42px 42px;
+  mask-image: radial-gradient(circle at 50% 20%, black, transparent 82%);
+}
+.portal-home-glow { position:absolute; width:260px; height:260px; border-radius:50%; filter:blur(60px); opacity:.18; pointer-events:none; }
+.portal-home-glow-1 { background:var(--gold); left:-100px; bottom:-130px; }
+.portal-home-glow-2 { background:var(--cyan); right:-90px; top:-110px; }
+.portal-home-contenido { position:relative; z-index:1; width:min(900px,100%); text-align:center; }
+.portal-home-titulo { margin:14px 0 10px; font-family:var(--font-display); font-size:clamp(34px,6vw,62px); line-height:1.05; color:var(--text-main); }
+.portal-home-subtitulo { max-width:680px; margin:0 auto; color:var(--text-muted); font-size:16px; }
+.portal-home-busqueda { display:flex; align-items:center; gap:10px; max-width:760px; margin:26px auto 14px; padding:7px 8px 7px 16px; background:var(--bg-panel); border:2px solid var(--clasico-borde); border-radius:14px; box-shadow:0 18px 45px rgba(0,0,0,.28); }
+.portal-home-busqueda:focus-within { border-color:var(--gold); box-shadow:0 0 0 4px rgba(240,180,41,.12), 0 18px 45px rgba(0,0,0,.28); }
+.portal-home-busqueda input { flex:1; min-width:0; border:0; outline:0; background:transparent; color:var(--text-main); font:600 15px var(--font-body); }
+.portal-home-busqueda input::placeholder { color:var(--text-placeholder); }
+.portal-home-busqueda button { border:0; border-radius:10px; padding:12px 18px; background:linear-gradient(135deg,var(--gold-bright),var(--gold)); color:#251902; font-weight:800; cursor:pointer; }
+.portal-home-accesos { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; }
+.portal-home-accesos a { padding:8px 12px; border:1px solid var(--line); background:rgba(36,17,69,.7); border-radius:999px; color:var(--text-secondary); font-size:12.5px; font-weight:700; }
+.portal-home-accesos a:hover { border-color:var(--gold); color:var(--text-main); transform:translateY(-1px); }
+.portal-home-main { max-width:1240px; margin:0 auto; padding:8px 18px 70px; }
+.portal-seccion { padding:42px 0 0; }
+.portal-seccion[hidden] { display:none !important; }
+.portal-seccion-header { display:flex; align-items:end; justify-content:space-between; gap:18px; margin-bottom:18px; }
+.portal-seccion-header h2 { margin:2px 0 0; font-family:var(--font-display); font-size:clamp(20px,3vw,28px); color:var(--text-main); }
+.portal-seccion-header a { color:var(--gold-bright); font-size:13px; font-weight:800; white-space:nowrap; }
+.portal-kicker { color:var(--text-muted); font-size:10px; font-weight:800; letter-spacing:1.1px; text-transform:uppercase; }
+.portal-catalogo-total { color:var(--text-muted); font-size:12px; }
+.portal-catalogo-total b { color:var(--gold-bright); }
+.portal-juego-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px; }
+.portal-juego-grid-feature { grid-template-columns:repeat(6,minmax(0,1fr)); }
+.portal-juego-card { min-width:0; }
+.portal-juego-link { display:block; overflow:hidden; background:linear-gradient(180deg,var(--bg-panel),var(--bg-base)); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 24px rgba(0,0,0,.18); transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease; }
+.portal-juego-link:hover { transform:translateY(-4px); border-color:var(--gold); box-shadow:0 16px 30px rgba(0,0,0,.3); }
+.portal-juego-imagen { position:relative; aspect-ratio:16/10; overflow:hidden; background:radial-gradient(circle,var(--bg-panel-alt),var(--bg-deep)); }
+.portal-juego-imagen img { width:100%; height:100%; object-fit:cover; transition:transform .25s ease; }
+.portal-juego-link:hover .portal-juego-imagen img { transform:scale(1.05); }
+.portal-juego-badge { position:absolute; top:7px; left:7px; max-width:calc(100% - 14px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:4px 7px; border-radius:999px; background:rgba(8,4,20,.76); border:1px solid rgba(255,255,255,.12); color:var(--gold-bright); font-size:9px; font-weight:800; }
+.portal-juego-overlay { position:absolute; inset:auto 8px 8px; display:flex; justify-content:center; opacity:0; transform:translateY(4px); transition:.18s ease; }
+.portal-juego-overlay span { padding:8px 18px; border-radius:999px; background:var(--gold); color:#241804; font-size:11px; font-weight:900; }
+.portal-juego-link:hover .portal-juego-overlay { opacity:1; transform:translateY(0); }
+.portal-juego-info { padding:10px 11px 11px; }
+.portal-juego-info h3 { margin:0 0 4px; color:var(--text-main); font-size:13px; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.portal-juego-meta { color:var(--text-muted); font-size:10.5px; }
+.portal-vacio { grid-column:1/-1; padding:26px; text-align:center; border:1px dashed var(--line); border-radius:12px; color:var(--text-muted); }
+.portal-categorias-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.portal-categoria-card { display:flex; align-items:center; gap:10px; padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--bg-panel); }
+.portal-categoria-card:hover { border-color:var(--gold); transform:translateY(-2px); }
+.portal-categoria-icon { width:38px; height:38px; display:grid; place-items:center; border-radius:10px; background:var(--bg-panel-alt); font-size:18px; }
+.portal-categoria-card strong { display:block; color:var(--text-main); font-size:13px; }
+.portal-categoria-card small { color:var(--text-muted); font-size:10px; }
+.portal-home-community { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:48px; padding:24px; border:1px solid var(--line); border-radius:16px; background:linear-gradient(135deg,var(--bg-panel),var(--bg-panel-alt)); }
+.portal-home-community h2 { margin:3px 0 4px; font-family:var(--font-display); font-size:22px; }
+.portal-home-community p { margin:0; color:var(--text-muted); font-size:13px; max-width:650px; }
+.portal-community-actions { display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+.portal-community-actions a { padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--bg-base); color:var(--text-secondary); font-size:12px; font-weight:800; }
+.portal-community-actions a:hover { border-color:var(--gold); color:var(--gold-bright); }
+@media (max-width:1050px){ .portal-juego-grid,.portal-juego-grid-feature{grid-template-columns:repeat(3,minmax(0,1fr));} .portal-categorias-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+@media (max-width:680px){ .portal-home-header{min-height:340px;padding:46px 16px 40px;} .portal-home-busqueda{padding-left:12px;} .portal-home-busqueda button{padding:11px 13px;} .portal-juego-grid,.portal-juego-grid-feature{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;} .portal-seccion-header{align-items:flex-start;} .portal-home-community{flex-direction:column;align-items:flex-start;} .portal-community-actions{justify-content:flex-start;} }
+@media (max-width:430px){ .portal-categorias-grid{grid-template-columns:1fr;} .portal-home-subtitulo{font-size:14px;} .portal-home-titulo{font-size:34px;} }

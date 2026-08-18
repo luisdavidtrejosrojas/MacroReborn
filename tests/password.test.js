@@ -32,9 +32,9 @@ before(async () => {
 });
 
 // Llama a un handler como lo llamaría Vercel (req/res simulados).
-function llamar(handler, metodo, query, body) {
+function llamar(handler, metodo, query, body, headers) {
   return new Promise((resolve) => {
-    const req = { method: metodo, query: query || {}, body: body || {}, headers: {} };
+    const req = { method: metodo, query: query || {}, body: body || {}, headers: headers || {} };
     const res = {
       status(codigo) { this.statusCode = codigo; return this; },
       json(obj) { resolve(obj); },
@@ -125,12 +125,19 @@ test("usuario legacy (texto plano): login funciona y queda migrado a hash en el 
 test("cambiar contraseña: verifica la actual, guarda el hash nuevo y la vieja deja de servir", async () => {
   const usersHandler = require("../api/users");
 
+  const login = await llamar(authHandler, "POST", { action: "login" }, {
+    username: "nuevo",
+    password: "secreto123"
+  });
+  assert.equal(login.success, true);
+  const headers = { authorization: `Bearer ${login.token}` };
+
   // Contraseña actual incorrecta -> error.
   const mal = await llamar(usersHandler, "POST", { action: "change-password" }, {
     username: "nuevo",
     currentPassword: "mal",
     newPassword: "nueva123"
-  });
+  }, headers);
   assert.equal(mal.success, false);
   assert.equal(mal.error, "La contraseña actual no es correcta");
 
@@ -139,7 +146,7 @@ test("cambiar contraseña: verifica la actual, guarda el hash nuevo y la vieja d
     username: "nuevo",
     currentPassword: "secreto123",
     newPassword: "nueva123"
-  });
+  }, headers);
   assert.equal(ok.success, true);
 
   const fila = await filaUsuario("nuevo");
@@ -161,19 +168,24 @@ test("cambiar contraseña: verifica la actual, guarda el hash nuevo y la vieja d
 });
 
 test("borrar cuenta: requiere la contraseña correcta y elimina al usuario", async () => {
+  const login = await llamar(authHandler, "POST", { action: "login" }, {
+    username: "veterano",
+    password: "clavevieja"
+  });
+  assert.equal(login.success, true);
+  const headers = { authorization: `Bearer ${login.token}` };
+
   // Contraseña incorrecta -> no borra.
   const mal = await llamar(authHandler, "POST", { action: "delete-account" }, {
-    username: "veterano",
     password: "mal"
-  });
+  }, headers);
   assert.equal(mal.success, false);
   assert.ok(await filaUsuario("veterano"), "el usuario debe seguir existiendo");
 
   // Contraseña correcta -> borra.
   const ok = await llamar(authHandler, "POST", { action: "delete-account" }, {
-    username: "veterano",
     password: "clavevieja"
-  });
+  }, headers);
   assert.equal(ok.success, true);
   assert.equal(await filaUsuario("veterano"), undefined, "el usuario debe haber desaparecido");
 });

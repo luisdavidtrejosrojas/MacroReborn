@@ -354,8 +354,6 @@ const CAPAS_IMG={
   cereza_piel1:"imagenes/cereza/piel1.png",
   cereza_piel2:"imagenes/cereza/piel2.png",
   cereza_piel3:"imagenes/cereza/piel3.png",
-  cereza_piel4:"imagenes/cereza/piel4.png",
-  cereza_piel5:"imagenes/cereza/piel5.png",
   cereza_ojos1:"imagenes/cereza/ojos1.png",
   cereza_ojos2:"imagenes/cereza/ojos2.png",
   cereza_ojos3:"imagenes/cereza/ojos3.png",
@@ -388,8 +386,6 @@ const CAPAS_IMG={
   cereza_espalda2:"imagenes/cereza/espalda2.png",
   cereza_cara1:"imagenes/cereza/cara1.png",
   cereza_cara2:"imagenes/cereza/cara2.png",
-  cereza_cara3:"imagenes/cereza/cara3.png",
-  cereza_cara4:"imagenes/cereza/cara4.png",
   cereza_mascota1:"imagenes/cereza/mascota1.png",
   cereza_mascota2:"imagenes/cereza/mascota2.png",
   cereza_mascota5:"imagenes/cereza/mascota5.png",
@@ -415,8 +411,6 @@ const CAPAS_IMG={
   cereza_borde16:"imagenes/cereza/borde16.png",
 
   // ---- Guardarropa de FENGCHAO ----
-  fengchao_piel1:"imagenes/fengchao/piel1.png",
-  fengchao_piel2:"imagenes/fengchao/piel2.png",
 
   // ---- Prendas nuevas de TORA ----
   tora_fondo24:"imagenes/tora/fondo24.png",
@@ -435,22 +429,12 @@ const CAPAS_IMG={
   tora_fondo37:"imagenes/tora/fondo37.png",
   tora_fondo38:"imagenes/tora/fondo38.png",
   tora_fondo39:"imagenes/tora/fondo39.png",
-  tora_fondo40:"imagenes/tora/fondo40.png",
-  tora_fondo41:"imagenes/tora/fondo41.png",
-  tora_fondo42:"imagenes/tora/fondo42.png",
   tora_piel4:"imagenes/tora/piel4.png",
   tora_piel5:"imagenes/tora/piel5.png",
   tora_piel6:"imagenes/tora/piel6.png",
-  tora_piel7:"imagenes/tora/piel7.png",
   tora_boca8:"imagenes/tora/boca8.png",
-  tora_boca9:"imagenes/tora/boca9.png",
-  tora_boca10:"imagenes/tora/boca10.png",
   tora_botas7:"imagenes/tora/botas7.png",
   tora_botas8:"imagenes/tora/botas8.png",
-  tora_botas9:"imagenes/tora/botas9.png",
-  tora_botas10:"imagenes/tora/botas10.png",
-  tora_botas11:"imagenes/tora/botas11.png",
-  tora_botas12:"imagenes/tora/botas12.png",
   tora_pantalon5:"imagenes/tora/pantalon5.png",
   tora_pantalon6:"imagenes/tora/pantalon6.png",
   tora_pantalon7:"imagenes/tora/pantalon7.png",
@@ -459,7 +443,6 @@ const CAPAS_IMG={
   tora_pantalon10:"imagenes/tora/pantalon10.png",
   tora_pantalon11:"imagenes/tora/pantalon11.png",
   tora_pantalon12:"imagenes/tora/pantalon12.png",
-  tora_pantalon13:"imagenes/tora/pantalon13.png",
   tora_remera5:"imagenes/tora/remera5.png",
   tora_remera6:"imagenes/tora/remera6.png",
   tora_remera7:"imagenes/tora/remera7.png",
@@ -475,11 +458,6 @@ const CAPAS_IMG={
   tora_remera17:"imagenes/tora/remera17.png",
   tora_remera18:"imagenes/tora/remera18.png",
   tora_remera19:"imagenes/tora/remera19.png",
-  tora_remera20:"imagenes/tora/remera20.png",
-  tora_remera21:"imagenes/tora/remera21.png",
-  tora_remera22:"imagenes/tora/remera22.png",
-  tora_remera23:"imagenes/tora/remera23.png",
-  tora_remera24:"imagenes/tora/remera24.png",
   tora_accesorio11:"imagenes/tora/accesorio11.png",
   tora_accesorio12:"imagenes/tora/accesorio12.png",
   tora_accesorio13:"imagenes/tora/accesorio13.png",
@@ -494,8 +472,6 @@ const CAPAS_IMG={
   tora_accesorio22:"imagenes/tora/accesorio22.png",
   tora_accesorio23:"imagenes/tora/accesorio23.png",
   tora_espalda3:"imagenes/tora/espalda3.png",
-  tora_espalda4:"imagenes/tora/espalda4.png",
-  tora_cara9:"imagenes/tora/cara9.png",
   tora_pelo5:"imagenes/tora/pelo5.png",
   tora_pelo6:"imagenes/tora/pelo6.png",
   tora_pelo7:"imagenes/tora/pelo7.png",
@@ -539,14 +515,8 @@ const CAPAS_IMG={
   cereza_fondo37:"imagenes/cereza/fondo37.png",
   cereza_fondo38:"imagenes/cereza/fondo38.png",
   cereza_fondo39:"imagenes/cereza/fondo39.png",
-  cereza_fondo40:"imagenes/cereza/fondo40.png",
-  cereza_fondo41:"imagenes/cereza/fondo41.png",
-  cereza_fondo42:"imagenes/cereza/fondo42.png",
   cereza_piel6:"imagenes/cereza/piel6.png",
   cereza_piel7:"imagenes/cereza/piel7.png",
-  cereza_piel8:"imagenes/cereza/piel8.png",
-  cereza_piel9:"imagenes/cereza/piel9.png",
-  cereza_piel10:"imagenes/cereza/piel10.png",
   cereza_boca3:"imagenes/cereza/boca3.png",
   cereza_boca4:"imagenes/cereza/boca4.png",
   cereza_boca5:"imagenes/cereza/boca5.png",
@@ -601,7 +571,6 @@ const CAPAS_IMG={
   cereza_espalda18:"imagenes/cereza/espalda18.png",
   cereza_espalda19:"imagenes/cereza/espalda19.png",
   cereza_espalda20:"imagenes/cereza/espalda20.png",
-  cereza_espalda21:"imagenes/cereza/espalda21.png",
   cereza_espalda22:"imagenes/cereza/espalda22.png",
   cereza_cara5:"imagenes/cereza/cara5.png",
   cereza_cara6:"imagenes/cereza/cara6.png",
@@ -1540,13 +1509,13 @@ async function renderAmigosPerfil(){
     return `
       <div class="tarjeta-usuario">
 
-        <button class="btn-favorito-amigo ${esFavorito ? "es-favorito" : ""}" data-nombre="${nombreAmigo}" title="${esFavorito ? "Quitar de favoritos" : "Marcar como favorito"}">★</button>
+        <button class="btn-favorito-amigo ${esFavorito ? "es-favorito" : ""}" data-nombre="${escaparHTML(nombreAmigo)}" title="${esFavorito ? "Quitar de favoritos" : "Marcar como favorito"}">★</button>
 
         <div class="avatar-tarjeta avatar-compuesto" data-capas="${rutasCapas.join("|")}" data-capa-class="capa-tarjeta">
           ${avatarHTML}
         </div>
 
-        <h3 class="usuario-nombre">${nombreAmigo}</h3>
+        <h3 class="usuario-nombre">${escaparHTML(nombreAmigo)}</h3>
 
         <div class="usuario-stats">
           <div class="stat-item">
@@ -1557,7 +1526,7 @@ async function renderAmigosPerfil(){
 
         <div class="tarjeta-amigo-acciones">
           <a href="usuario.html?usuario=${encodeURIComponent(nombreAmigo)}" class="btn-ver-perfil">👤 Ver perfil</a>
-          <button class="btn-quitar-amigo-perfil" data-nombre="${nombreAmigo}" title="Eliminar amigo">🗑️</button>
+          <button class="btn-quitar-amigo-perfil" data-nombre="${escaparHTML(nombreAmigo)}" title="Eliminar amigo">🗑️</button>
         </div>
 
       </div>
@@ -1649,6 +1618,14 @@ async function cargarComentarios(){
 
 // AVATAR DEL USUARIO EN COMENTARIOS
 
+// Escapa texto no confiable antes de insertarlo en HTML.
+function escaparHTML(texto) {
+  const div = document.createElement("div");
+  div.textContent = texto == null ? "" : String(texto);
+  return div.innerHTML;
+}
+
+
 function obtenerAvatarComentario(nombre){
   // El avatar viaja embebido en el usuario (users.avatar, Neon); se lee
   // de la caché en memoria de js/core.js, precargada por
@@ -1699,10 +1676,10 @@ function renderUltimosComentariosInicio(){
     <div class="comentario">
       <div class="usuario-comentario">
         ${obtenerAvatarComentario(c.usuario)}
-        <b>${c.usuario}</b>
+        <b>${escaparHTML(c.usuario)}</b>
       </div>
       ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(c.usuario, true) : ""}
-      <p>${c.texto}</p>
+      <p>${escaparHTML(c.texto)}</p>
       ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
     </div>
   `;
@@ -1800,12 +1777,12 @@ async function renderComentarios(){
       <div class="comentario">
         <div class="usuario-comentario">
           ${obtenerAvatarComentario(c.usuario)}
-          <b>${c.usuario}</b>
+          <b>${escaparHTML(c.usuario)}</b>
         </div>
         ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(c.usuario, true) : ""}
-        <p>${c.texto}</p>
+        <p>${escaparHTML(c.texto)}</p>
         ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
-        <button class="boton-responder" data-usuario="${c.usuario}">Responder</button>
+        <button class="boton-responder" data-usuario="${escaparHTML(c.usuario)}">Responder</button>
         ${puedeEliminar ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
         <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
       </div>`;
@@ -1998,3 +1975,39 @@ function renderLogros(){
 }
 
 logrosListos.then(renderLogros);
+
+// ==============================
+// RESUMEN RÁPIDO DEL PERFIL
+// ==============================
+// Carga contadores reales para que el encabezado funcione como un
+// dashboard de jugador. Los endpoints ya existen y, si alguno falla,
+// se conserva el 0 sin romper el resto del perfil.
+(async function cargarResumenPerfil(){
+  const nombre = datosUsuario && datosUsuario.nombre;
+  if(!nombre) return;
+
+  const pintar = (id, valor) => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = String(Number(valor) || 0);
+  };
+
+  const peticiones = await Promise.allSettled([
+    fetch('/api/content?action=game-history&username=' + encodeURIComponent(nombre)).then(r => r.json()),
+    fetch('/api/content?action=favorites&username=' + encodeURIComponent(nombre)).then(r => r.json()),
+    fetch('/api/social?action=friends&username=' + encodeURIComponent(nombre)).then(r => r.json())
+  ]);
+
+  const historial = peticiones[0].status === 'fulfilled' && peticiones[0].value?.success
+    ? (peticiones[0].value.historial || []) : [];
+  const favoritos = peticiones[1].status === 'fulfilled' && peticiones[1].value?.success
+    ? (peticiones[1].value.favoritos || []) : [];
+  const amigos = peticiones[2].status === 'fulfilled' && peticiones[2].value?.success
+    ? (peticiones[2].value.amigos || []) : [];
+
+  pintar('perfilResumenJuegos', historial.length);
+  pintar('perfilResumenFavoritos', favoritos.length);
+  pintar('perfilResumenAmigos', amigos.length);
+
+  const logros = typeof obtenerLogros === 'function' ? obtenerLogros(nombre) : [];
+  pintar('perfilResumenLogros', Array.isArray(logros) ? logros.length : 0);
+})();
