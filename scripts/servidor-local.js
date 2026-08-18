@@ -23,6 +23,11 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
+// El servidor local necesita firmar tokens para que el flujo de login y XP
+// sea reproducible. Vercel/Neon siempre proporcionan su propio secreto; este
+// valor predeterminado solo aplica a este proceso local.
+process.env.SESSION_SECRET = process.env.SESSION_SECRET || "local-development-session-secret";
+
 const { crearBaseLocal, crearSqlPGlite } = require("./pglite");
 const { usarSqlLocal } = require("../api/_db");
 

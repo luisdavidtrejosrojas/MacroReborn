@@ -150,8 +150,9 @@ El script busca un puerto libre, arranca `scripts/servidor-local.js` con una
 PGlite efímera, comprueba que el sitio responde, hace login con `demo` /
 `demo1234`, envía dos pulsos de XP y verifica que el primero otorga entre 10 y
 30 monedas y el segundo devuelve el no-op de diez minutos. Siempre termina el
-proceso hijo, también cuando falla una aserción. No modifica
-`scripts/servidor-local.js` ni necesita una base externa.
+proceso hijo, también cuando falla una aserción. No necesita una base externa;
+el servidor local usa un secreto efímero por defecto solo cuando no se
+proporciona `SESSION_SECRET` en el entorno.
 
 ### 3.8 Verificación manual en navegador
 
