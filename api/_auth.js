@@ -3,8 +3,11 @@ const crypto = require('crypto');
 const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 function getSecret() {
-  // SESSION_SECRET should be explicitly configured in production.
-  const secret = process.env.SESSION_SECRET;
+  // SESSION_SECRET es la clave recomendada y tiene prioridad.
+  // El fallback a DATABASE_URL mantiene el login funcionando en despliegues
+  // existentes que todavía no tienen SESSION_SECRET configurado.
+  // Configura SESSION_SECRET en Vercel para eliminar este fallback.
+  const secret = process.env.SESSION_SECRET || process.env.DATABASE_URL;
   if (!secret) throw new Error('Falta configurar SESSION_SECRET');
   return String(secret);
 }
