@@ -11,6 +11,10 @@
 //
 // Correr:  npm test   (o: node --test tests/)
 
+// El main actual firma las sesiones con SESSION_SECRET. Este valor solo
+// existe dentro del proceso aislado de pruebas.
+process.env.SESSION_SECRET = process.env.SESSION_SECRET || "test-session-secret";
+
 const { test, before } = require("node:test");
 const assert = require("node:assert");
 const bcrypt = require("bcryptjs");

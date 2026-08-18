@@ -38,6 +38,7 @@ jugado, amigos, chat, notificaciones y perfiles de usuario.
 ```bash
 npm install        # instala las dependencias (solo la primera vez)
 npm test           # tests automáticos (base local, no toca la real)
+npm run test:smoke  # smoke test HTTP: levanta y cierra un servidor local efímero
 npm run db:local   # sitio local en http://localhost:3001
 ```
 

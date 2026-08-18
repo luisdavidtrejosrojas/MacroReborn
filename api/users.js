@@ -3,9 +3,11 @@ const { getPusher, canalNotificaciones } = require("./_pusher");
 const { obtenerSql } = require("./_db");
 const { PasswordService } = require("./_password");
 const { requerirAuth } = require("./_auth");
+const { MonedasService } = require("./_monedas");
 
 const sql = obtenerSql();
 const passwordService = new PasswordService(sql);
+const monedasService = new MonedasService(sql);
 
 // ==============================
 // /api/users
@@ -114,6 +116,29 @@ async function registrarTickTiempoJugado(userId, gameId) {
   `;
 
 }
+
+// ==============================
+// MONEDAS POR TIEMPO JUGADO
+// ==============================
+// El mismo pulso de 1 vez por minuto que suma XP y cuenta minutos para
+// el ranking también es el reloj con el que se GANAN monedas. Toda la
+// regla (cada 10 minutos, premio aleatorio de 10 a 30, tope de 500 por
+// día UTC con reseteo perezoso) vive en api/_monedas.js: acá solo se lo
+// llama y se agrega el resultado a la respuesta.
+//
+// No hay endpoint nuevo a propósito: Vercel (plan Hobby) permite 12
+// Serverless Functions y ya están todas usadas, así que se reusa el
+// pedido que el cliente ya hacía.
+//
+// Respuesta defensiva si falla el servicio. Se manda igual, con la
+// misma forma, para que el frontend nunca tenga que preguntarse si el
+// campo "monedas" existe: alcanza con mirar "otorgado".
+const MONEDAS_SIN_OTORGAR = {
+  otorgado: false,
+  monto: 0,
+  saldoNuevo: null,
+  razon: "error-al-otorgar"
+};
 
 async function listarUsuarios(req, res) {
   const { q, username, limit } = req.query;
@@ -316,10 +341,27 @@ async function sumarXp(req, res) {
     console.warn("MacroReborn: no se pudo registrar el tiempo jugado para el ranking.", error);
   }
 
+  // Monedas por tiempo jugado: el mismo pulso, además de XP y minutos,
+  // puede otorgar monedas (cada 10 minutos, no cada minuto: la regla
+  // completa está en api/_monedas.js).
+  // Mismo criterio defensivo que el tick de arriba: si el banco falla
+  // (columnas de la migración 015 sin aplicar todavía, base caída),
+  // se loguea y el usuario igual recibe su XP. Perder un otorgamiento
+  // de monedas es un problema chico; perder el XP del minuto sería
+  // visible en pantalla.
+  let monedas = MONEDAS_SIN_OTORGAR;
+
+  try {
+    monedas = await monedasService.otorgarPorTiempoJugado(id);
+  } catch (error) {
+    console.warn("MacroReborn: no se pudieron otorgar las monedas por tiempo jugado.", error);
+  }
+
   return res.status(200).json({
     success: true,
     user: actualizado[0],
-    subioNivel
+    subioNivel,
+    monedas
   });
 }
 

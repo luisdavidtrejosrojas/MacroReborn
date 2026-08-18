@@ -1,9 +1,18 @@
-const { neon } = require("@neondatabase/serverless");
 const { setCors, hayBloqueoEntreUsuarios } = require("./_utils");
 const { getPusher, canalNotificaciones } = require("./_pusher");
 const { requerirAuth } = require("./_auth");
+const { obtenerSql } = require("./_db");
+const { MonedasService } = require("./_monedas");
 
-const sql = neon(process.env.DATABASE_URL);
+// La conexión se pide a api/_db.js en vez de crearla acá con
+// neon(process.env.DATABASE_URL). En producción es exactamente la misma
+// conexión de siempre; el motivo del cambio es que así este handler
+// también se puede correr contra la base local PGlite en los tests, que
+// es lo que permite probar de verdad la compra en la tienda de avatares.
+const sql = obtenerSql();
+
+// El "banco": el único lugar que sabe restar monedas (ver api/_monedas.js).
+const monedasService = new MonedasService(sql);
 
 // ==============================
 // /api/content?action=comments|likes|reports
@@ -1501,8 +1510,13 @@ async function communityFeed(req, res) {
 // GET  /api/content?action=avatar-shop-buy&username=X&itemId=Y
 //   (se resuelve como POST más abajo)
 // POST /api/content?action=avatar-shop-buy { username, itemId }
-//   -> descuenta el precio de users.monedas e inserta la compra.
-//   Falla si ya la tiene o si no le alcanzan las monedas.
+//   -> descuenta el precio del saldo (users.monedas) a través del banco
+//   (api/_monedas.js) e inserta la compra. Falla si ya la tiene o si no
+//   le alcanzan las monedas.
+//
+// El saldo se LEE y se GASTA por api/_monedas.js, no con SQL suelto acá:
+// ese módulo es también el que otorga monedas por jugar, así que las dos
+// puntas del saldo (ganarlo y gastarlo) viven en el mismo lugar.
 
 async function avatarShop(req, res) {
 
@@ -1524,8 +1538,7 @@ async function avatarShop(req, res) {
   if (username) {
     const userId = await getUserId(username);
     if (userId) {
-      const filasUsuario = await sql`SELECT monedas FROM users WHERE id = ${userId};`;
-      monedas = filasUsuario.length ? filasUsuario[0].monedas : null;
+      monedas = await monedasService.consultarSaldo(userId);
 
       const filasCompras = await sql`
         SELECT item_id FROM avatar_shop_purchases WHERE user_id = ${userId};
@@ -1566,22 +1579,23 @@ async function avatarShopBuy(req, res) {
     return res.status(200).json({ success: false, error: "Ya tenés esta prenda" });
   }
 
-  const filasSaldo = await sql`SELECT monedas FROM users WHERE id = ${userId};`;
-  const saldo = filasSaldo.length ? filasSaldo[0].monedas : 0;
+  // El descuento del saldo lo hace el banco (api/_monedas.js), no este
+  // handler: antes acá había un SELECT del saldo, la comparación y un
+  // UPDATE escritos a mano. El servicio lo hace en una sola instrucción
+  // condicionada, así que dos clics simultáneos no pueden dejar el saldo
+  // en negativo. El mensaje de error es el mismo que veía el usuario.
+  const gasto = await monedasService.gastar(userId, item.precio);
 
-  if (saldo < item.precio) {
-    return res.status(200).json({ success: false, error: "No te alcanzan las monedas" });
+  if (!gasto.ok) {
+    return res.status(200).json({ success: false, error: gasto.error });
   }
 
-  await sql`UPDATE users SET monedas = monedas - ${item.precio} WHERE id = ${userId};`;
   await sql`INSERT INTO avatar_shop_purchases (user_id, item_id) VALUES (${userId}, ${itemId});`;
-
-  const filasNuevoSaldo = await sql`SELECT monedas FROM users WHERE id = ${userId};`;
 
   return res.status(200).json({
     success: true,
     itemComprado: item.nombre,
-    monedas: filasNuevoSaldo[0].monedas
+    monedas: gasto.saldoNuevo
   });
 }
 

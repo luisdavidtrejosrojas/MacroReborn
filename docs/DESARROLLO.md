@@ -10,10 +10,11 @@ backfill y tests).
 ## 1. Qué cubre esta guía
 
 - Los módulos compartidos del backend (`api/_db.js`, `api/_password.js`,
-  `api/_pusher.js`) y los cambios en `api/auth.js` y `api/users.js`.
+  `api/_pusher.js`, `api/_monedas.js`) y los cambios en `api/auth.js`,
+  `api/users.js` y `api/content.js`.
 - La infraestructura local: `scripts/pglite.js`,
   `scripts/servidor-local.js`, `scripts/migrar-passwords.js` y
-  `tests/password.test.js`.
+  `scripts/smoke-local.js`, junto con los tests de `tests/`.
 - Cómo correr, probar y desplegar, y las convenciones del proyecto.
 
 ## 2. Módulos nuevos del backend
@@ -28,9 +29,9 @@ Antes cada archivo de la API creaba su conexión con
 - `usarSqlLocal(sqlLocal)` → reemplaza la conexión por una base local
   (PGlite) en desarrollo/tests.
 
-Los handlers de esta rama (`api/auth.js`, `api/users.js`) usan
-`obtenerSql()` en vez de crear la conexión a mano. Los otros archivos
-de la API (`content.js`, `social.js`, `system.js`) no se tocaron.
+Los handlers de esta rama (`api/auth.js`, `api/users.js` y
+`api/content.js`) usan `obtenerSql()` en vez de crear la conexión a mano.
+Los otros archivos de la API (`social.js`, `system.js`) no se tocaron.
 
 ### 2.2 `api/_password.js` — contraseñas
 
@@ -73,7 +74,7 @@ antes (el contrato de la API no cambió).
 
 - `crearBaseLocal()` → crea un Postgres real embebido (PGlite, WASM),
   arma la tabla `users` base y aplica todas las migraciones de
-  `migrations/` en orden (incluida la 013).
+  `migrations/` en orden (incluidas la 013, 014 y 015).
 - `crearSqlPGlite(db)` → adaptador que imita la interfaz del driver de
   Neon (`sql\`...\``), para que los mismos handlers corran contra la
   base local. Soporta **fragmentos SQL anidados**: pedazos `sql\`...\``
@@ -124,6 +125,61 @@ handlers reales. Cubren: registro con hash, login correcto/incorrecto,
 migración legacy, cambio de contraseña, borrado de cuenta y usuario
 duplicado.
 
+### 3.5 `tests/monedas.test.js` — reglas de monedas
+
+Se ejecuta junto con `npm test` y usa una base PGlite nueva por suite. Cubre
+el primer otorgamiento, la ventana de diez minutos, el tope diario, el
+overshoot permitido, el reseteo perezoso UTC, llamadas concurrentes,
+`gastar()`/`consultarSaldo()` y el enganche real de monedas en el handler de
+XP y en la tienda.
+
+### 3.6 `tests/migrations.test.js` — contrato de la migración 015
+
+Comprueba que las tres columnas nuevas existen con tipo, default y nulabilidad
+correctos, que la columna `users.monedas` conserva su saldo y que volver a
+aplicar la migración es seguro. La base es efímera: al terminar el proceso no
+queda ningún archivo ni conexión con Neon.
+
+### 3.7 `scripts/smoke-local.js` — prueba HTTP de extremo a extremo
+
+```bash
+npm run test:smoke
+```
+
+El script busca un puerto libre, arranca `scripts/servidor-local.js` con una
+PGlite efímera, comprueba que el sitio responde, hace login con `demo` /
+`demo1234`, envía dos pulsos de XP y verifica que el primero otorga entre 10 y
+30 monedas y el segundo devuelve el no-op de diez minutos. Siempre termina el
+proceso hijo, también cuando falla una aserción. No necesita una base externa;
+el servidor local usa un secreto efímero por defecto solo cuando no se
+proporciona `SESSION_SECRET` en el entorno.
+
+### 3.8 Verificación manual en navegador
+
+La automatización no sustituye la comprobación visual del flujo del sitio.
+Para hacerla sin tocar la base real:
+
+1. Ejecutar `npm run db:local` y abrir `http://localhost:3001/login.html`.
+2. Entrar como `demo` / `demo1234`; la consola del servidor debe mostrar la
+   migración perezosa de la contraseña solo en el primer login.
+3. Abrir `http://localhost:3001/jugar.html?id=112`, dejar la pestaña activa y
+   abrir DevTools → Network. Cada minuto debe aparecer
+   `POST /api/users?action=xp` con `success: true` y un objeto `monedas`.
+4. En el primer pulso de un usuario nuevo se verá `otorgado: true` y un monto
+   entre 10 y 30. Los pulsos siguientes durante los diez minutos siguientes
+   deben mostrar `otorgado: false`, `monto: 0` y
+   `razon: "aun-no-pasaron-10-minutos"`. El frontend todavía no muestra un
+   toast de monedas, por decisión de alcance de esta rama.
+5. Para observar un nuevo premio hay que dejar transcurrir diez minutos
+   reales (el smoke test y los tests unitarios simulan el tiempo; no hace
+   falta esperar para validar la regla automáticamente).
+
+El servidor local solo enruta `/api/auth` y `/api/users`. Por eso la compra de
+un avatar se valida automáticamente contra el handler real en
+`tests/monedas.test.js`; probar la pantalla de tienda requiere un entorno de
+staging que tenga `/api/content` habilitado y no debe hacerse contra
+producción durante esta fase.
+
 ## 4. Despliegue de estos cambios
 
 Orden estricto (la migración SIEMPRE antes que el código que la usa):
@@ -133,19 +189,22 @@ Orden estricto (la migración SIEMPRE antes que el código que la usa):
 2. Aplicar la migración 014 (quita el NOT NULL de `users.password`;
    sin ella, registro y login fallan con el error de not-null
    constraint — ver `docs/SEGURIDAD.md`).
-3. Desplegar el código nuevo (todo el repo).
-4. Verificar: registrar un usuario de prueba y entrar con un usuario
+3. Aplicar la migración 015 (agrega la contabilidad de monedas por tiempo;
+   no modifica `users.monedas`).
+4. Desplegar el código nuevo (todo el repo).
+5. Verificar: registrar un usuario de prueba y entrar con un usuario
    existente (se migra solo).
-5. Correr el backfill con `--produccion` (cubre a los que no entran).
-6. Verificar que no quede texto plano:
+6. Correr el backfill con `--produccion` (cubre a los que no entran).
+7. Verificar que no quede texto plano:
    `SELECT COUNT(*) FROM users WHERE password IS NOT NULL;` → 0.
-7. Recién entonces planificar la migración 015 (borrar `users.password`
-   y la rama legacy de `api/_password.js`).
+8. Recién entonces planificar una migración futura (borrar
+   `users.password` y la rama legacy de `api/_password.js`).
 
 Si se despliega el código sin la 013, registro y login fallan (la
 columna `password_hash` no existe). Si se despliega sin la 014,
-fallan por la restricción NOT NULL de `password`. Las dos migraciones
-van antes que el código.
+fallan por la restricción NOT NULL de `password`. Si se despliega sin la
+015, el primer pulso de XP intentará usar columnas que no existen. Las tres
+migraciones van antes que el código.
 
 ## 5. Convenciones del proyecto
 
