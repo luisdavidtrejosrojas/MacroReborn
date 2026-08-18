@@ -1238,6 +1238,17 @@ const juegos = [
     iframe: "./html/juegos/i-am-hall-security.html"
 },
 
+{
+    id: 113,
+    nombre: "Macro Snake",
+    imagen: "imagenes/juegos/macro-snake.svg",
+    categoria: "Arcade",
+    estado: "🧬 Original",
+    tipo: "destacado",
+    descripcion: "El juego original de MacroReborn: comé la fruta, crecé, superá tu récord y construí tu progreso con cada partida.",
+    iframe: "./html/juegos/macro-snake.html"
+},
+
 ];
 
 
