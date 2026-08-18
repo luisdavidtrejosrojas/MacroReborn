@@ -345,3 +345,154 @@
 .juego-card-tag.nuevo { color: #7dd3fc; border-color: rgba(125,211,252,.35); }
 .juego-card-tag.destacado { color: #ffd166; border-color: rgba(255,209,102,.35); }
 .juego-card:hover .juego-card-tag { transform: translateY(-1px); }
+
+
+/* ========================================================================
+   CENTRO DE DESCUBRIMIENTO — filtros y vistas rápidas
+   Se apoya en js/juegos.js existente; no crea una segunda lógica de catálogo.
+   ======================================================================== */
+.mr-catalogo-herramientas {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px 24px 6px;
+}
+
+.mr-catalogo-vistas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.mr-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  transition: border-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+.mr-chip:hover,
+.mr-chip.activo {
+  color: var(--gold-bright);
+  border-color: rgba(240, 180, 41, .45);
+  transform: translateY(-1px);
+}
+
+.mr-filtros-catalogo {
+  display: grid;
+  grid-template-columns: minmax(240px, 1.7fr) minmax(170px, .8fr) minmax(170px, .8fr);
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--bg-panel), rgba(255,255,255,.01));
+  box-shadow: 0 10px 24px rgba(0,0,0,.16);
+}
+
+.mr-buscador-catalogo,
+.mr-select-catalogo {
+  min-width: 0;
+}
+
+.mr-buscador-catalogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 13px;
+  min-height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg-base);
+}
+
+.mr-buscador-catalogo span {
+  flex: 0 0 auto;
+  font-size: 17px;
+}
+
+.mr-buscador-catalogo input,
+.mr-select-catalogo select {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  color: var(--text-main);
+  background: transparent;
+  font: inherit;
+}
+
+.mr-buscador-catalogo input::placeholder {
+  color: var(--text-muted);
+}
+
+.mr-select-catalogo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg-base);
+}
+
+.mr-select-catalogo span {
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  font-weight: 800;
+}
+
+.mr-select-catalogo select {
+  cursor: pointer;
+}
+
+.mr-catalogo-enlaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  padding: 12px 2px 0;
+}
+
+.mr-catalogo-enlaces a {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.mr-catalogo-enlaces a:hover {
+  color: var(--gold-bright);
+}
+
+.mr-resultados-catalogo {
+  max-width: 1200px;
+  margin: 8px auto 0;
+  padding: 0 24px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.mr-resultados-catalogo strong {
+  color: var(--text-main);
+}
+
+@media (max-width: 800px) {
+  .mr-filtros-catalogo {
+    grid-template-columns: 1fr;
+  }
+
+  .mr-catalogo-herramientas,
+  .mr-resultados-catalogo {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
