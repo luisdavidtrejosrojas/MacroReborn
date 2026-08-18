@@ -13,7 +13,8 @@
 -- que el registro/login nuevo no fallen). Recién cuando se confirme
 -- que no queda ningún password en claro (verificable con el script
 -- scripts/migrar-passwords.js y una consulta COUNT), la columna
--- "password" se elimina del todo en la migración 015.
+-- "password" se elimina del todo en una migración futura, después del
+-- período de gracia y de la verificación del backfill.
 --
 -- Seguro de re-ejecutar (usa IF NOT EXISTS).
 -- ============================================

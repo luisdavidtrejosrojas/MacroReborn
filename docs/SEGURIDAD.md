@@ -21,7 +21,7 @@ más grave y fue lo primero que se resolvió.
 - **Columna nueva `users.password_hash`** (migración 013). La columna
   vieja `password` se conserva durante la transición (sin su
   restricción NOT NULL, ver migración 014) y se borra recién en una
-  futura migración 015.
+  migración futura, después del período de gracia.
 - **Módulo `api/_password.js`**: funciones puras (`hashContrasena`,
   `verificarHash`, `verificarContrasenaYMigrar`) + clase
   `PasswordService`.
@@ -116,8 +116,9 @@ Orden estricto:
 5. Correr el backfill con `--produccion` (cubre a los que no entran).
 6. Verificar que no quede texto plano:
    `SELECT COUNT(*) FROM users WHERE password IS NOT NULL;` → 0.
-7. Tras un período de gracia: migración 015 (borrar `users.password`)
-   y quitar la rama de comparación legacy de `api/_password.js`.
+7. Tras un período de gracia: crear una migración futura para borrar
+   `users.password` y quitar la rama de comparación legacy de
+   `api/_password.js`.
 
 Si se despliega el código sin la 013, registro y login fallan (la
 columna `password_hash` no existe). Si se despliega sin la 014,
