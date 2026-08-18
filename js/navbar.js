@@ -54,6 +54,12 @@ function _inyectarEstilosNotifDropdown(){
 
 if(nav){
 
+    // Acceso global de descubrimiento: se añade una sola vez y no reemplaza
+    // ningún enlace existente del menú.
+    if (!nav.querySelector(".nav-explorar-global")) {
+        nav.insertAdjacentHTML("afterbegin", `<a class="sesion-extra nav-explorar-global" href="explorar.html" title="Descubrí juegos y actividad">🧭 Explorar</a>`);
+    }
+
     // Evitar duplicados
     document.querySelectorAll(".sesion-extra")
     .forEach(e=>e.remove());
