@@ -63,13 +63,15 @@ if(nav){
             <div class="mr-portal-hub" id="mrPortalHub">
                 <button type="button" class="mr-portal-hub-btn" id="mrPortalHubBtn" aria-expanded="false" aria-haspopup="true">🧭 Portal <span aria-hidden="true">▾</span></button>
                 <div class="mr-portal-hub-menu" id="mrPortalHubMenu">
-                    <a href="explorar.html">🔎 Explorar</a>
                     <a href="juegos.html">🎮 Juegos</a>
+                    <a href="comunidad.html">🌐 Comunidad</a>
+                    <a href="ranking.html">🏆 Ranking</a>
                     <a href="mi-dia.html">🔥 Mi día</a>
                     <a href="progreso.html">🎯 Progreso</a>
                     <a href="liga-global.html">🏆 Ligas</a>
-                    <a href="comunidad-ranking.html">🌐 Comunidad</a>
+                    <a href="perfil.html">👤 Mi perfil</a>
                     <a href="amigos.html">👥 Amigos</a>
+                    <a href="notificaciones.html">🔔 Notificaciones</a>
                 </div>
             </div>
         `);
