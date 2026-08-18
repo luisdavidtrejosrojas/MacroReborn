@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ligas globales | MacroReborn</title>
+  <link rel="stylesheet" href="css/liga-global.css">
+</head>
+<body>
+  <main class="lg-wrap">
+    <header class="lg-header">
+      <div>
+        <span class="lg-kicker">COMPETICIÓN GLOBAL</span>
+        <h1>🏆 Ligas MacroReborn</h1>
+        <p>Compite con toda la comunidad, no con un solo juego.</p>
+      </div>
+      <nav class="lg-nav">
+        <a href="index.html">Inicio</a>
+        <a href="juegos.html">Juegos</a>
+        <a href="explorar.html">Explorar</a>
+        <a href="progreso.html">Progreso</a>
+        <a href="comunidad-ranking.html">Ranking</a>
+      </nav>
+    </header>
+
+    <section id="lg-me" class="lg-hero" aria-live="polite">
+      <div class="lg-loading">Cargando tu posición…</div>
+    </section>
+
+    <section class="lg-grid lg-grid-main">
+      <article class="lg-card">
+        <div class="lg-card-head">
+          <div><span class="lg-kicker">CLASIFICACIÓN</span><h2>Ranking global</h2></div>
+          <input id="lg-search" type="search" placeholder="Buscar jugador…" autocomplete="off">
+        </div>
+        <div class="lg-filters">
+          <button data-filter="todos" class="active">Todos</button>
+          <button data-filter="mis-amigos">Mis amigos</button>
+          <button data-filter="top-10">Top 10</button>
+          <button data-filter="ascenso">Ascenso</button>
+        </div>
+        <div id="lg-table" class="lg-table-wrap"><div class="lg-loading">Cargando ranking…</div></div>
+      </article>
+
+      <aside class="lg-side">
+        <article class="lg-card">
+          <div class="lg-card-head"><div><span class="lg-kicker">LIGAS</span><h2>Tramos</h2></div></div>
+          <div class="lg-leagues">
+            <div><b>👑 Leyenda</b><span>Top 3%</span></div>
+            <div><b>💎 Maestro</b><span>Top 10%</span></div>
+            <div><b>💠 Diamante</b><span>Top 20%</span></div>
+            <div><b>🏆 Platino</b><span>Top 40%</span></div>
+            <div><b>🥇 Oro</b><span>Top 65%</span></div>
+            <div><b>🥈 Plata</b><span>Top 85%</span></div>
+            <div><b>🥉 Bronce</b><span>Resto</span></div>
+          </div>
+        </article>
+
+        <article class="lg-card">
+          <div class="lg-card-head"><div><span class="lg-kicker">ASCENSOS</span><h2>Sube de liga</h2></div></div>
+          <p class="lg-muted">Tu liga depende de tu posición global. Cuanto más juegas y progresas, más arriba puedes llegar.</p>
+          <a class="lg-cta" href="progreso.html">Ver mi progreso →</a>
+        </article>
+      </aside>
+    </section>
+  </main>
+  <script src="js/liga-global.js" defer></script>
+</body>
+</html>
