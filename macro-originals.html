@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MacroReborn Originals</title>
+  <meta name="description" content="MacroReborn Originals: juegos propios, retos y progresión de la comunidad.">
+  <link rel="stylesheet" href="css/macro-originals.css">
+</head>
+<body>
+  <header class="mr-orig-nav">
+    <a href="index.html" class="mr-brand">MACRO<span>REBORN</span></a>
+    <nav>
+      <a href="juegos.html">Juegos</a>
+      <a href="comunidad-ranking.html">Ranking</a>
+      <a href="perfil.html">Perfil</a>
+    </nav>
+  </header>
+
+  <main class="mr-originals-shell">
+    <section class="mr-hero">
+      <div>
+        <span class="mr-kicker">MACROREBORN ORIGINALS</span>
+        <h1>Juegos propios que alimentan tu progreso.</h1>
+        <p>Una zona reservada para títulos exclusivos de MacroReborn. Cada partida puede alimentar tu actividad, tu XP y tus retos sin alterar el catálogo existente.</p>
+        <div class="mr-actions">
+          <a class="mr-btn primary" href="html/juegos/macro-snake.html">🎮 Jugar Macro Snake</a>
+          <a class="mr-btn ghost" href="#progreso">🏆 Ver progreso</a>
+        </div>
+      </div>
+      <div class="mr-hero-orb" aria-hidden="true"><span>🐍</span></div>
+    </section>
+
+    <section class="mr-section" id="progreso">
+      <div class="mr-section-head">
+        <div><span class="mr-kicker">TU CICLO</span><h2>Progresión MacroReborn</h2></div>
+        <span id="mrSesionBadge" class="mr-badge">Visitante</span>
+      </div>
+      <div class="mr-grid stats" id="mrProgressStats">
+        <article class="mr-card"><span>⭐</span><strong id="mrNivel">—</strong><small>Nivel</small></article>
+        <article class="mr-card"><span>✨</span><strong id="mrXp">—</strong><small>XP</small></article>
+        <article class="mr-card"><span>🪙</span><strong id="mrMonedas">—</strong><small>Monedas</small></article>
+        <article class="mr-card"><span>🎮</span><strong id="mrJuegos">—</strong><small>Juegos jugados</small></article>
+      </div>
+    </section>
+
+    <section class="mr-section">
+      <div class="mr-section-head">
+        <div><span class="mr-kicker">RETOS</span><h2>Objetivos que hacen volver</h2></div>
+      </div>
+      <div class="mr-grid missions" id="mrMissions"></div>
+    </section>
+
+    <section class="mr-section">
+      <div class="mr-section-head">
+        <div><span class="mr-kicker">EXCLUSIVOS</span><h2>MacroReborn Originals</h2></div>
+      </div>
+      <div class="mr-grid originals">
+        <article class="mr-original-card featured">
+          <div class="mr-original-art snake">🐍</div>
+          <div class="mr-original-copy"><span>ARCADE · 1 JUGADOR</span><h3>Macro Snake</h3><p>La versión arcade propia de MacroReborn: récords, racha de juego y progreso.</p><a href="html/juegos/macro-snake.html">Jugar ahora →</a></div>
+        </article>
+        <article class="mr-original-card locked"><div class="mr-original-art arena">⚔️</div><div class="mr-original-copy"><span>PRÓXIMAMENTE</span><h3>Macro Arena</h3><p>Combates cortos pensados para rankings diarios y semanales.</p><b>En desarrollo</b></div></article>
+        <article class="mr-original-card locked"><div class="mr-original-art tower">🏰</div><div class="mr-original-copy"><span>PRÓXIMAMENTE</span><h3>Macro Tower</h3><p>Desafíos de estrategia con niveles, medallas y temporadas.</p><b>En desarrollo</b></div></article>
+      </div>
+    </section>
+  </main>
+
+  <script defer src="js/macro-originals.js"></script>
+</body>
+</html>
