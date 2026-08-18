@@ -788,6 +788,70 @@ async function gameHistory(req, res) {
   return res.status(405).json({ success: false, error: "Método no permitido" });
 }
 
+
+// ============== GAMES OVERVIEW ==============
+// Lectura agregada para Home/Catálogo. No modifica datos existentes.
+// "partidas" mantiene el nombre de campo que ya consume el frontend;
+// representa sesiones históricas registradas en game_history por usuario/juego.
+async function gamesOverview(req, res) {
+  if (req.method !== "GET") {
+    return res.status(405).json({ success: false, error: "Método no permitido" });
+  }
+
+  const [historial, ratings, favoritos, tendencia] = await Promise.all([
+    sql`
+      SELECT game_id, COUNT(*)::int AS cantidad
+      FROM game_history
+      GROUP BY game_id;
+    `,
+    sql`
+      SELECT game_id,
+             ROUND(AVG(calificacion)::numeric, 2)::float AS promedio,
+             COUNT(*)::int AS votos
+      FROM game_ratings
+      GROUP BY game_id;
+    `,
+    sql`
+      SELECT game_id, COUNT(*)::int AS cantidad
+      FROM game_favorites
+      GROUP BY game_id;
+    `,
+    sql`
+      SELECT game_id, COUNT(*)::int AS cantidad
+      FROM game_history
+      WHERE played_at >= now() - INTERVAL '7 days'
+      GROUP BY game_id;
+    `
+  ]);
+
+  const juegos = {};
+  const asegurar = (id) => {
+    const key = String(id);
+    if (!juegos[key]) juegos[key] = { partidas: 0, promedio: 0, votos: 0, valoraciones: 0, favoritos: 0, tendencia: 0, jugadores: 0 };
+    return juegos[key];
+  };
+
+  historial.forEach(f => {
+    const item = asegurar(f.game_id);
+    item.partidas = Number(f.cantidad) || 0;
+    item.jugadores = Number(f.cantidad) || 0;
+  });
+  ratings.forEach(f => {
+    const item = asegurar(f.game_id);
+    item.promedio = Number(f.promedio) || 0;
+    item.votos = Number(f.votos) || 0;
+    item.valoraciones = item.votos;
+  });
+  favoritos.forEach(f => {
+    asegurar(f.game_id).favoritos = Number(f.cantidad) || 0;
+  });
+  tendencia.forEach(f => {
+    asegurar(f.game_id).tendencia = Number(f.cantidad) || 0;
+  });
+
+  return res.status(200).json({ success: true, juegos });
+}
+
 // ============== REPORTS ==============
 
 async function reports(req, res) {
@@ -1560,6 +1624,7 @@ module.exports = async function handler(req, res) {
     if (action === "activity-friends") return await activityFriends(req, res);
     if (action === "favorites") return await favorites(req, res);
     if (action === "game-history") return await gameHistory(req, res);
+    if (action === "games-overview") return await gamesOverview(req, res);
     if (action === "reports") return await reports(req, res);
     if (action === "reports-resolve") return await resolveReport(req, res);
     if (action === "reviews") return await reviews(req, res);
