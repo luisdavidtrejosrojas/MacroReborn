@@ -15,8 +15,31 @@
   function tick(){dir=nextDir;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.x>=size||head.y<0||head.y>=size||snake.some((p,i)=>i>0&&p.x===head.x&&p.y===head.y))return end();snake.unshift(head);if(head.x===food.x&&head.y===food.y){score+=10;scoreEl.textContent=score;placeFood()}else snake.pop();draw()}
   async function registerPlay(){const u=user();if(!u?.nombre)return;try{await fetch("../../api/content?action=game-history",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u.nombre,gameId:"macro-snake"})})}catch(_){} localStorage.setItem("mr_originals_played","1");try{if(typeof iniciarXP==="function")iniciarXP("macro-snake")}catch(_){} }
   async function reward(){const u=user();if(!u?.nombre)return;try{if(typeof ganarXP==="function")await ganarXP(Math.min(40,10+Math.floor(score/10)*5))}catch(_){} try{if(typeof registrarActividad==="function")registrarActividad(u.nombre,"macro-original","Macro Snake: "+score+" puntos")}catch(_){} }
+  async function submitScore(){
+    const u=user();
+    const token=localStorage.getItem("macroSessionToken");
+    if(!u?.nombre || !token) return null;
+    try{
+      const response=await fetch("../../api/originales-ranking?action=score",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({gameId:"113",score})
+      });
+      const data=await response.json();
+      if(!response.ok || !data?.success) return null;
+      const serverBest=Number(data.mejorPuntuacion||score);
+      if(serverBest>best){
+        best=serverBest;
+        localStorage.setItem("mr_macro_snake_best",String(best));
+        bestEl.textContent=best;
+      }
+      return data;
+    }catch(_){
+      return null;
+    }
+  }
   function start(){if(running)return;running=true;roundStartedAt=Date.now();streak+=1;localStorage.setItem("mr_macro_snake_streak",String(streak));streakEl.textContent=streak;registerPlay();setStatus("¡En marcha! Come la fruta amarilla.");clearInterval(timer);timer=setInterval(tick,105);}
-  async function end(){if(!running)return;running=false;clearInterval(timer);timer=null;if(score>best){best=score;localStorage.setItem("mr_macro_snake_best",String(best));bestEl.textContent=best;setStatus("🏆 Nuevo récord: "+score+" puntos.")}else setStatus("Fin de partida: "+score+" puntos. Récord: "+best+".");await reward()}
+  async function end(){if(!running)return;running=false;clearInterval(timer);timer=null;const localRecord=score>best;if(localRecord){best=score;localStorage.setItem("mr_macro_snake_best",String(best));bestEl.textContent=best;setStatus("🏆 Nuevo récord: "+score+" puntos. Guardando clasificación…")}else setStatus("Fin de partida: "+score+" puntos. Guardando clasificación…");await reward();const result=await submitScore();if(result){const esMejorServidor=Number(result.mejorPuntuacion||0)===score;setStatus(esMejorServidor?"🏆 Récord registrado en la clasificación: "+score+" puntos.":"✅ Puntuación registrada: "+score+" puntos. Récord: "+Number(result.mejorPuntuacion||best)+".")}else if(score>0){setStatus(localRecord?"🏆 Nuevo récord local: "+score+" puntos. Inicia sesión para competir en la clasificación.":"Fin de partida: "+score+" puntos. Inicia sesión para enviar tu puntuación.")}}
   document.getElementById("start").addEventListener("click",start);document.getElementById("restart").addEventListener("click",()=>{clearInterval(timer);running=false;reset()});
   document.addEventListener("keydown",e=>{const m={ArrowUp:[0,-1],w:[0,-1],W:[0,-1],ArrowDown:[0,1],s:[0,1],S:[0,1],ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],ArrowRight:[1,0],d:[1,0],D:[1,0]};if(m[e.key]){e.preventDefault();change(...m[e.key])}if(e.key==="Enter"&&!running)start()});
   canvas.addEventListener("pointerdown",e=>{const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,dx=x-r.width/2,dy=y-r.height/2;if(Math.abs(dx)>Math.abs(dy))change(dx>0?1:-1,0);else change(0,dy>0?1:-1);if(!running)start()});
