@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tu progreso — MacroReborn</title>
+  <meta name="description" content="Misiones, racha, progreso y desafío global de MacroReborn.">
+  <link rel="icon" href="imagenes/logo.png" type="image/png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/macro-progreso.css">
+</head>
+<body class="mr-progress-page">
+  <nav class="mr-progress-nav">
+    <a href="index.html" class="mr-progress-brand"><img src="imagenes/logo.png" alt="MacroReborn"> MacroReborn</a>
+    <div class="mr-progress-navlinks">
+      <a href="juegos.html">🎮 Juegos</a>
+      <a href="ranking.html">🏆 Ranking</a>
+      <a href="comunidad.html">🌐 Comunidad</a>
+      <a href="macro-originals.html">🕹️ Originals</a>
+    </div>
+  </nav>
+
+  <main class="mr-progress-wrap">
+    <section class="mr-progress-hero">
+      <div>
+        <span class="mr-kicker">CENTRO DE PROGRESIÓN</span>
+        <h1>Tu partida no termina cuando cerrás el juego.</h1>
+        <p>Convertí cada sesión en XP, monedas, rachas, misiones y posición dentro de MacroReborn.</p>
+      </div>
+      <div class="mr-level-card" id="levelCard"><span>Cargando…</span></div>
+    </section>
+
+    <section class="mr-progress-grid" aria-label="Progreso del jugador">
+      <article class="mr-card mr-streak-card">
+        <div class="mr-card-head"><span>🔥 Racha</span><span id="streakBest">Mejor: 0</span></div>
+        <strong id="streakCurrent">0 días</strong>
+        <p>Entrá cada día para mantener tu racha.</p>
+        <button id="btnCheckin" class="mr-primary">Registrar hoy</button>
+        <div id="checkinState" class="mr-message"></div>
+      </article>
+
+      <article class="mr-card">
+        <div class="mr-card-head"><span>🎯 Misión diaria</span><span id="dailyPeriod">—</span></div>
+        <h2 id="dailyTitle">Cargando…</h2>
+        <p id="dailyDescription"></p>
+        <div class="mr-progress-bar"><span id="dailyBar"></span></div>
+        <div class="mr-progress-meta"><span id="dailyValue">0/0</span><span id="dailyReward">+0 XP · 🪙 0</span></div>
+        <button id="dailyClaim" class="mr-primary" disabled>Reclamar recompensa</button>
+      </article>
+
+      <article class="mr-card">
+        <div class="mr-card-head"><span>📅 Misión semanal</span><span id="weeklyPeriod">—</span></div>
+        <h2 id="weeklyTitle">Cargando…</h2>
+        <p id="weeklyDescription"></p>
+        <div class="mr-progress-bar"><span id="weeklyBar"></span></div>
+        <div class="mr-progress-meta"><span id="weeklyValue">0/0</span><span id="weeklyReward">+0 XP · 🪙 0</span></div>
+        <button id="weeklyClaim" class="mr-primary" disabled>Reclamar recompensa</button>
+      </article>
+    </section>
+
+    <section class="mr-card mr-global-card">
+      <div class="mr-global-copy">
+        <span class="mr-kicker">🌎 DESAFÍO GLOBAL</span>
+        <h2>La comunidad tiene una sola meta.</h2>
+        <p>Acumulen minutos jugados durante la semana. Si la comunidad alcanza el objetivo, la recompensa es para todos.</p>
+      </div>
+      <div class="mr-global-meter">
+        <strong id="globalValue">0</strong><span id="globalTarget">/ 10.000 minutos</span>
+        <div class="mr-progress-bar"><span id="globalBar"></span></div>
+        <small id="globalReward">Recompensa: +500 XP · 🪙 250</small>
+      </div>
+    </section>
+
+    <section class="mr-card mr-roadmap-card">
+      <div class="mr-card-head"><span>🚀 Ciclo de MacroReborn</span><span>Temporada 01</span></div>
+      <div class="mr-roadmap">
+        <div><b>1</b><span>Jugar</span></div>
+        <div><b>2</b><span>Conseguir XP</span></div>
+        <div><b>3</b><span>Subir de nivel</span></div>
+        <div><b>4</b><span>Completar misiones</span></div>
+        <div><b>5</b><span>Ganar monedas</span></div>
+        <div><b>6</b><span>Subir en la liga</span></div>
+        <div><b>7</b><span>Personalizar perfil</span></div>
+      </div>
+    </section>
+
+    <p id="progressError" class="mr-error" hidden></p>
+  </main>
+  <script src="js/macro-progreso.js" defer></script>
+</body>
+</html>
