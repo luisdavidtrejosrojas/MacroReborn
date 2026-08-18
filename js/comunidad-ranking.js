@@ -197,14 +197,6 @@ function rkRenderizar(filtro = "") {
 
   // ---- Podio (top 6) ----
 
-// Escapa texto no confiable antes de insertarlo en HTML.
-function escaparHTML(texto) {
-  const div = document.createElement("div");
-  div.textContent = texto == null ? "" : String(texto);
-  return div.innerHTML;
-}
-
-
   rkPodio.innerHTML = top6.map((usuario, i) => {
 
     const puesto = i + 1;
@@ -218,7 +210,7 @@ function escaparHTML(texto) {
 
         ${rkAvatarHTML(usuario.avatar, "rk-podio-avatar", "capa-rk")}
 
-        <p class="rk-podio-nombre">${escaparHTML(usuario.nombre)}</p>
+        <p class="rk-podio-nombre">${usuario.nombre}</p>
 
         ${_rkModo === "logros" || _rkOrdenarPorLogros
           ? `<span class="rk-delta rk-neutro">🏅 ${usuario.puntosLogros} puntos</span>`
@@ -242,7 +234,7 @@ function escaparHTML(texto) {
 
         ${rkAvatarHTML(usuario.avatar, "rk-mini-avatar", "capa-rk-mini")}
 
-        <p class="rk-mini-nombre">${escaparHTML(usuario.nombre)}</p>
+        <p class="rk-mini-nombre">${usuario.nombre}</p>
         <p class="rk-mini-puesto">${puesto}º</p>
 
         ${_rkModo === "logros" || _rkOrdenarPorLogros
@@ -371,7 +363,7 @@ function comRenderUsuarios(lista) {
 
         ${rkAvatarHTML(usuario.avatar, "avatar-tarjeta", "capa-tarjeta")}
 
-        <h3 class="usuario-nombre">${escaparHTML(usuario.nombre)}</h3>
+        <h3 class="usuario-nombre">${usuario.nombre}</h3>
 
         ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(usuario.nombre, true) : ""}
 
@@ -389,7 +381,7 @@ function comRenderUsuarios(lista) {
           </div>` : ""}
         </div>
 
-        ${usuario.bio ? `<p class="usuario-bio">${escaparHTML(usuario.bio)}</p>` : ""}
+        ${usuario.bio ? `<p class="usuario-bio">${usuario.bio}</p>` : ""}
 
         <a href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}" class="btn-ver-perfil">👤 Ver perfil</a>
 
@@ -474,7 +466,7 @@ async function crCargarEstadisticas() {
       const llegados = datos.recienLlegados || [];
       crRecienLlegados.innerHTML = llegados.length
         ? llegados.map(u => `
-            <a href="usuario.html?usuario=${encodeURIComponent(u.username)}" class="cr-avatar-chico" title="${escaparHTML(u.username)}">
+            <a href="usuario.html?usuario=${encodeURIComponent(u.username)}" class="cr-avatar-chico" title="${u.username}">
               ${crAvatarCapasHTML(u.avatar, "cr-capa-chica")}
             </a>
           `).join("")
@@ -504,11 +496,11 @@ async function crCargarModeracion() {
 
     crListaModeracion.innerHTML = datos.staff.map(s => `
       <div class="cr-fila-staff">
-        <a href="usuario.html?usuario=${encodeURIComponent(s.username)}" class="cr-avatar-chico" title="${escaparHTML(s.username)}">
+        <a href="usuario.html?usuario=${encodeURIComponent(s.username)}" class="cr-avatar-chico" title="${s.username}">
           ${crAvatarCapasHTML(s.avatar, "cr-capa-chica")}
         </a>
         <div class="cr-staff-info">
-          <p class="cr-staff-nombre">${escaparHTML(s.username)}</p>
+          <p class="cr-staff-nombre">${s.username}</p>
           <p class="cr-staff-rol">${ICONO_ROL[s.rol] || "•"} ${s.rol}</p>
         </div>
         <span class="cr-punto-estado ${s.conectado ? "cr-conectado" : ""}" title="${s.conectado ? "Conectado" : "Desconectado"}"></span>
@@ -558,7 +550,7 @@ function crRenderConectados(lista, filtro = "") {
   }
 
   crGridConectados.innerHTML = conectados.slice(0, 24).map(u => `
-    <a href="usuario.html?usuario=${encodeURIComponent(u.nombre)}" title="${escaparHTML(u.nombre)}">
+    <a href="usuario.html?usuario=${encodeURIComponent(u.nombre)}" title="${u.nombre}">
       ${crAvatarCapasHTML(u.avatar, "cr-capa-chica")}
     </a>
   `).join("");
@@ -621,7 +613,7 @@ async function crCargarTienda() {
           <div class="cr-item-tienda-imagen">
             ${ruta ? `<img src="${ruta}" alt="${item.nombre}" loading="lazy">` : ""}
           </div>
-          <p class="cr-item-tienda-nombre">${escaparHTML(item.nombre)}</p>
+          <p class="cr-item-tienda-nombre">${item.nombre}</p>
           <p class="cr-item-tienda-precio">🪙 ${item.precio}</p>
           ${boton}
         </div>
@@ -708,7 +700,7 @@ async function crCargarFeed() {
             ${crAvatarCapasHTML(item.avatar, "cr-capa-chica")}
           </a>
           <div class="cr-feed-texto">
-            <p>${escaparHTML(texto)}</p>
+            <p>${texto}</p>
             <span class="cr-feed-hora">${hace}</span>
           </div>
         </div>
@@ -740,6 +732,22 @@ async function iniciarComunidadRanking() {
 
   const usuarios = crudos.map(u => ({ ...u, nombre: u.username, nivel: u.level }));
   const nombres = usuarios.map(u => u.nombre);
+
+  // La lista principal no debe quedar esperando a logros, insignias o
+  // relaciones sociales. Si alguno de esos pedidos tarda o falla, los
+  // usuarios, conectados y ranking igualmente se muestran.
+  _rkUsuarios = usuarios.map(usuario => ({
+    ...usuario,
+    puntosLogros: 0
+  }));
+  rkRenderizar();
+  comRenderUsuarios(usuarios);
+  crRenderConectados(usuarios);
+  crRenderRangos();
+
+  // Las estadísticas (incluidos conectados y recién llegados) tampoco
+  // dependen de las tareas auxiliares del ranking. Se cargan aparte.
+  crCargarEstadisticas();
 
   const tareas = [];
 
@@ -778,14 +786,14 @@ async function iniciarComunidadRanking() {
     rkBanner.classList.toggle("rk-oculto", !!activoComRk);
   }
 
+  // Actualiza de nuevo después de cargar logros/insignias para que el
+  // ranking pueda mostrar esos datos sin bloquear la primera pintura.
   rkRenderizar();
   comRenderUsuarios(usuarios);
   crRenderConectados(usuarios);
   crRenderRangos();
 
-  // Estas 3 no dependen de /api/users: se piden en paralelo aparte
-  // para no atrasar el resto del render si tardan o fallan.
-  crCargarEstadisticas();
+  // Estas tareas no bloquean la lista principal.
   crCargarModeracion();
   crCargarTienda();
   crCargarFeed();

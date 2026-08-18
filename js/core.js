@@ -177,9 +177,15 @@ function _latidoServidor(){
   const activo = leerJSON(localStorage.getItem("usuarioActivo") || "null");
   if(!activo || !activo.nombre) return;
 
+  const token = localStorage.getItem("macroSessionToken");
+  if (!token) return;
+
   fetch("/api/users?action=heartbeat", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
     body: JSON.stringify({ username: activo.nombre })
   }).catch(() => {
     // Si falla (sin conexión, etc.) no rompe nada: se reintenta solo
