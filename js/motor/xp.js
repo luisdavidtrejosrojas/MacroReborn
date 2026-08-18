@@ -65,9 +65,16 @@ async function ganarXP(cantidad){
 
     try {
 
+        // El interceptor global de core.js también lo agrega, pero este
+        // pulso es crítico para la sesión: mantener el token explícito acá
+        // permite recuperarse incluso si otro script reemplazó fetch.
+        const headers = { "Content-Type": "application/json" };
+        const token = localStorage.getItem("macroSessionToken");
+        if (token) headers.Authorization = "Bearer " + token;
+
         const respuesta = await fetch("/api/users?action=xp", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers,
             body: JSON.stringify({
                 username: usuario.nombre,
                 cantidad: cantidad,
