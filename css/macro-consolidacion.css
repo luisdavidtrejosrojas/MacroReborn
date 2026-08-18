@@ -1,0 +1,10 @@
+/* MacroReborn 2.0 — consolidación visual.
+   No elimina HTML ni lógica existente; solo evita mostrar dos bloques que
+   cumplen la misma función después de la integración del portal. */
+.macro-consolidado .macro-legacy-offer{display:none;}
+.macro-consolidado .macro-home-hub{margin-top:18px;}
+.macro-consolidado .portal-home-community{margin-top:18px;}
+@media (max-width:760px){
+  .macro-consolidado .macro-home-hub{margin-top:12px;}
+  .macro-consolidado .portal-home-community{margin-top:12px;}
+}
