@@ -23,11 +23,16 @@
 //
 // Correr:  npm test   (o: node --test tests/)
 
+// Los handlers de escrituras del main actual exigen una sesión firmada.
+// Este secreto solo vive en el proceso de pruebas y nunca se usa en producción.
+process.env.SESSION_SECRET = process.env.SESSION_SECRET || "test-session-secret";
+
 const { test, before } = require("node:test");
 const assert = require("node:assert");
 
 const { crearBaseLocal, crearSqlPGlite } = require("../scripts/pglite");
 const { usarSqlLocal } = require("../api/_db");
+const { crearToken } = require("../api/_auth");
 const {
   MINUTOS_ENTRE_OTORGAMIENTOS,
   MONEDAS_MINIMAS,
@@ -61,9 +66,9 @@ before(async () => {
 });
 
 // Llama a un handler como lo llamaría Vercel (req/res simulados).
-function llamar(handler, metodo, query, body) {
+function llamar(handler, metodo, query, body, headers) {
   return new Promise((resolve) => {
-    const req = { method: metodo, query: query || {}, body: body || {}, headers: {} };
+    const req = { method: metodo, query: query || {}, body: body || {}, headers: headers || {} };
     const res = {
       status(codigo) { this.statusCode = codigo; return this; },
       json(obj) { resolve(obj); },
@@ -83,6 +88,14 @@ async function crearUsuario(username) {
     [username]
   );
   return filas.rows[0].id;
+}
+
+async function headersParaUsuario(username) {
+  const filas = await db.query("SELECT id FROM users WHERE username = $1", [username]);
+  assert.equal(filas.rows.length, 1, `debe existir el usuario ${username}`);
+  return {
+    authorization: `Bearer ${crearToken({ id: filas.rows[0].id, username })}`
+  };
 }
 
 // Lee las columnas de monedas de un usuario.
@@ -396,12 +409,13 @@ test("consultarSaldo devuelve el saldo, y null si el usuario no existe", async (
 
 test("POST /api/users?action=xp otorga monedas y sigue devolviendo todo lo de antes", async () => {
   await crearUsuario("pulso_jugando");
+  const headers = await headersParaUsuario("pulso_jugando");
 
   const resp = await llamar(usersHandler, "POST", { action: "xp" }, {
     username: "pulso_jugando",
     cantidad: 10,
     gameId: "juego-de-prueba"
-  });
+  }, headers);
 
   // La forma vieja de la respuesta no cambió.
   assert.equal(resp.success, true);
@@ -422,7 +436,7 @@ test("POST /api/users?action=xp otorga monedas y sigue devolviendo todo lo de an
     username: "pulso_jugando",
     cantidad: 10,
     gameId: "juego-de-prueba"
-  });
+  }, headers);
 
   assert.equal(resp2.success, true);
   assert.equal(resp2.user.xp, 20, "el XP sigue sumando en cada pulso");
@@ -434,11 +448,12 @@ test("POST /api/users?action=xp otorga monedas y sigue devolviendo todo lo de an
 
 test("todo pulso de XP exitoso llama al servicio de monedas, aunque gameId no venga", async () => {
   await crearUsuario("pulso_sin_juego");
+  const headers = await headersParaUsuario("pulso_sin_juego");
 
   const resp = await llamar(usersHandler, "POST", { action: "xp" }, {
     username: "pulso_sin_juego",
     cantidad: 10
-  });
+  }, headers);
 
   assert.equal(resp.success, true);
   assert.equal(resp.user.xp, 10, "el XP se suma igual");
@@ -453,6 +468,7 @@ test("todo pulso de XP exitoso llama al servicio de monedas, aunque gameId no ve
 
 test("si falla el servicio de monedas, el pulso de XP igual responde correctamente", async () => {
   await crearUsuario("pulso_con_falla_monedas");
+  const headers = await headersParaUsuario("pulso_con_falla_monedas");
 
   const otorgarOriginal = MonedasService.prototype.otorgarPorTiempoJugado;
   const warnOriginal = console.warn;
@@ -467,7 +483,7 @@ test("si falla el servicio de monedas, el pulso de XP igual responde correctamen
       username: "pulso_con_falla_monedas",
       cantidad: 10,
       gameId: "juego-de-prueba"
-    });
+    }, headers);
 
     assert.equal(resp.success, true);
     assert.equal(resp.user.xp, 10, "el XP no debe perderse por una falla de monedas");
@@ -486,6 +502,7 @@ test("si falla el servicio de monedas, el pulso de XP igual responde correctamen
 
 test("comprar en la tienda de avatares descuenta el saldo y rechaza si no alcanza", async () => {
   const id = await crearUsuario("comprador_tienda");
+  const headers = await headersParaUsuario("comprador_tienda");
 
   const items = await sql`SELECT id, precio, nombre FROM avatar_shop_items ORDER BY precio ASC LIMIT 1;`;
   const item = items[0];
@@ -493,7 +510,7 @@ test("comprar en la tienda de avatares descuenta el saldo y rechaza si no alcanz
   const compra = await llamar(contentHandler, "POST", { action: "avatar-shop-buy" }, {
     username: "comprador_tienda",
     itemId: item.id
-  });
+  }, headers);
 
   assert.equal(compra.success, true);
   assert.equal(compra.itemComprado, item.nombre);
@@ -504,7 +521,7 @@ test("comprar en la tienda de avatares descuenta el saldo y rechaza si no alcanz
   const repetida = await llamar(contentHandler, "POST", { action: "avatar-shop-buy" }, {
     username: "comprador_tienda",
     itemId: item.id
-  });
+  }, headers);
   assert.equal(repetida.success, false);
   assert.equal(repetida.error, "Ya tenés esta prenda");
 
@@ -519,7 +536,7 @@ test("comprar en la tienda de avatares descuenta el saldo y rechaza si no alcanz
   const sinSaldo = await llamar(contentHandler, "POST", { action: "avatar-shop-buy" }, {
     username: "comprador_tienda",
     itemId: otros[0].id
-  });
+  }, headers);
 
   assert.equal(sinSaldo.success, false);
   assert.equal(sinSaldo.error, "No te alcanzan las monedas");

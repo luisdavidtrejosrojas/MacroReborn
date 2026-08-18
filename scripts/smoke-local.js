@@ -29,6 +29,14 @@ function pedir(puerto, ruta, opciones = {}) {
   const cuerpo = opciones.cuerpo === undefined
     ? null
     : Buffer.from(JSON.stringify(opciones.cuerpo));
+  const headers = {
+    ...(opciones.headers || {})
+  };
+
+  if (cuerpo) {
+    headers["Content-Type"] = "application/json";
+    headers["Content-Length"] = cuerpo.length;
+  }
 
   return new Promise((resolve, reject) => {
     const req = http.request({
@@ -36,10 +44,7 @@ function pedir(puerto, ruta, opciones = {}) {
       port: puerto,
       path: ruta,
       method: metodo,
-      headers: cuerpo ? {
-        "Content-Type": "application/json",
-        "Content-Length": cuerpo.length
-      } : undefined
+      headers: Object.keys(headers).length ? headers : undefined
     }, res => {
       const trozos = [];
       res.on("data", trozo => trozos.push(trozo));
@@ -140,7 +145,11 @@ async function main() {
   let errores = "";
   const servidor = spawn(process.execPath, ["scripts/servidor-local.js"], {
     cwd: RAIZ,
-    env: { ...process.env, PORT: String(puerto) },
+    env: {
+      ...process.env,
+      PORT: String(puerto),
+      SESSION_SECRET: process.env.SESSION_SECRET || "smoke-session-secret"
+    },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true
   });
@@ -157,10 +166,12 @@ async function main() {
     });
     assert.equal(login.codigo, 200);
     assert.equal(login.json?.success, true, "el login local debe funcionar");
+    assert.equal(typeof login.json?.token, "string", "el login debe devolver un token");
 
     const pulso = {
       metodo: "POST",
-      cuerpo: { username: "demo", cantidad: 10, gameId: "smoke-local" }
+      cuerpo: { username: "demo", cantidad: 10, gameId: "smoke-local" },
+      headers: { authorization: `Bearer ${login.json.token}` }
     };
     const primero = await pedir(puerto, "/api/users?action=xp", pulso);
     assert.equal(primero.codigo, 200);
