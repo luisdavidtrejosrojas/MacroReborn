@@ -41,6 +41,7 @@
 <link rel="stylesheet" href="css/juegos.css">
 <link rel="stylesheet" href="css/descubrimiento.css">
 <link rel="stylesheet" href="css/buscador.css">
+<link rel="stylesheet" href="css/portal-growth.css">
     <link rel="stylesheet" href="css/finalizacion.css">
   <link rel="manifest" href="site.webmanifest">
 </head>
@@ -89,6 +90,20 @@
   <a class="mr-chip" href="coleccion.html?coleccion=pokemon">⚡ Pokémon</a>
   <a class="mr-chip" href="coleccion.html?coleccion=mario">🍄 Mario</a>
 </div>
+<section id="mrCatalogoGrowth" class="mr-growth-toolbar" aria-label="Herramientas de descubrimiento">
+  <div class="mr-growth-toolbar-head">
+    <div><span class="mr-growth-kicker">DESCUBRIMIENTO</span><h2>Encontrá tu próximo juego</h2></div>
+    <span class="mr-growth-count" id="mrGrowthResultados">Explorá por popularidad, tendencia o género</span>
+  </div>
+  <div class="mr-growth-controls">
+    <label class="mr-growth-search">🔎 <input id="filtroBusquedaJuegos" type="search" placeholder="Buscar por nombre, género o descripción…" autocomplete="off"></label>
+    <label><span>📂</span><select id="filtroCategoria"><option value="">Todas las categorías</option></select></label>
+    <label><span>↕️</span><select id="filtroOrden"><option value="destacados">Destacados</option><option value="jugados">Más jugados</option><option value="trending">Tendencias</option><option value="valorados">Mejor valorados</option><option value="favoritos">Más favoritos</option><option value="nuevos">Nuevos</option><option value="az">A–Z</option></select></label>
+  </div>
+  <div class="mr-growth-shortcuts">
+    <a href="juegos.html?orden=trending">🔥 Tendencias</a><a href="juegos.html?orden=jugados">👑 Más jugados</a><a href="juegos.html?orden=nuevos">🆕 Nuevos</a><a href="juegos.html?orden=valorados">⭐ Mejor valorados</a>
+  </div>
+</section>
 <main class="contenido-principal">
 
   <section class="seccion-juegos" id="seccionDestacados">
@@ -171,6 +186,7 @@
 <script defer src="js/navbar.js"></script>
 <script defer src="js/buscador.js"></script>
 <script defer src="js/nav-toggle.js"></script>
+<script defer src="js/portal-growth.js"></script>
 
 <script>
 // ==============================================================
