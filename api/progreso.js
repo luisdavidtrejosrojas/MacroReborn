@@ -4,7 +4,8 @@ const { requerirAuth } = require("./_auth");
 
 const {
   fechaLocalAR, semanaActual, MISIONES_DIARIAS, MISIONES_SEMANALES,
-  pickDaily, pickWeekly, juegosDeHoy, juegosDeLaSemana
+  pickDaily, pickWeekly, juegosDeHoy, juegosDeLaSemana,
+  pendienteSinCobrar, avisarSiSeCumplen
 } = require("./_misiones");
 
 const sql = obtenerSql();
@@ -99,7 +100,7 @@ async function estado(req, res, auth) {
   const weekly = pickWeekly(metricas.semana);
   const global = await asegurarDesafioGlobal();
 
-  const [claims, progresoGlobal] = await Promise.all([
+  const [claims, progresoGlobal, diariaQueEspera, semanalQueEspera] = await Promise.all([
     sql`
       SELECT mission_key, period_key
       FROM player_mission_claims
@@ -110,7 +111,9 @@ async function estado(req, res, auth) {
       SELECT COALESCE(SUM(r.minutos_jugados),0)::int AS valor
       FROM ranking_actividad_semanal r
       WHERE r.semana = ${metricas.semana}::date;
-    `
+    `,
+    pendienteSinCobrar(sql, auth.sub, "daily", metricas.hoy),
+    pendienteSinCobrar(sql, auth.sub, "weekly", metricas.semana)
   ]);
 
   const claimed = new Set(claims.map(c => `${c.mission_key}:${c.period_key}`));
@@ -122,14 +125,25 @@ async function estado(req, res, auth) {
       periodKey,
       value: Math.min(value, mission.target),
       completed,
-      claimed: claimed.has(`${mission.key}:${periodKey}`)
+      claimed: claimed.has(`${mission.key}:${periodKey}`),
+      pendiente: false
     };
   };
+  // Una cumplida de antes que espera a que se cobre (api/_misiones.js):
+  // se enseña ella, con su fecha, en lugar de la de ahora.
+  const mapQueEspera = ({ mision, periodo }) => ({
+    ...mision,
+    periodKey: periodo,
+    value: mision.target,
+    completed: true,
+    claimed: false,
+    pendiente: true
+  });
 
   return res.status(200).json({
     success: true,
-    today: { date: metricas.hoy, mission: mapMission(daily, metricas.hoy) },
-    week: { start: metricas.semana, mission: mapMission(weekly, metricas.semana) },
+    today: { date: metricas.hoy, mission: diariaQueEspera ? mapQueEspera(diariaQueEspera) : mapMission(daily, metricas.hoy) },
+    week: { start: metricas.semana, mission: semanalQueEspera ? mapQueEspera(semanalQueEspera) : mapMission(weekly, metricas.semana) },
     streak: metricas.streak,
     global: {
       key: global.challenge_key,
@@ -151,18 +165,31 @@ async function reclamar(req, res, auth) {
   const missionKey = String(body.missionKey || "");
   const periodKey = String(body.periodKey || "");
   const tipo = body.tipo === "weekly" ? "weekly" : "daily";
-  const hoy = fechaLocalAR();
-  const semana = semanaActual();
-  const mission = tipo === "weekly" ? pickWeekly(semana) : pickDaily(hoy);
-  const esperado = tipo === "weekly" ? semana : hoy;
+  const actual = tipo === "weekly" ? semanaActual() : fechaLocalAR();
+
+  // La que está a la vista: una cumplida de antes que espera a que se
+  // cobre, si la hay (api/_misiones.js); si no, la de hoy o la de esta
+  // semana.
+  const queEspera = await pendienteSinCobrar(sql, auth.sub, tipo, actual);
+  const mission = queEspera ? queEspera.mision : (tipo === "weekly" ? pickWeekly(actual) : pickDaily(actual));
+  const esperado = queEspera ? queEspera.periodo : actual;
 
   if (!missionKey || missionKey !== mission.key || periodKey !== esperado) {
+    // La que se acaba de cobrar, pedida otra vez (dos clics, dos
+    // pestañas): como con la de hoy, se dice que ya estaba cobrada.
+    const cobrada = missionKey ? await sql`
+      SELECT 1 FROM player_mission_claims
+      WHERE user_id = ${auth.sub} AND mission_key = ${missionKey} AND period_key = ${periodKey}
+      LIMIT 1;
+    ` : [];
+    if (cobrada.length) return res.status(200).json({ success: true, alreadyClaimed: true });
     return res.status(400).json({ success: false, error: "Misión no válida para este período" });
   }
 
+  // La que espera ya se cumplió: tiene su fila. La de ahora se mide.
   const metricas = await obtenerMetricas(auth.sub);
   const value = Number(metricas[mission.metric] || 0);
-  if (value < mission.target) {
+  if (!queEspera && value < mission.target) {
     return res.status(400).json({ success: false, error: "Todavía no completaste la misión" });
   }
 
@@ -219,6 +246,18 @@ async function reclamar(req, res, auth) {
 
   if (!pago) {
     return res.status(200).json({ success: true, alreadyClaimed: true });
+  }
+
+  // Cobrada la que esperaba, aparece la de ahora, y lo jugado hoy (o esta
+  // semana) cuenta aunque no estuviera a la vista. Si ya está cumplida,
+  // se apunta y se avisa aquí, para que también espere: si no, se
+  // perdería al cambiar de día sin haber jugado otro minuto.
+  if (queEspera) {
+    try {
+      await avisarSiSeCumplen(sql, Number(auth.sub), auth.username, metricas);
+    } catch (error) {
+      console.warn("MacroReborn: no se pudo mirar la misión que aparece al cobrar.", error);
+    }
   }
 
   return res.status(200).json({

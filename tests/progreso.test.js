@@ -247,3 +247,145 @@ describe("las misiones", () => {
   });
 
 });
+
+// Desde el 28/09/2026 una misión cumplida espera hasta que se cobre, los
+// días que haga falta (api/_misiones.js). Qué se cumplió lo dice la fila
+// que apunta el aviso (player_mission_avisos).
+describe("la cumplida espera hasta que se cobre", () => {
+
+  const DIA = "2026-09-20";         // la diaria de ese día: "Cambio de juego"
+  const SEMANA = "2026-09-14";      // la semanal: "Maratón Macro"
+  const cumplidaEl = (p, key, periodo) => db.query(
+    "INSERT INTO player_mission_avisos (user_id, mission_key, period_key) VALUES ($1, $2, $3)", [p.id, key, periodo]);
+  const cobrar = (p, missionKey, periodKey, tipo) => llamar(progresoHandler, "POST", { action: "claim" },
+    { missionKey, periodKey, tipo: tipo || "daily" }, p.headers);
+  const saldo = async (p) => Number((await db.query("SELECT monedas FROM users WHERE id = $1", [p.id])).rows[0].monedas);
+
+  // Que lo que pide la diaria de hoy ya esté jugado, sea de juegos o de minutos.
+  async function jugadoHoy(p) {
+    const m = internas.pickDaily(hoy);
+    if (m.metric === "games_today") {
+      for (let i = 0; i < m.target; i++) {
+        await db.query("INSERT INTO game_history (user_id, game_id, played_at) VALUES ($1, $2, now())", [p.id, "hoy" + i]);
+      }
+    } else {
+      await db.query("INSERT INTO actividad_diaria (user_id, dia, minutos) VALUES ($1, $2::date, $3)", [p.id, hoy, m.target]);
+    }
+    return m;
+  }
+
+  test("las claves dicen de qué tipo es cada misión: así se buscan", () => {
+    for (const m of internas.MISIONES_DIARIAS) assert.ok(m.key.startsWith("daily_"), m.key);
+    for (const m of internas.MISIONES_SEMANALES) assert.ok(m.key.startsWith("weekly_"), m.key);
+  });
+
+  test("se ve ella, con su fecha, en lugar de la de hoy", async () => {
+    const p = await persona("esperada");
+    const m = internas.pickDaily(DIA);
+    await cumplidaEl(p, m.key, DIA);
+    const vista = (await estado(p)).today.mission;
+    assert.equal(vista.key, m.key);
+    assert.equal(vista.periodKey, DIA);
+    assert.equal(vista.pendiente, true);
+    assert.equal(vista.completed, true);
+    assert.equal(vista.claimed, false);
+    assert.equal(vista.value, m.target);
+  });
+
+  test("se cobra cuando sea, una sola vez, y entonces aparece la de hoy", async () => {
+    const p = await persona("tardia");
+    const m = internas.pickDaily(DIA);
+    await cumplidaEl(p, m.key, DIA);
+    const antes = await saldo(p);
+
+    const r = await cobrar(p, m.key, DIA);
+    assert.equal(r.cuerpo.success, true);
+    assert.equal(r.cuerpo.alreadyClaimed, false);
+    assert.deepStrictEqual(r.cuerpo.reward, { xp: m.xp, coins: m.coins });
+    assert.equal(await saldo(p), antes + m.coins);
+
+    // Dos clics, o dos pestañas: la segunda dice que ya estaba cobrada.
+    const otra = await cobrar(p, m.key, DIA);
+    assert.equal(otra.cuerpo.success, true);
+    assert.equal(otra.cuerpo.alreadyClaimed, true);
+    assert.equal(await saldo(p), antes + m.coins, "se pagó dos veces");
+
+    const vista = (await estado(p)).today.mission;
+    assert.equal(vista.periodKey, hoy);
+    assert.equal(vista.pendiente, false);
+  });
+
+  test("mientras espera, la de hoy no se cobra aunque ya esté jugada", async () => {
+    const p = await persona("impaciente");
+    await cumplidaEl(p, internas.pickDaily(DIA).key, DIA);
+    const m = await jugadoHoy(p);
+    const r = await cobrar(p, m.key, hoy);
+    assert.equal(r.codigo, 400);
+  });
+
+  test("lo jugado hoy mientras esperaba cuenta: al cobrarla, la de hoy se apunta, se avisa y se cobra", async () => {
+    const p = await persona("aprovechada");
+    await cumplidaEl(p, internas.pickDaily(DIA).key, DIA);
+    const m = await jugadoHoy(p);
+    await cobrar(p, internas.pickDaily(DIA).key, DIA);
+
+    // Apuntada: si no, se perdería a medianoche sin haber jugado otro minuto.
+    const apuntada = await db.query(
+      "SELECT 1 FROM player_mission_avisos WHERE user_id = $1 AND mission_key = $2 AND period_key = $3", [p.id, m.key, hoy]);
+    assert.equal(apuntada.rows.length, 1);
+    const titulos = (await db.query("SELECT titulo FROM notifications WHERE user_id = $1", [p.id])).rows.map(f => f.titulo);
+    assert.deepStrictEqual(titulos, ["🎯 ¡Misión cumplida!"]);
+
+    assert.equal((await estado(p)).today.mission.completed, true);
+    const r = await cobrar(p, m.key, hoy);
+    assert.equal(r.cuerpo.alreadyClaimed, false);
+  });
+
+  test("sin su fila, una de otro día no se cobra", async () => {
+    const p = await persona("colada");
+    const r = await cobrar(p, internas.pickDaily(DIA).key, DIA);
+    assert.equal(r.codigo, 400);
+    assert.match(r.cuerpo.error, /no válida/);
+  });
+
+  test("cobrada, deja de esperar", async () => {
+    const p = await persona("cumplidora");
+    const m = internas.pickDaily(DIA);
+    await cumplidaEl(p, m.key, DIA);
+    await db.query(
+      `INSERT INTO player_mission_claims (user_id, mission_key, period_key, reward_xp, reward_coins)
+       VALUES ($1, $2, $3, $4, $5)`, [p.id, m.key, DIA, m.xp, m.coins]);
+    assert.equal((await estado(p)).today.mission.periodKey, hoy);
+  });
+
+  test("con dos esperando, primero la más antigua", async () => {
+    const p = await persona("acumuladora");
+    const antes = "2026-09-19";
+    await cumplidaEl(p, internas.pickDaily(DIA).key, DIA);
+    await cumplidaEl(p, internas.pickDaily(antes).key, antes);
+    assert.equal((await estado(p)).today.mission.periodKey, antes);
+    await cobrar(p, internas.pickDaily(antes).key, antes);
+    assert.equal((await estado(p)).today.mission.periodKey, DIA);
+    await cobrar(p, internas.pickDaily(DIA).key, DIA);
+    assert.equal((await estado(p)).today.mission.periodKey, hoy);
+  });
+
+  test("la semanal, igual", async () => {
+    const p = await persona("semanera");
+    const m = internas.pickWeekly(SEMANA);
+    await cumplidaEl(p, m.key, SEMANA);
+    const vista = (await estado(p)).week.mission;
+    assert.equal(vista.key, m.key);
+    assert.equal(vista.periodKey, SEMANA);
+    assert.equal(vista.pendiente, true);
+    // La diaria no se entera.
+    assert.equal((await estado(p)).today.mission.pendiente, false);
+
+    const r = await cobrar(p, m.key, SEMANA, "weekly");
+    assert.equal(r.cuerpo.success, true);
+    assert.equal(r.cuerpo.alreadyClaimed, false);
+    assert.deepStrictEqual(r.cuerpo.reward, { xp: m.xp, coins: m.coins });
+    assert.equal((await estado(p)).week.mission.pendiente, false);
+  });
+
+});
