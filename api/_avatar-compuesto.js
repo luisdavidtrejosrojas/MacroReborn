@@ -66,6 +66,7 @@ const path = require("path");
 const crypto = require("crypto");
 
 const compositor = require("./_compositor");
+const { problemaDeCuadro } = require("./_recortes");
 const { CAPAS, VACIO } = require("./_avatar-catalogo");
 
 // Sube esto cuando cambie algo que altere los bytes de salida.
@@ -98,6 +99,71 @@ const CACHE_SIN_VERSION = 60;
 const DIRECTORIO = process.env.MR_AVATARES_DIR ||
   path.join(__dirname, "..", "datos-locales", "avatares-compuestos");
 
+// ---------------------------------------------------------------
+// LA FOTO DE PERFIL
+// ---------------------------------------------------------------
+//     /avatares/128/cara.jpg?v=401ddea45538
+//
+// La cara del personaje en un cuadrado: la de las miniaturas (arriba a
+// la derecha, Comunidad, el buscador, el portal). Decidida el 28/09/2026
+// con el administrador, sobre una pagina de prueba con avatares reales:
+// la cara, con su fondo y en cuadrado. Hasta entonces las miniaturas
+// metian el cuerpo entero en un cuadrado, y casi nunca se veia la cara.
+//
+// CADA MODELO TIENE SU CUADRO, en api/recortes-cara.json: de la coronilla
+// a la barbilla, con la misma composicion en todos (la coronilla casi en
+// el borde de arriba, la barbilla hacia el 85 %), medido mirando el
+// dibujo de cada uno. Antes se probo una cuenta automatica sacada de los
+// ojos y la boca, y fallaba: max no tiene piezas de ojos y el cuadro caia
+// a un lado, y en tora cortaba la frente. Un modelo que no este en el
+// archivo usa CUADRO_GENERICO, mas grande, que en los modelos de pie coge
+// la cabeza con aire; a un modelo nuevo hay que medirle el suyo.
+//
+// SIN LA MASCOTA NI EL MARCO. Son las dos ultimas capas, asi que la foto
+// sale de lo compuesto hasta el pelo, y el cuerpo entero es eso con ellas
+// encima: se compone una sola vez. Hay mascotas, como un zorro de nueve
+// colas, que tapan al personaje entero.
+//
+// EL CUADRO VA EN LA HUELLA. Si se cambia el de un modelo, cambia la
+// huella de los avatares de ese modelo y con ella sus direcciones, que el
+// navegador guarda un año. Despues hay que correr el relleno
+// (scripts/rellenar-avatares.js), que los rehace.
+//
+// Solo del avatar puesto: los diseños guardados (ranuras) no tienen foto.
+const FOTO = "cara";
+const LADO_FOTO = 96;
+const CAPAS_FUERA_DE_LA_FOTO = ["mascota", "borde"];
+const CUADRO_GENERICO = Object.freeze({ x: 88, y: 24, lado: 150 });
+const ARCHIVO_CUADROS = process.env.MR_RECORTES_CARA_ARCHIVO ||
+  path.join(__dirname, "recortes-cara.json");
+
+// Componer la foto aparte del cuerpo entero solo da lo mismo si lo que
+// se deja fuera va encima de todo lo demas. Si un dia se reordenan las
+// capas, esto salta en las pruebas en vez de dibujar mal.
+if (CAPAS.slice(-CAPAS_FUERA_DE_LA_FOTO.length).join() !== CAPAS_FUERA_DE_LA_FOTO.join()) {
+  throw new Error("La mascota y el marco tienen que ser las ultimas capas");
+}
+
+let _cuadros = null;
+
+function leerCuadros() {
+  try {
+    return JSON.parse(fs.readFileSync(ARCHIVO_CUADROS, "utf8"));
+  } catch (error) {
+    console.error("foto de perfil: no se pudo leer " + ARCHIVO_CUADROS + ".", error.message);
+    return {};
+  }
+}
+
+// El cuadro de la foto de un modelo, o el generico si no tiene uno que
+// valga.
+function cuadroDeLaFoto(modelo) {
+  if (!_cuadros) _cuadros = leerCuadros();
+  const c = typeof modelo === "string" && Object.prototype.hasOwnProperty.call(_cuadros, modelo)
+    ? _cuadros[modelo] : null;
+  return c && !problemaDeCuadro(c) ? { x: c.x, y: c.y, lado: c.lado } : { ...CUADRO_GENERICO };
+}
+
 // ------------------------------------------------------------------
 // EL DESTINO
 // ------------------------------------------------------------------
@@ -126,6 +192,19 @@ function carpetaDe(destino) {
 
 function rutaDe(destino, ancho, alto) {
   return path.join(carpetaDe(destino), ancho + "x" + alto + "." + EXTENSION);
+}
+
+// La foto de perfil, en la carpeta del avatar puesto. Una ranura no tiene.
+function rutaFoto(destino) {
+  return path.join(carpetaDe(destino), FOTO + "." + EXTENSION);
+}
+
+// ¿Esta todo lo de este destino en el disco? Los dos tamaños y, del
+// avatar puesto, su foto.
+function enSitio(destino) {
+  if (!destinoValido(destino)) return false;
+  return TAMANOS.every(([a, l]) => fs.existsSync(rutaDe(destino, a, l))) &&
+    (!!destino.ranura || fs.existsSync(rutaFoto(destino)));
 }
 
 // ------------------------------------------------------------------
@@ -172,15 +251,37 @@ async function recetaDe(sql, avatar) {
 
   if (!encontradas.length) return null;
 
+  // El cuadro de la foto va en la huella: ver LA FOTO DE PERFIL.
+  const cuadro = cuadroDeLaFoto(avatar.modelo);
   const texto = "v" + VERSION + "\n" +
-    encontradas.map(c => c.capa + ":" + c.archivo.sha256).join("\n");
+    encontradas.map(c => c.capa + ":" + c.archivo.sha256).join("\n") + "\n" +
+    FOTO + ":" + cuadro.x + "," + cuadro.y + "," + cuadro.lado;
   const huella = crypto.createHash("sha256").update(texto).digest("hex");
 
   return {
     huella,
+    cuadro,
     capas: encontradas.map(c => ({ capa: c.capa, valor: c.valor, sha256: c.archivo.sha256 })),
     archivos: encontradas.map(c => c.archivo.datos)
   };
+}
+
+// El cuerpo entero y la foto, componiendo una sola vez: primero todo
+// menos la mascota y el marco (de ahi sale la foto) y despues, encima de
+// una copia, la mascota y el marco. Como son las ultimas capas, da los
+// mismos pixeles que apilarlo todo de una vez.
+function componerConFoto(receta) {
+  const fuera = (i) => CAPAS_FUERA_DE_LA_FOTO.includes(receta.capas[i].capa);
+  const base = compositor.componer(receta.archivos.filter((_, i) => !fuera(i)));
+
+  const entero = { rgba: Buffer.from(base.rgba), ancho: base.ancho, alto: base.alto };
+  receta.archivos.forEach((png, i) => {
+    if (fuera(i)) compositor.encimar(entero.rgba, compositor.componer([png]).rgba);
+  });
+
+  const k = receta.cuadro;
+  const foto = compositor.reducir(compositor.recortar(base, k.x, k.y, k.lado, k.lado), LADO_FOTO, LADO_FOTO);
+  return { entero, foto };
 }
 
 // ------------------------------------------------------------------
@@ -206,6 +307,15 @@ function leer(destino, ancho, alto) {
   }
 }
 
+function leerFoto(destino) {
+  if (!destinoValido(destino) || destino.ranura) return null;
+  try {
+    return fs.readFileSync(rutaFoto(destino));
+  } catch (_) {
+    return null;
+  }
+}
+
 // ------------------------------------------------------------------
 // EL FRENO
 // ------------------------------------------------------------------
@@ -219,10 +329,11 @@ function leer(destino, ancho, alto) {
 // Dos frenos, y el primero hace casi todo el trabajo:
 //
 //   1. NO SE RECOMPONE LO QUE NO CAMBIO. Si la huella guardada es la
-//      misma que la de la receta nueva y los dos archivos estan en su
-//      sitio, el archivo YA es correcto: la huella captura la receta
-//      entera. Guardar veinte veces el mismo avatar cuesta una
-//      composicion, no veinte.
+//      misma que la de la receta nueva y sus archivos estan en su sitio
+//      (los dos tamaños y, del avatar puesto, la foto: enSitio), el
+//      archivo YA es correcto: la huella captura la receta entera.
+//      Guardar veinte veces el mismo avatar cuesta una composicion, no
+//      veinte.
 //
 //   2. UN PRESUPUESTO POR PERSONA Y POR MINUTO, para el caso de quien
 //      alterne entre dos avatares a proposito. Un humano guarda dos o
@@ -290,8 +401,7 @@ async function asegurar(sql, destino, avatar, huellaGuardada) {
   }
 
   // Freno 1: no cambio nada.
-  if (huellaGuardada && huellaGuardada === receta.huella &&
-      TAMANOS.every(([a, l]) => fs.existsSync(rutaDe(destino, a, l)))) {
+  if (huellaGuardada && huellaGuardada === receta.huella && enSitio(destino)) {
     return receta.huella;
   }
 
@@ -309,10 +419,11 @@ async function asegurar(sql, destino, avatar, huellaGuardada) {
   const carpeta = carpetaDe(destino);
   fs.mkdirSync(carpeta, { recursive: true });
 
-  const salida = compositor.renderizar(receta.archivos, TAMANOS, { formato: EXTENSION });
+  const { entero, foto } = componerConFoto(receta);
   for (const [a, l] of TAMANOS) {
-    escribirEntero(rutaDe(destino, a, l), salida.salidas[a + "x" + l]);
+    escribirEntero(rutaDe(destino, a, l), compositor.aJPG(compositor.reducir(entero, a, l)));
   }
+  if (!destino.ranura) escribirEntero(rutaFoto(destino), compositor.aJPG(foto));
 
   return receta.huella;
 }
@@ -341,6 +452,7 @@ function borrar(destino) {
   try {
     for (const [a, l] of TAMANOS) fs.rmSync(rutaDe(destino, a, l), { force: true });
     if (destino.ranura) fs.rmSync(carpetaDe(destino), { recursive: true, force: true });
+    else fs.rmSync(rutaFoto(destino), { force: true });
     return true;
   } catch (error) {
     console.error("avatar compuesto: no se pudo borrar.", error.message);
@@ -361,6 +473,13 @@ function urlDe(destino, huella, ancho, alto) {
   return huella ? base + "?v=" + String(huella).slice(0, 12) : base;
 }
 
+// La de la foto de perfil. Lleva la misma huella que el compuesto.
+function urlFotoDe(destino, huella) {
+  if (!destinoValido(destino) || destino.ranura) return null;
+  const base = "/avatares/" + destino.usuarioId + "/" + FOTO + "." + EXTENSION;
+  return huella ? base + "?v=" + String(huella).slice(0, 12) : base;
+}
+
 // ¿Esta ruta es la de un compuesto? Devuelve sus piezas o null. Vive
 // aquí y no en server.js porque el servidor de desarrollo es OTRO
 // servidor: cuando el cierre de las prendas vivió dentro de server.js,
@@ -369,8 +488,17 @@ function urlDe(destino, huella, ancho, alto) {
 const RUTA = new RegExp(
   "^/avatares/(\\d{1,9})(?:/ranura(\\d{1,4}))?/(\\d{1,4})x(\\d{1,4})\\." + EXTENSION + "$"
 );
+const RUTA_FOTO = new RegExp("^/avatares/(\\d{1,9})/" + FOTO + "\\." + EXTENSION + "$");
 
+// { destino, ancho, alto } para un compuesto, { destino, foto: true }
+// para la foto de perfil, o null.
 function partirRuta(pathname) {
+  const f = RUTA_FOTO.exec(String(pathname || ""));
+  if (f) {
+    const destino = { usuarioId: Number(f[1]) };
+    return destinoValido(destino) ? { destino, foto: true } : null;
+  }
+
   const m = RUTA.exec(String(pathname || ""));
   if (!m) return null;
 
@@ -414,11 +542,23 @@ const A_LA_VEZ = 2;
 let enCurso = 0;
 
 async function leerOComponer(sql, destino, ancho, alto) {
-  const listo = leer(destino, ancho, alto);
+  return servirOComponer(sql, destino, () => leer(destino, ancho, alto), TAMANOS_VALIDOS.has(ancho + "x" + alto));
+}
+
+// La foto de perfil, igual: si falta, se compone todo el avatar, que la
+// deja hecha.
+async function leerOComponerFoto(sql, destino) {
+  return servirOComponer(sql, destino, () => leerFoto(destino), !!destino && !destino.ranura);
+}
+
+// `lector` lee del disco lo que se pidio; `existe` dice si eso es algo
+// que se genera, para no componer por una direccion inventada.
+async function servirOComponer(sql, destino, lector, existe) {
+  const listo = lector();
   if (listo) return { datos: listo, compuesto: true };
 
   const sinAvatar = { datos: silueta(), compuesto: false };
-  if (!destinoValido(destino) || !TAMANOS_VALIDOS.has(ancho + "x" + alto)) return sinAvatar;
+  if (!destinoValido(destino) || !existe) return sinAvatar;
   if (enCurso >= A_LA_VEZ) return sinAvatar;
 
   enCurso++;
@@ -448,7 +588,7 @@ async function leerOComponer(sql, destino, ancho, alto) {
       }
     }
 
-    const hecho = leer(destino, ancho, alto);
+    const hecho = lector();
     return hecho ? { datos: hecho, compuesto: true } : sinAvatar;
   } catch (error) {
     console.error("avatar compuesto: no se pudo componer al pedirlo.", error.message);
@@ -458,15 +598,17 @@ async function leerOComponer(sql, destino, ancho, alto) {
   }
 }
 
-// Sirve /avatares/<id>/<tam>.jpg y las ranuras. Devuelve true si la ruta
-// era suya. Vive aqui y no en server.js para que el servidor de
-// desarrollo haga exactamente lo mismo: misma leccion que
-// api/_prendas-ruta.js.
+// Sirve /avatares/<id>/<tam>.jpg, las ranuras y la foto de perfil
+// (/avatares/<id>/cara.jpg). Devuelve true si la ruta era suya. Vive
+// aqui y no en server.js para que el servidor de desarrollo haga
+// exactamente lo mismo: misma leccion que api/_prendas-ruta.js.
 async function atender(req, res, url, sql) {
   const ruta = partirRuta(url.pathname);
   if (!ruta) return false;
 
-  const r = await leerOComponer(sql, ruta.destino, ruta.ancho, ruta.alto);
+  const r = ruta.foto
+    ? await leerOComponerFoto(sql, ruta.destino)
+    : await leerOComponer(sql, ruta.destino, ruta.ancho, ruta.alto);
 
   // La silueta, con cache corta aunque la direccion traiga version: no
   // es el avatar de esa persona, y en cuanto se pueda componer tiene que
@@ -503,12 +645,21 @@ module.exports = {
   DIRECTORIO,
   CACHE_CON_VERSION,
   CACHE_SIN_VERSION,
+  FOTO,
+  LADO_FOTO,
+  CAPAS_FUERA_DE_LA_FOTO,
+  CUADRO_GENERICO,
+  ARCHIVO_CUADROS,
+  cuadroDeLaFoto,
   destinoValido,
   capasCon,
   recetaDe,
   carpetaDe,
   rutaDe,
+  rutaFoto,
+  enSitio,
   leer,
+  leerFoto,
   TOPE_POR_MINUTO,
   hayPresupuesto,
   olvidarPresupuesto,
@@ -516,7 +667,9 @@ module.exports = {
   asegurarSinFallar,
   borrar,
   urlDe,
+  urlFotoDe,
   partirRuta,
   leerOComponer,
+  leerOComponerFoto,
   atender
 };

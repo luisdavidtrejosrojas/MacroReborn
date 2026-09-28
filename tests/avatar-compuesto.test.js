@@ -174,7 +174,8 @@ describe("generar y guardar", () => {
 
     assert.ok(!antes.equals(despues), "el archivo no cambió al cambiar de ropa");
     assert.match(huellaNueva, /^[a-f0-9]{64}$/);
-    assert.equal(fs.readdirSync(AC.carpetaDe(ANA)).length, 2, "quedaron archivos de más");
+    // Los dos tamaños y la foto de perfil, y nada más.
+    assert.equal(fs.readdirSync(AC.carpetaDe(ANA)).length, 3, "quedaron archivos de más");
   });
 
   test("cada persona tiene su archivo, aunque lleven lo mismo", async () => {
@@ -540,6 +541,157 @@ describe("si falta, se compone al pedirlo", () => {
     assert.equal(sil.cabeceras["Cache-Control"], "public, max-age=60");
 
     assert.equal((await pedir("/previsualizaciones/1.jpg")).atendida, false);
+  });
+
+});
+
+describe("la foto de perfil", () => {
+
+  // La cara del personaje en un cuadrado, para las miniaturas. Decidida
+  // el 28/09/2026: cada modelo tiene su cuadro en api/recortes-cara.json,
+  // y la foto va sin la mascota ni el marco.
+
+  const jpeg = require("jpeg-js");
+  const { problemaDeCuadro } = require("../api/_recortes");
+  const TORA = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "api", "recortes-cara.json"), "utf8")).tora;
+  const FRIDA = { usuarioId: 700 };
+
+  // Opaco solo dentro de la caja; transparente el resto del lienzo.
+  function pngEn(caja, r, g, b) {
+    const rgba = Buffer.alloc(327 * 504 * 4);
+    for (let y = caja.y; y < caja.y + caja.lado; y++) {
+      for (let x = caja.x; x < caja.x + caja.lado; x++) {
+        const i = (y * 327 + x) * 4;
+        rgba[i] = r; rgba[i + 1] = g; rgba[i + 2] = b; rgba[i + 3] = 255;
+      }
+    }
+    return lienzo.escribirRGBA8({ rgba, ancho: 327, alto: 504 });
+  }
+  const pixel = (img, x, y) => { const i = (y * img.width + x) * 4; return [img.data[i], img.data[i + 1], img.data[i + 2]]; };
+  const cerca = (a, b) => a.every((v, i) => Math.abs(v - b[i]) <= 24);
+
+  before(async () => {
+    // Un pelo rojo que ocupa justo el cuadro de tora, y una mascota y un
+    // marco que lo tapan todo.
+    await sembrarPrenda("tora_pelo_cuadro", "pelo", pngEn(TORA, 220, 20, 20), "e".repeat(64));
+    await sembrarPrenda("tora_mascota1", "mascota", png(20, 20, 220), "f".repeat(64));
+    await sembrarPrenda("tora_borde1", "borde", png(20, 200, 20), "0".repeat(64));
+    await db.query(
+      `INSERT INTO users (id, username, password_hash, level, xp, status, created_at, last_login, avatar)
+       VALUES (600, 'gala', 'hash', 1, 0, 'active', now(), now(), $1)`, [JSON.stringify(avatarBase)]);
+  });
+
+  test("se guarda con el avatar puesto: un JPG cuadrado de 96", async () => {
+    AC.olvidarPresupuesto();
+    await AC.asegurar(sql, FRIDA, avatarBase);
+    const foto = jpeg.decode(fs.readFileSync(AC.rutaFoto(FRIDA)));
+    assert.deepStrictEqual([foto.width, foto.height], [96, 96]);
+    assert.equal(AC.enSitio(FRIDA), true);
+  });
+
+  test("es el cuadro de su modelo, sin la mascota ni el marco", async () => {
+    AC.olvidarPresupuesto();
+    const avatar = { modelo: "tora", pelo: "tora_pelo_cuadro", mascota: "tora_mascota1", borde: "tora_borde1" };
+    await AC.asegurar(sql, FRIDA, avatar);
+    // La foto entera es el pelo rojo: el cuadro cae justo donde se pinto,
+    // y ni la mascota azul ni el marco verde la tapan.
+    const foto = jpeg.decode(fs.readFileSync(AC.rutaFoto(FRIDA)));
+    for (const [x, y] of [[4, 4], [91, 4], [48, 48], [4, 91], [91, 91]]) {
+      assert.ok(cerca(pixel(foto, x, y), [220, 20, 20]), "no es el pelo en " + x + "," + y + ": " + pixel(foto, x, y));
+    }
+    // El cuerpo entero si los lleva: encima de todo, el marco.
+    const entero = jpeg.decode(fs.readFileSync(AC.rutaDe(FRIDA, 62, 96)));
+    assert.ok(cerca(pixel(entero, 31, 48), [20, 200, 20]), "el cuerpo entero perdio el marco: " + pixel(entero, 31, 48));
+  });
+
+  test("el cuerpo entero sale igual que antes de la foto", async () => {
+    // Componer aparte lo de debajo y lo de encima da los mismos pixeles
+    // que apilarlo todo de una vez, que es lo que se hacia antes.
+    AC.olvidarPresupuesto();
+    const avatar = { fondo: "tora_fondo1", modelo: "tora", pelo: "tora_pelo_cuadro", mascota: "tora_mascota1" };
+    await AC.asegurar(sql, FRIDA, avatar);
+    const receta = await AC.recetaDe(sql, avatar);
+    const compositor = require("../api/_compositor");
+    const antes = compositor.renderizar(receta.archivos, AC.TAMANOS, { formato: "jpg" });
+    for (const [a, l] of AC.TAMANOS) {
+      assert.ok(fs.readFileSync(AC.rutaDe(FRIDA, a, l)).equals(antes.salidas[a + "x" + l]), "cambio el de " + a + "x" + l);
+    }
+  });
+
+  test("un diseño guardado no tiene foto", async () => {
+    AC.olvidarPresupuesto();
+    const ranura = { usuarioId: 700, ranura: 4 };
+    await AC.asegurar(sql, ranura, avatarBase);
+    assert.deepStrictEqual(fs.readdirSync(AC.carpetaDe(ranura)).sort(), ["327x504.jpg", "62x96.jpg"]);
+    assert.equal(AC.urlFotoDe(ranura, "abc"), null);
+    assert.equal(AC.leerFoto(ranura), null);
+  });
+
+  test("si solo falta la foto, se rehace aunque la huella cuadre", async () => {
+    AC.olvidarPresupuesto();
+    const huella = await AC.asegurar(sql, FRIDA, avatarBase);
+    fs.rmSync(AC.rutaFoto(FRIDA));
+    assert.equal(AC.enSitio(FRIDA), false);
+    await AC.asegurar(sql, FRIDA, avatarBase, huella);
+    assert.ok(fs.existsSync(AC.rutaFoto(FRIDA)), "no rehizo la foto");
+  });
+
+  test("quitarse todo se la lleva, como al compuesto", async () => {
+    AC.olvidarPresupuesto();
+    await AC.asegurar(sql, FRIDA, avatarBase);
+    await AC.asegurar(sql, FRIDA, {});
+    assert.equal(fs.existsSync(AC.rutaFoto(FRIDA)), false);
+  });
+
+  test("cada modelo tiene su cuadro, que cabe en el lienzo; uno sin cuadro, el generico", () => {
+    const cuadros = JSON.parse(fs.readFileSync(AC.ARCHIVO_CUADROS, "utf8"));
+    assert.deepStrictEqual(Object.keys(cuadros).sort(), ["cereza", "fengchao", "fenglei", "fiora", "max", "tora"]);
+    for (const [modelo, c] of Object.entries(cuadros)) {
+      assert.equal(problemaDeCuadro(c), null, modelo);
+      assert.deepStrictEqual(AC.cuadroDeLaFoto(modelo), c);
+    }
+    assert.deepStrictEqual(AC.cuadroDeLaFoto("modelo_nuevo"), { ...AC.CUADRO_GENERICO });
+    assert.equal(problemaDeCuadro(AC.CUADRO_GENERICO), null);
+    assert.deepStrictEqual(AC.cuadroDeLaFoto("__proto__"), { ...AC.CUADRO_GENERICO });
+  });
+
+  test("la receta lleva el cuadro de su modelo, que entra en la huella", async () => {
+    const receta = await AC.recetaDe(sql, avatarBase);
+    assert.deepStrictEqual(receta.cuadro, TORA);
+  });
+
+  test("su dirección lleva la misma huella, y el servidor la entiende", () => {
+    const url = AC.urlFotoDe(FRIDA, "0123456789abcdef");
+    assert.equal(url, "/avatares/700/cara.jpg?v=0123456789ab");
+    assert.equal(AC.urlFotoDe(FRIDA, null), "/avatares/700/cara.jpg");
+    assert.deepStrictEqual(AC.partirRuta("/avatares/700/cara.jpg"), { destino: FRIDA, foto: true });
+    assert.equal(AC.partirRuta("/avatares/700/ranura2/cara.jpg"), null);
+    assert.equal(AC.partirRuta("/avatares/0/cara.jpg"), null);
+    assert.equal(AC.partirRuta("/avatares/700/cara.png"), null);
+  });
+
+  test("si falta, se compone al pedirla, se guarda y se apunta la huella", async () => {
+    AC.olvidarPresupuesto();
+    assert.equal(fs.existsSync(AC.rutaFoto({ usuarioId: 600 })), false);
+    const r = await AC.leerOComponerFoto(sql, { usuarioId: 600 });
+    assert.equal(r.compuesto, true);
+    assert.deepStrictEqual([r.datos[0], r.datos[1]], [0xFF, 0xD8]);
+    assert.equal(AC.enSitio({ usuarioId: 600 }), true);
+    const fila = await db.query("SELECT avatar_compuesto FROM users WHERE id = 600");
+    assert.match(fila.rows[0].avatar_compuesto || "", /^[a-f0-9]{64}$/);
+  });
+
+  test("la ruta la sirve con la misma cache que el compuesto", async () => {
+    const res = {
+      codigo: 0, cabeceras: {}, cuerpo: null,
+      writeHead(c, h) { this.codigo = c; this.cabeceras = h || {}; },
+      end(d) { this.cuerpo = d === undefined ? null : d; }
+    };
+    const atendida = await AC.atender({ method: "GET" }, res, new URL("http://x/avatares/600/cara.jpg?v=abc"), sql);
+    assert.equal(atendida, true);
+    assert.equal(res.cabeceras["Content-Type"], "image/jpeg");
+    assert.equal(res.cabeceras["Cache-Control"], "public, max-age=31536000, immutable");
+    assert.ok(res.cuerpo.equals(fs.readFileSync(AC.rutaFoto({ usuarioId: 600 }))));
   });
 
 });

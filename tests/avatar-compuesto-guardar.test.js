@@ -159,7 +159,8 @@ describe("guardar un avatar", () => {
     await guardar({ modelo: "tora", fondo: "tora_fondo9" }, ana());
 
     assert.ok(!antes.equals(fs.readFileSync(ruta)), "el archivo no cambio");
-    assert.equal(fs.readdirSync(AC.carpetaDe(DESTINO())).length, 2, "quedaron archivos de mas");
+    // Los dos tamaños y la foto de perfil, y nada mas.
+    assert.equal(fs.readdirSync(AC.carpetaDe(DESTINO())).length, 3, "quedaron archivos de mas");
     assert.equal(AC.urlDe(DESTINO(), null, 62, 96), "/avatares/" + idAna + "/62x96.jpg");
   });
 
