@@ -341,6 +341,22 @@ html {
 }
 
 /* ==========================================================================
+   LO QUE ESCRIBIÓ UNA CUENTA BANEADA
+   El servidor manda un aviso en lugar del texto (api/_sanciones.js) y
+   MRTexto.escrito(), en js/core.js, lo envuelve en esta clase. Rojo en
+   los dos temas, por encima del color de cada página.
+   ========================================================================== */
+
+.texto-baneado {
+  color: #f87171 !important;
+  font-style: italic;
+}
+
+html[data-tema="claro"] .texto-baneado {
+  color: #b91c1c !important;
+}
+
+/* ==========================================================================
    NAVBAR
    ========================================================================== */
 

@@ -77,6 +77,14 @@ const MRTexto = {
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
+  },
+
+  // Lo que escribió alguien: un mensaje del chat, un comentario, una
+  // reseña. Lo de una cuenta baneada llega del servidor ya tapado, con
+  // "autor_baneado" (api/_sanciones.js), y aquí se pinta en rojo.
+  escrito(fila, campo = "texto") {
+    const texto = MRTexto.escapar(fila ? fila[campo] : "");
+    return fila && fila.autor_baneado ? `<span class="texto-baneado">${texto}</span>` : texto;
   }
 };
 
