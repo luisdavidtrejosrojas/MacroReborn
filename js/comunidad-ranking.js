@@ -492,7 +492,7 @@ crBuscarConectado?.addEventListener("input", () => {
 // CENTRO DE AVATARES (las últimas prendas de la tienda)
 // ==============================
 // Un escaparate: las doce últimas prendas y el saldo. Se compra en la
-// tienda (tienda.html), que pregunta antes de cobrar; aquí "Comprar"
+// tienda, el Bazar (bazar.html), que pregunta antes de cobrar; aquí "Comprar"
 // lleva allí con la prenda a la vista. Antes compraba desde aquí de un
 // solo clic, sin preguntar.
 
@@ -542,7 +542,7 @@ async function crCargarTienda() {
       } else if (yaLaTiene) {
         boton = `<button type="button" class="cr-item-tienda-boton cr-comprada" disabled>✅ La tenés</button>`;
       } else {
-        boton = `<a href="tienda.html?prenda=${MRTexto.escapar(encodeURIComponent(item.valorCapa))}" class="cr-item-tienda-boton" style="display:block;text-decoration:none;box-sizing:border-box;">Comprar</a>`;
+        boton = `<a href="bazar.html?prenda=${MRTexto.escapar(encodeURIComponent(item.valorCapa))}" class="cr-item-tienda-boton" style="display:block;text-decoration:none;box-sizing:border-box;">Comprar</a>`;
       }
 
       return `

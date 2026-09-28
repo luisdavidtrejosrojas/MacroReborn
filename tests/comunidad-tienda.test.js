@@ -2,8 +2,10 @@
 // EL ESCAPARATE DE COMUNIDAD — tests/comunidad-tienda.test.js
 // ==============================
 // comunidad-ranking.html enseña las doce últimas prendas de la tienda y
-// el saldo. Ya no compra: "Comprar" lleva a tienda.html?prenda=<valor>,
+// el saldo. Ya no compra: "Comprar" lleva a bazar.html?prenda=<valor>,
 // que pregunta antes de cobrar. Antes compraba desde aquí de un clic.
+// Hasta el 28/09/2026 llevaba a la tienda (tienda.html); desde ese día la
+// tienda es el Bazar.
 //
 // Se evalúa crCargarTienda() de verdad (js/comunidad-ranking.js) con el
 // escape de verdad (MRTexto, de js/core.js) y una red de mentira.
@@ -57,14 +59,14 @@ async function montar(usuario, respuesta) {
   };
 }
 
-test("con sesión: el saldo, doce prendas, y Comprar lleva a la tienda", async () => {
+test("con sesión: el saldo, doce prendas, y Comprar lleva al Bazar", async () => {
   const e = await montar({ nombre: "ana" }, { success: true, items, comprados: [2], monedas: 12500 });
   assert.deepStrictEqual(e.pedidas, ["/api/content?action=avatar-shop"]);
   assert.equal(e.saldo.textContent, "🪙 " + (12500).toLocaleString("es-ES") + " monedas");
   const botones = e.botones();
   assert.equal(botones.length, 12);
   assert.equal(botones[0].tagName, "A");
-  assert.equal(botones[0].getAttribute("href"), "tienda.html?prenda=tora_pelo1");
+  assert.equal(botones[0].getAttribute("href"), "bazar.html?prenda=tora_pelo1");
   assert.equal(botones[0].textContent, "Comprar");
   assert.ok(botones[1].disabled, "la que ya tiene no se puede comprar");
   assert.equal(botones[1].textContent, "✅ La tenés");
@@ -81,8 +83,9 @@ test("sin sesión, cada prenda invita a iniciarla", async () => {
   assert.ok(e.botones().every(b => b.getAttribute("href") === "login.html"));
 });
 
-test("la página enlaza la tienda desde los dos paneles", () => {
+test("la página enlaza el Bazar desde los dos paneles", () => {
   const centro = HTML.slice(HTML.indexOf('class="cr-panel cr-centro-avatares"'), HTML.indexOf('class="cr-panel cr-necesitas-ayuda"'));
-  assert.equal((centro.match(/href="tienda\.html"/g) || []).length, 2);
-  assert.match(centro, /Ver toda la tienda/);
+  assert.equal((centro.match(/href="bazar\.html"/g) || []).length, 2);
+  assert.equal((centro.match(/tienda\.html/g) || []).length, 0);
+  assert.match(centro, /Ver todo el Bazar/);
 });
