@@ -1,9 +1,11 @@
 // ==============================
-// LA TIENDA EN LA BARRA — tests/navbar-tienda.test.js
+// EL BAZAR EN LA BARRA — tests/navbar-bazar.test.js
 // ==============================
-// js/navbar.js añade "Tienda" detrás de "Juegos" en todas las páginas,
+// js/navbar.js añade "Bazar" detrás de "Juegos" en todas las páginas,
 // en vez de copiarlo en el HTML de las veinticinco que tienen barra. Se
 // evalúa el trozo de verdad sobre la barra de verdad de cada página.
+// Hasta el 28/09/2026 era "Tienda" (tienda.html, que ahora redirige al
+// Bazar y ya no tiene barra).
 //
 // Correr:  npm test
 
@@ -41,20 +43,22 @@ const paginas = fs.readdirSync(raiz).filter(f => f.endsWith(".html") &&
 
 test("hay barras que probar", () => {
   assert.ok(paginas.length >= 20, "solo " + paginas.length + " páginas con barra");
-  assert.ok(paginas.includes("tienda.html"));
+  assert.ok(paginas.includes("bazar.html"));
+  assert.ok(!paginas.includes("tienda.html"), "tienda.html solo redirige");
 });
 
 for (const pagina of paginas) {
-  test(pagina + ": la tienda sale una vez, detrás de Juegos", () => {
+  test(pagina + ": el Bazar sale una vez, detrás de Juegos", () => {
     const enlaces = prepararBarra(fs.readFileSync(path.join(raiz, pagina), "utf8"));
-    assert.equal(enlaces.filter(t => t === "🛍️ Tienda").length, 1, enlaces.join(" | "));
+    assert.equal(enlaces.filter(t => t === "🛍️ Bazar").length, 1, enlaces.join(" | "));
+    assert.equal(enlaces.filter(t => t.includes("Tienda")).length, 0, enlaces.join(" | "));
     const juegos = enlaces.indexOf("🎮 Juegos");
-    if (juegos !== -1) assert.equal(enlaces[juegos + 1], "🛍️ Tienda", enlaces.join(" | "));
+    if (juegos !== -1) assert.equal(enlaces[juegos + 1], "🛍️ Bazar", enlaces.join(" | "));
   });
 }
 
 test("una página que ya la trae no la tiene dos veces", () => {
   const enlaces = prepararBarra(`<nav class="navbar"><div class="nav-links"></div>
-    <div class="nav-categorias"><a href="juegos.html">🎮 Juegos</a><a href="tienda.html">🛍️ Tienda</a></div></nav>`);
-  assert.equal(enlaces.filter(t => t.includes("Tienda")).length, 1);
+    <div class="nav-categorias"><a href="juegos.html">🎮 Juegos</a><a href="bazar.html">🛍️ Bazar</a></div></nav>`);
+  assert.equal(enlaces.filter(t => t.includes("Bazar")).length, 1);
 });
