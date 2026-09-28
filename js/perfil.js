@@ -751,7 +751,7 @@ insigniasPerfilPropioListas.then(lista=>{
 
 
 // ---------- CENTRO DE AVATARES (tienda) ----------
-// Integración con la tienda (tienda.html): las prendas que están en el
+// Integración con la tienda, el Bazar (bazar.html): las prendas que están en el
 // catálogo de la tienda (avatar_shop_items) y el usuario TODAVÍA no
 // compró quedan bloqueadas acá (🔒). Desde la migración 022 son todas
 // las publicadas. Si no hay conexión, o el servidor no reconoce la
@@ -1111,19 +1111,19 @@ document.getElementById("editorAvatar")?.addEventListener("click", (evento)=>{
     // la deja desequipar con normalidad más abajo, no se la trabamos).
     if(opcion.classList.contains("cr-bloqueada") && editorCapas[capa] !== valor){
       const precio = _tiendaPremiumPrecio.get(valor) || 0;
-      // A la tienda, con esa prenda a la vista y la compra preguntada.
-      const irATienda = ()=>{ window.location.href = "tienda.html?prenda=" + encodeURIComponent(valor); };
+      // Al Bazar, con esa prenda a la vista y la compra preguntada.
+      const irATienda = ()=>{ window.location.href = "bazar.html?prenda=" + encodeURIComponent(valor); };
       if(window.MRModal){
         MRModal.show({
           icon: "🔒",
           title: "Todavía no es tuya",
-          message: "Esta prenda cuesta " + precio.toLocaleString("es-ES") + " monedas. Podés comprarla en la tienda.",
+          message: "Esta prenda cuesta " + precio.toLocaleString("es-ES") + " monedas. Podés comprarla en el Bazar.",
           actions: [
             { text: "Ahora no" },
-            { text: "Verla en la tienda", primary: true, onClick: irATienda }
+            { text: "Verla en el Bazar", primary: true, onClick: irATienda }
           ]
         });
-      } else if(confirm("Esta prenda cuesta 🪙 " + precio + " y todavía no la compraste.\n¿Querés verla en la tienda?")){
+      } else if(confirm("Esta prenda cuesta 🪙 " + precio + " y todavía no la compraste.\n¿Querés verla en el Bazar?")){
         irATienda();
       }
       return;

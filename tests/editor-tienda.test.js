@@ -1,10 +1,11 @@
 // ==============================
 // EL EDITOR Y LA TIENDA — tests/editor-tienda.test.js
 // ==============================
-// Los dos caminos entre el editor del perfil y la tienda (tienda.html):
+// Los dos caminos entre el editor del perfil y la tienda, que desde el
+// 28/09/2026 es el Bazar (bazar.html):
 //
 //   - Una prenda con candado ofrece ir a comprarla, y lleva a
-//     tienda.html?prenda=<valor>, que la enseña y pregunta.
+//     bazar.html?prenda=<valor>, que la enseña y pregunta.
 //   - Tras comprar, perfil.html?ponerse=<valor> abre el editor con la
 //     prenda puesta; si es de otro personaje, cambia de personaje y lo
 //     avisa; si no es suya, sale el candado.
@@ -153,12 +154,12 @@ describe("perfil.html?ponerse=<valor>", () => {
     assert.equal(p.tituloModal(), "Es de Cereza");
   });
 
-  test("una que no es suya: no se la pone, sale el candado y lleva a la tienda", async () => {
+  test("una que no es suya: no se la pone, sale el candado y lleva al Bazar", async () => {
     const p = await montar({ search: "?ponerse=tora_pelo2" });
     assert.notEqual(p.capas().pelo, "tora_pelo2");
     assert.equal(p.tituloModal(), "Todavía no es tuya");
     p.botonesModal()[1].click();
-    assert.equal(p.direccion.href, "tienda.html?prenda=tora_pelo2");
+    assert.equal(p.direccion.href, "bazar.html?prenda=tora_pelo2");
   });
 
   test("sin ?ponerse no abre nada", async () => {
@@ -178,7 +179,7 @@ describe("perfil.html?ponerse=<valor>", () => {
 
 describe("el candado del editor", () => {
 
-  test("ofrece verla en la tienda, con la prenda en la dirección", async () => {
+  test("ofrece verla en el Bazar, con la prenda en la dirección", async () => {
     const p = await montar();
     p.d.getElementById("botonCrearAvatar").click();
     assert.ok(p.opcion("tora_pelo2").classList.contains("cr-bloqueada"));
@@ -186,11 +187,11 @@ describe("el candado del editor", () => {
 
     p.opcion("tora_pelo2").click();
     assert.equal(p.tituloModal(), "Todavía no es tuya");
-    assert.deepStrictEqual(p.botonesModal().map(b => b.textContent), ["Ahora no", "Verla en la tienda"]);
+    assert.deepStrictEqual(p.botonesModal().map(b => b.textContent), ["Ahora no", "Verla en el Bazar"]);
     assert.notEqual(p.capas().pelo, "tora_pelo2");
 
     p.botonesModal()[1].click();
-    assert.equal(p.direccion.href, "tienda.html?prenda=tora_pelo2");
+    assert.equal(p.direccion.href, "bazar.html?prenda=tora_pelo2");
   });
 
   test("\"Ahora no\" se queda en el editor", async () => {
