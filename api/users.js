@@ -36,6 +36,8 @@ const monedasService = new MonedasService(sql);
 //   GET /api/users            -> lista de usuarios (ranking/comunidad)
 //   GET /api/users?q=texto    -> búsqueda por nombre (buscador)
 //   GET /api/users?username=X -> un usuario puntual
+//   ... &moderacion=1         -> con las cuentas baneadas, que si no, no
+//                                salen (el panel; solo la moderación)
 //
 // Escrituras (POST), con ?action= para elegir cuál correr:
 //   POST /api/users?action=update-avatar { username, avatar }
@@ -220,6 +222,21 @@ async function listarUsuarios(req, res) {
   // (rank_actual) no se mueve con esto, se recalcula recién el lunes.
   const semanaActualSQL = sql`date_trunc('week', (now() AT TIME ZONE 'America/Argentina/Buenos_Aires'))::date`;
 
+  // LA LISTA DE LA MODERACIÓN. Una cuenta baneada no sale en ninguna
+  // lista ni en el buscador, y su perfil sale sin biografía ni avatar
+  // (api/_sanciones.js, "LO QUE VEN LOS DEMÁS"). El panel sí las necesita,
+  // para ver su estado y levantarles el baneo: lo pide con ?moderacion=1,
+  // y eso solo lo puede pedir la moderación.
+  const moderacion = !!req.query.moderacion;
+  if (moderacion) {
+    const auth = requerirAuth(req, res);
+    if (!auth) return;
+    if (!(await sanciones.rolesDe(sql, auth.sub)).moderador) {
+      return res.status(403).json({ success: false, error: "Solo la moderación puede ver esta lista" });
+    }
+  }
+  const sinBaneadasSQL = moderacion ? sql`true` : sanciones.noBaneadaSQL(sql);
+
   // El estado de moderación de cada cuenta, de la tabla sanciones
   // (migración 026, api/_sanciones.js): suspendida hasta cuándo y por qué,
   // y si está baneada. El motivo del baneo no sale en ninguna lista: se le
@@ -292,10 +309,16 @@ async function listarUsuarios(req, res) {
     //
     // Pasó: el parámetro se añadió sin esta línea y los avatares PNG de
     // otras personas desaparecieron de las menciones y los comentarios.
-    return res.status(200).json({
-      success: true,
-      user: req.query.ligero ? aligerarAvatarPNG(usuario[0]) : usuario[0]
-    });
+    let uno = req.query.ligero ? aligerarAvatarPNG(usuario[0]) : usuario[0];
+
+    // Baneada: su perfil dice "Cuenta baneada" (js/usuario.js), sin
+    // biografía ni avatar. En las menciones, los comentarios y el chat,
+    // que piden su avatar aquí, sale la silueta.
+    if (uno.baneado && !moderacion) {
+      uno = { ...uno, bio: null, avatar: null, avatar_compuesto: null };
+    }
+
+    return res.status(200).json({ success: true, user: uno });
   }
 
   let usuarios;
@@ -312,7 +335,7 @@ async function listarUsuarios(req, res) {
       LEFT JOIN ranking_actividad_semanal ras
         ON ras.user_id = u.id AND ras.semana = ${semanaActualSQL}
       ${sancionJoinSQL}
-      WHERE u.username ILIKE ${buscado}
+      WHERE u.username ILIKE ${buscado} AND ${sinBaneadasSQL}
       ORDER BY u.username ASC
       LIMIT ${tope};
     `;
@@ -349,6 +372,7 @@ async function listarUsuarios(req, res) {
         WHERE dia >= date_trunc('month', ${hoySQL})::date
         GROUP BY user_id
       ) mes ON mes.user_id = u.id
+      WHERE ${sinBaneadasSQL}
       ORDER BY u.rank_actual ASC NULLS LAST, u.username ASC
       LIMIT ${tope};
     `;

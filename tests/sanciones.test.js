@@ -278,19 +278,24 @@ describe("el historial y las listas", () => {
     const b = await cuenta();
     await moderar(admin, "suspend", { username: s.username, motivo: "spam", dias: 3 });
     await moderar(admin, "ban", { username: b.username, motivo: "troll" });
-    const una = async (c) => (await llamar(users, "GET", { username: c.username }, null, {})).cuerpo.user;
-    const suspendida = await una(s);
+    // La suspendida se mira con su sesión, como la franja de
+    // js/motor/permisos.js: el motivo solo lo ven ella y la moderación.
+    const suspendida = (await llamar(users, "GET", { username: s.username }, null, s.headers)).cuerpo.user;
     assert.equal(suspendida.suspendido, true);
     assert.equal(suspendida.motivo_suspension, "spam");
     assert.ok(suspendida.suspendido_hasta);
     assert.equal(suspendida.baneado, false);
-    const baneada = await una(b);
+    const baneada = (await llamar(users, "GET", { username: b.username }, null, {})).cuerpo.user;
     assert.equal(baneada.baneado, true);
     assert.equal(baneada.suspendido, false);
-    assert.ok(!Object.values(baneada).includes("troll"), "el motivo del baneo salió en la lista");
+    assert.ok(!Object.values(baneada).includes("troll"), "el motivo del baneo salió");
 
-    const lista = (await llamar(users, "GET", { limit: "500" }, null, {})).cuerpo.users;
-    assert.equal(lista.find(u => u.username === b.username).baneado, true);
+    // Las listas públicas ya no la traen (tests/baneadas.test.js); la del
+    // panel, sí.
+    const lista = (await llamar(users, "GET", { limit: "2000", moderacion: "1" }, null, admin.headers)).cuerpo.users;
+    const enLista = lista.find(u => u.username === b.username);
+    assert.equal(enLista.baneado, true);
+    assert.ok(!Object.values(enLista).includes("troll"), "el motivo del baneo salió en la lista");
   });
 
 });
