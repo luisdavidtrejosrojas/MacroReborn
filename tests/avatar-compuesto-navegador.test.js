@@ -387,16 +387,19 @@ describe("la página de comunidad", () => {
 
   test("las siete listas pasan la persona, no solo su avatar", () => {
     // La que lo olvide sale con siluetas.
+    // El 28/09/2026 (rediseño de Comunidad del zip "per") se fue la lista
+    // de todos los jugadores (un rkAvatarHTML) y llegaron los usuarios
+    // destacados (un crAvatarHTML): siguen siendo siete.
     const rk = llamadasA(COMUNIDAD, "rkAvatarHTML");
-    assert.equal(rk.length, 3, "cambió el número de usos de rkAvatarHTML");
+    assert.equal(rk.length, 2, "cambió el número de usos de rkAvatarHTML");
     for (const uso of rk) {
       assert.match(uso, /, usuario\)$/, "esta llamada no pasa el usuario: " + uso);
     }
 
     const cr = llamadasA(COMUNIDAD, "crAvatarHTML");
-    assert.equal(cr.length, 4, "cambió el número de usos de crAvatarHTML");
+    assert.equal(cr.length, 5, "cambió el número de usos de crAvatarHTML");
     for (const uso of cr) {
-      assert.match(uso, /"cr-capa-chica",\s*\S/, "esta llamada no pasa la persona: " + uso);
+      assert.match(uso, /"cr-capa-[a-z]+",\s*\S/, "esta llamada no pasa la persona: " + uso);
     }
     // La actividad no es una persona: su id se llama usuario_id.
     assert.ok(cr.some(uso => /id: item\.usuario_id, avatar_compuesto: item\.avatar_compuesto/.test(uso)),
