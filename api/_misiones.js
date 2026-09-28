@@ -82,6 +82,69 @@ async function juegosDeLaSemana(sql, userId, semana) {
   return Number(filas[0]?.cantidad) || 0;
 }
 
+// ==============================
+// AVISAR AL CUMPLIRLA
+// ==============================
+// Decidido el 28/09/2026: de cada tres misiones cumplidas se cobraba una.
+// Para cobrar hay que entrar en "Mi día" o "Progreso", casi nadie entra y
+// nada avisaba; la diaria, además, se pierde a medianoche.
+//
+// Los eventos que mueven lo que miden las misiones -el minuto de juego
+// (api/users.js) y abrir un juego con "Jugar" (api/content.js)- llaman
+// aquí con los valores que acaban de quedar. Si con ellos se cumple la
+// misión de hoy o la de esta semana, llega una notificación: a la
+// campana, y con su aviso emergente aunque se esté jugando
+// (js/realtime.js). Una sola vez: player_mission_avisos (migración 025)
+// lo apunta, y de lo ya cobrado no se avisa.
+//
+// "ahora" existe para las pruebas: qué misión toca depende del día.
+
+// Lo que miden, en este momento, la misión de hoy y la de la semana. Quien
+// llama solo calcula lo que puede avisar de algo.
+function metricasEnJuego(ahora) {
+  const cuando = ahora || new Date();
+  return new Set([pickDaily(fechaLocalAR(cuando)).metric, pickWeekly(semanaActual(cuando)).metric]);
+}
+
+async function avisarSiSeCumplen(sql, userId, username, valores, ahora) {
+  // Aquí y no arriba: api/_notifications.js abre la conexión al cargarse.
+  const { crearNotificacionServidor } = require("./_notifications");
+
+  const cuando = ahora || new Date();
+  const hoy = fechaLocalAR(cuando);
+  const semana = semanaActual(cuando);
+  const candidatas = [
+    { mision: pickDaily(hoy), periodo: hoy, diaria: true },
+    { mision: pickWeekly(semana), periodo: semana, diaria: false }
+  ];
+
+  for (const { mision, periodo, diaria } of candidatas) {
+    const valor = valores[mision.metric];
+    if (valor === undefined || valor === null || Number(valor) < mision.target) continue;
+
+    const nueva = await sql`
+      INSERT INTO player_mission_avisos (user_id, mission_key, period_key)
+      SELECT ${userId}, ${mision.key}, ${periodo}
+      WHERE NOT EXISTS (
+        SELECT 1 FROM player_mission_claims
+        WHERE user_id = ${userId} AND mission_key = ${mision.key} AND period_key = ${periodo}
+      )
+      ON CONFLICT DO NOTHING
+      RETURNING user_id;
+    `;
+    if (!nueva.length) continue;
+
+    await crearNotificacionServidor(
+      username,
+      diaria ? "🎯 ¡Misión cumplida!" : "🏆 ¡Misión semanal cumplida!",
+      `«${mision.title}»: cobrá +${mision.xp} XP y 🪙 ${mision.coins} en Mi día` +
+        (diaria ? " antes de las 00:00, hora de Argentina." : " antes de que termine la semana."),
+      null,
+      { userId }
+    );
+  }
+}
+
 module.exports = {
   fechaLocalAR,
   semanaActual,
@@ -90,5 +153,7 @@ module.exports = {
   pickDaily,
   pickWeekly,
   juegosDeHoy,
-  juegosDeLaSemana
+  juegosDeLaSemana,
+  metricasEnJuego,
+  avisarSiSeCumplen
 };

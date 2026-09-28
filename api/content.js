@@ -5,6 +5,7 @@ const { crearNotificacionServidor, notificarMencionesServidor } = require("./_no
 const { obtenerSql } = require("./_db");
 const { MonedasService } = require("./_monedas");
 const { PRECIO_POR_CAPA, precioDeCapa, precioValido } = require("./_precios");
+const { metricasEnJuego, avisarSiSeCumplen, juegosDeHoy, fechaLocalAR } = require("./_misiones");
 const avatarCompuesto = require("./_avatar-compuesto");
 const previsualizaciones = require("./_previsualizaciones");
 // CAPAS es la lista de las 15 capas en su orden de dibujo. Es la del
@@ -1665,6 +1666,17 @@ async function gameHistory(req, res) {
       );
     } catch (error) {
       console.warn("Avisos: no se pudo avisar el nuevo juego jugado en vivo.", error);
+    }
+
+    // ¿Con este juego se cumple la misión de hoy? (api/_misiones.js). Un
+    // fallo aquí no debe tocar lo que ya quedó apuntado.
+    try {
+      if (metricasEnJuego().has("games_today")) {
+        const juegosHoy = await juegosDeHoy(sql, userId, fechaLocalAR());
+        await avisarSiSeCumplen(sql, userId, req.auth.username, { games_today: juegosHoy });
+      }
+    } catch (error) {
+      console.warn("MacroReborn: no se pudo avisar de la misión cumplida.", error);
     }
 
     return res.status(200).json({

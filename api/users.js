@@ -5,6 +5,7 @@ const { PasswordService } = require("./_password");
 const { requerirAuth } = require("./_auth");
 const { MonedasService } = require("./_monedas");
 const { registrarMinutoJugado } = require("./_racha");
+const { metricasEnJuego, avisarSiSeCumplen, juegosDeLaSemana, semanaActual } = require("./_misiones");
 const { crearNotificacionServidor } = require("./_notifications");
 const { validarAvatar } = require("./_avatar-catalogo");
 const avatarCompuesto = require("./_avatar-compuesto");
@@ -121,13 +122,13 @@ function xpNecesaria(nivel) {
 // Si falla (por lo que sea), no debe romper el XP en sí: se llama
 // siempre dentro de un try/catch, igual que ya se hacía con el aviso
 // en vivo de heartbeat().
-async function registrarTickTiempoJugado(userId, gameId) {
+async function registrarTickTiempoJugado(userId, gameId, username) {
 
   if (!gameId) return; // sin juego asociado (no debería pasar, pero por las dudas)
 
   const idJuego = String(gameId);
 
-  await sql`
+  const semanaFila = await sql`
     INSERT INTO ranking_actividad_semanal (user_id, semana, minutos_jugados, dias_activos, ultimo_dia_registrado)
     VALUES (
       ${userId},
@@ -142,10 +143,11 @@ async function registrarTickTiempoJugado(userId, gameId) {
         WHEN ranking_actividad_semanal.ultimo_dia_registrado IS DISTINCT FROM (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
         THEN 1 ELSE 0
       END,
-      ultimo_dia_registrado = (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date;
+      ultimo_dia_registrado = (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
+    RETURNING minutos_jugados;
   `;
 
-  await sql`
+  const juegoFila = await sql`
     INSERT INTO ranking_juegos_semanales (user_id, semana, game_id, minutos)
     VALUES (
       ${userId},
@@ -154,10 +156,29 @@ async function registrarTickTiempoJugado(userId, gameId) {
       1
     )
     ON CONFLICT (user_id, semana, game_id) DO UPDATE SET
-      minutos = ranking_juegos_semanales.minutos + 1;
+      minutos = ranking_juegos_semanales.minutos + 1
+    RETURNING minutos;
   `;
 
-  await registrarMinutoJugado(sql, userId);
+  const minutosHoy = await registrarMinutoJugado(sql, userId);
+
+  // ¿Con este minuto se cumple la misión de hoy o la de la semana?
+  // (api/_misiones.js). Solo se calcula lo que miden las de ahora: los
+  // juegos de la semana, solo si este es el primer minuto de este juego.
+  // Un fallo aquí no debe tocar el minuto, que ya está contado.
+  try {
+    const enJuego = metricasEnJuego();
+    const valores = {
+      minutes_today: minutosHoy,
+      minutes_week: Number(semanaFila[0]?.minutos_jugados) || 0
+    };
+    if (enJuego.has("games_week") && Number(juegoFila[0]?.minutos) === 1) {
+      valores.games_week = await juegosDeLaSemana(sql, userId, semanaActual());
+    }
+    await avisarSiSeCumplen(sql, userId, username, valores);
+  } catch (error) {
+    console.warn("MacroReborn: no se pudo avisar de la misión cumplida.", error);
+  }
 
 }
 
@@ -647,7 +668,7 @@ async function sumarXp(req, res) {
   // jugando (1 por minuto) también cuenta como 1 minuto jugado para
   // el ranking semanal. No debe romper la respuesta de XP si falla.
   try {
-    await registrarTickTiempoJugado(id, gameId);
+    await registrarTickTiempoJugado(id, gameId, auth.username);
   } catch (error) {
     console.warn("MacroReborn: no se pudo registrar el tiempo jugado para el ranking.", error);
   }

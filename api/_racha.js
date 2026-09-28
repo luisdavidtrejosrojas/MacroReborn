@@ -22,11 +22,14 @@
 // en api/users.js). Sin juego no hay pulso que cuente: abrir el sitio
 // no suma racha.
 
+// Devuelve los minutos de hoy que quedan con este: con ellos se mira si
+// se acaba de cumplir la misión del día (api/_misiones.js).
 async function registrarMinutoJugado(sql, userId) {
-  await sql`
+  const dia = await sql`
     INSERT INTO actividad_diaria (user_id, dia, minutos)
     VALUES (${userId}, (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date, 1)
-    ON CONFLICT (user_id, dia) DO UPDATE SET minutos = actividad_diaria.minutos + 1;
+    ON CONFLICT (user_id, dia) DO UPDATE SET minutos = actividad_diaria.minutos + 1
+    RETURNING minutos;
   `;
 
   // La racha, una vez al día. Si ayer se jugó, suma uno; si no, vuelve a
@@ -50,6 +53,8 @@ async function registrarMinutoJugado(sql, userId) {
       updated_at = now()
     WHERE player_streaks.last_checkin_date IS DISTINCT FROM EXCLUDED.last_checkin_date;
   `;
+
+  return Number(dia[0]?.minutos) || 0;
 }
 
 module.exports = { registrarMinutoJugado };
