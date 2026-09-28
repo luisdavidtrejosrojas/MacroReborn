@@ -127,8 +127,8 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | # | Estado | Categoría | Qué pasa | Dónde | Esfuerzo |
 |---|---|---|---|---|---|
 | 15 | 2026-09-25 | Función rota | Las rachas diarias nunca han subido. Las 17 personas con racha tienen racha 1. Son dos mitades: arreglar solo la primera no basta. Arreglado, y la racha pasa a contarse sola al jugar (nota al pie) | `api/_racha.js`, `api/progreso.js` | 30 min |
-| 16 | - | Moderación | Las advertencias no llegan a nadie. 4 registradas, 0 entregadas. El panel afirma que sí se enviaron | `js/admin.js:102` | 1 h |
-| 17 | - | Moderación | Suspender no hace nada: el servidor nunca consulta `suspendido`, ni siquiera al iniciar sesión | `api/_auth.js:70` | 2 h |
+| 16 | 2026-09-28 | Moderación | Las advertencias no llegan a nadie. 4 registradas, 0 entregadas. El panel afirma que sí se enviaron. Arreglado con las sanciones (nota al pie) | `js/admin.js:102` | 1 h |
+| 17 | 2026-09-28 | Moderación | Suspender no hace nada: el servidor nunca consulta `suspendido`, ni siquiera al iniciar sesión. Arreglado con las sanciones (nota al pie) | `api/_auth.js:70` | 2 h |
 | 18 | 2026-09-25 | Economía | El XP y los minutos se conceden por número de peticiones, no por tiempo verificado. Los tres primeros del ranking tienen minutos imposibles. Arreglado: un minuto por minuto y por persona, lo cuente quien lo cuente (nota al pie) | `api/users.js`, `sumarXp` | 1 día |
 | 19 | - | Economía | Macro Snake paga XP por muerte. Una cuenta generó 265.605 de las 271.626 partidas | `html/juegos/macro-snake.js:17` | 2 h |
 | 20 | - | Función rota | `explorar.html` está vacía para todos: lee `window.juegos` y `datos-juegos.js` declara un `const`, que no cuelga de `window` | `js/explorar.js:14` | 10 min |
@@ -289,6 +289,20 @@ juego (`api/users.js`) y el botón "Jugar" (`api/content.js`), con
 período (`player_mission_avisos`, migración 025), y nunca de lo ya
 cobrado. Lo sujeta `tests/misiones-avisos.test.js`. El margen para
 cobrar se decidió ese mismo día: ver la nota al 85.
+
+**Nota al 16 y al 17.** Hechos el 28/09/2026, con las sanciones
+(`docs/MODERACION.md`, migración 026, `api/_sanciones.js`), decididas
+ese día con el administrador. La advertencia fallaba porque el panel
+mandaba la notificación sin `origenNombre`, el servidor la rechazaba con
+un 403 y el panel, que no miraba la respuesta, decía "enviada". Suspender
+ponía `users.suspendido`, que ningún código del servidor leía: la única
+cuenta suspendida, del 15/09, entró el 20/09 como si nada.
+
+Ahora advertir, suspender (1, 3, 7 o 30 días), banear y levantar son
+acciones del servidor, que comprueba quién puede, apunta el historial y
+avisa a la cuenta; la suspendida no escribe y la baneada no entra, y su
+sesión deja de valer en el acto. Esa cuenta del 15/09 quedó baneada. Lo
+sujetan `tests/sanciones.test.js` y `tests/moderacion-navegador.test.js`.
 
 **Nota al 85.** Decidido el 28/09/2026, a petición del administrador,
 tras el aviso del 84: "da margen para cobrar la diaria en el momento que
