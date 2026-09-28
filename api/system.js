@@ -436,10 +436,11 @@ async function communityStats(req, res) {
     sql`SELECT COUNT(*)::int AS n FROM users WHERE last_login > now() - interval '5 minutes';`,
     sql`SELECT COUNT(*)::int AS n FROM profile_comments WHERE created_at > now() - interval '1 hour';`,
     // El id y la huella son para pedir el avatar ya compuesto, y el PNG
-    // de administrador va recortado: ver api/_avatar-ligero.js.
+    // de administrador va recortado: ver api/_avatar-ligero.js. Sin las
+    // cuentas baneadas (api/_sanciones.js).
     sql`SELECT u.id, u.username, u.avatar_compuesto, ${fragmentoAvatarLigero(sql)}
         FROM users u
-        WHERE u.created_at > now() - interval '1 day'
+        WHERE u.created_at > now() - interval '1 day' AND ${sanciones.noBaneadaSQL(sql)}
         ORDER BY u.created_at DESC LIMIT 12;`
 
   ]);
@@ -470,6 +471,7 @@ async function moderatorsStatus(req, res) {
     FROM badges b
     JOIN users u ON u.id = b.user_id
     WHERE b.badge_id IN ('administrador','moderador','colaborador')
+      AND ${sanciones.noBaneadaSQL(sql)}
     ORDER BY
       CASE b.badge_id
         WHEN 'administrador' THEN 0
