@@ -83,11 +83,47 @@ async function juegosDeLaSemana(sql, userId, semana) {
 }
 
 // ==============================
+// LA MISIÓN CUMPLIDA ESPERA HASTA QUE SE COBRE
+// ==============================
+// Decidido el 28/09/2026: una misión cumplida ya no se pierde a
+// medianoche (la diaria) ni al acabar la semana (la semanal). Se queda en
+// Mi día y en Progreso, con su fecha, hasta que se cobre, los días que
+// haga falta. Mientras tanto no aparece otra del mismo tipo; al cobrarla
+// aparece la de ese día o esa semana, y si lo que pide ya se jugó, se
+// puede cobrar en el acto (api/progreso.js).
+//
+// Qué se cumplió lo dice player_mission_avisos: la fila que se apunta al
+// avisar (abajo). La que espera es una de un período anterior que no se
+// cobró. Si hubiera más de una -solo pasa con lo rescatado de la semana
+// del 21/09 (scripts/rescatar-misiones.js)-, primero la más antigua.
+async function pendienteSinCobrar(sql, userId, tipo, periodoActual) {
+  const filas = await sql`
+    SELECT a.mission_key, a.period_key
+    FROM player_mission_avisos a
+    WHERE a.user_id = ${userId}
+      AND a.mission_key LIKE ${tipo === "weekly" ? "weekly_%" : "daily_%"}
+      AND a.period_key < ${periodoActual}
+      AND NOT EXISTS (
+        SELECT 1 FROM player_mission_claims c
+        WHERE c.user_id = a.user_id AND c.mission_key = a.mission_key AND c.period_key = a.period_key
+      )
+    ORDER BY a.period_key;
+  `;
+  // Una misión que ya no está en las listas no puede quedarse esperando.
+  const lista = tipo === "weekly" ? MISIONES_SEMANALES : MISIONES_DIARIAS;
+  for (const fila of filas) {
+    const mision = lista.find(m => m.key === fila.mission_key);
+    if (mision) return { mision, periodo: fila.period_key };
+  }
+  return null;
+}
+
+// ==============================
 // AVISAR AL CUMPLIRLA
 // ==============================
 // Decidido el 28/09/2026: de cada tres misiones cumplidas se cobraba una.
 // Para cobrar hay que entrar en "Mi día" o "Progreso", casi nadie entra y
-// nada avisaba; la diaria, además, se pierde a medianoche.
+// nada avisaba.
 //
 // Los eventos que mueven lo que miden las misiones -el minuto de juego
 // (api/users.js) y abrir un juego con "Jugar" (api/content.js)- llaman
@@ -114,13 +150,17 @@ async function avisarSiSeCumplen(sql, userId, username, valores, ahora) {
   const hoy = fechaLocalAR(cuando);
   const semana = semanaActual(cuando);
   const candidatas = [
-    { mision: pickDaily(hoy), periodo: hoy, diaria: true },
-    { mision: pickWeekly(semana), periodo: semana, diaria: false }
+    { tipo: "daily", mision: pickDaily(hoy), periodo: hoy },
+    { tipo: "weekly", mision: pickWeekly(semana), periodo: semana }
   ];
 
-  for (const { mision, periodo, diaria } of candidatas) {
+  for (const { tipo, mision, periodo } of candidatas) {
     const valor = valores[mision.metric];
     if (valor === undefined || valor === null || Number(valor) < mision.target) continue;
+
+    // Con una de antes esperando a que se cobre, esta ni se ve: no se
+    // apunta. Al cobrar aquella se vuelve a mirar (api/progreso.js).
+    if (await pendienteSinCobrar(sql, userId, tipo, periodo)) continue;
 
     const nueva = await sql`
       INSERT INTO player_mission_avisos (user_id, mission_key, period_key)
@@ -136,9 +176,8 @@ async function avisarSiSeCumplen(sql, userId, username, valores, ahora) {
 
     await crearNotificacionServidor(
       username,
-      diaria ? "🎯 ¡Misión cumplida!" : "🏆 ¡Misión semanal cumplida!",
-      `«${mision.title}»: cobrá +${mision.xp} XP y 🪙 ${mision.coins} en Mi día` +
-        (diaria ? " antes de las 00:00, hora de Argentina." : " antes de que termine la semana."),
+      tipo === "daily" ? "🎯 ¡Misión cumplida!" : "🏆 ¡Misión semanal cumplida!",
+      `«${mision.title}»: cobrá +${mision.xp} XP y 🪙 ${mision.coins} en Mi día. Te espera hasta que la cobres.`,
       null,
       { userId }
     );
@@ -154,6 +193,7 @@ module.exports = {
   pickWeekly,
   juegosDeHoy,
   juegosDeLaSemana,
+  pendienteSinCobrar,
   metricasEnJuego,
   avisarSiSeCumplen
 };

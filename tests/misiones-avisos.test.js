@@ -2,10 +2,11 @@
 // EL AVISO DE MISIÓN CUMPLIDA — tests/misiones-avisos.test.js
 // ==============================
 // Decidido el 28/09/2026: de cada tres misiones cumplidas se cobraba una,
-// porque nada avisaba y la diaria se pierde a medianoche. Ahora, en el
+// porque nada avisaba y la diaria se perdía a medianoche. Ahora, en el
 // momento en que se cumple la de hoy o la de la semana, llega una
 // notificación (avisarSiSeCumplen, en api/_misiones.js): una sola vez, y
-// nunca de lo ya cobrado.
+// nunca de lo ya cobrado. Y la cumplida espera hasta que se cobre: con
+// una de antes esperando, la de hoy no se apunta ni se avisa.
 //
 // Primero la regla, con fechas fijas (qué misión toca depende del día):
 //   - 01/10/2026: la diaria es "Tiempo de juego" (15 minutos) y la
@@ -75,14 +76,14 @@ describe("la regla", () => {
     assert.deepStrictEqual(await avisos(p), []);
   });
 
-  test("al llegar, un aviso con la recompensa y hasta cuándo se cobra; y solo uno", async () => {
+  test("al llegar, un aviso con la recompensa, que espera hasta que se cobre; y solo uno", async () => {
     const p = await persona();
     await avisar(p, { minutes_today: 15 }, OCT_1);
     await avisar(p, { minutes_today: 16 }, OCT_1);
     const lista = await avisos(p);
     assert.equal(lista.length, 1);
     assert.equal(lista[0].titulo, "🎯 ¡Misión cumplida!");
-    assert.equal(lista[0].mensaje, "«Tiempo de juego»: cobrá +55 XP y 🪙 40 en Mi día antes de las 00:00, hora de Argentina.");
+    assert.equal(lista[0].mensaje, "«Tiempo de juego»: cobrá +55 XP y 🪙 40 en Mi día. Te espera hasta que la cobres.");
   });
 
   test("la semanal, con su propio aviso", async () => {
@@ -91,7 +92,7 @@ describe("la regla", () => {
     const lista = await avisos(p);
     assert.equal(lista.length, 1);
     assert.equal(lista[0].titulo, "🏆 ¡Misión semanal cumplida!");
-    assert.equal(lista[0].mensaje, "«Descubridor»: cobrá +180 XP y 🪙 140 en Mi día antes de que termine la semana.");
+    assert.equal(lista[0].mensaje, "«Descubridor»: cobrá +180 XP y 🪙 140 en Mi día. Te espera hasta que la cobres.");
   });
 
   test("de lo que no miden las misiones de ese día, nada", async () => {
@@ -109,13 +110,64 @@ describe("la regla", () => {
     assert.deepStrictEqual(await avisos(p), []);
   });
 
+  // Desde el 28/09/2026 una misión cumplida espera hasta que se cobre, y
+  // mientras espera no aparece otra del mismo tipo: la de hoy ni se ve,
+  // así que no se apunta ni se avisa (la del 28/09 es "Explorador diario").
+  const cumplidaEl = (p, key, periodo) => db.query(
+    "INSERT INTO player_mission_avisos (user_id, mission_key, period_key) VALUES ($1, $2, $3)", [p.id, key, periodo]);
+
+  test("con una diaria de antes sin cobrar, la de hoy ni se apunta ni avisa", async () => {
+    const p = await persona();
+    await cumplidaEl(p, "daily_3_games", "2026-09-28");
+    await avisar(p, { minutes_today: 15 }, OCT_1);
+    assert.deepStrictEqual(await avisos(p), []);
+    const filas = await db.query("SELECT period_key FROM player_mission_avisos WHERE user_id = $1", [p.id]);
+    assert.deepStrictEqual(filas.rows.map(f => f.period_key), ["2026-09-28"]);
+  });
+
+  test("cobrada aquella, la de hoy sí", async () => {
+    const p = await persona();
+    await cumplidaEl(p, "daily_3_games", "2026-09-28");
+    await db.query(
+      `INSERT INTO player_mission_claims (user_id, mission_key, period_key, reward_xp, reward_coins)
+       VALUES ($1, 'daily_3_games', '2026-09-28', 40, 35)`, [p.id]);
+    await avisar(p, { minutes_today: 15 }, OCT_1);
+    assert.equal((await avisos(p)).length, 1);
+  });
+
+  test("la diaria que espera no frena la semanal, ni al revés", async () => {
+    const p = await persona();
+    await cumplidaEl(p, "daily_3_games", "2026-09-28");
+    await avisar(p, { minutes_today: 15, games_week: 6 }, OCT_1);
+    assert.deepStrictEqual((await avisos(p)).map(a => a.titulo), ["🏆 ¡Misión semanal cumplida!"]);
+
+    const q = await persona();
+    await cumplidaEl(q, "weekly_90_minutes", "2026-09-21");
+    await avisar(q, { minutes_today: 15, games_week: 6 }, OCT_1);
+    assert.deepStrictEqual((await avisos(q)).map(a => a.titulo), ["🎯 ¡Misión cumplida!"]);
+  });
+
+  test("una misión que ya no existe no se queda esperando", async () => {
+    const p = await persona();
+    await cumplidaEl(p, "daily_que_ya_no_existe", "2026-09-28");
+    await avisar(p, { minutes_today: 15 }, OCT_1);
+    assert.equal((await avisos(p)).length, 1);
+  });
+
   test("otro día, otra misión; y la misma misión otro día vuelve a avisar", async () => {
     const p = await persona();
-    await avisar(p, { games_today: 3 }, OCT_7);
+    // Cobrando cada una en su día: sin cobrar, la primera esperaría y
+    // frenaría las demás (arriba).
+    const cobrar = (key, periodo) => db.query(
+      `INSERT INTO player_mission_claims (user_id, mission_key, period_key, reward_xp, reward_coins)
+       VALUES ($1, $2, $3, 0, 0)`, [p.id, key, periodo]);
     await avisar(p, { minutes_today: 15 }, OCT_1);
+    await cobrar("daily_15_minutes", "2026-10-01");
+    await avisar(p, { games_today: 3 }, OCT_7);
+    await cobrar("daily_3_games", "2026-10-07");
     await avisar(p, { minutes_today: 15 }, OCT_8);   // el 8 vuelve a tocar "Tiempo de juego"
     const titulos = (await avisos(p)).map(a => a.mensaje.split("»")[0]);
-    assert.deepStrictEqual(titulos, ["«Explorador diario", "«Tiempo de juego", "«Tiempo de juego"]);
+    assert.deepStrictEqual(titulos, ["«Tiempo de juego", "«Explorador diario", "«Tiempo de juego"]);
   });
 
 });
