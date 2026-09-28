@@ -2,6 +2,7 @@ const { setCors } = require("./_utils");
 const { requerirAuth } = require("./_auth");
 const { obtenerSql } = require("./_db");
 const { fragmentoAvatarLigero, aligerarAvatarPNG } = require("./_avatar-ligero");
+const sanciones = require("./_sanciones");
 
 const sql = obtenerSql();
 
@@ -262,7 +263,7 @@ async function calcularYAplicarRanking() {
         AND semana >= (${semana}::date - INTERVAL '28 days');
     `,
 
-    sql`SELECT id, rank_actual, ranking_puntuacion FROM users;`
+    sql`SELECT u.id, u.rank_actual, u.ranking_puntuacion, ${sanciones.baneadaSQL(sql)} AS baneada FROM users u;`
 
   ]);
 
@@ -321,6 +322,7 @@ async function calcularYAplicarRanking() {
       id: usuario.id,
       rankAnterior: usuario.rank_actual,
       puntuacionFinal,
+      baneada: usuario.baneada === true,
       minutos // para desempatar posiciones iguales de puntuación
     };
 
@@ -334,12 +336,17 @@ async function calcularYAplicarRanking() {
   // Se actualiza de a un usuario por vez (cantidad de jugadores
   // acotada, no hace falta una sola query masiva — mismo criterio que
   // ya usaba el snapshot anterior).
-  for (let i = 0; i < resultados.length; i++) {
-    const r = resultados[i];
+  //
+  // Una cuenta baneada se queda sin puesto, y los demás corren uno
+  // (api/_sanciones.js). Su puntuación se sigue calculando: si se le
+  // levanta el baneo, vuelve a tener puesto en el cálculo siguiente.
+  let puesto = 0;
+  for (const r of resultados) {
+    const nuevo = r.baneada ? null : ++puesto;
     await sql`
       UPDATE users
       SET rank_anterior = ${r.rankAnterior},
-          rank_actual = ${i + 1},
+          rank_actual = ${nuevo},
           rank_actualizado_at = now(),
           ranking_puntuacion = ${r.puntuacionFinal}
       WHERE id = ${r.id};
