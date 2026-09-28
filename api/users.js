@@ -2,7 +2,7 @@ const { setCors } = require("./_utils");
 const { avisar, canalNotificaciones } = require("./_avisos");
 const { obtenerSql } = require("./_db");
 const { PasswordService } = require("./_password");
-const { requerirAuth } = require("./_auth");
+const { requerirAuth, obtenerAuth } = require("./_auth");
 const sanciones = require("./_sanciones");
 const { MonedasService } = require("./_monedas");
 const { registrarMinutoJugado } = require("./_racha");
@@ -228,14 +228,23 @@ async function listarUsuarios(req, res) {
   // para ver su estado y levantarles el baneo: lo pide con ?moderacion=1,
   // y eso solo lo puede pedir la moderación.
   const moderacion = !!req.query.moderacion;
+  let auth = null;
   if (moderacion) {
-    const auth = requerirAuth(req, res);
+    auth = requerirAuth(req, res);
     if (!auth) return;
     if (!(await sanciones.rolesDe(sql, auth.sub)).moderador) {
       return res.status(403).json({ success: false, error: "Solo la moderación puede ver esta lista" });
     }
+  } else {
+    auth = obtenerAuth(req);
   }
   const sinBaneadasSQL = moderacion ? sql`true` : sanciones.noBaneadaSQL(sql);
+
+  // El motivo de una suspensión lo ven la moderación y la propia cuenta
+  // (la franja de js/motor/permisos.js); los demás, solo que lo está.
+  const conMotivo = (fila) => (moderacion || (auth && Number(auth.sub) === Number(fila.id)))
+    ? fila
+    : { ...fila, motivo_suspension: null };
 
   // El estado de moderación de cada cuenta, de la tabla sanciones
   // (migración 026, api/_sanciones.js): suspendida hasta cuándo y por qué,
@@ -309,7 +318,7 @@ async function listarUsuarios(req, res) {
     //
     // Pasó: el parámetro se añadió sin esta línea y los avatares PNG de
     // otras personas desaparecieron de las menciones y los comentarios.
-    let uno = req.query.ligero ? aligerarAvatarPNG(usuario[0]) : usuario[0];
+    let uno = conMotivo(req.query.ligero ? aligerarAvatarPNG(usuario[0]) : usuario[0]);
 
     // Baneada: su perfil dice "Cuenta baneada" (js/usuario.js), sin
     // biografía ni avatar. En las menciones, los comentarios y el chat,
@@ -378,7 +387,7 @@ async function listarUsuarios(req, res) {
     `;
   }
 
-  return res.status(200).json({ success: true, users: usuarios.map(aligerarAvatarPNG) });
+  return res.status(200).json({ success: true, users: usuarios.map(aligerarAvatarPNG).map(conMotivo) });
 }
 
 async function updateAvatar(req, res) {
