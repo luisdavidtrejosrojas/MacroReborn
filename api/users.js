@@ -223,8 +223,8 @@ async function listarUsuarios(req, res) {
   const semanaActualSQL = sql`date_trunc('week', (now() AT TIME ZONE 'America/Argentina/Buenos_Aires'))::date`;
 
   // LA LISTA DE LA MODERACIÓN. Una cuenta baneada no sale en ninguna
-  // lista ni en el buscador, y su perfil sale sin biografía ni avatar
-  // (api/_sanciones.js, "LO QUE VEN LOS DEMÁS"). El panel sí las necesita,
+  // lista ni en el buscador, y su perfil sale con la biografía tapada y
+  // sin avatar (api/_sanciones.js, "LO QUE VEN LOS DEMÁS"). El panel sí las necesita,
   // para ver su estado y levantarles el baneo: lo pide con ?moderacion=1,
   // y eso solo lo puede pedir la moderación.
   const moderacion = !!req.query.moderacion;
@@ -320,11 +320,11 @@ async function listarUsuarios(req, res) {
     // otras personas desaparecieron de las menciones y los comentarios.
     let uno = conMotivo(req.query.ligero ? aligerarAvatarPNG(usuario[0]) : usuario[0]);
 
-    // Baneada: su perfil dice "Cuenta baneada" (js/usuario.js), sin
-    // biografía ni avatar. En las menciones, los comentarios y el chat,
-    // que piden su avatar aquí, sale la silueta.
+    // Baneada: su perfil dice "Cuenta baneada" (js/usuario.js), con el
+    // aviso en lugar de la biografía y sin avatar. En las menciones, los
+    // comentarios y el chat, que piden su avatar aquí, sale la silueta.
     if (uno.baneado && !moderacion) {
-      uno = { ...uno, bio: null, avatar: null, avatar_compuesto: null };
+      uno = { ...uno, bio: sanciones.TAPADO, avatar: null, avatar_compuesto: null };
     }
 
     return res.status(200).json({ success: true, user: uno });

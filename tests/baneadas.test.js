@@ -4,8 +4,8 @@
 // La segunda parte de la moderación, decidida el 28/09/2026
 // (docs/MODERACION.md, api/_sanciones.js):
 //
-//   - lo que escribió se tapa: chat, comentarios y reseñas (también sus
-//     estrellas), y su perfil sale sin biografía ni avatar;
+//   - lo que escribió se tapa: chat, comentarios, reseñas (también sus
+//     estrellas) y biografía, y su perfil sale sin avatar;
 //   - la cuenta sale de las listas: usuarios, buscador, amigos y
 //     solicitudes, favoritos, actividad, Comunidad, los rankings y el
 //     equipo de moderación;
@@ -111,14 +111,14 @@ describe("lo que escribió se tapa", () => {
     assert.deepStrictEqual([resenaOtra.texto, resenaOtra.calificacion], ["genial", 5]);
   });
 
-  test("su perfil sale sin biografía ni avatar, y dice que está baneada", async () => {
+  test("su perfil sale con el aviso en lugar de la biografía, sin avatar, y dice que está baneada", async () => {
     const b = await cuenta();
     await db.query(`UPDATE users SET bio = 'mi bio', avatar = '{"cabeza":"gorra"}'::jsonb, avatar_compuesto = 'huella1'
                     WHERE id = $1`, [b.id]);
     await banear(b);
     for (const query of [{ username: b.username }, { username: b.username, ligero: "1" }]) {
       const u = (await leer(users, query)).user;
-      assert.deepStrictEqual([u.baneado, u.bio, u.avatar, u.avatar_compuesto], [true, null, null, null]);
+      assert.deepStrictEqual([u.baneado, u.bio, u.avatar, u.avatar_compuesto], [true, TAPADO, null, null]);
     }
   });
 
