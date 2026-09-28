@@ -159,6 +159,21 @@ if (typeof seoActualizar === "function") {
 
 
 
+} else {
+
+// Un número que no es de ningún juego del catálogo: uno que se quitó
+// (el 30, el 28/09/2026) o una dirección mal escrita. La ficha se
+// quedaba en "Cargando..." para siempre, y el botón de jugar fallaba
+// al pulsarlo (lee juego.nombre).
+
+const nombre = document.querySelector(".nombre-juego");
+const descripcion = document.querySelector(".descripcion-juego");
+const boton = document.querySelector(".boton-jugar");
+
+if(nombre) nombre.textContent = "Juego no encontrado";
+if(descripcion) descripcion.textContent = "Este juego ya no está en el catálogo.";
+if(boton) boton.style.display = "none";
+
 }
 
 
