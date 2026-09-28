@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+// No abre nada al cargarse: las sanciones en pie las carga server.js.
+const sanciones = require('./_sanciones');
 
 const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -159,19 +161,29 @@ function extraerBearer(req) {
   return header.slice(7).trim();
 }
 
+// Una cuenta baneada (api/_sanciones.js) no tiene sesión aunque su pase
+// siga firmado y en fecha: aquí cuenta como si no lo trajera.
 function obtenerAuth(req) {
   const payload = verificarToken(extraerBearer(req));
+  if (payload && sanciones.baneoDe(payload.sub)) return null;
   return payload;
 }
 
 function requerirAuth(req, res) {
-  const auth = obtenerAuth(req);
-  if (!auth) {
+  const payload = verificarToken(extraerBearer(req));
+  // Baneada: se le dice, con el motivo, en vez del "sesión no válida" de
+  // siempre, y js/core.js le cierra la sesión en el navegador.
+  const baneo = payload && sanciones.baneoDe(payload.sub);
+  if (baneo) {
+    sanciones.respuestaBaneo(res, baneo);
+    return null;
+  }
+  if (!payload) {
     res.status(401).json({ success: false, error: 'Sesión no válida o expirada' });
     return null;
   }
-  renovarSiToca(auth, res);
-  return auth;
+  renovarSiToca(payload, res);
+  return payload;
 }
 
 module.exports = {

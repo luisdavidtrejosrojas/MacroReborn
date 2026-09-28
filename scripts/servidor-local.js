@@ -106,6 +106,9 @@ async function main() {
     usarSqlLocal(crearSqlPGlite(db));
   }
 
+  // Las sanciones en pie, en memoria, como en producción (server.js).
+  require("../api/_sanciones").arrancar(obtenerSql());
+
   // Lo de abajo es siembra de mentira: en la copia real no se toca NADA,
   // que para eso es una copia.
   if (!MODO_REAL) {

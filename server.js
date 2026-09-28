@@ -132,6 +132,7 @@ const { obtenerSql } = require("./api/_db");
 // por el despacho de /api/, por el motivo que explica mas abajo.
 const avisosSSE = require("./api/_avisos-sse");
 const avisos = require("./api/_avisos");
+const sanciones = require("./api/_sanciones");
 
 const HANDLERS = {
   "/api/auth": require("./api/auth"),
@@ -356,6 +357,11 @@ async function main() {
     console.warn("Avisos: sin puente entre procesos.", error.message);
     return false;
   });
+
+  // Las sanciones en pie, en memoria: requerirAuth las mira en cada
+  // petición (api/_sanciones.js). Después del puente, para que un baneo
+  // puesto en el otro proceso llegue a este en el acto.
+  sanciones.arrancar(obtenerSql());
 
   server.listen(PUERTO, () => {
     console.log(`Servidor de producción escuchando en el puerto ${PUERTO}`);
