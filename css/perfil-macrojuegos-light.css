@@ -1321,3 +1321,112 @@ html[data-tema="claro"] .perfil-estado-online.offline {
   color: #fff !important;
   background: #7d8790 !important;
 }
+
+/* ======================================================================
+   EL AVATAR ENTERO Y EL NOMBRE DENTRO DE LA IMAGEN
+   ----------------------------------------------------------------------
+   Decidido el 28/09/2026 con el administrador, sobre capturas de antes,
+   ahora y dos propuestas. La tarjeta compacta del zip "per" (arriba) le
+   daba a la caja del avatar un alto fijo en escritorio (563 px, o 414) y
+   object-fit: cover, asi que el dibujo se agrandaba y se cortaba: en el
+   tema oscuro se perdia un 24 % por los lados (alas, mascotas) y en el
+   claro un 9 % por arriba y por abajo. Y la placa del nombre tapaba los
+   pies.
+
+   Ahora, en los dos temas y en todos los tamaños:
+     - la caja tiene la proporcion del dibujo (327 x 504) y el avatar se
+       ve entero, como antes del zip;
+     - el nombre va DENTRO de la imagen, abajo a la izquierda, en blanco
+       sobre un degradado oscuro que sube desde el borde, como en la
+       tarjeta de macrojuegos: se lee sobre cualquier fondo y deja ver
+       los pies a traves;
+     - la medalla de logros, en la esquina de abajo a la derecha.
+
+   Va al final, con los tres selectores de cada regla (los del tema claro,
+   los del oscuro y los de los dos), para mandar sobre todo lo de arriba
+   sin depender del orden de sus bloques. Solo carga esta hoja perfil.html:
+   el perfil de otra persona (usuario.html) no cambia.
+   ====================================================================== */
+
+html .tarjeta-avatar,
+html:not([data-tema="claro"]) .tarjeta-avatar,
+html[data-tema="claro"] .tarjeta-avatar {
+  position: relative !important;
+}
+
+html .tarjeta-avatar .avatar,
+html:not([data-tema="claro"]) .tarjeta-avatar .avatar,
+html[data-tema="claro"] .tarjeta-avatar .avatar {
+  height: auto !important;
+  aspect-ratio: 327 / 504 !important;
+}
+
+html .tarjeta-avatar .avatar img,
+html:not([data-tema="claro"]) .tarjeta-avatar .avatar img,
+html[data-tema="claro"] .tarjeta-avatar .avatar img {
+  object-fit: contain !important;
+}
+
+html .tarjeta-avatar-pie,
+html:not([data-tema="claro"]) .tarjeta-avatar-pie,
+html[data-tema="claro"] .tarjeta-avatar-pie {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  /* A la derecha, el hueco de la medalla. */
+  padding: 34px 52px 10px 12px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  background: linear-gradient(180deg, rgba(8, 4, 20, 0) 0%, rgba(8, 4, 20, .5) 45%, rgba(8, 4, 20, .82) 100%) !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: flex-start !important;
+  z-index: 7 !important;
+}
+
+html .tarjeta-avatar-pie::before,
+html .tarjeta-avatar-pie::after,
+html:not([data-tema="claro"]) .tarjeta-avatar-pie::before,
+html:not([data-tema="claro"]) .tarjeta-avatar-pie::after,
+html[data-tema="claro"] .tarjeta-avatar-pie::before,
+html[data-tema="claro"] .tarjeta-avatar-pie::after {
+  display: none !important;
+  content: none !important;
+}
+
+html .tarjeta-avatar-nombre,
+html:not([data-tema="claro"]) .tarjeta-avatar-nombre,
+html[data-tema="claro"] .tarjeta-avatar-nombre {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  font: 800 17px/1.2 var(--font-body), Inter, Arial, sans-serif !important;
+  letter-spacing: .01em !important;
+  text-align: left !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .9), 0 0 8px rgba(0, 0, 0, .55) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html .tarjeta-avatar-medalla,
+html:not([data-tema="claro"]) .tarjeta-avatar-medalla,
+html[data-tema="claro"] .tarjeta-avatar-medalla {
+  position: absolute !important;
+  right: 6px !important;
+  bottom: 4px !important;
+  transform: scale(.82) !important;
+  transform-origin: bottom right !important;
+}
