@@ -301,15 +301,31 @@ async function listarUsuarios(req, res) {
     // nivel. Los usuarios que todavía no tienen posición calculada
     // (recién registrados, antes de que corra el cron del próximo
     // lunes) quedan al final, ordenados por nombre.
+    //
+    // Con los minutos de hoy y del mes, para las pestañas del ranking de
+    // Comunidad (Hoy / Este mes, js/comunidad-ranking.js). Salen de
+    // actividad_diaria (migración 023), que empezó el 25/09/2026: el mes
+    // de septiembre de 2026 solo cuenta desde ese día.
+    const hoySQL = sql`(now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date`;
     usuarios = await sql`
       SELECT u.id, u.username, u.level, u.xp, u.status, u.bio, ${avatarLigeroSQL}, u.avatar_compuesto, u.created_at, u.last_login,
              u.suspendido, u.fecha_suspension, u.motivo_suspension,
              u.rank_actual, u.rank_anterior, u.ranking_puntuacion,
              COALESCE(ras.minutos_jugados, 0) AS minutos_semana_actual,
-             COALESCE(ras.dias_activos, 0) AS dias_activos_semana_actual
+             COALESCE(ras.dias_activos, 0) AS dias_activos_semana_actual,
+             COALESCE(hoy.minutos, 0) AS minutos_hoy,
+             COALESCE(mes.minutos, 0) AS minutos_mes
       FROM users u
       LEFT JOIN ranking_actividad_semanal ras
         ON ras.user_id = u.id AND ras.semana = ${semanaActualSQL}
+      LEFT JOIN actividad_diaria hoy
+        ON hoy.user_id = u.id AND hoy.dia = ${hoySQL}
+      LEFT JOIN (
+        SELECT user_id, SUM(minutos)::int AS minutos
+        FROM actividad_diaria
+        WHERE dia >= date_trunc('month', ${hoySQL})::date
+        GROUP BY user_id
+      ) mes ON mes.user_id = u.id
       ORDER BY u.rank_actual ASC NULLS LAST, u.username ASC
       LIMIT ${tope};
     `;

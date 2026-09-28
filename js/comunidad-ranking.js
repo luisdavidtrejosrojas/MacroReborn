@@ -50,6 +50,15 @@ if (window.MRSession && typeof window.MRSession.subscribe === "function") {
 
 let _rkOrdenarPorLogros = false;
 let _rkModo = "general";
+
+// Los rankings por minutos jugados: cuánto se jugó hoy, esta semana o
+// este mes. api/users.js los manda con cada persona (minutos_hoy,
+// minutos_semana_actual, minutos_mes), con los días de Argentina.
+const RK_PERIODOS = {
+  hoy: { campo: "minutos_hoy", texto: "hoy" },
+  semana: { campo: "minutos_semana_actual", texto: "esta semana" },
+  mes: { campo: "minutos_mes", texto: "este mes" }
+};
 let _rkUsuarios = [];       // lista completa ya con puntosLogros
 
 // ==============================
@@ -129,16 +138,21 @@ function rkRenderizar(filtro = "") {
 
   let lista = _rkUsuarios.slice();
 
+  const periodo = RK_PERIODOS[_rkModo];
+
   lista.sort((a, b) => {
 
     if (_rkModo === "logros" || _rkOrdenarPorLogros) {
       return (Number(b.puntosLogros) || 0) - (Number(a.puntosLogros) || 0);
     }
 
-    if (_rkModo === "semana") {
-      const minutosA = Number(a.minutos_semana_actual) || 0;
-      const minutosB = Number(b.minutos_semana_actual) || 0;
+    if (periodo) {
+      const minutosA = Number(a[periodo.campo]) || 0;
+      const minutosB = Number(b[periodo.campo]) || 0;
       if (minutosB !== minutosA) return minutosB - minutosA;
+    }
+
+    if (_rkModo === "semana") {
       const diasA = Number(a.dias_activos_semana_actual) || 0;
       const diasB = Number(b.dias_activos_semana_actual) || 0;
       if (diasB !== diasA) return diasB - diasA;
@@ -200,7 +214,9 @@ function rkRenderizar(filtro = "") {
           ? `<span class="rk-delta rk-neutro">🏅 ${usuario.puntosLogros} puntos</span>`
           : _rkModo === "semana"
             ? `<p class="rk-podio-stat">🔥 ${usuario.minutos_semana_actual || 0} min · ${usuario.dias_activos_semana_actual || 0} días</p>`
-            : `<p class="rk-podio-stat">⏱️ ${usuario.minutos_semana_actual || 0} min esta semana</p>${rkDeltaHTML(usuario)}`}
+            : periodo
+              ? `<p class="rk-podio-stat">⏱️ ${Number(usuario[periodo.campo]) || 0} min ${periodo.texto}</p>`
+              : `<p class="rk-podio-stat">⏱️ ${usuario.minutos_semana_actual || 0} min esta semana</p>${rkDeltaHTML(usuario)}`}
 
       </div>
     `;
@@ -225,7 +241,11 @@ function rkRenderizar(filtro = "") {
           ? `<span class="rk-delta rk-neutro">🏅 ${usuario.puntosLogros} pts</span>`
           : _rkModo === "semana"
             ? `<p class="rk-mini-stat">🔥 ${usuario.minutos_semana_actual || 0} min · ${usuario.dias_activos_semana_actual || 0} días</p>`
-            : `<p class="rk-mini-stat">⏱️ ${usuario.minutos_semana_actual || 0} min</p>${rkDeltaHTML(usuario)}`}
+            : periodo
+              // Sin "hoy" ni "este mes": no cabe en la tarjeta chica, y el
+              // título del tablero ya dice el período.
+              ? `<p class="rk-mini-stat">⏱️ ${Number(usuario[periodo.campo]) || 0} min</p>`
+              : `<p class="rk-mini-stat">⏱️ ${usuario.minutos_semana_actual || 0} min</p>${rkDeltaHTML(usuario)}`}
 
       </a>
     `;
@@ -236,25 +256,42 @@ function rkRenderizar(filtro = "") {
 
 
 // ---- Modos del ranking ----
-document.querySelectorAll('.rk-board-tab').forEach((tab) => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.rk-board-tab').forEach(t => t.classList.remove('activo'));
-    tab.classList.add('activo');
-  });
-});
+// Tres juegos de botones mueven el mismo ranking: los modos de arriba
+// (General / Esta semana / Logros), las pestañas del tablero (Todos /
+// Hoy / Esta semana / Este mes) y el botón de logros. Todos pasan por
+// aquí, y cada botón se marca según el modo que tenga en
+// data-ranking-modo, así que "Esta semana" se enciende en los dos sitios.
+const rkPestanasTablero = Array.from(document.querySelectorAll(".rk-board-tab"));
+const rkTituloTablero = document.querySelector(".rk-ranking-board-title span");
+const rkResumenTablero = document.querySelector(".rk-ranking-resumen");
+const RK_TITULOS = {
+  general: ["Ranking general", "Puestos destacados de la comunidad"],
+  hoy: ["Ranking de hoy", "Por minutos jugados hoy"],
+  semana: ["Ranking de la semana", "Por minutos jugados esta semana"],
+  mes: ["Ranking del mes", "Por minutos jugados este mes"],
+  logros: ["Ranking de logros", "Por puntos de logros"]
+};
 
-rkModos.forEach((boton) => {
-  boton.addEventListener("click", () => {
-    _rkModo = boton.dataset.rankingModo || "general";
-    _rkOrdenarPorLogros = _rkModo === "logros";
-    _rkInicioVentana = 0;
-    rkModos.forEach(b => b.classList.toggle("activo", b === boton));
-    if (rkBotonLogros) {
-      rkBotonLogros.classList.toggle("rk-activo", _rkModo === "logros");
-      rkBotonLogros.textContent = _rkModo === "logros" ? "Ver Ranking General" : "Ver Ranking de Logros";
-    }
-    rkRenderizar(rkBuscador?.value || "");
+function rkCambiarModo(modo) {
+  _rkModo = RK_TITULOS[modo] ? modo : "general";
+  _rkOrdenarPorLogros = _rkModo === "logros";
+  _rkInicioVentana = 0;
+  [...rkModos, ...rkPestanasTablero].forEach((b) => {
+    const activo = (b.dataset.rankingModo || "general") === _rkModo;
+    b.classList.toggle("activo", activo);
+    b.setAttribute("aria-pressed", activo ? "true" : "false");
   });
+  if (rkBotonLogros) {
+    rkBotonLogros.classList.toggle("rk-activo", _rkOrdenarPorLogros);
+    rkBotonLogros.textContent = _rkOrdenarPorLogros ? "Ver Ranking General" : "Ver Ranking de Logros";
+  }
+  if (rkTituloTablero) rkTituloTablero.textContent = RK_TITULOS[_rkModo][0];
+  if (rkResumenTablero) rkResumenTablero.textContent = RK_TITULOS[_rkModo][1];
+  rkRenderizar(rkBuscador?.value || "");
+}
+
+[...rkModos, ...rkPestanasTablero].forEach((boton) => {
+  boton.addEventListener("click", () => rkCambiarModo(boton.dataset.rankingModo || "general"));
 });
 
 // ---- Buscador del ranking ----
@@ -282,19 +319,7 @@ rkFlechaAbajo?.addEventListener("click", () => {
 // cargados (no hace falta pedir nada de nuevo al servidor).
 
 rkBotonLogros?.addEventListener("click", () => {
-
-  _rkOrdenarPorLogros = !_rkOrdenarPorLogros;
-  _rkModo = _rkOrdenarPorLogros ? "logros" : "general";
-  _rkInicioVentana = 0;
-
-  rkBotonLogros.textContent = _rkOrdenarPorLogros
-    ? "Ver Ranking General"
-    : "Ver Ranking de Logros";
-
-  rkBotonLogros.classList.toggle("rk-activo", _rkOrdenarPorLogros);
-
-  rkRenderizar(rkBuscador?.value || "");
-
+  rkCambiarModo(_rkOrdenarPorLogros ? "general" : "logros");
 });
 
 
