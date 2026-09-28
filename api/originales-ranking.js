@@ -1,6 +1,7 @@
 const { obtenerSql } = require('./_db');
 const { setCors } = require('./_utils');
 const { requerirAuth } = require('./_auth');
+const sanciones = require('./_sanciones');
 
 const sql = obtenerSql();
 
@@ -26,6 +27,7 @@ async function leaderboard(req, res) {
   const limitRaw = enteroNoNegativo(req.query?.limit || 20);
   const limit = Math.min(Math.max(limitRaw || 20, 1), 100);
 
+  // Sin las cuentas baneadas (api/_sanciones.js).
   const filas = await sql`
     SELECT
       s.id,
@@ -36,7 +38,7 @@ async function leaderboard(req, res) {
       u.avatar
     FROM originales_scores s
     JOIN users u ON u.id = s.user_id
-    WHERE s.game_id = ${juego.id}
+    WHERE s.game_id = ${juego.id} AND ${sanciones.noBaneadaSQL(sql)}
     ORDER BY s.score DESC, s.created_at ASC, s.id ASC
     LIMIT ${limit};
   `;
