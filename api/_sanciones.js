@@ -10,7 +10,8 @@
 //                escribir (chat, comentarios, reseñas, biografía,
 //                solicitudes de amistad ni notificaciones a otros);
 //   baneo        sin fin: no puede entrar, y su sesión deja de valer en
-//                el acto.
+//                el acto. Lo que escribió se tapa y la cuenta sale de las
+//                listas (abajo, "LO QUE VEN LOS DEMÁS").
 //
 // Advierten y suspenden los moderadores y los administradores; banean y
 // levantan baneos solo los administradores. A un administrador no se le
@@ -284,10 +285,42 @@ async function levantar(sql, auth, { username }) {
   return { username: objetivo.username };
 }
 
+// ---------- LO QUE VEN LOS DEMÁS DE UNA CUENTA BANEADA ----------
+// Lo que escribió se tapa con este aviso, que el navegador pinta en rojo
+// (chat, comentarios, reseñas y biografía); su perfil dice "Cuenta
+// baneada", sin biografía, avatar ni actividad; y la cuenta sale de las
+// listas: rankings, Comunidad, el buscador y los amigos de los demás.
+// Se decide al leer, sin tocar nada de lo guardado: si se le levanta el
+// baneo, vuelve todo tal cual. El panel de moderación la sigue viendo.
+//
+// Los dos trozos de SQL son para consultas que tienen la cuenta como "u"
+// (FROM users u, JOIN users u ...), igual que fragmentoAvatarLigero en
+// api/_avatar-ligero.js. Van a la base y no a la memoria de arriba
+// porque cambian qué filas salen, y con ellas los LIMIT y los puestos.
+const TAPADO = "[Este usuario fue baneado y no es posible leer este mensaje]";
+
+function baneadaSQL(sql) {
+  return sql`EXISTS (
+    SELECT 1 FROM sanciones sb
+    WHERE sb.user_id = u.id AND sb.tipo = 'baneo' AND sb.levantada_en IS NULL)`;
+}
+
+function noBaneadaSQL(sql) {
+  return sql`NOT ${baneadaSQL(sql)}`;
+}
+
+// Una fila que trae "autor_baneado" (sacado con baneadaSQL): si lo es,
+// sale con el texto tapado y, si hace falta, algo más cambiado (las
+// estrellas de una reseña).
+function tapar(fila, ademas) {
+  return fila.autor_baneado ? { ...fila, texto: TAPADO, ...ademas } : fila;
+}
+
 module.exports = {
   DISCORD,
   DIAS_DE_SUSPENSION,
   CANAL,
+  TAPADO,
   Rechazo,
   recargar,
   arrancar,
@@ -296,6 +329,11 @@ module.exports = {
   fechaAR,
   respuestaBaneo,
   bloquearSiSuspendida,
+  rolesDe,
+  baneadaEnBase,
+  baneadaSQL,
+  noBaneadaSQL,
+  tapar,
   advertir,
   suspender,
   banear,
