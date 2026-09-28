@@ -34,16 +34,9 @@ const juegos = [
     iframe: "./html/juegos/mariocombat.html"
 },
 
-{
-    id: 30,
-    nombre: "The Binding of Isaac: Wrath of the Lamb - Eternal Edition",
-    imagen: "imagenes/juegos/isaacwratheternal.jpg",
-    categoria: "Acción",
-    estado: "⭐ Nuevo",
-    tipo: "destacado",
-    descripcion: "Explorá mazmorras generadas aleatoriamente, derrotá monstruos, conseguí objetos que mejoran tus habilidades y sobreviví hasta enfrentar a los jefes finales.",
-    iframe: "./html/juegos/isaacwratheternal.html"
-},
+// El 30 (The Binding of Isaac: Wrath of the Lamb) se quitó el 28/09/2026
+// porque no cargaba. Su número no se vuelve a usar: el historial, los
+// favoritos y las reseñas de la base siguen apuntando a él (docs/JUEGOS.md).
 
 {
     id: 39,
