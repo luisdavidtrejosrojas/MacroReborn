@@ -6,6 +6,19 @@
 // ============================================
 
 // ============================================
+// LA CHAPA DEL NIVEL
+// ============================================
+// Ajusta la chapa del nivel de la tarjeta del perfil (perfil.html y
+// usuario.html) para que un nivel de varias cifras se siga leyendo
+// entero: las clases le bajan la letra (css/perfil.css).
+function ajustarChapaNivel(elemento, nivel){
+  if(!elemento) return;
+  const cantidadDigitos = String(Number(nivel) || nivel || 1).replace(/\D/g, "").length;
+  elemento.classList.toggle("nivel-largo", cantidadDigitos >= 3);
+  elemento.classList.toggle("nivel-muy-largo", cantidadDigitos >= 5);
+}
+
+// ============================================
 // ESCAPAR TEXTO ANTES DE METERLO EN HTML
 // ============================================
 // Un solo sitio con la versión correcta, disponible en las 28 páginas

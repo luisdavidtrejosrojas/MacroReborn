@@ -570,3 +570,34 @@ html[data-tema="claro"] .config-bloque-personalizacion {
     width: 100% !important;
   }
 }
+
+/* ======================================================================
+   EL ESTADO DEBAJO DEL AVATAR, EN EL TEMA CLARO
+   ----------------------------------------------------------------------
+   Del zip "Corazones": el Online/Offline va debajo de la tarjeta, junto
+   a las insignias (perfil.html, .perfil-meta-avatar). El zip "per" se
+   hizo sobre una copia anterior de esta hoja y no lo traia: sin esto, en
+   el tema claro la pastilla sale oscura y el texto casi no se lee.
+   ====================================================================== */
+
+html[data-tema="claro"] .perfil-meta-avatar {
+  gap: 5px !important;
+  margin-top: 2px !important;
+}
+
+html[data-tema="claro"] .perfil-estado-online {
+  min-height: 22px !important;
+  padding: 4px 8px !important;
+  border-radius: 2px !important;
+  border: 1px solid #2c3e50 !important;
+  background: #626f7c !important;
+  color: #fff !important;
+  font: bold 10px Arial, Helvetica, sans-serif !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html[data-tema="claro"] .perfil-estado-online.offline {
+  color: #fff !important;
+  background: #7d8790 !important;
+}

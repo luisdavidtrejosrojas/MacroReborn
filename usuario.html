@@ -88,7 +88,6 @@
 
         <div class="tarjeta-avatar-chapas">
           <span id="nivel" class="nivel tarjeta-chapa-nivel">⭐ Nivel 1</span>
-          <span id="estado" class="estado tarjeta-chapa-estado">🟢 En línea</span>
         </div>
 
         <div class="avatar" id="avatarUsuario">
@@ -96,12 +95,15 @@
         </div>
 
         <div class="tarjeta-avatar-pie">
-          <span class="tarjeta-avatar-nombre" id="tarjetaAvatarNombre">Usuario</span>
+          <span id="tarjetaAvatarNombre" class="tarjeta-avatar-nombre">Usuario</span>
         </div>
 
       </div>
 
-      <div class="insignias-usuario" id="insigniasPerfil"></div>
+      <div class="perfil-meta-avatar" id="perfilMetaAvatar">
+        <span id="estado" class="estado perfil-estado-online">Online</span>
+        <div class="insignias-usuario" id="insigniasPerfil"></div>
+      </div>
 
       <div class="tarjeta-stats">
         <h3 class="tarjeta-stats-titulo">Estadísticas de <span id="statsNombreUsuario">Usuario</span></h3>
@@ -144,7 +146,7 @@
         <button class="tab" data-tab="comentarios">💬 Comentarios</button>
       </nav>
 
-      <div class="perfil-datos-cabecera">
+      <div class="perfil-datos-cabecera perfil-datos-cabecera-oculta" aria-hidden="true">
         <h1 id="nombreUsuario">Usuario</h1>
       </div>
 

@@ -74,11 +74,16 @@
       if (nombre && nombre !== "Usuario") migasNombre.textContent = nombre.toUpperCase();
     }
 
-    const estadoEl = document.querySelector(".tarjeta-chapa-estado");
+    // El estado ahora vive debajo del avatar, junto a las insignias.
+    // No se antepone el nombre del usuario y conserva exactamente la
+    // etiqueta "Online" / "Offline".
+    const estadoEl = document.getElementById("estadoOnlinePerfil") || document.getElementById("estado");
     if (estadoEl) {
       const texto = estadoEl.textContent.trim().toLowerCase();
-      const online = texto.includes("en línea") || texto.includes("online") || texto.includes("🟢");
-      estadoEl.textContent = online ? "ONLINE" : "OFFLINE";
+      const online = texto.includes("online") || texto.includes("en línea") || texto.includes("🟢");
+      estadoEl.textContent = online ? "Online" : "Offline";
+      estadoEl.classList.toggle("online", online);
+      estadoEl.classList.toggle("offline", !online);
     }
   }
 

@@ -2845,3 +2845,102 @@ html[data-tema="claro"] .contenido-tab select {
   color: var(--accent);
   font-weight: 600;
 }
+
+
+/* =============================================================
+   TARJETA DE AVATAR — nivel + Online + nombre
+   El nivel queda arriba, Online debajo del avatar junto a las
+   insignias y el pie de la tarjeta muestra únicamente el nombre.
+   ============================================================= */
+
+.tarjeta-avatar-chapas {
+  justify-content: flex-start;
+}
+
+.tarjeta-chapa-nivel.nivel {
+  width: auto;
+  min-width: 0;
+  max-width: calc(100% - 14px);
+}
+
+.tarjeta-avatar-pie {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+}
+
+.tarjeta-avatar-nombre {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0,0,0,.45);
+}
+
+.perfil-datos-cabecera-oculta {
+  display: none !important;
+}
+
+.perfil-meta-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 2px 0 0;
+}
+
+.perfil-meta-avatar .insignias-usuario {
+  margin: 0;
+}
+
+.perfil-estado-online {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.25);
+  background: rgba(10,15,28,.78);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.perfil-estado-online.offline {
+  color: #a8b3c2;
+}
+
+.tarjeta-chapa-nivel.nivel.nivel-largo {
+  font-size: 10px;
+  padding-inline: 9px;
+}
+
+.tarjeta-chapa-nivel.nivel.nivel-muy-largo {
+  font-size: 9px;
+  padding-inline: 8px;
+}
+
+@media (max-width: 480px) {
+  .tarjeta-avatar-nombre {
+    font-size: 16px;
+    padding-inline: 8px;
+    box-sizing: border-box;
+  }
+
+  .perfil-estado-online {
+    font-size: 10px;
+    padding-inline: 8px;
+  }
+}

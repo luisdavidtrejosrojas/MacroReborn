@@ -95,7 +95,7 @@ const usuario={
 
   nombre: datosUsuario.nombre,
 
-  estado:"🟢 En línea",
+  estado:"Online",
 
   nivel: Number(datosUsuario.nivel) || 1,
 
@@ -146,8 +146,14 @@ if(bienvenidaPerfil){
   bienvenidaPerfil.textContent = "Bienvenido al perfil de " + usuario.nombre + ".";
 }
 
-document.querySelector(".estado").textContent=usuario.nombre+" · "+usuario.estado;
+document.querySelector(".estado").textContent=usuario.estado;
 document.querySelector(".nivel").textContent="⭐ Nivel "+usuario.nivel;
+
+// Ajuste visual: los niveles largos reducen un poco la tipografía para
+// que el número siga siendo completamente visible dentro de la chapa.
+if (typeof ajustarChapaNivel === "function") {
+  ajustarChapaNivel(document.querySelector(".nivel"), usuario.nivel);
+}
 document.getElementById("biografia").textContent=usuario.biografia;
 document.getElementById("xp").textContent="⚡ "+usuario.xp+" XP";
 
@@ -260,9 +266,14 @@ function actualizarPerfilDesdeSesion(detalle){
   const nombreEl = document.getElementById("nombreUsuario");
   if(nombreEl) nombreEl.textContent = nombre;
   const estadoEl = document.querySelector(".estado");
-  if(estadoEl) estadoEl.textContent = nombre + " · " + usuario.estado;
+  if(estadoEl) estadoEl.textContent = usuario.estado;
   const nivelEl = document.querySelector(".nivel");
-  if(nivelEl) nivelEl.textContent = "⭐ Nivel " + nivel;
+  if(nivelEl) {
+    nivelEl.textContent = "⭐ Nivel " + nivel;
+    if (typeof ajustarChapaNivel === "function") {
+      ajustarChapaNivel(nivelEl, nivel);
+    }
+  }
   const bioEl = document.getElementById("biografia");
   if(bioEl) bioEl.textContent = usuario.biografia;
   const xpEl = document.getElementById("xp");

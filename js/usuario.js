@@ -205,11 +205,13 @@ if (!usuario) {
   // página.
   function pintarEstadoYUltimaConexion(){
 
-    document.getElementById("estado").textContent =
-      usuario.nombre + " · " +
-      ((typeof usuarioEstaConectado === "function" && usuarioEstaConectado(usuario))
-        ? "🟢 En línea"
-        : "⚪ Desconectado");
+    const online = (typeof usuarioEstaConectado === "function" && usuarioEstaConectado(usuario));
+    const estadoEl = document.getElementById("estado");
+    if(estadoEl){
+      estadoEl.textContent = online ? "Online" : "Offline";
+      estadoEl.classList.toggle("online", online);
+      estadoEl.classList.toggle("offline", !online);
+    }
 
     const textoUltimaConexion = typeof tiempoRelativo === "function"
       ? tiempoRelativo(usuario.last_login, "Nunca")
@@ -220,7 +222,14 @@ if (!usuario) {
   }
 
   pintarEstadoYUltimaConexion();
-  document.getElementById("nivel").textContent = "⭐ Nivel " + (usuario.nivel || 1);
+  const nivelEl = document.getElementById("nivel");
+  if(nivelEl){
+    const nivelActual = usuario.nivel || 1;
+    nivelEl.textContent = "⭐ Nivel " + nivelActual;
+    if (typeof ajustarChapaNivel === "function") {
+      ajustarChapaNivel(nivelEl, nivelActual);
+    }
+  }
   document.getElementById("biografia").textContent = usuario.biografia || "Todavía no escribió una biografía.";
   document.getElementById("xp").textContent = (usuario.xp || 0) + " XP";
 
