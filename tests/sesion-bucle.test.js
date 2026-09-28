@@ -22,7 +22,9 @@
 //      `refreshPromise && ahora - lastRefreshAt < 5000`, y refreshPromise
 //      vale null en cuanto un refresco termina. O sea que no frenaba.
 //
-// Estos tests cubren las dos.
+// Estos tests cubren la segunda. La primera se fue con su archivo: el
+// 28/09/2026 se quitó del perfil el bloque "Identidad gamer", y con él
+// js/perfil-identidad.js.
 //
 // Correr:  npm test
 
@@ -34,7 +36,6 @@ const vm = require("node:vm");
 
 const RAIZ = path.join(__dirname, "..");
 const FUENTE_SESION = fs.readFileSync(path.join(RAIZ, "js", "session.js"), "utf8");
-const FUENTE_IDENTIDAD = fs.readFileSync(path.join(RAIZ, "js", "perfil-identidad.js"), "utf8");
 
 const USUARIO = { username: "gurime", nombre: "gurime", level: 3, nivel: 3 };
 
@@ -135,29 +136,5 @@ describe("si el servidor falla, tampoco se insiste sin parar", () => {
     await sesion.refresh();
 
     assert.equal(peticiones.length, 1);
-  });
-});
-
-describe("el perfil no pide la sesión al enterarse de que la sesión cambió", () => {
-  // Se lee el fuente porque el bucle es una propiedad de cómo está
-  // escrito el oyente, no de lo que devuelve ninguna función.
-  test("el oyente de macro:session-change no pide refreshSession", () => {
-    const i = FUENTE_IDENTIDAD.indexOf("'macro:session-change'");
-    assert.ok(i !== -1, "no se encontró el oyente en js/perfil-identidad.js");
-
-    const linea = FUENTE_IDENTIDAD.slice(i, FUENTE_IDENTIDAD.indexOf("\n", i));
-
-    assert.ok(!/refreshSession/.test(linea),
-      "pedir la sesión al recibir el evento que produce la propia sesión " +
-      "vuelve a abrir el bucle: " + linea.trim());
-  });
-
-  test("pero sí repinta las listas cuando la sesión cambia de verdad", () => {
-    const i = FUENTE_IDENTIDAD.indexOf("'macro:session-change'");
-    const linea = FUENTE_IDENTIDAD.slice(i, FUENTE_IDENTIDAD.indexOf("\n", i));
-
-    assert.ok(/programarRefresco/.test(linea),
-      "si la sesión cambia desde otra pestaña, las listas tienen que " +
-      "repintarse: " + linea.trim());
   });
 });

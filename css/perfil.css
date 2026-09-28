@@ -2763,35 +2763,6 @@ html[data-tema="claro"] .contenido-tab select {
   color: #333;
 }
 
-/* Evita que los módulos modernos de identidad vuelvan a teñir el perfil
-   clásico cuando estamos en modo claro. */
-html[data-tema="claro"] .mr-identidad-hero,
-html[data-tema="claro"] .mr-identidad-panel,
-html[data-tema="claro"] .mr-identidad-stat {
-  border-radius: 2px;
-  box-shadow: none;
-  background: #fff;
-  border-color: var(--mj-border);
-}
-
-html[data-tema="claro"] .mr-identidad-hero {
-  background: var(--mj-blue-pale);
-}
-
-html[data-tema="claro"] .mr-identidad-kicker,
-html[data-tema="claro"] .mr-identidad-stat-copy strong {
-  color: var(--mj-blue-dark);
-}
-
-html[data-tema="claro"] .mr-identidad-hero p,
-html[data-tema="claro"] .mr-identidad-stat-copy span,
-html[data-tema="claro"] .mr-identidad-stat-copy small,
-html[data-tema="claro"] .mr-identidad-panel-title small,
-html[data-tema="claro"] .mr-identidad-empty,
-html[data-tema="claro"] .mr-identidad-loading {
-  color: #666;
-}
-
 /* Responsive: conservar la estética en pantallas chicas */
 @media (max-width: 900px) {
   html[data-tema="claro"] .perfil-cuerpo {

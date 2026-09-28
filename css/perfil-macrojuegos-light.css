@@ -267,9 +267,7 @@ html[data-tema="claro"] .tarjeta-avatar-nombre {
 }
 
 /* Insignias modernas: no pertenecen a la referencia clásica. */
-html[data-tema="claro"] .insignias-usuario,
-html[data-tema="claro"] #mrIdentidadHub,
-html[data-tema="claro"] .mr-identidad-hub {
+html[data-tema="claro"] .insignias-usuario {
   display: none !important;
 }
 
