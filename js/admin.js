@@ -83,44 +83,102 @@
 
 
   // ==============================
-  // ADVERTIR USUARIO (administrador y moderador)
+  // ADVERTIR, SUSPENDER, BANEAR Y LEVANTAR
   // ==============================
-  // Manda una notificación directa al usuario (POST a
-  // /api/content?action=notifications, sin depender de que
-  // js/notificaciones.js esté cargado en esta página) y registra la
-  // acción en el historial de moderación. Pide el motivo con
-  // "prompt", igual que ya hace el sitio para reportar comentarios
-  // (js/perfil.js).
+  // Lo decide y lo apunta en el historial el servidor
+  // (api/_sanciones.js, desde el 28/09/2026): aquí solo se pregunta el
+  // motivo y la duración y se dice cómo fue. Antes la advertencia era un
+  // POST de notificación que el servidor rechazaba, y suspender, una marca
+  // que nadie miraba; el panel anunciaba las dos como hechas.
+  //
+  // Advierten y suspenden moderadores y administradores; banean y levantan
+  // baneos solo los administradores. A un administrador no se le sanciona.
 
-  async function advertirUsuario(nombre){
-
-    const mensaje = prompt(`¿Por qué advertís a ${nombre}? Este texto se le va a mostrar como notificación.`);
-    if(mensaje === null) return false; // canceló el prompt
-
-    const motivo = mensaje.trim() || "No especificado";
-
-    fetch("/api/content?action=notifications", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: nombre,
-        titulo: "⚠️ Advertencia de la moderación",
-        mensaje: motivo
-      })
-    }).catch(error=>{
-      console.warn("MacroReborn: no se pudo enviar la notificación de advertencia.", error);
-    });
-
-    await registrarAccionModeracion({
-      accion: "advertir_usuario",
-      usuarioAfectado: nombre,
-      motivo: motivo
-    });
-
-    alert(`Advertencia enviada a ${nombre}.`);
-    return true;
-
+  // El motivo es obligatorio: es lo que va a leer esa persona. null si se
+  // cancela.
+  function pedirMotivo(pregunta){
+    for(;;){
+      const texto = prompt(pregunta);
+      if(texto === null) return null;
+      if(texto.trim()) return texto.trim();
+      alert("El motivo es obligatorio: es lo que va a leer esa persona.");
+    }
   }
+
+  // Cuánto dura la suspensión: 1, 3, 7 o 30 días. null si se cancela.
+  function pedirDuracion(nombre){
+    return new Promise(resolve => {
+      if(!window.MRModal){
+        const dias = Number(prompt(`¿Cuántos días suspendés a ${nombre}? 1, 3, 7 o 30`));
+        resolve([1, 3, 7, 30].includes(dias) ? dias : null);
+        return;
+      }
+      MRModal.show({
+        icon: "🚫",
+        title: `¿Cuánto tiempo suspendés a ${nombre}?`,
+        message: "Mientras dure puede entrar, jugar y mirar, pero no escribir. Se levanta sola al acabar.",
+        actions: [
+          { text: "Cancelar", onClick: () => resolve(null) },
+          { text: "1 día", onClick: () => resolve(1) },
+          { text: "3 días", onClick: () => resolve(3) },
+          { text: "7 días", onClick: () => resolve(7) },
+          { text: "30 días", primary: true, onClick: () => resolve(30) }
+        ]
+      });
+    });
+  }
+
+  // true si se hizo. Si el servidor dice que no, se cuenta por qué.
+  async function accionModeracion(tipo, nombre){
+    let resultado;
+    if(tipo === "advertir"){
+      const motivo = pedirMotivo(`¿Por qué advertís a ${nombre}? Le va a llegar como notificación.`);
+      if(motivo === null) return false;
+      resultado = await advertirCuenta(nombre, motivo);
+    }else if(tipo === "suspender"){
+      const dias = await pedirDuracion(nombre);
+      if(!dias) return false;
+      const motivo = pedirMotivo(`¿Por qué suspendés a ${nombre}? Lo va a leer.`);
+      if(motivo === null) return false;
+      resultado = await suspenderUsuario(nombre, motivo, dias);
+    }else if(tipo === "banear"){
+      if(!confirm(`¿Banear a ${nombre}? No va a poder entrar más, y su sesión se corta ahora mismo.`)) return false;
+      const motivo = pedirMotivo(`¿Por qué baneás a ${nombre}? Lo va a leer al intentar entrar.`);
+      if(motivo === null) return false;
+      resultado = await banearUsuario(nombre, motivo);
+    }else if(tipo === "levantar"){
+      if(!confirm(`¿Levantarle la sanción a ${nombre}?`)) return false;
+      resultado = await reactivarUsuario(nombre);
+    }else{
+      return false;
+    }
+    if(!resultado || !resultado.success){
+      alert("No se pudo: " + ((resultado && resultado.error) || "el servidor no contestó") + ".");
+      return false;
+    }
+    return true;
+  }
+
+  // Los botones de sanción de una cuenta. A un administrador no se le
+  // sanciona, y a uno mismo tampoco: no salen.
+  function botonesSancion(nombre, estado){
+    if(nombre === activoAdmin.nombre) return "";
+    if(typeof obtenerInsignias === "function" && obtenerInsignias(nombre).includes(ROLES.ADMINISTRADOR)){
+      return `<span class="chip-estado chip-activo">👑 Administrador: no se sanciona</span>`;
+    }
+    const n = MRTexto.escapar(nombre);
+    const botones = [`<button class="btn-moderar" data-accion="advertir" data-usuario="${n}">⚠️ Advertir</button>`];
+    if(estado && estado.baneado){
+      if(esAdmin) botones.push(`<button class="btn-moderar" data-accion="levantar" data-usuario="${n}">✅ Levantar baneo</button>`);
+    }else{
+      botones.push(estado && estado.suspendido
+        ? `<button class="btn-moderar" data-accion="levantar" data-usuario="${n}">✅ Levantar suspensión</button>`
+        : `<button class="btn-moderar" data-accion="suspender" data-usuario="${n}">🚫 Suspender</button>`);
+      if(esAdmin) botones.push(`<button class="btn-moderar" data-accion="banear" data-usuario="${n}">⛔ Banear</button>`);
+    }
+    return botones.join("");
+  }
+
 
 
   // ==============================
@@ -137,9 +195,13 @@
   if(esAdmin){
 
     function chipEstadoCuenta(usuario){
-      return usuario.suspendido
-        ? `<span class="chip-estado chip-suspendido">🚫 Suspendido</span>`
-        : `<span class="chip-estado chip-activo">🟢 Activo</span>`;
+      if(usuario.baneado) return `<span class="chip-estado chip-suspendido">⛔ Baneado</span>`;
+      if(usuario.suspendido){
+        const hasta = usuario.suspendido_hasta && typeof fechaSuspensionAR === "function"
+          ? " hasta el " + fechaSuspensionAR(usuario.suspendido_hasta) : "";
+        return `<span class="chip-estado chip-suspendido">🚫 Suspendido${MRTexto.escapar(hasta)}</span>`;
+      }
+      return `<span class="chip-estado chip-activo">🟢 Activo</span>`;
     }
 
     // Roles (administrador / moderador) van marcados con data-rol="1"
@@ -229,11 +291,7 @@
             </div>
 
             <div class="admin-tarjeta-acciones">
-              <button class="btn-advertir" data-usuario="${MRTexto.escapar(usuario.username)}" ${esUnoMismo ? "disabled title=\"No podés advertirte a vos mismo\"" : ""}>⚠️ Advertir usuario</button>
-              ${usuario.suspendido
-                ? `<button class="btn-reactivar" data-usuario="${MRTexto.escapar(usuario.username)}">✅ Reactivar usuario</button>`
-                : `<button class="btn-suspender" data-usuario="${MRTexto.escapar(usuario.username)}" ${esUnoMismo ? "disabled title=\"No podés suspender tu propia cuenta\"" : ""}>🚫 Suspender usuario</button>`
-              }
+              ${botonesSancion(usuario.username, usuario)}
             </div>
 
           </div>
@@ -278,44 +336,10 @@
         });
       });
 
-      // EVENTOS: advertir
-      contenedor.querySelectorAll(".btn-advertir").forEach(btn=>{
+      // EVENTOS: advertir, suspender, banear y levantar
+      contenedor.querySelectorAll(".btn-moderar").forEach(btn=>{
         btn.addEventListener("click", async ()=>{
-          if(btn.disabled) return;
-          if(!(await advertirUsuario(btn.dataset.usuario))) return;
-          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          await renderHistorialModeracion();
-        });
-      });
-
-      // EVENTOS: suspender
-      contenedor.querySelectorAll(".btn-suspender").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          if(btn.disabled) return;
-          const nombre = btn.dataset.usuario;
-          if(!confirm(`¿Suspender a ${nombre}? No podrá comentar, mandar mensajes ni usar la comunidad.`)) return;
-          const motivo = prompt(`¿Por qué suspendés a ${nombre}? (opcional)`) || "";
-          await suspenderUsuario(nombre, motivo);
-          await registrarAccionModeracion({
-            accion: "suspender_usuario",
-            usuarioAfectado: nombre,
-            motivo: motivo
-          });
-          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          await renderEstadisticas();
-          await renderHistorialModeracion();
-        });
-      });
-
-      // EVENTOS: reactivar
-      contenedor.querySelectorAll(".btn-reactivar").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          const nombre = btn.dataset.usuario;
-          await reactivarUsuario(nombre);
-          await registrarAccionModeracion({
-            accion: "reactivar_usuario",
-            usuarioAfectado: nombre
-          });
+          if(!(await accionModeracion(btn.dataset.accion, btn.dataset.usuario))) return;
           await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
           await renderEstadisticas();
           await renderHistorialModeracion();
@@ -573,7 +597,6 @@
     contenedor.innerHTML = pendientes.map(reporte=>{
 
       const autor = mapaUsuarios[reporte.usuario] || null;
-      const autorSuspendido = autor && autor.suspendido;
       const esChat = reporte.origen === "chatGeneral";
       const origen = esChat
         ? "💬 Chat general"
@@ -596,15 +619,7 @@
           <div class="admin-tarjeta-acciones">
             <button class="btn-ignorar-reporte" data-id="${reporte.id}">👁️ Ignorar</button>
             <button class="btn-eliminar-reporte" data-id="${reporte.id}" data-origen="${esChat ? "comentario" : "publicacion"}">🗑️ Eliminar ${esChat ? "comentario" : "publicación"}</button>
-            ${autor
-              ? `
-                <button class="btn-advertir" data-usuario="${MRTexto.escapar(reporte.usuario)}">⚠️ Advertir autor</button>
-                ${autorSuspendido
-                  ? `<button class="btn-reactivar" data-usuario="${MRTexto.escapar(reporte.usuario)}">✅ Reactivar autor</button>`
-                  : `<button class="btn-suspender" data-usuario="${MRTexto.escapar(reporte.usuario)}">🚫 Suspender autor</button>`}
-              `
-              : ""
-            }
+            ${autor ? botonesSancion(reporte.usuario, autor) : ""}
           </div>
 
         </div>
@@ -648,45 +663,9 @@
       });
     });
 
-    contenedor.querySelectorAll(".btn-advertir").forEach(btn=>{
+    contenedor.querySelectorAll(".btn-moderar").forEach(btn=>{
       btn.addEventListener("click", async ()=>{
-        if(!(await advertirUsuario(btn.dataset.usuario))) return;
-        await renderReportesAdmin();
-        if(esAdmin){
-          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          await renderHistorialModeracion();
-        }
-      });
-    });
-
-    contenedor.querySelectorAll(".btn-suspender").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        const nombre = btn.dataset.usuario;
-        if(!confirm(`¿Suspender a ${nombre}? No podrá comentar, mandar mensajes ni usar la comunidad.`)) return;
-        const motivo = prompt(`¿Por qué suspendés a ${nombre}? (opcional)`) || "";
-        await suspenderUsuario(nombre, motivo);
-        await registrarAccionModeracion({
-          accion: "suspender_usuario",
-          usuarioAfectado: nombre,
-          motivo: motivo
-        });
-        await renderReportesAdmin();
-        if(esAdmin){
-          await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
-          await renderEstadisticas();
-          await renderHistorialModeracion();
-        }
-      });
-    });
-
-    contenedor.querySelectorAll(".btn-reactivar").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        const nombre = btn.dataset.usuario;
-        await reactivarUsuario(nombre);
-        await registrarAccionModeracion({
-          accion: "reactivar_usuario",
-          usuarioAfectado: nombre
-        });
+        if(!(await accionModeracion(btn.dataset.accion, btn.dataset.usuario))) return;
         await renderReportesAdmin();
         if(esAdmin){
           await renderUsuariosAdmin(document.getElementById("buscadorUsuariosAdmin").value);
