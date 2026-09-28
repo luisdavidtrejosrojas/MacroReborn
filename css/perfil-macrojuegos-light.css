@@ -1436,3 +1436,17 @@ html[data-tema="claro"] .tarjeta-avatar-medalla {
   transform: scale(.82) !important;
   transform-origin: bottom right !important;
 }
+
+/* El lateral de la tarjeta compacta medía 300 px en una columna de 280:
+   la caja de estadísticas se metía 20 px bajo el panel de la derecha, y
+   se notaba en los perfiles con una biografía larga. Ahora ocupa su
+   columna, como la tarjeta. En el móvil hay una sola columna y no pasa. */
+@media (min-width: 861px) {
+  html .perfil-sidebar,
+  html:not([data-tema="claro"]) .perfil-sidebar,
+  html[data-tema="claro"] .perfil-sidebar {
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+}
