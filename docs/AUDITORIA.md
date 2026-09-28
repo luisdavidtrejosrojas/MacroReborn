@@ -154,6 +154,7 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 81 | 2026-09-25 | Función rota | "Mi día" enseñaba la misión cumplida sin forma de cobrarla: el botón solo estaba en "Progreso", y parecía que no se había validado | `js/mi-dia.js` | 30 min |
 | 82 | 2026-09-25 | Economía | El XP de cada pulso lo decidía el navegador: `cantidad` no tenía tope, y bastaba con pedir 1.000.000 | `api/users.js`, `sumarXp` | 15 min |
 | 83 | 2026-09-25 | Función rota | A los 7 días de iniciar sesión, todo lo que escribe fallaba en silencio (el XP de jugar, el chat, los comentarios) mientras la página seguía enseñando a la persona como conectada. El pase no se renovaba nunca y el navegador no se enteraba del 401. De 150 a 330 escrituras rechazadas al día | `api/_auth.js`, `js/core.js` | medio día |
+| 84 | 2026-09-28 | Función rota | De cada tres misiones cumplidas se cobraba una: para cobrar hay que entrar en "Mi día" o "Progreso", casi nadie entra, nada avisaba de que estaba cumplida, y la diaria se pierde a medianoche. Arreglado con un aviso al cumplirla (nota al pie) | `api/_misiones.js` | medio día |
 
 **Nota al 24 y al 78.** Hechos el 24/09/2026 con la tienda nueva
 (`tienda.html`, ver `docs/TIENDA.md`). El catálogo (`avatarShop`) y la
@@ -266,6 +267,27 @@ recuperar lo que se perdió esos días: los registros no dicen de qué
 cuenta era cada petición rechazada. Lo sujetan
 `tests/sesion-renovar.test.js`, `tests/sesion-navegador.test.js` y
 `tests/login-volver.test.js`.
+
+**Nota al 84.** Visto el 28/09/2026 al revisar, a petición del
+administrador, si las misiones se estaban cumpliendo tras los arreglos
+del 25. Contaban y cobraban bien: los 3 intentos de cobro salieron bien,
+nadie cobró sin cumplir, y la de "Jugá 20 minutos", antes imposible, la
+cumplieron 6 personas el primer día que tocó. Pero de 9 diarias
+cumplidas se cobraron 3, y de 13 semanales, 5. Para cobrar hay que entrar
+en "Mi día" o "Progreso" (el 27 no las abrió nadie con sesión), nada
+avisaba de que la misión estaba cumplida, y la diaria se pierde a las
+00:00 de Argentina.
+
+Se decidió avisar, manteniendo el botón de cobrar: en el momento en que
+alguien cumple la misión de hoy o la de la semana le llega una
+notificación ("¡Misión cumplida! Cobrá +55 XP y 🪙 40 en Mi día antes de
+las 00:00"), a la campana y, por la línea de avisos, como aviso
+emergente aunque esté jugando (`js/realtime.js`). Lo miran el minuto de
+juego (`api/users.js`) y el botón "Jugar" (`api/content.js`), con
+`avisarSiSeCumplen` (`api/_misiones.js`): una sola vez por misión y
+período (`player_mission_avisos`, migración 025), y nunca de lo ya
+cobrado. Queda pendiente decidir si se da margen hasta el día siguiente
+para cobrar la diaria. Lo sujeta `tests/misiones-avisos.test.js`.
 
 ---
 
