@@ -2156,7 +2156,9 @@ async function avatarGallery(req, res) {
 
     // Con la huella de cada diseño y, abajo, el id de su dueño: con eso
     // la galería pide el compuesto de cada ranura en vez de sus prendas.
-    const guardados = await sql`
+    // Los de una cuenta baneada no se enseñan: sus ranuras salen vacías
+    // (api/_sanciones.js).
+    const guardados = await sanciones.baneadaEnBase(sql, userId) ? [] : await sql`
       SELECT id, slot, avatar, avatar_compuesto FROM saved_avatars WHERE user_id = ${userId};
     `;
 
