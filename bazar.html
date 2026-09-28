@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<script src="js/tema.js?v=20260918"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bazar de prendas - Prendas para tu avatar | MacroReborn</title>
+
+<!-- SEO -->
+<meta name="description" content="Bazar de MacroReborn: comprá prendas para tu avatar con las monedas que ganás jugando. Peinados, remeras, fondos, mascotas y mucho más, para los seis personajes.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.macroreborn.com/bazar.html">
+<meta name="theme-color" content="#150a28">
+<link rel="icon" href="imagenes/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="imagenes/logo.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MacroReborn">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Bazar de prendas | MacroReborn">
+<meta property="og:description" content="Comprá prendas para tu avatar con las monedas que ganás jugando: peinados, remeras, fondos, mascotas y mucho más.">
+<meta property="og:url" content="https://www.macroreborn.com/bazar.html">
+<meta property="og:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MacroReborn - Comunidad y catálogo de juegos gratis online">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bazar de prendas | MacroReborn">
+<meta name="twitter:description" content="Comprá prendas para tu avatar con las monedas que ganás jugando: peinados, remeras, fondos, mascotas y mucho más.">
+<meta name="twitter:image" content="https://www.macroreborn.com/imagenes/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/modal.css?v=20260924">
+<link rel="stylesheet" href="css/inicio.css?v=20260918">
+<link rel="stylesheet" href="css/buscador.css?v=20260918">
+    <link rel="stylesheet" href="css/finalizacion.css?v=20260918">
+  <link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="css/theme-canonical.css?v=20260918">
+<link rel="stylesheet" href="css/navbar-macrojuegos.css?v=20260928">
+<!-- El Bazar va el último: su diseño se hizo encima de los otros. -->
+<link rel="stylesheet" href="css/bazar.css?v=20260928">
+</head>
+
+<body class="mr-root bazar-page">
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <img src="imagenes/logo.png" alt="MacroReborn">
+    MacroReborn
+  </a>
+  <a href="comunidad-ranking.html" class="nav-boton-comunidad">Comunidad</a>
+  <div class="nav-links">
+    <a href="explorar.html">🧭 Explorar</a>
+    <a href="mi-dia.html">🔥 Mi día</a>
+    <a href="progreso.html">🎯 Progreso</a>
+    <a href="liga-global.html">🏆 Ligas</a>
+  </div>
+  <div class="nav-categorias">
+    <a href="chat.html">💬 Chat</a>
+    <a href="amigos.html">👥 Amigos</a>
+    <a href="juegos.html">🎮 Juegos</a>
+    <a href="noticias.html">📰 Noticias</a>
+  </div>
+</nav>
+
+<main class="bazar-shell">
+  <section class="bazar-hero">
+    <div>
+      <span class="bazar-kicker">🛍️ ESPACIO EXCLUSIVO</span>
+      <h1>Bazar de prendas</h1>
+      <p>Elegí una prenda, confirmá la compra y listo. Cada pieza que entra al proyecto puede aparecer acá para que la hagas parte de tu avatar.</p>
+    </div>
+    <div class="bazar-saldo">
+      <small>Tu saldo</small>
+      <strong id="bazarSaldo">🪙 0</strong>
+      <span id="bazarSaldoNota" class="bazar-saldo-nota">Cargando…</span>
+      <a href="progreso.html">Ver cómo conseguir más monedas →</a>
+    </div>
+  </section>
+
+  <section class="bazar-como" aria-label="Cómo funciona el Bazar">
+    <article class="bazar-paso">
+      <div class="bazar-paso-num">01</div>
+      <div><strong>Elegí</strong><span>Filtrá por categoría, personaje o nombre.</span></div>
+    </article>
+    <article class="bazar-paso">
+      <div class="bazar-paso-num">02</div>
+      <div><strong>Comprá</strong><span>Confirmá con tus monedas. La compra queda guardada.</span></div>
+    </article>
+    <article class="bazar-paso">
+      <div class="bazar-paso-num">03</div>
+      <div><strong>Equipá</strong><span>Entrá a tu perfil y usala en tu editor de avatar.</span></div>
+    </article>
+  </section>
+
+  <section aria-labelledby="bazarDestacadoTitulo">
+    <div class="bazar-catalogo-head">
+      <div>
+        <h2 id="bazarDestacadoTitulo">✨ La última llegada</h2>
+        <p>La prenda más reciente del proyecto aparece primero para que nadie se la pierda.</p>
+      </div>
+    </div>
+    <div id="bazarDestacado" class="bazar-destacado">
+      <div class="bazar-cargando">Preparando el destacado…</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="bazarCatalogoTitulo">
+    <div class="bazar-catalogo-head">
+      <div>
+        <h2 id="bazarCatalogoTitulo">👕 Todas las prendas</h2>
+        <p>Solo aparecen prendas que están activas y tienen precio de compra.</p>
+      </div>
+      <span id="bazarContador" class="bazar-contador">—</span>
+    </div>
+
+    <div class="bazar-toolbar">
+      <input id="bazarBuscar" class="bazar-input" type="search" placeholder="🔎 Buscar una prenda…" autocomplete="off">
+      <select id="bazarCategoria" class="bazar-select" aria-label="Filtrar por categoría">
+        <option value="">Todas las categorías</option>
+      </select>
+      <select id="bazarModelo" class="bazar-select" aria-label="Filtrar por personaje">
+        <option value="">Todos los personajes</option>
+      </select>
+      <label class="bazar-toggle">
+        <input id="bazarMostrarCompradas" type="checkbox">
+        Mostrar compradas
+      </label>
+    </div>
+
+    <div id="bazarGrid" class="bazar-grid" aria-live="polite"></div>
+
+    <div class="bazar-mas">
+      <button type="button" id="bazarVerMas" class="bazar-ver-mas" hidden>Ver más prendas</button>
+    </div>
+  </section>
+
+  <section class="bazar-ayuda">
+    <strong>💡 Una sola compra, una prenda para siempre</strong>
+    <span>Cuando comprás una prenda, queda vinculada a tu cuenta y se desbloquea en tu guardarropa. El Bazar usa el mismo saldo de monedas que ya funciona en MacroReborn.</span>
+  </section>
+</main>
+
+<div id="bazarToast" class="bazar-toast" role="status" aria-live="polite"></div>
+
+<div id="bazarModalBackdrop" class="bazar-modal-backdrop" aria-hidden="true">
+  <section class="bazar-modal" role="dialog" aria-modal="true" aria-labelledby="bazarModalTitulo">
+    <div class="bazar-modal-top">
+      <div id="bazarModalImagen" class="bazar-modal-img"></div>
+      <div>
+        <h2 id="bazarModalTitulo">Confirmar compra</h2>
+        <p id="bazarModalDescripcion">Prenda</p>
+      </div>
+    </div>
+    <div class="bazar-modal-body">
+      <div id="bazarModalConfirmacion" class="bazar-modal-confirmacion">Preparando…</div>
+      <div class="bazar-modal-acciones">
+        <button id="bazarModalCerrar" class="bazar-modal-cerrar" type="button">Cancelar</button>
+        <button id="bazarModalConfirmar" class="bazar-modal-confirmar" type="button">Confirmar compra</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER (mismo componente que el resto de MacroReborn) -->
+<footer class="pie-footer">
+  <div class="pie-contenido">
+    <div class="pie-marca">
+      <a href="index.html" class="nav-logo">
+        <img src="imagenes/logo.png" alt="MacroReborn">
+        MacroReborn
+      </a>
+      <p>Una comunidad de juegos con nostalgia de portal clásico y alma moderna.</p>
+      <p class="estado-servidor"><span class="punto"></span> Servidor en línea</p>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Plataforma</h4>
+      <a href="juegos.html">Juegos</a>
+      <a href="comunidad-ranking.html">Ranking</a>
+      <a href="comunidad-ranking.html">Comunidad</a>
+      <a href="noticias.html">Noticias</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Cuenta</h4>
+      <a href="login.html">Iniciar sesión</a>
+      <a href="registro.html">Registrarse</a>
+      <a href="perfil.html">Mi perfil</a>
+      <a href="notificaciones.html">Notificaciones</a>
+    </div>
+
+    <div class="pie-columna">
+      <h4>Social</h4>
+      <a href="amigos.html">Amigos</a>
+      <a href="chat.html">Chat</a>
+    </div>
+    <div class="pie-columna">
+      <h4>Legal</h4>
+      <a href="terminos.html">Términos de uso</a>
+      <a href="mailto:macroreborn0@gmail.com">Retirada de contenido</a>
+    </div>
+
+  </div>
+
+  <div class="pie-inferior">
+    <span>© 2026 MacroReborn. Todos los derechos reservados.</span>
+    <span>Hecho con 💛 para la vieja escuela de los juegos web.</span>
+  </div>
+</footer>
+
+<script defer src="js/core.js?v=20260928"></script>
+<script defer src="js/api-client.js?v=20260918"></script>
+<script defer src="js/session.js?v=20260918"></script>
+<script defer src="js/app-shell.js?v=20260918"></script>
+
+<script defer src="js/modal.js?v=20260924"></script>
+<script defer src="js/motor/permisos.js?v=20260918"></script>
+<script defer src="js/bazar.js?v=20260928"></script>
+<script defer src="js/notificaciones.js?v=20260918"></script>
+<script defer src="js/avisos.js?v=20260921"></script>
+<script defer src="js/realtime.js?v=20260918"></script>
+<script defer src="js/navbar.js?v=20260928"></script>
+<script defer src="js/datos-juegos.js?v=20260918"></script>
+<script defer src="js/buscador.js?v=20260918"></script>
+<script defer src="js/nav-toggle.js?v=20260918"></script>
+
+</body>
+</html>
