@@ -1629,10 +1629,10 @@ async function gameHistory(req, res) {
       return res.status(400).json({ success: false, error: "Datos incompletos" });
     }
 
-    const userId = await getUserId(username);
-    if (!userId) {
-      return res.status(404).json({ success: false, error: "Usuario no encontrado" });
-    }
+    // La cuenta la dice la sesión: el handler ya comprobó que username es
+    // el suyo. Buscarla por el nombre, sin mayúsculas, podía dar la otra
+    // de una pareja como jader y Jader (punto 31 de docs/AUDITORIA.md).
+    const userId = Number(req.auth.sub);
 
     const idTexto = String(gameId);
 
