@@ -112,6 +112,9 @@
       .map((r) => {
         const esPropia = usuarioResena && r.usuario === usuarioResena.nombre;
         const fecha = new Date(r.updated_at || r.created_at).toLocaleDateString("es-AR");
+        // La de una cuenta baneada llega tapada y sin estrellas
+        // (api/_sanciones.js): en rojo, sin nada que votar ni responder.
+        const tapada = r.autor_baneado === true;
 
         return `
       <div class="tarjeta-resena${esPropia ? " resena-propia" : ""}" data-usuario="${escaparHTML(r.usuario)}">
@@ -119,7 +122,7 @@
           ${avatarHTMLResena(r.usuario)}
           <div class="resena-datos">
             <b class="resena-nombre">${escaparHTML(r.usuario)}</b>
-            <div class="resena-estrellas">${estrellasHTML(r.calificacion)}</div>
+            ${tapada ? "" : `<div class="resena-estrellas">${estrellasHTML(r.calificacion)}</div>`}
             <span class="resena-fecha">${escaparHTML(fecha)}${r.editado ? " · editada" : ""}</span>
           </div>
           ${esPropia ? `
@@ -128,9 +131,9 @@
             <button type="button" class="boton-borrar-resena">🗑️ Eliminar</button>
           </div>` : ""}
         </div>
-        <p class="resena-texto">${escaparHTML(r.texto)}</p>
-        ${typeof botonLikeHTML === "function" ? botonLikeHTML("resena", escaparHTML(idJuegoResena + ":" + r.usuario), usuarioResena ? usuarioResena.nombre : null) : ""}
-        ${!esPropia ? `
+        <p class="resena-texto">${MRTexto.escrito(r)}</p>
+        ${!tapada && typeof botonLikeHTML === "function" ? botonLikeHTML("resena", escaparHTML(idJuegoResena + ":" + r.usuario), usuarioResena ? usuarioResena.nombre : null) : ""}
+        ${!esPropia && !tapada ? `
         <button type="button" class="boton-responder-resena" data-usuario="${escaparHTML(r.usuario)}"
           style="margin-top:8px;background:none;border:1px solid rgba(148,163,184,0.35);color:#93c5fd;border-radius:8px;padding:4px 12px;font-size:12.5px;cursor:pointer;">
           Responder
