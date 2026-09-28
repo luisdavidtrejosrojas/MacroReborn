@@ -80,13 +80,13 @@ async function rellenar(sql, nombreTabla, filas) {
 
     // Con el nombre fijo ya no vale saltarse lo que existe: el archivo
     // de ayer puede seguir ahi con la ropa de ayer. Se comprueba solo
-    // que la huella coincida Y que el archivo este, y aun asi se
-    // rehace si falta cualquiera de los dos tamanos.
+    // que la huella coincida Y que los archivos esten, y aun asi se
+    // rehace si falta cualquiera de los dos tamanos o, en el avatar
+    // puesto, la foto de perfil (desde el 28/09/2026).
     const destino = { usuarioId: Number(fila.usuario_id) };
     if (fila.ranura !== null && fila.ranura !== undefined) destino.ranura = Number(fila.ranura);
 
-    const yaEsta = fila.avatar_compuesto === receta.huella &&
-      avatarCompuesto.TAMANOS.every(([a, l]) => avatarCompuesto.leer(destino, a, l));
+    const yaEsta = fila.avatar_compuesto === receta.huella && avatarCompuesto.enSitio(destino);
     if (yaEsta) { yaEstaban++; continue; }
 
     if (!APLICAR) { hechos++; continue; }
