@@ -4,11 +4,14 @@ const { avisar, canalNotificaciones } = require('./_avisos');
 
 const sql = obtenerSql();
 
-async function crearNotificacionServidor(username, titulo, mensaje, origenNombre) {
+// opciones.userId: la cuenta, cuando quien llama ya la sabe. Sin él se
+// busca por el nombre, sin mayúsculas, y de dos cuentas como jader y
+// Jader (punto 31 de docs/AUDITORIA.md) podía salir la otra.
+async function crearNotificacionServidor(username, titulo, mensaje, origenNombre, opciones) {
   if (!username || !titulo) return { success: false, error: 'Datos incompletos' };
 
   try {
-    const userId = await getUserId(sql, username);
+    const userId = (opciones && opciones.userId) || await getUserId(sql, username);
     if (!userId) return { success: false, error: 'Usuario no encontrado' };
 
     if (origenNombre && await hayBloqueoEntreUsuarios(sql, origenNombre, username)) {
