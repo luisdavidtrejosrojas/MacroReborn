@@ -83,6 +83,14 @@ Lo que se hizo, archivo por archivo:
   sobre un degradado, como en macrojuegos: la última sección de
   `css/perfil-macrojuegos-light.css`, sujeta por
   `tests/tarjeta-perfil.test.js`.
+- Esa tarjeta solo la tenía "Mi perfil": el zip "per" no tocó
+  `usuario.html`, y el perfil de los demás seguía con la de antes. El
+  mismo día se pidió para todos: `usuario.html` carga la misma hoja, lleva
+  la medalla, y `js/usuario.js` pinta el nivel y la medalla como
+  `js/perfil.js`.
+- El lateral de la tarjeta compacta medía 300 px en una columna de 280, y
+  la caja de estadísticas se metía bajo el panel de la derecha; se notó
+  en perfiles con una biografía larga. Ahora ocupa su columna.
 
 ---
 

@@ -1016,9 +1016,16 @@ Lo que se cuida en `api/_avatar-compuesto.js`, "LA FOTO DE PERFIL":
 arriba, el portal de inicio, el buscador y Explorar; y en Comunidad
 (`js/comunidad-ranking.js`) el podio, el ranking, los recién llegados, la
 moderación, los destacados y la actividad, más la página de actividad de
-la comunidad. En todos esos huecos, que son cuadrados, la foto ocupa el
-hueco entero. El perfil y las tarjetas de amigos siguen enseñando el
-avatar entero, y un PNG de administrador sale como siempre.
+la comunidad. El mismo día, tras una auditoría de la web entera, el
+resto de huecos pequeños: el chat, las reseñas, los comentarios y la
+actividad de los dos perfiles, y las Ligas, que solo enseñaban la
+inicial. En todos esos huecos, cuadrados o redondos de 34 a 55 px, la
+foto ocupa el hueco entero (`tests/miniaturas-foto.test.js`).
+
+Se quedan con el cuerpo entero, a propósito: el avatar grande del
+perfil, las tarjetas de amigos (verticales, de 104 × 160 y 72 × 110), los
+diseños guardados y el Bazar. Y un PNG de administrador sale como
+siempre.
 
 ### Al desplegarla
 
