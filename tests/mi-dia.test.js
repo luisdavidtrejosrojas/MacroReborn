@@ -134,6 +134,34 @@ describe("las misiones se cobran desde aquí", () => {
     p.cerrar();
   });
 
+  // Desde el 28/09/2026 una misión cumplida espera hasta que se cobre
+  // (api/_misiones.js), y el servidor la manda con pendiente: true.
+  test("una cumplida de antes dice de cuándo es y que espera, y se cobra con su fecha", async () => {
+    const p = await montar({ estado: estadoDePrueba({
+      today: { date: "2026-09-28", mission: mision({ periodKey: "2026-09-26", pendiente: true }) },
+      week: { start: "2026-09-28", mission: mision({ key: "weekly_90_minutes", title: "Jugador constante", target: 90, value: 90, periodKey: "2026-09-21", pendiente: true }) }
+    }) });
+    assert.equal(p.$("dailyPeriod").textContent, "Del 26/09 · sin cobrar");
+    assert.equal(p.$("dailyDesc").textContent, "La cumpliste y te espera: al cobrarla aparece la de hoy.");
+    assert.equal(p.$("weeklyPeriod").textContent, "Semana del 21/09 · sin cobrar");
+    assert.equal(p.$("weeklyDesc").textContent, "La cumpliste y te espera: al cobrarla aparece la de esta semana.");
+    assert.equal(p.$("dailyClaim").disabled, false);
+
+    p.$("dailyClaim").click();
+    await p.esperar();
+    const cobro = p.pedidas.find(x => x.url.includes("action=claim"));
+    assert.deepStrictEqual(JSON.parse(cobro.init.body), { missionKey: "daily_5_games", periodKey: "2026-09-26", tipo: "daily" });
+    p.cerrar();
+  });
+
+  test("la de ahora, como siempre: su fecha y lo que pide", async () => {
+    const p = await montar();
+    assert.equal(p.$("dailyPeriod").textContent, "2026-09-25");
+    assert.equal(p.$("dailyDesc").textContent, "Probá 5 juegos distintos hoy.");
+    assert.equal(p.$("weeklyPeriod").textContent, "Desde 2026-09-22");
+    p.cerrar();
+  });
+
   test("si el servidor dice que no, lo cuenta y deja volver a intentarlo", async () => {
     const p = await montar({ cobro: { success: false, error: "Todavía no completaste la misión" } });
     p.$("dailyClaim").click();

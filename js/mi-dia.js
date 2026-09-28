@@ -47,6 +47,11 @@
     b.textContent=m.claimed?'Reclamada ✓':(m.completed?'Reclamar recompensa':'Completá la misión');
   }
 
+  // Una misión cumplida de un día o una semana anterior espera a que se
+  // cobre (api/_misiones.js): se dice de cuándo es y qué pasa al cobrarla.
+  function diaMes(k){const p=String(k||'').split('-');return p.length===3?p[2]+'/'+p[1]:String(k||'');}
+  const ESPERA={daily:'La cumpliste y te espera: al cobrarla aparece la de hoy.',weekly:'La cumpliste y te espera: al cobrarla aparece la de esta semana.'};
+
   async function loadProgress(){
     const d=await json('/api/progreso?action=status');
     ultimo=d;
@@ -55,8 +60,8 @@
     const s=d.streak||{}; const racha=Number(s.current_streak||0);
     $('streakCurrent').textContent=racha+' días'; $('streakBest').textContent='Mejor racha: '+Number(s.best_streak||0);
     $('checkinState').textContent=s.hoy_cuenta?'Hoy ya cuenta ✓':(racha>0?'Jugá hoy para no perderla':'Jugá un minuto para empezarla');
-    const dm=d.today?.mission||{}; $('dailyTitle').textContent=dm.title||'Misión diaria'; $('dailyDesc').textContent=dm.description||''; $('dailyValue').textContent=(dm.value||0)+'/'+(dm.target||0); $('dailyReward').textContent='+'+(dm.xp||0)+' XP · '+money(dm.coins); $('dailyPeriod').textContent=dm.periodKey||''; $('dailyBar').style.width=pct(dm.value,dm.target)+'%';
-    const wm=d.week?.mission||{}; $('weeklyTitle').textContent=wm.title||'Misión semanal'; $('weeklyDesc').textContent=wm.description||''; $('weeklyValue').textContent=(wm.value||0)+'/'+(wm.target||0); $('weeklyReward').textContent='+'+(wm.xp||0)+' XP · '+money(wm.coins); $('weeklyPeriod').textContent=wm.periodKey?'Desde '+wm.periodKey:''; $('weeklyBar').style.width=pct(wm.value,wm.target)+'%';
+    const dm=d.today?.mission||{}; $('dailyTitle').textContent=dm.title||'Misión diaria'; $('dailyDesc').textContent=dm.pendiente?ESPERA.daily:(dm.description||''); $('dailyValue').textContent=(dm.value||0)+'/'+(dm.target||0); $('dailyReward').textContent='+'+(dm.xp||0)+' XP · '+money(dm.coins); $('dailyPeriod').textContent=dm.pendiente?'Del '+diaMes(dm.periodKey)+' · sin cobrar':(dm.periodKey||''); $('dailyBar').style.width=pct(dm.value,dm.target)+'%';
+    const wm=d.week?.mission||{}; $('weeklyTitle').textContent=wm.title||'Misión semanal'; $('weeklyDesc').textContent=wm.pendiente?ESPERA.weekly:(wm.description||''); $('weeklyValue').textContent=(wm.value||0)+'/'+(wm.target||0); $('weeklyReward').textContent='+'+(wm.xp||0)+' XP · '+money(wm.coins); $('weeklyPeriod').textContent=wm.pendiente?'Semana del '+diaMes(wm.periodKey)+' · sin cobrar':(wm.periodKey?'Desde '+wm.periodKey:''); $('weeklyBar').style.width=pct(wm.value,wm.target)+'%';
     const g=d.global||{}; $('globalValue').textContent=Number(g.value||0).toLocaleString('es-ES'); $('globalTarget').textContent='/ '+Number(g.target||0).toLocaleString('es-ES')+' minutos'; $('globalBar').style.width=pct(g.value,g.target)+'%'; $('globalReward').textContent='+'+(g.rewardXp||0)+' XP · '+money(g.rewardCoins); if(g.endsAt){$('globalEnd').textContent='Hasta '+new Date(g.endsAt).toLocaleDateString('es-ES');}
     pintarCobro($('dailyClaim'),dm);
     pintarCobro($('weeklyClaim'),wm);
