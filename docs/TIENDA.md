@@ -6,7 +6,12 @@ prendas en un panel de `comunidad-ranking.html`, que compraban de un
 solo clic y sin preguntar, y el editor del perfil mandaba ahí a comprar
 prendas que casi nunca salían en esas doce.
 
-Ahora tiene página propia, `tienda.html`, con todo el catálogo.
+Ahora tiene página propia con todo el catálogo. Desde el 28/09/2026 es
+el **Bazar** (`bazar.html`): el diseño del zip que mandó otro dev el
+22/09, que se eligió frente a la primera página (`tienda.html`) viendo
+las dos en capturas. `tienda.html` redirige al Bazar con la misma
+dirección, así que `tienda.html?prenda=<valor>` sigue llevando a esa
+prenda. Ver 4.
 
 ---
 
@@ -94,26 +99,41 @@ precio, y 1.560 regalos para 120 personas, de 354 prendas distintas.
   prenda, para ponérsela al momento.
 - `GET ?action=mis-monedas`: solo el saldo, para la barra de navegación.
 
-**La página** (`tienda.html`, `js/tienda.js`, `css/tienda.css`): todo
-sale de una petición y se filtra en el navegador. Por personaje (abre en
-el de cada cual), tipo, texto, "solo lo que puedo comprar" y "ocultar lo
-que ya tengo"; ordenado por lo más nuevo, precio o ventas; de 48 en 48.
-Comprar pregunta antes, con `MRModal` (`js/modal.js`), y después ofrece
-ponérsela. Como lo más nuevo es lo caro del equipo de arte, el resumen
-dice cuántas prendas le alcanzan a cada cual y ofrece ver solo esas.
+**La página** (`bazar.html`, `js/bazar.js`, `css/bazar.css`): todo sale
+de una petición y se filtra en el navegador, por categoría, personaje y
+texto, y "Mostrar compradas". Arriba, "La última llegada", la prenda más
+nueva. Se pinta de 24 en 24, con "Ver más". Comprar pregunta antes, en
+su propio diálogo, y después ofrece ponérsela ("Ponértela ahora").
+
+Del zip del Bazar se tomó el diseño, no el servidor: traía una acción
+nueva, `?action=bazar`, que daba el dibujo suelto de cada prenda por
+`/prendas/<huella>.png`, y esa dirección está cerrada desde el
+24/09/2026 (abajo). El Bazar lee `avatar-shop`, que ya da solo lo
+publicado, con su previsualización. Tampoco se tomó su `?next=` en el
+login: ya existía `?volver=` (`js/login.js`). Al integrarlo se le
+añadió lo que hacía la tienda: la prenda enlazada, "Ponértela", el
+saldo en la barra, el aviso de sesión caducada y el "Ver más" (pintaba
+las 750 de golpe: 300.000 píxeles de alto en el móvil). Y se arregló
+que en el móvil las imágenes se salían de la tarjeta y tapaban el
+nombre.
+
+La primera página (`js/tienda.js`, `css/tienda.css`, del 24/09) se
+borró; está en la historia de Git. Tenía además el orden por precio y
+ventas y el "solo lo que puedo comprar", que el Bazar no trae.
 
 **Los caminos que llevan a ella:**
 
 - La barra de navegación de todas las páginas, detrás de "Juegos"
-  (`js/navbar.js`).
-- `tienda.html?prenda=<valor>` enseña esa prenda y pregunta si
+  (`js/navbar.js`): "🛍️ Bazar".
+- `bazar.html?prenda=<valor>` enseña esa prenda y pregunta si
   comprarla. Ahí mandan el candado del editor del perfil y el
   escaparate de Comunidad.
+- El portal de la portada ("Abrir Bazar", `portal-growth.js`).
 - Tras comprar, `perfil.html?ponerse=<valor>` abre el editor con la
   prenda puesta. Si es de otro personaje, cambia de personaje y lo
   avisa.
 
-**Nunca el dibujo suelto.** La tienda solo enseña previsualizaciones:
+**Nunca el dibujo suelto.** El Bazar solo enseña previsualizaciones:
 la prenda puesta en un maniquí, 96 px, en JPG. El dibujo suelto es el
 arte del equipo y `/prendas/` está cerrado a los demás
 (`docs/AVATARES-SERVIDOR.md`, fase 5).
@@ -177,8 +197,8 @@ journalctl -u macroreborn | grep "\[arte\]"
 | `tests/arte-pagina.test.js`, `tests/taller.test.js` | El precio propuesto al subir y el botón Editar |
 | `tests/tienda-api.test.js` | Catálogo, privacidad, compra, clics dobles y `mis-monedas` |
 | `tests/transaccion.test.js` | `sql.transaccion` en los dos adaptadores |
-| `tests/tienda-pagina.test.js` | La página entera, con la compra y los enlaces |
+| `tests/bazar-pagina.test.js` | La página entera, con la compra, los enlaces y la redirección de `tienda.html` |
 | `tests/editor-tienda.test.js` | El candado del editor y `?ponerse=` |
 | `tests/comunidad-tienda.test.js` | El escaparate de Comunidad |
-| `tests/navbar-tienda.test.js`, `tests/navbar-monedas.test.js` | El enlace y el saldo de la barra |
+| `tests/navbar-bazar.test.js`, `tests/navbar-monedas.test.js` | El enlace y el saldo de la barra |
 | `tests/modal.test.js` | Los botones y la imagen de `MRModal` |
