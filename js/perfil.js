@@ -1684,6 +1684,8 @@ function renderUltimosComentariosInicio(){
   // simplemente los primeros 3, sin necesidad de invertir nada.
   const ultimos = lista.slice(0, 3);
 
+  // El de una cuenta baneada llega tapado (api/_sanciones.js): en rojo y
+  // sin votos.
   contenedor.innerHTML = ultimos.map((c)=>{
     return `
     <div class="comentario">
@@ -1692,8 +1694,8 @@ function renderUltimosComentariosInicio(){
         <b>${escaparHTML(c.usuario)}</b>
       </div>
       ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(c.usuario, true) : ""}
-      <p>${escaparHTML(c.texto)}</p>
-      ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
+      <p>${MRTexto.escrito(c)}</p>
+      ${!c.autor_baneado && typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
     </div>
   `;
   }).join("");
@@ -1788,6 +1790,9 @@ async function renderComentarios(){
     contenedor.innerHTML = lista.map((c)=>{
       const esMio = miNombreComentarios && c.usuario === miNombreComentarios;
       const puedeEliminar = esMio || esDueñoDelPerfil;
+      // El de una cuenta baneada llega tapado (api/_sanciones.js): en
+      // rojo, y solo se puede eliminar.
+      const tapado = c.autor_baneado === true;
       return `
       <div class="comentario">
         <div class="usuario-comentario">
@@ -1795,11 +1800,11 @@ async function renderComentarios(){
           <b>${escaparHTML(c.usuario)}</b>
         </div>
         ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(c.usuario, true) : ""}
-        <p>${escaparHTML(c.texto)}</p>
-        ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
-        <button class="boton-responder" data-usuario="${escaparHTML(c.usuario)}">Responder</button>
+        <p>${MRTexto.escrito(c)}</p>
+        ${!tapado && typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, datosUsuario.nombre) : ""}
+        ${tapado ? "" : `<button class="boton-responder" data-usuario="${escaparHTML(c.usuario)}">Responder</button>`}
         ${puedeEliminar ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
-        <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
+        ${tapado ? "" : `<button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>`}
       </div>`;
     }).join("");
   }

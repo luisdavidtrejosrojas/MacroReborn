@@ -720,6 +720,9 @@ function escaparHTML(texto) {
     contenedor.innerHTML = lista.map((c) => {
       const esMio = activo && c.usuario === activo.nombre;
       const puedeEliminar = esMio || esDueñoDelPerfil;
+      // El de una cuenta baneada llega tapado (api/_sanciones.js): en
+      // rojo, y solo se puede eliminar.
+      const tapado = c.autor_baneado === true;
       return `
       <div class="comentario">
         <div class="usuario-comentario" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
@@ -727,11 +730,11 @@ function escaparHTML(texto) {
           <b style="color:#f0b429;">${escaparHTML(c.usuario)}</b>
         </div>
         ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(c.usuario, true) : ""}
-        <p style="color:#cbd5e1;margin:0 0 10px;">${escaparHTML(c.texto)}</p>
-        ${typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, activo ? activo.nombre : null) : ""}
-        <button class="boton-responder" data-usuario="${escaparHTML(c.usuario)}">Responder</button>
+        <p style="color:#cbd5e1;margin:0 0 10px;">${MRTexto.escrito(c)}</p>
+        ${!tapado && typeof botonLikeHTML === "function" ? botonLikeHTML("comment", c.id, activo ? activo.nombre : null) : ""}
+        ${tapado ? "" : `<button class="boton-responder" data-usuario="${escaparHTML(c.usuario)}">Responder</button>`}
         ${puedeEliminar ? `<button class="boton-eliminar" data-id="${c.id}">🗑️ Eliminar</button>` : ""}
-        <button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>
+        ${tapado ? "" : `<button class="boton-reportar" data-id="${c.id}">🚩 Reportar</button>`}
       </div>
     `;
     }).join("");
