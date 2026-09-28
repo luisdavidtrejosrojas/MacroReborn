@@ -87,11 +87,19 @@ async function friends(req, res) {
     //
     // El id y la huella, para pedir el avatar ya compuesto en vez de
     // dibujarlo prenda por prenda: ver imagenDeAvatar() en js/core.js.
+    //
+    // Una cuenta baneada no sale en las listas de los demás, ni enseña la
+    // suya (api/_sanciones.js). No se borra nada: si se le levanta el
+    // baneo, vuelven sus amistades y sus solicitudes.
+    if (await sanciones.baneadaEnBase(sql, userId)) {
+      return res.status(200).json({ success: true, amigos: [], solicitudesEntrantes: [], solicitudesSalientes: [] });
+    }
+
     const amigos = await sql`
       SELECT u.id, u.username, u.level, u.xp, u.avatar_compuesto, ${fragmentoAvatarLigero(sql)}
       FROM friendships f
       JOIN users u ON u.id = f.friend_id
-      WHERE f.user_id = ${userId}
+      WHERE f.user_id = ${userId} AND ${sanciones.noBaneadaSQL(sql)}
       ORDER BY u.username ASC;
     `;
 
@@ -99,7 +107,7 @@ async function friends(req, res) {
       SELECT fr.id, u.username AS de, fr.created_at
       FROM friend_requests fr
       JOIN users u ON u.id = fr.from_user_id
-      WHERE fr.to_user_id = ${userId} AND fr.status = 'pendiente'
+      WHERE fr.to_user_id = ${userId} AND fr.status = 'pendiente' AND ${sanciones.noBaneadaSQL(sql)}
       ORDER BY fr.created_at DESC;
     `;
 
@@ -107,7 +115,7 @@ async function friends(req, res) {
       SELECT fr.id, u.username AS para, fr.created_at
       FROM friend_requests fr
       JOIN users u ON u.id = fr.to_user_id
-      WHERE fr.from_user_id = ${userId} AND fr.status = 'pendiente'
+      WHERE fr.from_user_id = ${userId} AND fr.status = 'pendiente' AND ${sanciones.noBaneadaSQL(sql)}
       ORDER BY fr.created_at DESC;
     `;
 
@@ -264,11 +272,12 @@ async function favoriteFriends(req, res) {
       return res.status(404).json({ success: false, error: "Usuario no encontrado" });
     }
 
+    // Sin las cuentas baneadas, igual que la lista de amigos (arriba).
     const filas = await sql`
       SELECT u.username, ff.created_at
       FROM friend_favorites ff
       JOIN users u ON u.id = ff.friend_id
-      WHERE ff.user_id = ${userId}
+      WHERE ff.user_id = ${userId} AND ${sanciones.noBaneadaSQL(sql)}
       ORDER BY ff.created_at ASC;
     `;
 
