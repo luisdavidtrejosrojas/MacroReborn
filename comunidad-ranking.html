@@ -120,11 +120,25 @@
 
       <div id="podioTop6" class="rk-podio6"></div>
 
-      <div class="rk-resto-paginado">
-        <button type="button" id="rkFlechaArriba" class="rk-flecha" aria-label="Puestos anteriores">▲</button>
-        <div id="listaRankingResto" class="rk-lista-resto"></div>
-        <button type="button" id="rkFlechaAbajo" class="rk-flecha" aria-label="Puestos siguientes">▼</button>
-      </div>
+      <section class="rk-ranking-board" aria-label="Ranking general">
+        <div class="rk-ranking-board-head">
+          <div class="rk-ranking-board-title">🏆 <span>Ranking general</span></div>
+          <div class="rk-ranking-board-tabs" role="tablist" aria-label="Filtros del ranking">
+            <button type="button" class="rk-board-tab activo">Todos</button>
+            <button type="button" class="rk-board-tab">Hoy</button>
+            <button type="button" class="rk-board-tab">Esta semana</button>
+            <button type="button" class="rk-board-tab">Este mes</button>
+          </div>
+        </div>
+        <div class="rk-ranking-board-tools">
+          <span class="rk-ranking-resumen">Puestos destacados de la comunidad</span>
+        </div>
+        <div class="rk-resto-paginado">
+          <button type="button" id="rkFlechaArriba" class="rk-flecha" aria-label="Puestos anteriores">▲</button>
+          <div id="listaRankingResto" class="rk-lista-resto"></div>
+          <button type="button" id="rkFlechaAbajo" class="rk-flecha" aria-label="Puestos siguientes">▼</button>
+        </div>
+      </section>
 
       <div id="rkBannerUnite" class="rk-banner-unite">
         <p>¿Te gustaría aparecer públicamente en el ranking y adquirir popularidad?</p>
@@ -136,32 +150,32 @@
     <!-- Columna lateral: estadísticas / moderación / rangos + conectados -->
     <aside class="rk-columna-lateral">
 
-      <div class="cr-panel cr-panel-tabs">
+      <div class="cr-panel cr-panel-stats">
+        <div class="cr-panel-heading"><span class="cr-panel-icon">♛</span><h2>Comunidad en números</h2></div>
+        <div class="cr-stats-stack">
+          <div class="cr-stat cr-stat-card cr-stat-purple"><span class="cr-stat-symbol">👥</span><span class="cr-stat-copy"><strong id="crStatRegistrados">—</strong><small>Registrados en total</small></span></div>
+          <div class="cr-stat cr-stat-card cr-stat-green"><span class="cr-stat-symbol">🟢</span><span class="cr-stat-copy"><strong id="crStatConectados">—</strong><small>Conectados ahora</small></span></div>
+          <div class="cr-stat cr-stat-card cr-stat-blue"><span class="cr-stat-symbol">💬</span><span class="cr-stat-copy"><strong id="crStatComentarios">—</strong><small>Comentarios / hora</small></span></div>
+          <div class="cr-stat cr-stat-card cr-stat-gold"><span class="cr-stat-symbol">★</span><span class="cr-stat-copy"><strong id="crStatLlegados">—</strong><small>Llegados hoy</small></span></div>
+        </div>
+      </div>
 
+      <div class="cr-panel cr-panel-reciens">
+        <div class="cr-panel-heading"><span class="cr-panel-icon">♛</span><h2>Recién llegados (hoy)</h2></div>
+        <div id="crRecienLlegados" class="cr-recien-llegados"></div>
+      </div>
+
+      <div class="cr-panel cr-panel-tabs">
         <div class="cr-tabs" role="tablist">
           <button type="button" class="cr-tab cr-tab-activa" data-tab="general" role="tab">General</button>
           <button type="button" class="cr-tab" data-tab="moderacion" role="tab">Moderación</button>
           <button type="button" class="cr-tab" data-tab="rangos" role="tab">Rangos</button>
         </div>
-
         <div id="crTabGeneral" class="cr-tab-panel cr-tab-panel-activo">
-          <div class="cr-stat">
-            <span class="cr-stat-label">Registrados en total</span>
-            <span id="crStatRegistrados" class="cr-stat-valor">—</span>
-          </div>
-          <div class="cr-stat">
-            <span class="cr-stat-label">Conectados ahora</span>
-            <span id="crStatConectados" class="cr-stat-valor cr-stat-verde">—</span>
-          </div>
-          <div class="cr-stat">
-            <span class="cr-stat-label">Comentarios / hora</span>
-            <span id="crStatComentarios" class="cr-stat-valor">—</span>
-          </div>
-
-          <p class="cr-subtitulo">Recién llegados (hoy)</p>
-          <div id="crRecienLlegados" class="cr-recien-llegados"></div>
+          <div class="cr-tab-summary-row"><span>👥 Usuarios conectados</span><strong id="crTabConectados">—</strong></div>
+          <div class="cr-tab-summary-row"><span>♟ Registrados en total</span><strong id="crTabRegistrados">—</strong></div>
+          <div class="cr-tab-summary-row"><span>💬 Comentarios / hora</span><strong id="crTabComentarios">—</strong></div>
         </div>
-
         <div id="crTabModeracion" class="cr-tab-panel">
           <p class="cr-subtitulo">Mentores y administradores</p>
           <div id="crListaModeracion" class="cr-lista-staff"></div>
@@ -172,6 +186,11 @@
           <div id="crListaRangos" class="cr-lista-rangos"></div>
         </div>
 
+      </div>
+
+      <div class="cr-panel cr-panel-destacados">
+        <div class="cr-panel-heading"><span class="cr-panel-icon">♛</span><h2>Usuarios destacados</h2></div>
+        <div id="crGridDestacados" class="cr-grid-destacados"></div>
       </div>
 
       <div class="cr-panel cr-panel-conectados">
@@ -231,25 +250,6 @@
   <h2 class="cr-titulo-actividad">📡 ¿Qué está ocurriendo ahora?</h2>
   <div id="crFeedActividad" class="cr-feed-actividad"></div>
 </section>
-
-<!-- ============================================================
-     COMUNIDAD — listado completo de jugadores (se mantiene igual
-     que antes: misma estructura/clases que comunidad.css)
-     ============================================================ -->
-<main class="comunidad-main">
-
-  <div class="comunidad-controles">
-    <input type="text" id="buscadorUsuarios" class="buscador" placeholder="🔍 Buscar jugador por nombre...">
-  </div>
-
-  <!-- TODOS LOS USUARIOS -->
-  <section class="seccion-todos">
-    <h2 class="seccion-titulo">👥 Todos los jugadores</h2>
-    <p id="contadorUsuarios" class="contador-usuarios"></p>
-    <div id="listaUsuarios" class="grid-usuarios"></div>
-  </section>
-
-</main>
 
 <!-- FOOTER (mismo componente que el resto de MacroReborn) -->
 <footer class="pie-footer">

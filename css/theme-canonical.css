@@ -168,10 +168,8 @@ body.auth-page,
 .badge-level { background: var(--warning-bg) !important; color: var(--gold-bright) !important; }
 
 /* ---------------------- COMUNIDAD + RANKING ----------------------------- */
-.rk-hero { background: linear-gradient(160deg, var(--bg-panel-alt), var(--bg-base) 55%, var(--bg-base)) !important; }
-.cr-panel,
-.cr-card,
-.comunidad-main .panel { background: var(--bg-panel) !important; border-color: var(--line) !important; }
+/* El detalle visual de comunidad-ranking.css se aplica por último dentro
+   de esa página; acá solo dejamos los tokens canónicos compartidos. */
 
 /* Seguridad: los root específicos no pueden reintroducir un fondo propio. */
 body.mr-social-page::before,

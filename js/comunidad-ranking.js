@@ -35,17 +35,10 @@ const rkBanner = document.getElementById("rkBannerUnite");
 const rkFlechaArriba = document.getElementById("rkFlechaArriba");
 const rkFlechaAbajo = document.getElementById("rkFlechaAbajo");
 
-// Cuántos puestos se muestran por página (2 filas de 10, igual que
-// el video de referencia) y desde qué puesto (0 = el 7º) arranca la
-// ventana visible ahora mismo.
+// Cuántos puestos se muestran por página (2 filas de 10) y desde qué
+// puesto (0 = el 4º) arranca la ventana visible ahora mismo.
 const RK_TAMANIO_PAGINA = 20;
 let _rkInicioVentana = 0;
-
-// ---------- ELEMENTOS: COMUNIDAD ----------
-
-const comListaUsuarios = document.getElementById("listaUsuarios");
-const comContador = document.getElementById("contadorUsuarios");
-const comBuscador = document.getElementById("buscadorUsuarios");
 
 // Usuario con sesión iniciada en este navegador.
 let activoComRk = window.MRSession ? window.MRSession.get() : leerJSON(localStorage.getItem("usuarioActivo") || "null");
@@ -58,10 +51,6 @@ if (window.MRSession && typeof window.MRSession.subscribe === "function") {
 let _rkOrdenarPorLogros = false;
 let _rkModo = "general";
 let _rkUsuarios = [];       // lista completa ya con puntosLogros
-let _comAmigos = [];
-let _comSolicitudesEnviadas = [];
-let _comSolicitudesRecibidas = [];
-
 
 // ==============================
 // EL AVATAR DE CADA PERSONA (compartido)
@@ -174,10 +163,10 @@ function rkRenderizar(filtro = "") {
       : nombreActivo ? "Tu posición: fuera del listado" : "Iniciá sesión para competir";
   }
 
-  const top6 = lista.slice(0, 6);
-  const restoCompleto = lista.slice(6);
+  const podio = lista.slice(0, 3);
+  const restoCompleto = lista.slice(3);
 
-  // Ventana paginada: no se pinta TODO el resto de una — se muestra
+  // Ventana paginada: no se pinta TODO el resto de una — se muestran
   // de a RK_TAMANIO_PAGINA (20) puestos, y las flechas ▲/▼ mueven esa
   // ventana. Si el buscador deja menos gente que la ventana actual,
   // se acomoda para no mostrar una página vacía.
@@ -190,9 +179,9 @@ function rkRenderizar(filtro = "") {
   if (rkFlechaArriba) rkFlechaArriba.disabled = _rkInicioVentana <= 0;
   if (rkFlechaAbajo) rkFlechaAbajo.disabled = _rkInicioVentana >= maxInicio;
 
-  // ---- Podio (top 6) ----
+  // ---- Podio (top 3) ----
 
-  rkPodio.innerHTML = top6.map((usuario, i) => {
+  rkPodio.innerHTML = podio.map((usuario, i) => {
 
     const puesto = i + 1;
 
@@ -218,11 +207,11 @@ function rkRenderizar(filtro = "") {
 
   }).join("");
 
-  // ---- Resto (7º en adelante) ----
+  // ---- Resto (4º en adelante) ----
 
   rkResto.innerHTML = resto.map((usuario, i) => {
 
-    const puesto = _rkInicioVentana + i + 7;
+    const puesto = _rkInicioVentana + i + 4;
 
     return `
       <a href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}" class="rk-mini-card">
@@ -247,6 +236,13 @@ function rkRenderizar(filtro = "") {
 
 
 // ---- Modos del ranking ----
+document.querySelectorAll('.rk-board-tab').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.rk-board-tab').forEach(t => t.classList.remove('activo'));
+    tab.classList.add('activo');
+  });
+});
+
 rkModos.forEach((boton) => {
   boton.addEventListener("click", () => {
     _rkModo = boton.dataset.rankingModo || "general";
@@ -303,106 +299,17 @@ rkBotonLogros?.addEventListener("click", () => {
 
 
 // ==============================
-// COMUNIDAD (misma lógica que tenía js/comunidad.js, con nombres
-// propios para no chocar con el resto de este archivo)
-// ==============================
-
-function comEstaConectado(usuario) {
-  if (!usuario || !usuario.last_login) return false;
-  const ultima = new Date(usuario.last_login).getTime();
-  if (isNaN(ultima)) return false;
-  return (Date.now() - ultima) <= MINUTOS_CONECTADO * 60 * 1000;
-}
-
-function comEstadoRelacion(nombreOtro) {
-  if (!activoComRk) return "";
-  if (activoComRk.nombre === nombreOtro) return "";
-
-  if (_comAmigos.includes(nombreOtro)) return `<span class="rel-amigos">✅ Amigos</span>`;
-  if (_comSolicitudesEnviadas.includes(nombreOtro)) return `<span class="rel-pendiente">⏳ Solicitud enviada</span>`;
-  if (_comSolicitudesRecibidas.includes(nombreOtro)) return `<span class="rel-recibida">📩 Te mandó solicitud</span>`;
-
-  return "";
-}
-
-function comRenderUsuarios(lista) {
-
-  if (!comListaUsuarios) return;
-
-  if (lista.length === 0) {
-    comListaUsuarios.innerHTML = `
-      <div class="estado-vacio">
-        <span class="icono-vacio">🕹️</span>
-        <p>No hay usuarios registrados todavía.</p>
-      </div>`;
-    if (comContador) comContador.textContent = "";
-    return;
-  }
-
-  if (comContador) {
-    comContador.textContent = `${lista.length} jugador${lista.length === 1 ? "" : "es"} registrado${lista.length === 1 ? "" : "s"}`;
-  }
-
-  comListaUsuarios.innerHTML = lista.map(usuario => {
-
-    const conectado = comEstaConectado(usuario);
-    const rel = comEstadoRelacion(usuario.nombre);
-    const cantidadLogros = typeof obtenerLogros === "function" ? obtenerLogros(usuario.nombre).length : 0;
-
-    return `
-      <div class="tarjeta-usuario">
-
-        <span class="badge-estado ${conectado ? "online" : "offline"}">
-          ${conectado ? "🟢 En línea" : "⚪ Desconectado"}
-        </span>
-
-        ${rkAvatarHTML(usuario.avatar, "avatar-tarjeta", "capa-tarjeta", null, usuario)}
-
-        <h3 class="usuario-nombre">${MRTexto.escapar(usuario.nombre)}</h3>
-
-        ${typeof insigniasBloqueHTML === "function" ? insigniasBloqueHTML(usuario.nombre, true) : ""}
-
-        ${rel}
-
-        <div class="usuario-stats">
-          <div class="stat-item">
-            <span class="stat-valor">${usuario.minutos_semana_actual || 0}</span>
-            <span class="stat-label">⏱️ min esta semana</span>
-          </div>
-          ${cantidadLogros ? `
-          <div class="stat-item">
-            <span class="stat-valor">${cantidadLogros}</span>
-            <span class="stat-label">🏅 Logros</span>
-          </div>` : ""}
-        </div>
-
-        ${usuario.bio ? `<p class="usuario-bio">${MRTexto.escapar(usuario.bio)}</p>` : ""}
-
-        <a href="usuario.html?usuario=${encodeURIComponent(usuario.nombre)}" class="btn-ver-perfil">👤 Ver perfil</a>
-
-      </div>
-    `;
-
-  }).join("");
-
-}
-
-comBuscador?.addEventListener("input", () => {
-  const texto = (comBuscador.value || "").trim().toLowerCase();
-  const filtrados = texto
-    ? _rkUsuarios.filter(u => u.nombre.toLowerCase().includes(texto))
-    : _rkUsuarios;
-  comRenderUsuarios(filtrados);
-});
-
-
-// ==============================
 // PANEL LATERAL — pestañas General / Moderación / Rangos
 // ==============================
 
 const crStatRegistrados = document.getElementById("crStatRegistrados");
 const crStatConectados = document.getElementById("crStatConectados");
 const crStatComentarios = document.getElementById("crStatComentarios");
+const crStatLlegados = document.getElementById("crStatLlegados");
+const crTabRegistrados = document.getElementById("crTabRegistrados");
+const crTabConectados = document.getElementById("crTabConectados");
+const crTabComentarios = document.getElementById("crTabComentarios");
+const crGridDestacados = document.getElementById("crGridDestacados");
 const crRecienLlegados = document.getElementById("crRecienLlegados");
 const crListaModeracion = document.getElementById("crListaModeracion");
 const crListaRangos = document.getElementById("crListaRangos");
@@ -450,6 +357,10 @@ async function crCargarEstadisticas() {
     if (crStatRegistrados) crStatRegistrados.textContent = datos.registradosTotal;
     if (crStatConectados) crStatConectados.textContent = datos.conectadosAhora;
     if (crStatComentarios) crStatComentarios.textContent = datos.comentariosPorHora;
+    if (crStatLlegados) crStatLlegados.textContent = (datos.recienLlegados || []).length;
+    if (crTabRegistrados) crTabRegistrados.textContent = datos.registradosTotal;
+    if (crTabConectados) crTabConectados.textContent = datos.conectadosAhora;
+    if (crTabComentarios) crTabComentarios.textContent = datos.comentariosPorHora;
 
     if (crRecienLlegados) {
       const llegados = datos.recienLlegados || [];
@@ -526,7 +437,9 @@ function crRenderRangos() {
 function crRenderConectados(lista, filtro = "") {
   if (!crGridConectados) return;
 
-  let conectados = lista.filter(comEstaConectado);
+  // usuarioEstaConectado, de js/core.js: la de siempre (comEstaConectado)
+  // vivía en la lista de "Todos los jugadores", que se quitó.
+  let conectados = lista.filter(usuarioEstaConectado);
 
   if (filtro) {
     const texto = filtro.toLowerCase();
@@ -675,7 +588,24 @@ async function crCargarFeed() {
 
 
 // ==============================
-// CARGA INICIAL (una sola vez para ranking + comunidad)
+// USUARIOS DESTACADOS
+// ==============================
+
+function crRenderDestacados(lista) {
+  if (!crGridDestacados) return;
+  const destacados = lista.filter(u => u && u.nombre).slice(0, 5);
+  crGridDestacados.innerHTML = destacados.length
+    ? destacados.map(u => `
+        <a href="usuario.html?usuario=${encodeURIComponent(u.nombre)}" class="cr-destacado-avatar" title="${MRTexto.escapar(u.nombre)}">
+          ${crAvatarHTML(u.avatar, "cr-capa-destacado", u)}
+          <span class="cr-destacado-corona">♛</span>
+        </a>
+      `).join("")
+    : `<p class="cr-vacio">Todavía no hay usuarios destacados.</p>`;
+}
+
+// ==============================
+// CARGA INICIAL DEL RANKING Y PANELES DE COMUNIDAD
 // ==============================
 
 async function iniciarComunidadRanking() {
@@ -701,9 +631,9 @@ async function iniciarComunidadRanking() {
     puntosLogros: 0
   }));
   rkRenderizar();
-  comRenderUsuarios(usuarios);
   crRenderConectados(usuarios);
   crRenderRangos();
+  crRenderDestacados(usuarios);
 
   // Las estadísticas (incluidos conectados y recién llegados) tampoco
   // dependen de las tareas auxiliares del ranking. Se cargan aparte.
@@ -714,19 +644,6 @@ async function iniciarComunidadRanking() {
   if (typeof cargarLogrosDeVarios === "function") tareas.push(cargarLogrosDeVarios(nombres));
   if (typeof cargarInsigniasDeVarios === "function") tareas.push(cargarInsigniasDeVarios(nombres));
 
-  if (activoComRk) {
-    tareas.push(
-      fetch("/api/social?action=friends&username=" + encodeURIComponent(activoComRk.nombre))
-        .then(r => r.json())
-        .then(datos => {
-          if (!datos || !datos.success) return;
-          _comAmigos = datos.amigos.map(a => a.username);
-          _comSolicitudesEnviadas = datos.solicitudesSalientes.map(s => s.para);
-          _comSolicitudesRecibidas = datos.solicitudesEntrantes.map(s => s.de);
-        })
-        .catch(error => console.warn("MacroReborn: no se pudo cargar el estado de amistad.", error))
-    );
-  }
 
   await Promise.all(tareas);
 
@@ -749,9 +666,9 @@ async function iniciarComunidadRanking() {
   // Actualiza de nuevo después de cargar logros/insignias para que el
   // ranking pueda mostrar esos datos sin bloquear la primera pintura.
   rkRenderizar();
-  comRenderUsuarios(usuarios);
   crRenderConectados(usuarios);
   crRenderRangos();
+  crRenderDestacados(usuarios);
 
   // Estas tareas no bloquean la lista principal.
   crCargarModeracion();
