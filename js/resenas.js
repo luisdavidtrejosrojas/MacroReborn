@@ -37,14 +37,15 @@
   if (!listaResenas) return;
 
   // ---------- AVATAR ----------
-  // Una sola imagen por persona: su PNG de administrador, su avatar ya
-  // compuesto o la silueta, con imagenDeAvatar() de js/core.js. La
-  // persona sale de la memoria de avatares, que se llena antes de pintar
-  // (renderResenas). Hasta el 24/09/2026 se dibujaba prenda por prenda.
-  // Ver docs/AVATARES-SERVIDOR.md, fase 3.
+  // Una sola imagen por persona: su PNG de administrador, su foto de
+  // perfil (la cara de su avatar, desde el 28/09/2026) o la silueta, con
+  // fotoDeAvatar() de js/core.js. La persona sale de la memoria de
+  // avatares, que se llena antes de pintar (renderResenas). Hasta el
+  // 24/09/2026 se dibujaba prenda por prenda; hasta el 28/09, el cuerpo
+  // entero diminuto en el cuadrado. Ver docs/AVATARES-SERVIDOR.md.
 
   function avatarHTMLResena(nombre) {
-    const imagen = imagenDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre), 62, 96) ||
+    const imagen = fotoDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre)) ||
       SILUETA_AVATAR;
 
     if (imagen.tipo === "silueta") {
@@ -53,6 +54,11 @@
 
     if (imagen.tipo === "png") {
       return `<img data-src="${imagen.src}" class="resena-avatar-simple avatar-png-personalizado" alt="${escaparHTML(nombre)}" loading="lazy">`;
+    }
+
+    // La foto ya es cuadrada: llena el hueco, como la silueta.
+    if (imagen.tipo === "foto") {
+      return `<img data-src="${imagen.src}" class="resena-avatar-simple" alt="${escaparHTML(nombre)}" loading="lazy">`;
     }
 
     return `<div class="resena-avatar"><img data-src="${imagen.src}" class="capa-resena" alt="" loading="lazy"></div>`;

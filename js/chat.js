@@ -64,11 +64,12 @@ function obtenerAvatarHTML(nombre){
     // memoria de js/core.js, precargada por renderChat() antes de
     // pintar los mensajes.
     //
-    // Una sola imagen por persona: su PNG de administrador, su avatar ya
-    // compuesto o la silueta, con imagenDeAvatar(). La memoria guarda su
-    // id y su huella. Hasta el 24/09/2026 se dibujaba prenda por prenda.
-    // Ver docs/AVATARES-SERVIDOR.md, fase 3.
-    const imagen = imagenDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre), 62, 96) ||
+    // Una sola imagen por persona: su PNG de administrador, su foto de
+    // perfil (la cara de su avatar, desde el 28/09/2026) o la silueta, con
+    // fotoDeAvatar(). La memoria guarda su id y su huella. Hasta el
+    // 24/09/2026 se dibujaba prenda por prenda; hasta el 28/09, el cuerpo
+    // entero diminuto en el cuadrado. Ver docs/AVATARES-SERVIDOR.md.
+    const imagen = fotoDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre)) ||
         SILUETA_AVATAR;
 
     if(imagen.tipo === "silueta"){
@@ -77,6 +78,12 @@ function obtenerAvatarHTML(nombre){
 
     if(imagen.tipo === "png"){
         return `<img data-src="${imagen.src}" class="avatar-chat avatar-png-personalizado" alt="" loading="lazy">`;
+    }
+
+    // La foto ya es cuadrada: llena el hueco, sin el marco que encoge el
+    // cuerpo entero.
+    if(imagen.tipo === "foto"){
+        return `<img data-src="${imagen.src}" class="avatar-chat" alt="" loading="lazy">`;
     }
 
     return `<div class="avatar-chat-personalizado"><img class="capa-chat" data-src="${imagen.src}" alt="" loading="lazy"></div>`;

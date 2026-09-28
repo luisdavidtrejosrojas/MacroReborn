@@ -48,6 +48,7 @@ function pagina(html, url, contestar) {
   w.MRSession = { get: () => ({ nombre: "ana" }), subscribe() {} };
   w.SILUETA_AVATAR = { tipo: "silueta", src: "imagenes/avatar.png" };
   w.imagenDeAvatar = () => null;
+  w.fotoDeAvatar = () => null;
   w.obtenerAvatarCacheado = () => null;
   w.obtenerPersonaCacheada = () => null;
   w.botonLikeHTML = () => "<button class='boton-like'>👍</button>";
