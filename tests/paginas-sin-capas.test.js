@@ -114,8 +114,9 @@ describe("js/core.js, que cargan todas las páginas", () => {
     assert.match(sinPersona, /imagenes\/avatar\.png/);
     assert.ok(!/prendas|data-capas|tora/.test(sinPersona), "dibujó capas: " + sinPersona);
 
+    // Con la persona, su foto de perfil (desde el 28/09/2026): la cara.
     const conPersona = mini({ modelo: "tora" }, { id: 38, avatar_compuesto: "abcdef123456" });
-    assert.match(conPersona, /data-src="\/avatares\/38\/62x96\.jpg\?v=abcdef123456"/);
+    assert.match(conPersona, /data-src="\/avatares\/38\/cara\.jpg\?v=abcdef123456"/);
   });
 
 });

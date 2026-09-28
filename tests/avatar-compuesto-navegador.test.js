@@ -18,6 +18,10 @@
 //   acabar pidiendo prendas sueltas: el PNG va antes que el compuesto,
 //   sin prendas sale la silueta, y sin huella la dirección desnuda.
 //
+//   LA MINIATURA ES LA FOTO DE PERFIL, desde el 28/09/2026: la cara de
+//   su avatar (/avatares/<id>/cara.jpg), en la barra, el portal, el
+//   buscador, Explorar y Comunidad. El compuesto sigue en el resto.
+//
 //   LA PAGINA DE COMUNIDAD PASA EL USUARIO, en sus siete listas. Desde
 //   el 24/09/2026 ya no dibuja por capas: la lista que lo olvide sale
 //   con siluetas. Se ejecutan sus funciones de verdad, y se comprueba
@@ -63,9 +67,10 @@ function montarAyudante() {
   vm.createContext(contexto);
   return vm.runInContext(
     funcion("leerJSON") + funcion("normalizarAvatar") + funcion("avatarPNGData") +
-    orden + "\n" + CORE.slice(i, j) +
+    orden + "\n" + CORE.slice(i, j) + funcion("avatarMiniaturaHTML") +
     "\n;({ url: urlAvatarCompuesto, img: imgCompuesta, imagen: imagenDeAvatar," +
-    " tienePrendas: avatarTienePrendas })",
+    " tienePrendas: avatarTienePrendas, urlFoto: urlFotoDePerfil, foto: fotoDeAvatar," +
+    " miniatura: avatarMiniaturaHTML })",
     contexto
   );
 }
@@ -197,6 +202,22 @@ describe("la dirección que arma el navegador", () => {
     assert.equal(AC.partirRuta(sucio.split("?")[0]), null);
   });
 
+  test("la foto de perfil lleva la misma huella, y el servidor la entiende", () => {
+    // La cara de su avatar, desde el 28/09/2026 (api/_avatar-compuesto.js).
+    const { urlFoto } = montarAyudante();
+    assert.equal(urlFoto(LUIS), "/avatares/38/cara.jpg?v=401ddea4553c");
+    assert.equal(urlFoto(LUIS), AC.urlFotoDe({ usuarioId: 38 }, LUIS.avatar_compuesto));
+    assert.equal(urlFoto({ id: 38 }), "/avatares/38/cara.jpg");
+    assert.deepStrictEqual(AC.partirRuta(urlFoto(LUIS).split("?")[0]), { destino: { usuarioId: 38 }, foto: true });
+    // Un diseño guardado no tiene foto, y sin saber de quién es no hay dirección.
+    assert.equal(urlFoto({ id: 38, ranura: 2, avatar_compuesto: "abc" }), null);
+    assert.equal(urlFoto({ avatar_compuesto: "abc" }), null);
+    assert.equal(urlFoto(null), null);
+    const sucia = urlFoto({ id: "38/../../otro" });
+    assert.ok(!sucia.includes("../"), "el id salió sin escapar: " + sucia);
+    assert.equal(AC.partirRuta(sucia), null);
+  });
+
 });
 
 describe("qué imagen se enseña", () => {
@@ -266,6 +287,28 @@ describe("qué imagen se enseña", () => {
     const k = CORE.indexOf("const ORDEN_CAPAS_AVATAR");
     const lista = CORE.slice(k, CORE.indexOf("];", k)).match(/"[a-z]+"/g).map(s => s.slice(1, -1));
     assert.deepStrictEqual(lista, require("../api/_avatar-catalogo").CAPAS);
+  });
+
+  test("en una miniatura, su foto de perfil donde saldría su compuesto", () => {
+    const { foto } = montarAyudante();
+    assert.deepStrictEqual({ ...foto(CAPAS, LUIS) }, { tipo: "foto", src: "/avatares/38/cara.jpg?v=401ddea4553c" });
+    assert.deepStrictEqual({ ...foto(CAPAS, { id: 38 }) }, { tipo: "foto", src: "/avatares/38/cara.jpg" });
+    // Lo demás, igual que imagenDeAvatar: el PNG, la silueta y null.
+    assert.deepStrictEqual({ ...foto(PNG, LUIS) }, { tipo: "png", src: PNG.url });
+    assert.deepStrictEqual({ ...foto({}, { id: 38 }) }, { tipo: "silueta", src: "imagenes/avatar.png" });
+    assert.equal(foto(CAPAS), null);
+    // Un diseño guardado no tiene foto: su compuesto.
+    assert.equal(foto(CAPAS, { id: 38, ranura: 2, avatar_compuesto: "abcdef1234567890" }).src,
+      "/avatares/38/ranura2/62x96.jpg?v=abcdef123456");
+  });
+
+  test("y la miniatura la pinta llenando el hueco, con data-src", () => {
+    const { miniatura } = montarAyudante();
+    const html = miniatura(CAPAS, LUIS);
+    assert.match(html, /^<img data-src="\/avatares\/38\/cara\.jpg\?v=401ddea4553c"/);
+    assert.match(html, /object-fit:cover/);
+    assert.match(miniatura(PNG, LUIS), /class="avatar-png-personalizado" src="\/api\/users\?action=avatar-png/);
+    assert.match(miniatura({}, { id: 38 }), /src="imagenes\/avatar\.png"/);
   });
 
 });

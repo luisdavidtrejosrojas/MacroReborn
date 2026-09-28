@@ -960,6 +960,30 @@ function imagenDeAvatar(avatarCrudo, usuario, ancho, alto){
   return null;
 }
 
+// La foto de perfil: la cara de su personaje en un cuadrado, que el
+// servidor recorta de su avatar con el cuadro de su modelo
+// (api/_avatar-compuesto.js, LA FOTO DE PERFIL). Lleva la misma huella
+// que el compuesto. Solo la tiene el avatar puesto, no un diseño
+// guardado: null si trae ranura o no se sabe de quien es.
+function urlFotoDePerfil(usuario){
+  if(!usuario || !usuario.id || usuario.ranura) return null;
+  const ruta = "/avatares/" + encodeURIComponent(usuario.id) + "/cara.jpg";
+  if(!usuario.avatar_compuesto) return ruta;
+  return ruta + "?v=" + encodeURIComponent(String(usuario.avatar_compuesto).slice(0, 12));
+}
+
+// Lo que va en una miniatura: lo mismo que imagenDeAvatar(), pero donde
+// saldria su compuesto sale su foto de perfil, { tipo: "foto" }. Su PNG
+// de administrador y la silueta, igual. Decidido el 28/09/2026: el
+// cuerpo entero metido en un cuadrado casi nunca enseñaba la cara.
+function fotoDeAvatar(avatarCrudo, usuario){
+  const imagen = imagenDeAvatar(avatarCrudo, usuario, 62, 96);
+  if(imagen && imagen.tipo === "compuesto" && !usuario.ranura){
+    return { tipo: "foto", src: urlFotoDePerfil(usuario) };
+  }
+  return imagen;
+}
+
 // Una sola etiqueta con el compuesto, con el mismo data-src perezoso
 // que las capas, para que el observador de mas abajo la recoja igual.
 function imgCompuesta(url, estilo, clase){
@@ -968,13 +992,14 @@ function imgCompuesta(url, estilo, clase){
     ` style="${estilo}">`;
 }
 
-// Con la persona entera, { id, avatar_compuesto }, sale su compuesto.
-// Solo con el avatar ya no se sabe de quien es: sale la silueta, y hasta
-// la fase 5 salia dibujado prenda por prenda.
+// Con la persona entera, { id, avatar_compuesto }, sale su foto de
+// perfil (fotoDeAvatar, arriba): la barra de arriba, el portal, el
+// buscador y Explorar. Solo con el avatar ya no se sabe de quien es:
+// sale la silueta, y hasta la fase 5 salia dibujado prenda por prenda.
 function avatarMiniaturaHTML(avatarCrudo, usuario){
-  const imagen = imagenDeAvatar(avatarCrudo, usuario, 62, 96);
+  const imagen = fotoDeAvatar(avatarCrudo, usuario);
 
-  if(imagen && imagen.tipo === "compuesto"){
+  if(imagen && (imagen.tipo === "foto" || imagen.tipo === "compuesto")){
     return imgCompuesta(imagen.src,
       "width:100%;height:100%;object-fit:cover;border-radius:inherit;");
   }
@@ -1133,6 +1158,8 @@ if (typeof window.crearNotificacion !== "function") {
 if (typeof window !== "undefined") {
   window.urlAvatarCompuesto = urlAvatarCompuesto;
   window.imagenDeAvatar = imagenDeAvatar;
+  window.urlFotoDePerfil = urlFotoDePerfil;
+  window.fotoDeAvatar = fotoDeAvatar;
   window.avatarTienePrendas = avatarTienePrendas;
   window.SILUETA_AVATAR = SILUETA_AVATAR;
   window.obtenerPersonaCacheada = obtenerPersonaCacheada;
