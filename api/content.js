@@ -1,6 +1,7 @@
 const { setCors, hayBloqueoEntreUsuarios } = require("./_utils");
 const { avisar, canalNotificaciones } = require("./_avisos");
 const { requerirAuth, obtenerAuth, crearPase, PASE_TTL_MS } = require("./_auth");
+const sanciones = require("./_sanciones");
 const { crearNotificacionServidor, notificarMencionesServidor } = require("./_notifications");
 const { obtenerSql } = require("./_db");
 const { MonedasService } = require("./_monedas");
@@ -2656,6 +2657,10 @@ async function avisosPase(req, res) {
   return res.status(200).json({ success: true, pase: crearPase(auth), caduca_ms: PASE_TTL_MS });
 }
 
+// Lo que una cuenta suspendida no puede hacer (api/_sanciones.js): es lo
+// que escribe algo que leen otros. Borrar lo suyo sí puede (DELETE).
+const ACCIONES_QUE_ESCRIBEN = new Set(["comments", "chat", "reviews", "notifications"]);
+
 module.exports = async function handler(req, res) {
 
   setCors(res, "GET, POST, DELETE, OPTIONS");
@@ -2671,6 +2676,7 @@ module.exports = async function handler(req, res) {
       const auth = requerirAuth(req, res);
       if (!auth) return;
       req.auth = auth;
+      if (req.method === "POST" && ACCIONES_QUE_ESCRIBEN.has(action) && sanciones.bloquearSiSuspendida(auth, res)) return;
       const body = req.body || {};
       // Las notificaciones pueden dirigirse a otro usuario solo cuando
       // el remitente declarado (origenNombre) coincide con la sesión.

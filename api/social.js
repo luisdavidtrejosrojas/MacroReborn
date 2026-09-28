@@ -1,6 +1,7 @@
 const { setCors, hayBloqueoEntreUsuarios, usuarioBloqueaA } = require("./_utils");
 const { avisar, canalNotificaciones } = require("./_avisos");
 const { requerirAuth } = require("./_auth");
+const sanciones = require("./_sanciones");
 const { crearNotificacionServidor } = require("./_notifications");
 const { obtenerSql } = require("./_db");
 const { fragmentoAvatarLigero, aligerarAvatarPNG } = require("./_avatar-ligero");
@@ -665,6 +666,10 @@ module.exports = async function handler(req, res) {
       const auth = requerirAuth(req, res);
       if (!auth) return;
       req.auth = auth;
+      // Una cuenta suspendida no manda solicitudes de amistad
+      // (api/_sanciones.js). Aceptar, rechazar o quitar, sí.
+      if (req.method === "POST" && action === "friends" && (req.body || {}).action === "request" &&
+          sanciones.bloquearSiSuspendida(auth, res)) return;
     }
 
     if (action === "friends") return await friends(req, res);
