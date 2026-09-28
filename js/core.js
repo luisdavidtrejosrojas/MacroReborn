@@ -341,6 +341,18 @@ const MRSesionServidor = (function () {
 
   const caducada = () => sesionPerdida('Tu sesión caducó. Volvé a iniciarla para seguir sumando XP y poder escribir.');
 
+  // La cuenta fue baneada (api/_sanciones.js): se cierra la sesión aquí
+  // también, y se dice el motivo y dónde reclamar. Sin "Iniciar sesión":
+  // con esta cuenta ya no se puede.
+  function baneada(datos) {
+    if (avisado || enLaEntrada() || enMarco) return;
+    avisado = true;
+    cerrarSesionLocal();
+    const motivo = datos && datos.motivo ? ' Motivo: ' + datos.motivo + '.' : '';
+    avisar('Tu cuenta fue baneada.' + motivo,
+      datos && datos.reclamar ? { texto: '¿Es un error? Escribinos en Discord', href: datos.reclamar } : null);
+  }
+
   // Otra pestaña cambió la sesión. El almacenamiento ya tiene la buena;
   // lo viejo es lo que esta página tiene en memoria: basta con recargar.
   function cambioFuera(texto) {
@@ -371,6 +383,8 @@ const MRSesionServidor = (function () {
       const error = String((datos && datos.error) || '');
       if (respuesta.status === 401 && /^Sesión no válida/.test(error)) {
         caducada();
+      } else if (respuesta.status === 403 && datos && datos.codigo === 'cuenta-baneada') {
+        baneada(datos);
       } else if (respuesta.status === 403 && /^Sesión no corresponde/.test(error)) {
         const delPase = nombreDelPase(actual);
         if (delPase && !mismo(delPase, nombreAlCargar)) {

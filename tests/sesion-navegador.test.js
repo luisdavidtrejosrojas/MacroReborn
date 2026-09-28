@@ -155,6 +155,27 @@ describe("cuando el servidor ya no acepta la sesión", () => {
     assert.equal(p.guardado("macroSessionToken"), pase("rafa"));
   });
 
+  // Desde el 28/09/2026 (api/_sanciones.js).
+  test("403 de cuenta baneada: se cierra la sesión y se dice el motivo, con dónde reclamar", async () => {
+    const p = await montar({ usuario: "ana", pase: pase("ana"),
+      contestar: () => respuesta(403, { success: false, codigo: "cuenta-baneada", error: "Esta cuenta está baneada.",
+        motivo: "Nombre <b>inapropiado</b>", reclamar: "https://discord.gg/tKjfsQ7GdG" }) });
+    await p.pedir("/api/content?action=chat", { method: "POST" });
+    assert.equal(p.guardado("usuarioActivo"), null);
+    assert.equal(p.guardado("macroSessionToken"), null);
+    assert.equal(p.franja().querySelector("span").textContent, "Tu cuenta fue baneada. Motivo: Nombre <b>inapropiado</b>.");
+    assert.equal(p.franja().querySelector("b"), null, "el motivo entró como HTML");
+    assert.equal(p.franja().querySelector("a").getAttribute("href"), "https://discord.gg/tKjfsQ7GdG");
+  });
+
+  test("403 de cuenta suspendida: la sesión sigue, que puede jugar y mirar", async () => {
+    const p = await montar({ usuario: "ana", pase: pase("ana"),
+      contestar: () => respuesta(403, { success: false, codigo: "cuenta-suspendida", error: "Tu cuenta está suspendida hasta el 5/10 a las 14:00" }) });
+    await p.pedir("/api/content?action=chat", { method: "POST" });
+    assert.equal(p.franja(), null);
+    assert.equal(p.guardado("macroSessionToken"), pase("ana"));
+  });
+
 });
 
 describe("al abrir la página", () => {
