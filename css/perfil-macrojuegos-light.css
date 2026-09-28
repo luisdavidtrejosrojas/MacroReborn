@@ -655,7 +655,9 @@ html[data-tema="claro"] .tarjeta-avatar .avatar img {
   height: 100% !important;
   object-fit: cover !important;
   object-position: center center !important;
-  display: block !important;
+  /* Sin !important: le ganaría a img[hidden] (css/inicio.css) y
+     volvería el recuadro roto del avatar PNG que no carga. */
+  display: block;
 }
 
 html[data-tema="claro"] .tarjeta-avatar-chapas {
@@ -901,7 +903,9 @@ html:not([data-tema="claro"]) .tarjeta-avatar .avatar img {
   height: 100% !important;
   object-fit: cover !important;
   object-position: center center !important;
-  display: block !important;
+  /* Sin !important: le ganaría a img[hidden] (css/inicio.css) y
+     volvería el recuadro roto del avatar PNG que no carga. */
+  display: block;
 }
 
 html:not([data-tema="claro"]) .tarjeta-avatar-chapas {
@@ -1133,7 +1137,9 @@ html .tarjeta-avatar .avatar img {
   height: 100% !important;
   object-fit: cover !important;
   object-position: center center !important;
-  display: block !important;
+  /* Sin !important: le ganaría a img[hidden] (css/inicio.css) y
+     volvería el recuadro roto del avatar PNG que no carga. */
+  display: block;
 }
 
 /* Capa superior para que las insignias sigan flotando sobre el avatar. */
