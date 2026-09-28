@@ -61,16 +61,26 @@
     $("globalReward").textContent = "Recompensa: +" + Number(d.global.rewardXp||0) + " XP · " + money(d.global.rewardCoins);
   }
 
+  // Una misión cumplida de un día o una semana anterior espera a que se
+  // cobre (api/_misiones.js): se dice de cuándo es y qué pasa al cobrarla.
+  function diaMes(k){ const p = String(k || "").split("-"); return p.length === 3 ? p[2] + "/" + p[1] : String(k || ""); }
+  const ESPERA = {
+    daily: "La cumpliste y te espera: al cobrarla aparece la de hoy.",
+    weekly: "La cumpliste y te espera: al cobrarla aparece la de esta semana."
+  };
+
   function pintarMision(m,tipo){
     $(tipo+"Title").textContent = m.title;
-    $(tipo+"Description").textContent = m.description;
+    $(tipo+"Description").textContent = m.pendiente ? ESPERA[tipo] : m.description;
     $(tipo+"Value").textContent = m.value + "/" + m.target;
     $(tipo+"Reward").textContent = "+" + m.xp + " XP · " + money(m.coins);
     $(tipo+"Bar").style.width = pct(m.value,m.target) + "%";
     const b = $(tipo === "weekly" ? "weeklyClaim" : "dailyClaim");
     b.disabled = !m.completed || m.claimed;
     b.textContent = m.claimed ? "Reclamada ✓" : (m.completed ? "Reclamar recompensa" : "Completá la misión");
-    $(tipo+"Period").textContent = tipo === "daily" ? m.periodKey : "Desde " + m.periodKey;
+    $(tipo+"Period").textContent = m.pendiente
+      ? (tipo === "daily" ? "Del " : "Semana del ") + diaMes(m.periodKey) + " · sin cobrar"
+      : (tipo === "daily" ? m.periodKey : "Desde " + m.periodKey);
   }
 
   async function claim(tipo){

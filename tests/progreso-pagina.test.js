@@ -26,7 +26,8 @@ const mision = (extra) => Object.assign({
   value: 2, completed: true, claimed: false
 }, extra || {});
 
-async function montar(streak) {
+// misiones: la de hoy y la de la semana, si no son las de siempre.
+async function montar(streak, misiones) {
   const dom = new JSDOM(HTML, { url: "https://www.macroreborn.com/progreso.html", runScripts: "outside-only" });
   const w = dom.window;
   w.localStorage.setItem("macroSessionToken", "token");
@@ -37,8 +38,8 @@ async function montar(streak) {
       ? { success: true, alreadyClaimed: false, reward: { xp: 30, coins: 25 } }
       : {
           success: true,
-          today: { mission: mision() },
-          week: { mission: mision({ key: "weekly_6_games", completed: false, value: 1, target: 6, periodKey: "2026-09-22" }) },
+          today: { mission: (misiones && misiones.today) || mision() },
+          week: { mission: (misiones && misiones.week) || mision({ key: "weekly_6_games", completed: false, value: 1, target: 6, periodKey: "2026-09-22" }) },
           streak,
           global: { value: 0, target: 10000, rewardXp: 500, rewardCoins: 250 },
           user: { level: 3, xp: 40, monedas: 500 }
@@ -76,5 +77,32 @@ test("cobrar una misión sigue funcionando", async () => {
   // Sin copia propia del pase: lo pone js/core.js, el vigente.
   assert.ok(p.pedidas.every(x => !("Authorization" in (x.init.headers || {}))), "la página manda su propia copia del pase");
   assert.match(p.$("progressError").textContent, /\+30 XP/);
+  p.w.close();
+});
+
+// Desde el 28/09/2026 una misión cumplida espera hasta que se cobre
+// (api/_misiones.js), y el servidor la manda con pendiente: true.
+test("una cumplida de antes dice de cuándo es y que espera, y se cobra con su fecha", async () => {
+  const p = await montar({ current_streak: 1, best_streak: 1, hoy_cuenta: true }, {
+    today: mision({ periodKey: "2026-09-26", pendiente: true }),
+    week: mision({ key: "weekly_90_minutes", title: "Jugador constante", target: 90, value: 90, periodKey: "2026-09-21", pendiente: true })
+  });
+  assert.equal(p.$("dailyPeriod").textContent, "Del 26/09 · sin cobrar");
+  assert.equal(p.$("dailyDescription").textContent, "La cumpliste y te espera: al cobrarla aparece la de hoy.");
+  assert.equal(p.$("weeklyPeriod").textContent, "Semana del 21/09 · sin cobrar");
+  assert.equal(p.$("weeklyDescription").textContent, "La cumpliste y te espera: al cobrarla aparece la de esta semana.");
+
+  p.$("dailyClaim").click();
+  for (let i = 0; i < 8; i++) await new Promise(r => setTimeout(r, 0));
+  const cobro = p.pedidas.find(x => x.url.includes("action=claim"));
+  assert.deepStrictEqual(JSON.parse(cobro.init.body), { missionKey: "daily_2_games", periodKey: "2026-09-26", tipo: "daily" });
+  p.w.close();
+});
+
+test("la de ahora, como siempre: su fecha y lo que pide", async () => {
+  const p = await montar({ current_streak: 1, best_streak: 1, hoy_cuenta: true });
+  assert.equal(p.$("dailyPeriod").textContent, "2026-09-25");
+  assert.equal(p.$("dailyDescription").textContent, "Jugá 2 juegos distintos hoy.");
+  assert.equal(p.$("weeklyPeriod").textContent, "Desde 2026-09-22");
   p.w.close();
 });
