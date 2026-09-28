@@ -57,8 +57,9 @@ describe("las páginas migradas", () => {
     });
 
     test(archivo + " pide la imagen con imagenDeAvatar", () => {
-      // O con avatarMiniaturaHTML y la persona, que la usa por dentro.
-      assert.match(leer(archivo), /imagenDeAvatar\(|imagenAvatarPerfil\(|avatarMiniaturaHTML\([^,()]+,\s*\w+\)/);
+      // O con avatarMiniaturaHTML y la persona, o con fotoDeAvatar (la foto
+      // de perfil, desde el 28/09/2026), que la usan por dentro.
+      assert.match(leer(archivo), /imagenDeAvatar\(|imagenAvatarPerfil\(|fotoDeAvatar\(|avatarMiniaturaHTML\([^,()]+,\s*\w+\)/);
     });
   }
 
