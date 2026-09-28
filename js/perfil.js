@@ -138,7 +138,7 @@ const insigniasPerfilPropioListas = typeof cargarInsignias === "function"
 // Se muestran debajo del nombre. Son manuales (no se otorgan por
 // logros): si el usuario no tiene ninguna, el contenedor queda oculto.
 if(typeof renderInsigniasEnContenedor === "function"){
-  renderInsigniasEnContenedor("insigniasPerfil", usuario.nombre);
+  renderInsigniasEnContenedor("insigniasPerfil", usuario.nombre, true);
 }
 
 const bienvenidaPerfil = document.getElementById("bienvenidaPerfil");
@@ -147,12 +147,8 @@ if(bienvenidaPerfil){
 }
 
 document.querySelector(".estado").textContent=usuario.estado;
-document.querySelector(".nivel").textContent="⭐ Nivel "+usuario.nivel;
-
-// Ajuste visual: los niveles largos reducen un poco la tipografía para
-// que el número siga siendo completamente visible dentro de la chapa.
-if (typeof ajustarChapaNivel === "function") {
-  ajustarChapaNivel(document.querySelector(".nivel"), usuario.nivel);
+if (typeof pintarChapaNivel === "function") {
+  pintarChapaNivel(document.querySelector(".nivel"), usuario.nivel);
 }
 document.getElementById("biografia").textContent=usuario.biografia;
 document.getElementById("xp").textContent="⚡ "+usuario.xp+" XP";
@@ -195,6 +191,10 @@ function actualizarPuntosLogrosUI(){
   const puntosLogrosEl = document.getElementById("puntosLogros");
   if(puntosLogrosEl){
     puntosLogrosEl.textContent = "🏅 " + calcularPuntosLogros(datosUsuario.nombre) + " puntos de logros";
+  }
+  // Y en la medalla del pie de la tarjeta.
+  if(typeof pintarMedallaLogros === "function"){
+    pintarMedallaLogros(document.getElementById("tarjetaAvatarMedalla"), calcularPuntosLogros(datosUsuario.nombre));
   }
 }
 
@@ -268,12 +268,7 @@ function actualizarPerfilDesdeSesion(detalle){
   const estadoEl = document.querySelector(".estado");
   if(estadoEl) estadoEl.textContent = usuario.estado;
   const nivelEl = document.querySelector(".nivel");
-  if(nivelEl) {
-    nivelEl.textContent = "⭐ Nivel " + nivel;
-    if (typeof ajustarChapaNivel === "function") {
-      ajustarChapaNivel(nivelEl, nivel);
-    }
-  }
+  if(nivelEl && typeof pintarChapaNivel === "function") pintarChapaNivel(nivelEl, nivel);
   const bioEl = document.getElementById("biografia");
   if(bioEl) bioEl.textContent = usuario.biografia;
   const xpEl = document.getElementById("xp");

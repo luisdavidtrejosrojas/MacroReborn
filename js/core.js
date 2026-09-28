@@ -18,6 +18,30 @@ function ajustarChapaNivel(elemento, nivel){
   elemento.classList.toggle("nivel-muy-largo", cantidadDigitos >= 5);
 }
 
+// La chapa lleva solo el número: en el diseño de la tarjeta (css/
+// perfil-macrojuegos-light.css) es un cuadrado de 48 px. "Nivel N" va en
+// el title, para quien pase el ratón y para los lectores de pantalla.
+function pintarChapaNivel(elemento, nivel){
+  if(!elemento) return;
+  const n = Math.max(1, Number(nivel) || 1);
+  elemento.textContent = String(n);
+  elemento.title = "Nivel " + n;
+  elemento.setAttribute("aria-label", "Nivel " + n);
+  ajustarChapaNivel(elemento, n);
+}
+
+// La medalla del pie de la tarjeta: los puntos de logros, en corto
+// (950, 1.2K, 12K). El número entero va en el title.
+function pintarMedallaLogros(elemento, puntos){
+  if(!elemento) return;
+  const p = Math.max(0, Math.floor(Number(puntos) || 0));
+  let corto = String(p);
+  if(p >= 10000) corto = Math.round(p / 1000) + "K";
+  else if(p >= 1000) corto = String(Math.round(p / 100) / 10).replace(/\.0$/, "") + "K";
+  elemento.textContent = corto;
+  elemento.title = p + " puntos de logros";
+}
+
 // ============================================
 // ESCAPAR TEXTO ANTES DE METERLO EN HTML
 // ============================================

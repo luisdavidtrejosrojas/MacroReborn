@@ -118,7 +118,7 @@ html[data-tema="claro"] .perfil-volver {
    DOS COLUMNAS
    ------------------------------- */
 html[data-tema="claro"] .perfil-cuerpo {
-  grid-template-columns: 312px minmax(0, 1fr) !important;
+  grid-template-columns: 280px minmax(0, 1fr) !important;
   gap: 10px !important;
   align-items: start !important;
 }
@@ -133,7 +133,7 @@ html[data-tema="claro"] .perfil-sidebar {
    ------------------------------- */
 html[data-tema="claro"] .tarjeta-avatar {
   position: relative !important;
-  width: 312px !important;
+  width: 280px !important;
   border: 2px solid #7e9caf !important;
   border-radius: 5px !important;
   background: #102d58 !important;
@@ -169,13 +169,14 @@ html[data-tema="claro"] .tarjeta-avatar-chapas > * {
   pointer-events: none !important;
 }
 
+/* Nivel: solo el número, como en la referencia. Aguanta 1, 2 y 3+ dígitos. */
 html[data-tema="claro"] .tarjeta-chapa-nivel.nivel {
   top: 0 !important;
   left: 0 !important;
   width: 61px !important;
   height: 61px !important;
   min-width: 61px !important;
-  max-width: none !important;
+  max-width: 61px !important;
   margin: 0 !important;
   padding: 0 !important;
   display: flex !important;
@@ -186,10 +187,9 @@ html[data-tema="claro"] .tarjeta-chapa-nivel.nivel {
   background: #b13cf0 !important;
   color: #fff !important;
   box-shadow: 0 1px 3px rgba(0,0,0,.45) !important;
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  line-height: 1 !important;
-  white-space: normal !important;
+  font: 400 30px/1 Arial, Helvetica, sans-serif !important;
+  letter-spacing: -1px !important;
+  white-space: nowrap !important;
   overflow: visible !important;
   text-shadow: 0 1px 1px rgba(0,0,0,.45) !important;
   transform: translate(-1px,-1px) !important;
@@ -205,21 +205,21 @@ html[data-tema="claro"] .tarjeta-chapa-estado.estado {
   border: 1px solid #2c3e50 !important;
   background: #626f7c !important;
   color: #fff !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  line-height: 1 !important;
+  font: 700 11px/1 Arial, Helvetica, sans-serif !important;
+  letter-spacing: .2px !important;
+  text-transform: uppercase !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
 }
 
+/* Corazones: puramente visuales, no están conectados a ninguna mecánica. */
 html[data-tema="claro"] .tarjeta-avatar-chapas::after {
   content: "♥♥♥";
   position: absolute;
   right: 7px;
-  top: 35px;
+  top: 34px;
   color: #ff2020;
-  font-size: 15px;
-  line-height: 1;
+  font: 700 16px/1 Arial, Helvetica, sans-serif;
   letter-spacing: 1px;
   text-shadow: 0 1px 1px #000;
 }
@@ -233,10 +233,11 @@ html[data-tema="claro"] .tarjeta-avatar-pie {
   min-height: 47px !important;
   display: flex !important;
   align-items: center !important;
-  padding: 7px 72px 7px 70px !important;
+  justify-content: center !important;
+  padding: 7px 64px 7px 10px !important;
   background: rgba(124, 46, 183, .67) !important;
   border: 0 !important;
-  text-align: left !important;
+  text-align: center !important;
 }
 
 html[data-tema="claro"] .tarjeta-avatar-pie::after {
@@ -256,19 +257,34 @@ html[data-tema="claro"] .tarjeta-avatar-pie::after {
   text-shadow: 0 1px 1px rgba(0,0,0,.35);
 }
 
+html[data-tema="claro"] .tarjeta-avatar-medalla {
+  position: absolute !important;
+  right: 1px !important;
+  bottom: 2px !important;
+  z-index: 8 !important;
+  width: 50px !important;
+  text-align: center !important;
+  color: #fff !important;
+  font: 700 15px/1 Arial, Helvetica, sans-serif !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.6) !important;
+  pointer-events: none !important;
+}
+
 html[data-tema="claro"] .tarjeta-avatar-nombre {
+  position: relative !important;
+  z-index: 7 !important;
+  display: block !important;
+  max-width: 100% !important;
   color: #fff !important;
   font-family: Arial Black, Arial, sans-serif !important;
-  font-size: 24px !important;
+  font-size: 22px !important;
   font-weight: 900 !important;
   line-height: 1 !important;
   text-align: center !important;
   text-shadow: 0 1px 2px rgba(0,0,0,.65) !important;
-}
-
-/* Insignias modernas: no pertenecen a la referencia clásica. */
-html[data-tema="claro"] .insignias-usuario {
-  display: none !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 /* -------------------------------
@@ -543,7 +559,7 @@ html[data-tema="claro"] .config-bloque-personalizacion {
   }
 
   html[data-tema="claro"] .perfil-sidebar {
-    width: 312px !important;
+    width: 280px !important;
     max-width: 100% !important;
     margin: 0 auto !important;
   }
@@ -568,6 +584,704 @@ html[data-tema="claro"] .config-bloque-personalizacion {
   html[data-tema="claro"] .perfil-barra-comentarios,
   html[data-tema="claro"] .perfil-preview-comentarios {
     width: 100% !important;
+  }
+}
+
+/* ======================================================================
+   TARJETA AVATAR — AJUSTE DE REFERENCIA
+   Diseño inspirado en la tarjeta clásica mostrada por el usuario.
+   No agrega mecánicas: nivel, estado, nombre, insignias y puntos
+   siguen saliendo de la lógica existente.
+   ====================================================================== */
+
+html[data-tema="claro"] .perfil-cuerpo {
+  grid-template-columns: 418px minmax(0, 1fr) !important;
+  gap: 14px !important;
+}
+
+html[data-tema="claro"] .perfil-sidebar {
+  width: 418px !important;
+  max-width: 418px !important;
+}
+
+html[data-tema="claro"] .tarjeta-avatar {
+  width: 408px !important;
+  max-width: 408px !important;
+  border: 3px solid #71848d !important;
+  border-radius: 7px !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 0 0 1px #3f4c52, 0 1px 3px rgba(0,0,0,.45) !important;
+  overflow: hidden !important;
+}
+
+/* Barra metálica superior */
+html[data-tema="claro"] .tarjeta-avatar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 29px;
+  z-index: 4;
+  background: linear-gradient(180deg, #dbe1e2 0%, #87969b 36%, #4e5d63 58%, #aeb9bc 100%);
+  border-bottom: 1px solid #39464c;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.85), inset 0 -2px 0 rgba(0,0,0,.25);
+  pointer-events: none;
+}
+
+/* Franja púrpura que cruza la tarjeta justo debajo del marco superior. */
+html[data-tema="claro"] .tarjeta-avatar-chapas::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  left: 0;
+  right: 0;
+  height: 31px;
+  z-index: 0;
+  background: linear-gradient(180deg, #9b58c3 0%, #7e3aaa 100%);
+  border-top: 1px solid rgba(255,255,255,.14);
+  border-bottom: 1px solid rgba(53,20,75,.55);
+}
+
+html[data-tema="claro"] .tarjeta-avatar .avatar {
+  width: 100% !important;
+  height: 563px !important;
+  aspect-ratio: auto !important;
+  background: #ffffff !important;
+}
+
+html[data-tema="claro"] .tarjeta-avatar .avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+html[data-tema="claro"] .tarjeta-avatar-chapas {
+  position: absolute !important;
+  inset: 0 !important;
+  padding: 0 !important;
+  z-index: 6 !important;
+}
+
+html[data-tema="claro"] .tarjeta-avatar-chapas > * {
+  position: absolute !important;
+  pointer-events: none !important;
+}
+
+/* Nivel: círculo grande arriba a la izquierda, legible incluso con 3+ dígitos. */
+html[data-tema="claro"] .tarjeta-chapa-nivel.nivel {
+  top: 5px !important;
+  left: 8px !important;
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
+  max-width: 64px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  border: 2px solid #5a2b8a !important;
+  background: linear-gradient(180deg, #d653ff 0%, #a933e7 70%, #8527bd 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,.42) !important;
+  font: 400 28px/1 Arial, Helvetica, sans-serif !important;
+  letter-spacing: -1px !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.5) !important;
+  transform: none !important;
+}
+
+/* Estado: arriba a la derecha, en la misma franja que la insignia/nivel. */
+html[data-tema="claro"] .tarjeta-chapa-estado.estado {
+  top: 20px !important;
+  right: 9px !important;
+  max-width: 108px !important;
+  padding: 5px 9px !important;
+  border-radius: 17px !important;
+  border: 1px solid #38414b !important;
+  background: #626b75 !important;
+  color: #35d488 !important;
+  font: 800 12px/1 Arial, Helvetica, sans-serif !important;
+  letter-spacing: .25px !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.35) !important;
+}
+
+/* Tres corazones: solo visuales. */
+html[data-tema="claro"] .tarjeta-avatar-chapas::after {
+  content: "♥♥♥";
+  position: absolute;
+  top: 56px;
+  right: 9px;
+  z-index: 8;
+  color: #ff1b1b;
+  font: 800 20px/1 Arial, Helvetica, sans-serif;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 1px #000;
+}
+
+/* Insignias oficiales: aparecen sobre el avatar, debajo de la franja superior. */
+html[data-tema="claro"] .perfil-sidebar > .insignias-usuario {
+  position: absolute !important;
+  top: 91px !important;
+  left: 11px !important;
+  width: 108px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  z-index: 10 !important;
+  pointer-events: none !important;
+}
+
+html[data-tema="claro"] .perfil-sidebar > .insignias-usuario .insignia-oficial {
+  display: inline-flex !important;
+  width: 30px !important;
+  height: 30px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.08) !important;
+  color: #ffd44f !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.65) !important;
+}
+
+/* Pie de tarjeta púrpura, con el nombre centrado y la medalla de puntos. */
+html[data-tema="claro"] .tarjeta-avatar-pie {
+  position: absolute !important;
+  left: 4px !important;
+  right: 4px !important;
+  bottom: 4px !important;
+  z-index: 9 !important;
+  min-height: 48px !important;
+  height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 72px 0 10px !important;
+  background: linear-gradient(180deg, rgba(159,91,205,.94) 0%, rgba(117,53,174,.96) 100%) !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(255,255,255,.18) !important;
+  text-align: center !important;
+}
+
+html[data-tema="claro"] .tarjeta-avatar-nombre {
+  max-width: calc(100% - 4px) !important;
+  color: #ffffff !important;
+  font-family: Arial Black, Arial, Helvetica, sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  text-shadow: 0 2px 2px rgba(0,0,0,.7) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Medalla real del perfil: estrella grande con puntos dentro. */
+html[data-tema="claro"] .tarjeta-avatar-pie::after {
+  display: none !important;
+  content: none !important;
+}
+
+html[data-tema="claro"] .tarjeta-avatar-medalla {
+  position: absolute !important;
+  right: -2px !important;
+  bottom: -11px !important;
+  z-index: 11 !important;
+  width: 68px !important;
+  height: 68px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #ffffff !important;
+  font: 800 19px/1 Arial, Helvetica, sans-serif !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.7) !important;
+  background: #ffc300 !important;
+  clip-path: polygon(50% 0%, 61% 28%, 92% 17%, 74% 45%, 100% 61%, 68% 64%, 69% 100%, 49% 75%, 27% 100%, 31% 66%, 0% 60%, 25% 43%, 8% 16%, 40% 28%) !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 860px) {
+  html[data-tema="claro"] .perfil-cuerpo {
+    grid-template-columns: 1fr !important;
+  }
+  html[data-tema="claro"] .perfil-sidebar {
+    width: min(360px, 100%) !important;
+    max-width: 360px !important;
+    margin: 0 auto !important;
+  }
+  html[data-tema="claro"] .tarjeta-avatar {
+    width: min(360px, 100%) !important;
+    max-width: 360px !important;
+  }
+  html[data-tema="claro"] .tarjeta-avatar .avatar {
+    height: auto !important;
+    aspect-ratio: 408 / 630 !important;
+  }
+}
+
+/* ======================================================================
+   PERFIL MACROJUEGOS CLÁSICO — MODO OSCURO
+   ----------------------------------------------------------------------
+   Importante: el sitio NO cambia a modo claro. Estas reglas solo rediseñan
+   la tarjeta del avatar cuando MacroReborn está en su tema oscuro
+   (data-tema ausente). El resto del perfil conserva la paleta oscura.
+   ====================================================================== */
+
+html:not([data-tema="claro"]) .perfil-cuerpo {
+  grid-template-columns: 280px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+html:not([data-tema="claro"]) .perfil-sidebar {
+  position: static !important;
+  gap: 10px !important;
+}
+
+html:not([data-tema="claro"]) .tarjeta-avatar {
+  position: relative !important;
+  width: 280px !important;
+  border: 2px solid #66727a !important;
+  border-radius: 5px !important;
+  background: #101827 !important;
+  box-shadow: 0 0 2px rgba(0,0,0,.7), 0 12px 24px rgba(0,0,0,.28) !important;
+  overflow: hidden !important;
+}
+
+/* Barra metálica superior */
+html:not([data-tema="claro"]) .tarjeta-avatar::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 29px !important;
+  z-index: 4 !important;
+  background: linear-gradient(180deg, #dbe1e2 0%, #87969b 36%, #4e5d63 58%, #aeb9bc 100%) !important;
+  border-bottom: 1px solid #39464c !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.72), inset 0 -2px 0 rgba(0,0,0,.35) !important;
+  pointer-events: none !important;
+}
+
+/* Franja púrpura justo debajo del marco superior */
+html:not([data-tema="claro"]) .tarjeta-avatar-chapas::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 28px !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 31px !important;
+  z-index: 0 !important;
+  background: linear-gradient(180deg, #9b58c3 0%, #7e3aaa 100%) !important;
+  border-top: 1px solid rgba(255,255,255,.12) !important;
+  border-bottom: 1px solid rgba(53,20,75,.7) !important;
+}
+
+html:not([data-tema="claro"]) .tarjeta-avatar .avatar {
+  width: 100% !important;
+  height: 563px !important;
+  aspect-ratio: auto !important;
+  background: #242b35 !important;
+}
+
+html:not([data-tema="claro"]) .tarjeta-avatar .avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+html:not([data-tema="claro"]) .tarjeta-avatar-chapas {
+  position: absolute !important;
+  inset: 0 !important;
+  padding: 0 !important;
+  z-index: 6 !important;
+  pointer-events: none !important;
+}
+
+html:not([data-tema="claro"]) .tarjeta-avatar-chapas > * {
+  position: absolute !important;
+  pointer-events: none !important;
+}
+
+/* Nivel: círculo grande, estable incluso en 3+ dígitos */
+html:not([data-tema="claro"]) .tarjeta-chapa-nivel.nivel {
+  top: 5px !important;
+  left: 8px !important;
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
+  max-width: 64px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  border: 2px solid #5a2b8a !important;
+  background: linear-gradient(180deg, #d653ff 0%, #a933e7 70%, #8527bd 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,.55) !important;
+  font: 400 28px/1 Arial, Helvetica, sans-serif !important;
+  letter-spacing: -1px !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.55) !important;
+}
+
+/* Estado: arriba a la derecha */
+html:not([data-tema="claro"]) .tarjeta-chapa-estado.estado {
+  top: 20px !important;
+  right: 9px !important;
+  max-width: 108px !important;
+  padding: 5px 9px !important;
+  border-radius: 17px !important;
+  border: 1px solid #38414b !important;
+  background: #4e5964 !important;
+  color: #35d488 !important;
+  font: 800 12px/1 Arial, Helvetica, sans-serif !important;
+  letter-spacing: .25px !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,.4) !important;
+  backdrop-filter: none !important;
+}
+
+html:not([data-tema="claro"]) .tarjeta-avatar-chapas::after {
+  content: "♥♥♥" !important;
+  position: absolute !important;
+  top: 50px !important;
+  right: 8px !important;
+  z-index: 8 !important;
+  color: #ff1b1b !important;
+  font: 800 18px/1 Arial, Helvetica, sans-serif !important;
+  letter-spacing: 1px !important;
+  text-shadow: 0 1px 1px #000 !important;
+}
+
+/* Insignias oficiales: el espacio queda listo y no ocupa el nombre */
+html:not([data-tema="claro"]) .perfil-sidebar > .insignias-usuario {
+  position: absolute !important;
+  top: 91px !important;
+  left: 11px !important;
+  width: 108px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  z-index: 10 !important;
+  pointer-events: none !important;
+}
+
+html:not([data-tema="claro"]) .perfil-sidebar > .insignias-usuario .insignia-oficial {
+  display: inline-flex !important;
+  width: 30px !important;
+  height: 30px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.08) !important;
+  color: #ffd44f !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.8) !important;
+}
+
+/* Pie de tarjeta: nombre centrado + estrella de puntos */
+html:not([data-tema="claro"]) .tarjeta-avatar-pie {
+  position: absolute !important;
+  left: 4px !important;
+  right: 4px !important;
+  bottom: 4px !important;
+  z-index: 9 !important;
+  min-height: 48px !important;
+  height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 72px 0 10px !important;
+  background: linear-gradient(180deg, rgba(99,56,143,.94) 0%, rgba(62,30,101,.98) 100%) !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(255,255,255,.15) !important;
+  text-align: center !important;
+}
+
+html:not([data-tema="claro"]) .tarjeta-avatar-nombre {
+  max-width: calc(100% - 4px) !important;
+  color: #ffffff !important;
+  font-family: Arial Black, Arial, Helvetica, sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  text-shadow: 0 2px 2px rgba(0,0,0,.72) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html:not([data-tema="claro"]) .tarjeta-avatar-pie::after {
+  display: none !important;
+  content: none !important;
+}
+
+html:not([data-tema="claro"]) .tarjeta-avatar-medalla {
+  position: absolute !important;
+  right: -2px !important;
+  bottom: -11px !important;
+  z-index: 11 !important;
+  width: 68px !important;
+  height: 68px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #ffffff !important;
+  font: 800 19px/1 Arial, Helvetica, sans-serif !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.7) !important;
+  background: #ffc300 !important;
+  clip-path: polygon(50% 0%, 61% 28%, 92% 17%, 74% 45%, 100% 61%, 68% 64%, 69% 100%, 49% 75%, 27% 100%, 31% 66%, 0% 60%, 25% 43%, 8% 16%, 40% 28%) !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 860px) {
+  html:not([data-tema="claro"]) .perfil-cuerpo {
+    grid-template-columns: 1fr !important;
+  }
+
+  html:not([data-tema="claro"]) .perfil-sidebar {
+    width: min(360px, 100%) !important;
+    max-width: 360px !important;
+    margin: 0 auto !important;
+  }
+
+  html:not([data-tema="claro"]) .tarjeta-avatar {
+    width: min(360px, 100%) !important;
+    max-width: 360px !important;
+  }
+
+  html:not([data-tema="claro"]) .tarjeta-avatar .avatar {
+    height: auto !important;
+    aspect-ratio: 408 / 630 !important;
+  }
+}
+
+/* ======================================================================
+   MACROREBORN — TARJETA DE PERFIL COMPACTA / MODERNA
+   ----------------------------------------------------------------------
+   Ajuste visual solicitado: tarjeta más pequeña, limpia y coherente con
+   la estética púrpura/neón de Comunidad. No modifica datos ni lógica.
+   ====================================================================== */
+
+html .perfil-cuerpo {
+  grid-template-columns: 300px minmax(0, 1fr) !important;
+  gap: 14px !important;
+}
+
+html .perfil-sidebar {
+  width: 300px !important;
+  max-width: 300px !important;
+  gap: 12px !important;
+}
+
+html .tarjeta-avatar {
+  width: 300px !important;
+  max-width: 300px !important;
+  border: 1px solid rgba(166, 112, 255, .55) !important;
+  border-radius: 16px !important;
+  background: #120b27 !important;
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.34),
+    0 0 0 1px rgba(255,255,255,.035) inset,
+    0 0 24px rgba(132, 66, 255, .12) !important;
+  overflow: hidden !important;
+}
+
+/* Quitamos los marcos retro; la imagen pasa a ser el foco principal. */
+html .tarjeta-avatar::before,
+html .tarjeta-avatar-chapas::before,
+html .tarjeta-avatar-chapas::after {
+  display: none !important;
+  content: none !important;
+}
+
+html .tarjeta-avatar .avatar {
+  width: 100% !important;
+  height: 414px !important;
+  aspect-ratio: auto !important;
+  background: #0d0820 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+html .tarjeta-avatar .avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+/* Capa superior para que las insignias sigan flotando sobre el avatar. */
+html .tarjeta-avatar-chapas {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 8 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+}
+
+html .tarjeta-avatar-chapas > * {
+  position: absolute !important;
+  pointer-events: none !important;
+}
+
+html .tarjeta-chapa-nivel.nivel {
+  top: 12px !important;
+  left: 12px !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  background: linear-gradient(145deg, #bc5cff 0%, #7426df 100%) !important;
+  color: #fff !important;
+  box-shadow:
+    0 8px 18px rgba(73, 25, 149, .38),
+    inset 0 1px 0 rgba(255,255,255,.18) !important;
+  font: 800 21px/1 var(--font-display, Inter), Arial, sans-serif !important;
+  letter-spacing: 0 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.3) !important;
+}
+
+html .tarjeta-chapa-estado.estado {
+  top: 14px !important;
+  right: 12px !important;
+  max-width: 100px !important;
+  padding: 7px 10px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  background: rgba(14, 10, 30, .72) !important;
+  color: #8cf5be !important;
+  font: 800 9px/1 var(--font-body, Inter), Arial, sans-serif !important;
+  letter-spacing: .8px !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 6px 14px rgba(0,0,0,.24) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+html .tarjeta-chapa-estado.estado.offline,
+html .perfil-estado-online.offline {
+  color: #a9a0bb !important;
+}
+
+html .perfil-sidebar > .insignias-usuario {
+  top: 72px !important;
+  left: 12px !important;
+  width: 110px !important;
+  gap: 5px !important;
+  z-index: 9 !important;
+}
+
+html .perfil-sidebar > .insignias-usuario .insignia-oficial {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 9px !important;
+  background: rgba(10, 7, 24, .55) !important;
+  border: 1px solid rgba(214, 171, 255, .16) !important;
+  font-size: 18px !important;
+  box-shadow: 0 6px 14px rgba(0,0,0,.16) !important;
+}
+
+html .tarjeta-avatar-pie {
+  left: 10px !important;
+  right: 10px !important;
+  bottom: 10px !important;
+  min-height: 52px !important;
+  height: 52px !important;
+  border-radius: 13px !important;
+  padding: 0 58px 0 14px !important;
+  background: linear-gradient(135deg, rgba(28, 14, 58, .96) 0%, rgba(67, 28, 111, .94) 100%) !important;
+  border: 1px solid rgba(190, 132, 255, .24) !important;
+  border-top: 1px solid rgba(255,255,255,.10) !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,.20) !important;
+  backdrop-filter: blur(10px) !important;
+  justify-content: flex-start !important;
+}
+
+html .tarjeta-avatar-nombre {
+  max-width: 100% !important;
+  color: #fff !important;
+  font-family: var(--font-display, Inter), Arial, sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  text-align: left !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,.35) !important;
+}
+
+/* La medalla conserva los puntos, pero pasa a ser una ficha compacta. */
+html .tarjeta-avatar-medalla {
+  right: 9px !important;
+  bottom: 9px !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 12px !important;
+  clip-path: none !important;
+  background: linear-gradient(145deg, #ffd969 0%, #e5a918 100%) !important;
+  border: 1px solid rgba(255,255,255,.24) !important;
+  color: #3a2200 !important;
+  font: 900 14px/1 Arial, sans-serif !important;
+  text-shadow: none !important;
+  box-shadow: 0 8px 16px rgba(92,55,0,.25), inset 0 1px 0 rgba(255,255,255,.42) !important;
+}
+
+@media (max-width: 860px) {
+  html .perfil-cuerpo {
+    grid-template-columns: 1fr !important;
+  }
+
+  html .perfil-sidebar {
+    width: min(300px, 100%) !important;
+    max-width: 300px !important;
+    margin: 0 auto !important;
+  }
+
+  html .tarjeta-avatar {
+    width: 100% !important;
+    max-width: 300px !important;
+  }
+
+  html .tarjeta-avatar .avatar {
+    height: auto !important;
+    aspect-ratio: 300 / 414 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  html .perfil-sidebar,
+  html .tarjeta-avatar {
+    width: 286px !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  html .tarjeta-avatar .avatar {
+    aspect-ratio: 286 / 394 !important;
   }
 }
 
