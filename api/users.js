@@ -3,6 +3,7 @@ const { avisar, canalNotificaciones } = require("./_avisos");
 const { obtenerSql } = require("./_db");
 const { PasswordService } = require("./_password");
 const { requerirAuth } = require("./_auth");
+const sanciones = require("./_sanciones");
 const { MonedasService } = require("./_monedas");
 const { registrarMinutoJugado } = require("./_racha");
 const { metricasEnJuego, avisarSiSeCumplen, juegosDeLaSemana, semanaActual } = require("./_misiones");
@@ -219,6 +220,25 @@ async function listarUsuarios(req, res) {
   // (rank_actual) no se mueve con esto, se recalcula recién el lunes.
   const semanaActualSQL = sql`date_trunc('week', (now() AT TIME ZONE 'America/Argentina/Buenos_Aires'))::date`;
 
+  // El estado de moderación de cada cuenta, de la tabla sanciones
+  // (migración 026, api/_sanciones.js): suspendida hasta cuándo y por qué,
+  // y si está baneada. El motivo del baneo no sale en ninguna lista: se le
+  // dice solo a la cuenta, al intentar entrar.
+  const sancionSQL = sql`
+    (san.suspendido_hasta IS NOT NULL) AS suspendido,
+    san.suspendido_hasta,
+    san.motivo_suspension,
+    COALESCE(san.baneado, false) AS baneado`;
+  const sancionJoinSQL = sql`
+    LEFT JOIN LATERAL (
+      SELECT bool_or(s.tipo = 'baneo') AS baneado,
+             max(s.hasta) FILTER (WHERE s.tipo = 'suspension') AS suspendido_hasta,
+             (array_agg(s.motivo ORDER BY s.desde DESC) FILTER (WHERE s.tipo = 'suspension'))[1] AS motivo_suspension
+      FROM sanciones s
+      WHERE s.user_id = u.id AND s.levantada_en IS NULL
+        AND (s.tipo = 'baneo' OR (s.tipo = 'suspension' AND s.hasta > now()))
+    ) san ON true`;
+
   // En las listas, un avatar PNG viaja sin su base64: se manda solo la
   // huella del contenido (md5) y la receta de capas a restaurar, y el
   // navegador va a buscar la imagen aparte. El recorte se hace acá, en
@@ -250,13 +270,14 @@ async function listarUsuarios(req, res) {
 
     const usuario = await sql`
       SELECT u.id, u.username, u.level, u.xp, u.monedas, u.status, u.bio, ${avatarUno}, u.avatar_compuesto, u.created_at, u.last_login,
-             u.suspendido, u.fecha_suspension, u.motivo_suspension,
+             ${sancionSQL},
              u.rank_actual, u.rank_anterior, u.ranking_puntuacion,
              COALESCE(ras.minutos_jugados, 0) AS minutos_semana_actual,
              COALESCE(ras.dias_activos, 0) AS dias_activos_semana_actual
       FROM users u
       LEFT JOIN ranking_actividad_semanal ras
         ON ras.user_id = u.id AND ras.semana = ${semanaActualSQL}
+      ${sancionJoinSQL}
       WHERE u.username = ${username};
     `;
 
@@ -283,13 +304,14 @@ async function listarUsuarios(req, res) {
     const buscado = "%" + String(q).trim() + "%";
     usuarios = await sql`
       SELECT u.id, u.username, u.level, u.xp, u.status, u.bio, ${avatarLigeroSQL}, u.avatar_compuesto, u.created_at, u.last_login,
-             u.suspendido, u.fecha_suspension, u.motivo_suspension,
+             ${sancionSQL},
              u.rank_actual, u.rank_anterior, u.ranking_puntuacion,
              COALESCE(ras.minutos_jugados, 0) AS minutos_semana_actual,
              COALESCE(ras.dias_activos, 0) AS dias_activos_semana_actual
       FROM users u
       LEFT JOIN ranking_actividad_semanal ras
         ON ras.user_id = u.id AND ras.semana = ${semanaActualSQL}
+      ${sancionJoinSQL}
       WHERE u.username ILIKE ${buscado}
       ORDER BY u.username ASC
       LIMIT ${tope};
@@ -309,7 +331,7 @@ async function listarUsuarios(req, res) {
     const hoySQL = sql`(now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date`;
     usuarios = await sql`
       SELECT u.id, u.username, u.level, u.xp, u.status, u.bio, ${avatarLigeroSQL}, u.avatar_compuesto, u.created_at, u.last_login,
-             u.suspendido, u.fecha_suspension, u.motivo_suspension,
+             ${sancionSQL},
              u.rank_actual, u.rank_anterior, u.ranking_puntuacion,
              COALESCE(ras.minutos_jugados, 0) AS minutos_semana_actual,
              COALESCE(ras.dias_activos, 0) AS dias_activos_semana_actual,
@@ -318,6 +340,7 @@ async function listarUsuarios(req, res) {
       FROM users u
       LEFT JOIN ranking_actividad_semanal ras
         ON ras.user_id = u.id AND ras.semana = ${semanaActualSQL}
+      ${sancionJoinSQL}
       LEFT JOIN actividad_diaria hoy
         ON hoy.user_id = u.id AND hoy.dia = ${hoySQL}
       LEFT JOIN (
@@ -550,6 +573,9 @@ async function avatarVistaPrevia(req, res) {
 async function updateBio(req, res) {
   const auth = requerirAuth(req, res);
   if (!auth) return;
+  // La biografía la leen otros: una cuenta suspendida no la cambia
+  // (api/_sanciones.js).
+  if (sanciones.bloquearSiSuspendida(auth, res)) return;
   const { username, bio } = req.body;
   if (String(auth.username).toLowerCase() !== String(username || '').toLowerCase()) {
     return res.status(403).json({ success: false, error: "No podés modificar otro usuario" });
@@ -721,61 +747,25 @@ async function sumarXp(req, res) {
   });
 }
 
-async function suspend(req, res) {
+// ==============================
+// LA MODERACIÓN: ADVERTIR, SUSPENDER, BANEAR Y LEVANTAR
+// ==============================
+// Toda la regla está en api/_sanciones.js: quién puede, a quién, el
+// historial de moderación y el aviso a la cuenta. Aquí solo se traduce a
+// HTTP. Hasta el 28/09/2026, "suspend" solo ponía users.suspendido, que
+// nadie miraba.
+async function moderar(req, res, accion) {
   const auth = requerirAuth(req, res);
   if (!auth) return;
-  const { username, motivo } = req.body || {};
-
-  if (!username) {
-    return res.status(400).json({ success: false, error: "Falta username" });
+  try {
+    const resultado = await accion(sql, auth, req.body || {});
+    return res.status(200).json({ success: true, ...resultado });
+  } catch (error) {
+    if (error instanceof sanciones.Rechazo) {
+      return res.status(error.codigo).json({ success: false, error: error.message });
+    }
+    throw error;
   }
-
-  const admin = await sql`
-    SELECT 1 FROM badges WHERE user_id = ${auth.sub} AND badge_id = 'administrador' LIMIT 1;
-  `;
-  if (!admin.length) return res.status(403).json({ success: false, error: "Solo un administrador puede suspender usuarios" });
-
-  const usuario = await sql`
-    UPDATE users
-    SET suspendido = true, fecha_suspension = now(),
-        motivo_suspension = ${(motivo && String(motivo).trim()) ? String(motivo).trim() : "No especificado"}
-    WHERE username = ${username}
-    RETURNING id, username, suspendido, fecha_suspension, motivo_suspension;
-  `;
-
-  if (usuario.length === 0) {
-    return res.status(404).json({ success: false, error: "Usuario no encontrado" });
-  }
-
-  return res.status(200).json({ success: true, user: usuario[0] });
-}
-
-async function reactivate(req, res) {
-  const auth = requerirAuth(req, res);
-  if (!auth) return;
-  const { username } = req.body || {};
-
-  if (!username) {
-    return res.status(400).json({ success: false, error: "Falta username" });
-  }
-
-  const admin = await sql`
-    SELECT 1 FROM badges WHERE user_id = ${auth.sub} AND badge_id = 'administrador' LIMIT 1;
-  `;
-  if (!admin.length) return res.status(403).json({ success: false, error: "Solo un administrador puede reactivar usuarios" });
-
-  const usuario = await sql`
-    UPDATE users
-    SET suspendido = false, fecha_suspension = NULL, motivo_suspension = NULL
-    WHERE username = ${username}
-    RETURNING id, username, suspendido;
-  `;
-
-  if (usuario.length === 0) {
-    return res.status(404).json({ success: false, error: "Usuario no encontrado" });
-  }
-
-  return res.status(200).json({ success: true, user: usuario[0] });
 }
 
 async function changePassword(req, res) {
@@ -831,8 +821,10 @@ module.exports = async function handler(req, res) {
       if (action === "update-bio") return await updateBio(req, res);
       if (action === "heartbeat") return await heartbeat(req, res);
       if (action === "xp") return await sumarXp(req, res);
-      if (action === "suspend") return await suspend(req, res);
-      if (action === "reactivate") return await reactivate(req, res);
+      if (action === "warn") return await moderar(req, res, sanciones.advertir);
+      if (action === "suspend") return await moderar(req, res, sanciones.suspender);
+      if (action === "ban") return await moderar(req, res, sanciones.banear);
+      if (action === "reactivate") return await moderar(req, res, sanciones.levantar);
       if (action === "change-password") return await changePassword(req, res);
 
       return res.status(400).json({ success: false, error: "Acción inválida" });
