@@ -88,7 +88,7 @@ function mostrarCuentaBaneada(usuario) {
     caja.innerHTML = `<img src="${SILUETA_AVATAR.src}" alt="" style="width:100%;height:100%;object-fit:contain;">`;
   }
 
-  ["nivel", "perfilMetaAvatar", "agregarAmigo", "bloquearUsuario"].forEach(id => {
+  ["nivel", "tarjetaAvatarMedalla", "perfilMetaAvatar", "agregarAmigo", "bloquearUsuario"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = "none";
   });
@@ -261,13 +261,12 @@ if (!usuario) {
   }
 
   pintarEstadoYUltimaConexion();
+  // La chapa del nivel lleva solo el número, como en Mi perfil: desde el
+  // 28/09/2026 las dos páginas usan la misma tarjeta
+  // (css/perfil-macrojuegos-light.css).
   const nivelEl = document.getElementById("nivel");
-  if(nivelEl){
-    const nivelActual = usuario.nivel || 1;
-    nivelEl.textContent = "⭐ Nivel " + nivelActual;
-    if (typeof ajustarChapaNivel === "function") {
-      ajustarChapaNivel(nivelEl, nivelActual);
-    }
+  if(nivelEl && typeof pintarChapaNivel === "function"){
+    pintarChapaNivel(nivelEl, usuario.nivel || 1);
   }
   document.getElementById("biografia").textContent = usuario.biografia || "Todavía no escribió una biografía.";
   document.getElementById("xp").textContent = (usuario.xp || 0) + " XP";
@@ -279,6 +278,10 @@ if (!usuario) {
     ? calcularPuntosLogros(usuario.nombre)
     : 0;
   document.getElementById("logros").textContent = puntosLogros + " puntos";
+  // Y en la medalla del pie de la tarjeta, como en Mi perfil.
+  if (typeof pintarMedallaLogros === "function") {
+    pintarMedallaLogros(document.getElementById("tarjetaAvatarMedalla"), puntosLogros);
+  }
 
   // RANKING: la posición ya viaja con el usuario que se acaba de pedir.
   // /api/users?username=X devuelve rank_actual, calculado por el

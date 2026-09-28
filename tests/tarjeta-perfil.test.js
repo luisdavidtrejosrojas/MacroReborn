@@ -122,3 +122,20 @@ test("y nada de la hoja lo pisa después: es la última regla de la tarjeta", ()
   const orden = ["css/perfil.css", "css/theme-canonical.css", "css/perfil-macrojuegos-light.css"].map(h => perfil.indexOf(h));
   assert.ok(orden.every(n => n !== -1) && orden[0] < orden[2] && orden[1] < orden[2], "perfil.html carga la hoja antes de tiempo");
 });
+
+test("el perfil de otra persona usa la misma tarjeta que Mi perfil", () => {
+  // Pedido el 28/09/2026: el avatar entero y el nombre dentro, en el
+  // perfil de todos, no solo en el propio.
+  const usuarioHtml = fs.readFileSync(path.join(__dirname, "..", "usuario.html"), "utf8");
+  const orden = ["css/perfil.css", "css/usuario.css", "css/theme-canonical.css", "css/perfil-macrojuegos-light.css"]
+    .map(h => usuarioHtml.indexOf(h));
+  assert.ok(orden.every(n => n !== -1), "usuario.html no carga alguna de las hojas");
+  assert.ok(orden[3] > orden[0] && orden[3] > orden[1] && orden[3] > orden[2], "usuario.html carga la hoja de la tarjeta antes de tiempo");
+  assert.match(usuarioHtml, /<div class="tarjeta-avatar-pie">\s*<span id="tarjetaAvatarNombre"[^>]*>[^<]*<\/span>\s*<span id="tarjetaAvatarMedalla" class="tarjeta-avatar-medalla"><\/span>/);
+
+  const usuarioJs = fs.readFileSync(path.join(__dirname, "..", "js", "usuario.js"), "utf8");
+  assert.match(usuarioJs, /pintarChapaNivel\(nivelEl, usuario\.nivel \|\| 1\)/);
+  assert.match(usuarioJs, /pintarMedallaLogros\(document\.getElementById\("tarjetaAvatarMedalla"\), puntosLogros\)/);
+  // Y en el perfil de una cuenta baneada, la medalla tampoco sale.
+  assert.match(usuarioJs, /\["nivel", "tarjetaAvatarMedalla", "perfilMetaAvatar", "agregarAmigo", "bloquearUsuario"\]/);
+});
