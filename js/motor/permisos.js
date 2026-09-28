@@ -187,47 +187,30 @@ async function estaSuspendido(usuarioONombre){
 
 }
 
-async function suspenderUsuario(nombre, motivo){
-
+// Advertir, suspender, banear y levantar: lo decide y lo apunta el
+// servidor (api/_sanciones.js, desde el 28/09/2026). Devuelven su
+// respuesta entera, { success, error, ... }, para que el panel diga la
+// verdad: antes ignoraba la respuesta y anunciaba "enviada" aunque el
+// servidor la hubiera rechazado.
+async function _moderar(accion, cuerpo){
   try{
-
-    const resp = await fetch("/api/users?action=suspend", {
+    const resp = await fetch("/api/users?action=" + accion, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: nombre, motivo: motivo || "" })
+      body: JSON.stringify(cuerpo)
     });
-    const datos = await resp.json();
-    return (datos && datos.success) ? datos.user : null;
-
+    const datos = await resp.json().catch(() => null);
+    return datos || { success: false, error: "El servidor no contestó" };
   }catch(error){
-
-    console.warn("MacroReborn: no se pudo suspender al usuario.", error);
-    return null;
-
+    console.warn("MacroReborn: no se pudo hablar con la moderación.", error);
+    return { success: false, error: "No se pudo hablar con el servidor" };
   }
-
 }
 
-async function reactivarUsuario(nombre){
-
-  try{
-
-    const resp = await fetch("/api/users?action=reactivate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: nombre })
-    });
-    const datos = await resp.json();
-    return (datos && datos.success) ? datos.user : null;
-
-  }catch(error){
-
-    console.warn("MacroReborn: no se pudo reactivar al usuario.", error);
-    return null;
-
-  }
-
-}
+const advertirCuenta = (nombre, motivo) => _moderar("warn", { username: nombre, motivo });
+const suspenderUsuario = (nombre, motivo, dias) => _moderar("suspend", { username: nombre, motivo, dias });
+const banearUsuario = (nombre, motivo) => _moderar("ban", { username: nombre, motivo });
+const reactivarUsuario = (nombre) => _moderar("reactivate", { username: nombre });
 
 // Chequeo genérico para usar antes de comentar / mandar mensajes /
 // acciones de comunidad. Si está suspendido, muestra el aviso y
@@ -248,7 +231,8 @@ async function bloqueadoPorSuspension(){
 function mostrarAvisoSuspension(){
   const activo = obtenerUsuarioActivo();
   const nombre = activo && activo.nombre ? activo.nombre : "tu cuenta";
-  const mensaje = "La cuenta de " + nombre + " está suspendida y las acciones de comunidad permanecen bloqueadas.";
+  const mensaje = "La cuenta de " + nombre + " está suspendida: podés jugar y mirar, pero no escribir. " +
+    "¿Es un error? Escribinos en Discord: " + DISCORD_MODERACION;
 
   if(window.MRModal && typeof window.MRModal.show === "function") {
     window.MRModal.show({
@@ -273,6 +257,20 @@ function mostrarAvisoSuspension(){
 // (lo agrega navbar.js en el DOM al cargar). No pisa nada del diseño
 // existente: usa las mismas clases que ya usa navbar.js.
 
+// Dónde se reclama una sanción (el mismo que da el servidor en sus
+// respuestas, api/_sanciones.js).
+const DISCORD_MODERACION = "https://discord.gg/tKjfsQ7GdG";
+
+// "5/10 a las 14:00", en la hora de Argentina, como en el servidor.
+function fechaSuspensionAR(fecha){
+  const partes = new Intl.DateTimeFormat("es-AR", {
+    timeZone: "America/Argentina/Buenos_Aires",
+    day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23"
+  }).formatToParts(new Date(fecha));
+  const p = (tipo) => (partes.find(x => x.type === tipo) || {}).value || "";
+  return p("day") + "/" + p("month") + " a las " + p("hour") + ":" + p("minute");
+}
+
 async function _pintarBannerSuspension(){
 
   const activo = obtenerUsuarioActivo();
@@ -284,11 +282,21 @@ async function _pintarBannerSuspension(){
   if(document.getElementById("avisoSuspension")) return;
 
   const motivo = usuarioActualizado.motivo_suspension || "";
+  const hasta = usuarioActualizado.suspendido_hasta
+    ? " hasta el " + fechaSuspensionAR(usuarioActualizado.suspendido_hasta) + " (hora de Argentina)"
+    : "";
 
   const banner = document.createElement("div");
   banner.id = "avisoSuspension";
   banner.className = "aviso-suspension";
-  banner.innerHTML = `🚫 Tu cuenta está suspendida.${motivo ? " Motivo: " + motivo : ""}`;
+  banner.textContent = "🚫 Tu cuenta está suspendida" + hasta +
+    ": podés jugar y mirar, pero no escribir." + (motivo ? " Motivo: " + motivo + "." : "") + " ";
+  const reclamar = document.createElement("a");
+  reclamar.href = DISCORD_MODERACION;
+  reclamar.target = "_blank";
+  reclamar.rel = "noopener";
+  reclamar.textContent = "¿Es un error? Escribinos en Discord";
+  banner.appendChild(reclamar);
 
   document.body.prepend(banner);
 
