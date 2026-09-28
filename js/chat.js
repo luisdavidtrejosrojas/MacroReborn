@@ -118,6 +118,10 @@ async function renderChat(){
         const esMio = msg.usuario === miNombre;
         const fecha = new Date(msg.created_at).toLocaleString("es-AR");
 
+        // El de una cuenta baneada llega tapado (api/_sanciones.js) y se
+        // pinta en rojo, sin nada que responder, reportar ni votar.
+        const tapado = msg.autor_baneado === true;
+
         const div = document.createElement("div");
         div.className = "mensaje" + (esMio ? " mensaje-propio" : "");
 
@@ -130,9 +134,9 @@ async function renderChat(){
                 </div>
             </div>
 
-            <p class="texto-chat">${escaparHTML(msg.texto)}</p>
+            <p class="texto-chat">${MRTexto.escrito(msg)}</p>
 
-            <div class="acciones-chat">
+            ${tapado ? "" : `<div class="acciones-chat">
                 ${typeof botonLikeHTML === "function" ? botonLikeHTML("chat", msg.id, miNombre) : ""}
 
                 <button class="btn-responder" data-usuario="${escaparHTML(msg.usuario)}">
@@ -148,7 +152,7 @@ async function renderChat(){
                         🚩 Reportar
                     </button>
                 `}
-            </div>
+            </div>`}
         `;
 
         contenedor.appendChild(div);
