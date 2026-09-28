@@ -18,12 +18,14 @@
 
 // Trae la lista completa de usuarios (para el panel de administración).
 // tope alto a propósito: el panel necesita verlos a todos, no solo los
-// primeros 300 que trae /api/users por defecto.
+// primeros 300 que trae /api/users por defecto. Con las cuentas
+// baneadas, que en las demás listas no salen (api/_sanciones.js): el
+// servidor solo se las da a la moderación.
 async function obtenerUsuarios(){
 
   try{
 
-    const resp = await fetch("/api/users?limit=2000");
+    const resp = await fetch("/api/users?limit=2000&moderacion=1");
     const datos = await resp.json();
     return (datos && datos.success) ? datos.users : [];
 
