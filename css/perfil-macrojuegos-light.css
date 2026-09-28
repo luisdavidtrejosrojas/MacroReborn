@@ -1,9 +1,15 @@
 /* ======================================================================
-   PERFIL MACROJUEGOS CLÁSICO — SOLO MODO CLARO
+   PERFIL MACROJUEGOS CLÁSICO
    ----------------------------------------------------------------------
    Esta hoja es exclusivamente visual. No cambia IDs, eventos, URLs,
-   datos, autenticación, sesión ni lógica de perfil. El modo oscuro no
-   recibe ninguna regla de esta hoja.
+   datos, autenticación, sesión ni lógica de perfil. Solo la carga
+   perfil.html.
+
+   Nació solo para el modo claro, pero desde los zips del otro dev
+   (28/09/2026) también lleva la tarjeta del avatar del modo oscuro y de
+   los dos: ver "MODO OSCURO", "TARJETA DE PERFIL COMPACTA" y, al final,
+   "EL AVATAR ENTERO Y EL NOMBRE DENTRO DE LA IMAGEN", que manda sobre
+   todo lo anterior en la tarjeta.
    ====================================================================== */
 
 html[data-tema="claro"] body.mr-root {
