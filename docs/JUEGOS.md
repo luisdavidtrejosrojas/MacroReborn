@@ -220,3 +220,34 @@ Notas:
 - **Reutilizar**: seguir el patrón de los juegos existentes (Ruffle
   desde jsdelivr, iframe con permisos, portadas 480x270, entrada en
   `datos-juegos.js`); no inventar un sistema paralelo.
+
+## 7. Quitar un juego
+
+Caso real: el 30 (The Binding of Isaac: Wrath of the Lamb - Eternal
+Edition), quitado el 28/09/2026 porque no cargaba. No era un enlace
+caído: sus tres trozos de SWF seguían respondiendo 200 en jsdelivr.
+
+1. Borrar su entrada de `js/datos-juegos.js` y dejar en su lugar un
+   comentario con el número, para que no se vuelva a usar.
+2. Borrar su `<url>` de `sitemap.xml`.
+3. Borrar el archivo del juego (`html/juegos/<slug>.html`) y la
+   portada (`imagenes/juegos/<slug>.jpg`). Siguen en el historial de
+   Git por si se quiere recuperar.
+
+La base no se toca. El historial, los favoritos, las valoraciones, las
+reseñas y el ranking semanal por juego guardan el número del juego
+(`game_id`) y se quedan como están:
+
+- Las páginas que buscan un juego por su número se saltan el que no
+  está en el catálogo (perfil propio y ajeno, recomendaciones,
+  personalización), y las estadísticas del panel de administración lo
+  nombran "Juego #30".
+- `jugar.html?id=30` dice "Juego no encontrado", y su ficha
+  (`juego.html?id=30`) también, sin botón de jugar.
+- Lo jugado antes sigue contando para la racha y las misiones.
+
+Por eso el número no se reusa: un juego nuevo con el 30 heredaría ese
+historial, esos favoritos y esas reseñas.
+
+`tests/juego-quitado.test.js` vigila que el sitemap solo enlace juegos
+del catálogo y que la ficha de uno quitado lo diga.
