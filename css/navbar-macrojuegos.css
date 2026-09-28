@@ -651,3 +651,163 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
     display: none !important;
   }
 }
+
+/* ================================================================
+   9. CUENTA ACTIVA — avatar cuadrado + barra de experiencia
+   ----------------------------------------------------------------
+   Reemplaza el indicador antiguo de "? / Nivel X" por una cuenta
+   compacta coherente con la estética púrpura de MacroReborn.
+   ================================================================ */
+
+.navbar .user-guest-boton.sesion-activa {
+  height: 42px;
+  min-width: 172px;
+  max-width: 238px;
+  padding: 3px 10px 3px 4px !important;
+  gap: 8px !important;
+  border: 1px solid rgba(137, 82, 239, 0.32) !important;
+  border-radius: 10px !important;
+  background: rgba(33, 13, 73, 0.72) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.025), 0 0 18px rgba(122, 61, 230, .12);
+}
+
+.navbar .user-guest-boton.sesion-activa:hover {
+  border-color: rgba(168, 105, 255, 0.58) !important;
+  background: rgba(45, 18, 92, 0.88) !important;
+}
+
+.navbar .user-guest-boton.sesion-activa .user-guest-avatar {
+  width: 34px !important;
+  height: 34px !important;
+  flex: 0 0 34px;
+  border-radius: 6px !important;
+  border: 1px solid rgba(201, 153, 255, 0.55) !important;
+  background: #16082e !important;
+  color: #fff !important;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(165, 96, 255, .20);
+}
+
+.navbar .user-guest-boton.sesion-activa .user-guest-avatar::before {
+  content: none !important;
+  display: none !important;
+}
+
+.navbar .user-guest-boton.sesion-activa .user-guest-avatar > img,
+.navbar .user-guest-boton.sesion-activa .user-guest-avatar > .avatar-compuesto {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.navbar .user-guest-boton.sesion-activa .user-guest-avatar .avatar-compuesto {
+  position: relative;
+}
+
+.navbar .user-guest-boton.sesion-activa .user-guest-nombre {
+  display: flex !important;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 170px;
+  padding-top: 0 !important;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  color: #f5f2ff !important;
+  font: 700 12px/1.1 var(--font-body), Inter, Arial, sans-serif !important;
+}
+
+.navbar .user-guest-boton.sesion-activa .user-guest-nombre::before {
+  content: none !important;
+  display: none !important;
+}
+
+.user-guest-nombre-text {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-guest-xp {
+  width: 100%;
+  max-width: 142px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.user-guest-xp-track {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 44px;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(185, 133, 255, .22);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.3);
+}
+
+.user-guest-xp-fill {
+  display: block;
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8b3dff 0%, #c38cff 55%, #f2d5ff 100%);
+  box-shadow: 0 0 8px rgba(167, 91, 255, .48);
+  transition: width .25s ease;
+}
+
+.user-guest-xp-text {
+  flex: 0 0 auto;
+  color: #beaee1;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.navbar .user-guest-boton.sesion-activa .user-guest-badge {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .navbar .user-guest-boton.sesion-activa {
+    min-width: 148px;
+    max-width: 195px;
+  }
+  .navbar .user-guest-boton.sesion-activa .user-guest-nombre {
+    max-width: 132px;
+  }
+  .user-guest-xp {
+    max-width: 118px;
+  }
+}
+
+@media (max-width: 650px) {
+  .navbar .user-guest-boton.sesion-activa {
+    min-width: 34px;
+    width: 34px;
+    max-width: 34px;
+    padding: 0 !important;
+    justify-content: center;
+    border-radius: 7px !important;
+    background: rgba(33, 13, 73, 0.72) !important;
+  }
+
+  .navbar .user-guest-boton.sesion-activa .user-guest-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    flex-basis: 28px;
+    border-radius: 5px !important;
+  }
+
+  .navbar .user-guest-boton.sesion-activa .user-guest-nombre {
+    display: none !important;
+  }
+}

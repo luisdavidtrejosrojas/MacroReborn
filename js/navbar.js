@@ -40,6 +40,54 @@ const usuarioNav = (window.MRSession && typeof MRSession.get === "function")
     ? MRSession.get()
     : leerJSON(localStorage.getItem("usuarioActivo") || "null");
 
+function xpNecesariaNavbar(nivel){
+    const n = Math.max(1, Number(nivel) || 1);
+    if(n === 1) return 50;
+    if(n === 2) return 100;
+    return 100 + ((n - 2) * 200);
+}
+
+function experienciaNavbar(usuario){
+    const nivel = Math.max(1, Number(usuario && (usuario.nivel ?? usuario.level)) || 1);
+    const actual = Math.max(0, Number(usuario && usuario.xp) || 0);
+    const necesaria = xpNecesariaNavbar(nivel);
+    const porcentaje = necesaria > 0 ? Math.min(100, Math.max(0, (actual / necesaria) * 100)) : 0;
+    return { nivel, actual, necesaria, porcentaje };
+}
+
+function renderExperienciaNavbar(usuario){
+    const datos = experienciaNavbar(usuario);
+    const xpEl = document.getElementById("navExperienciaUsuario");
+    if(!xpEl) return;
+
+    const fill = xpEl.querySelector(".user-guest-xp-fill");
+    const texto = xpEl.querySelector(".user-guest-xp-text");
+    if(fill) fill.style.width = datos.porcentaje.toFixed(1) + "%";
+    if(texto) texto.textContent = `${datos.actual} / ${datos.necesaria} XP`;
+    xpEl.title = `Nivel ${datos.nivel}: ${datos.actual} de ${datos.necesaria} XP`;
+    xpEl.setAttribute("aria-label", `Nivel ${datos.nivel}. ${datos.actual} de ${datos.necesaria} XP`);
+}
+
+// La miniatura del botón de usuario. Con la cuenta entera ({ id,
+// avatar_compuesto }) sale su avatar compuesto; solo con el avatar, la
+// silueta (avatarMiniaturaHTML, en js/core.js). La sesión cambia con cada
+// minuto de juego: solo se repinta si cambió el avatar, para no volver a
+// pedir la imagen.
+let _avatarNavbarPintado = null;
+function renderAvatarNavbar(usuario){
+    const avatarEl = document.querySelector("#botonUsuarioMenu .user-guest-avatar");
+    if(!avatarEl) return;
+    const avatar = usuario && usuario.avatar;
+    const clave = JSON.stringify([usuario && usuario.id, usuario && usuario.avatar_compuesto, avatar]);
+    if(clave === _avatarNavbarPintado) return;
+    _avatarNavbarPintado = clave;
+    if(typeof avatarMiniaturaHTML === "function") {
+        avatarEl.innerHTML = avatarMiniaturaHTML(avatar, usuario);
+    } else {
+        avatarEl.innerHTML = '<img src="imagenes/avatar.png" alt="Avatar">';
+    }
+}
+
 // ---------- ESTILOS DEL DESPLEGABLE DE NOTIFICACIONES ----------
 // Se inyectan una sola vez desde acá, así el desplegable funciona en
 // cualquier página sin tener que agregar un <link> nuevo a cada HTML
@@ -163,10 +211,13 @@ if(navbar && nav){
 
             <div class="user-guest-wrap" id="userMenuWrap">
                 <button type="button" class="sesion-extra user-guest-boton sesion-activa" id="botonUsuarioMenu" aria-haspopup="true" aria-expanded="false">
-                    <span class="user-guest-avatar">👤</span>
+                    <span class="user-guest-avatar">${typeof avatarMiniaturaHTML === "function" ? avatarMiniaturaHTML(usuarioNav.avatar, usuarioNav) : '<img src="imagenes/avatar.png" alt="Avatar">'}</span>
                     <span class="user-guest-nombre">
-                        <span>${MRTexto.escapar(usuarioNav.nombre)}</span>
-                        <span class="user-guest-nivel" id="navNivelUsuario">Nivel ${Number(usuarioNav.nivel ?? usuarioNav.level ?? 1)}</span>
+                        <span class="user-guest-nombre-text">${MRTexto.escapar(usuarioNav.nombre)}</span>
+                        <span class="user-guest-xp" id="navExperienciaUsuario" aria-label="Experiencia del usuario">
+                            <span class="user-guest-xp-track"><span class="user-guest-xp-fill"></span></span>
+                            <span class="user-guest-xp-text">0 / 0 XP</span>
+                        </span>
                     </span>
                 </button>
 
@@ -199,6 +250,9 @@ if(navbar && nav){
 
         const botonUsuarioMenu = document.getElementById("botonUsuarioMenu");
         const dropdownUsuarioMenu = document.getElementById("dropdownUsuarioMenu");
+
+        renderAvatarNavbar(usuarioNav);
+        renderExperienciaNavbar(usuarioNav);
 
         function cerrarDropdownUsuarioMenu(){
             if(!dropdownUsuarioMenu) return;
@@ -369,10 +423,9 @@ if(navbar && nav){
         if(window.MRSession && typeof MRSession.subscribe === "function"){
             MRSession.subscribe(function(detalle){
                 const usuarioActual = detalle && detalle.usuario;
-                const nombreEl = document.querySelector("#botonUsuarioMenu .user-guest-nombre");
+                const nombreEl = document.querySelector("#botonUsuarioMenu .user-guest-nombre-text");
                 const tituloEl = document.querySelector("#dropdownUsuarioMenu .user-guest-dropdown-header");
                 const monedasEl = document.getElementById("navMonedas");
-                const nivelEl = document.getElementById("navNivelUsuario");
 
                 if(!usuarioActual){
                     return;
@@ -380,15 +433,11 @@ if(navbar && nav){
 
                 const nombreActual = usuarioActual.nombre || usuarioActual.username;
                 if(nombreActual){
-                    if(nombreEl) {
-                        const spanNombre = nombreEl.querySelector(":scope > span:first-child");
-                        if(spanNombre) spanNombre.textContent = nombreActual;
-                        else nombreEl.textContent = nombreActual;
-                    }
+                    if(nombreEl) nombreEl.textContent = nombreActual;
                     if(tituloEl) tituloEl.textContent = nombreActual;
                 }
-                const nivelActual = Number(usuarioActual.nivel ?? usuarioActual.level);
-                if(nivelEl && Number.isFinite(nivelActual)) nivelEl.textContent = "Nivel " + Math.max(1, nivelActual);
+                renderAvatarNavbar(usuarioActual);
+                renderExperienciaNavbar(usuarioActual);
 
                 // Si la sesión ya trae el saldo nuevo (por ejemplo, después
                 // de un pulso de XP), lo pintamos directamente. Solo
