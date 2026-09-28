@@ -67,6 +67,41 @@ function obtenerActivo() {
     : leerJSON(localStorage.getItem("usuarioActivo") || "null");
 }
 
+// ---------- CUENTA BANEADA ----------
+// Su perfil dice "Cuenta baneada": el aviso en rojo en lugar de la
+// biografía (lo manda el servidor, api/_sanciones.js), la silueta en vez
+// del avatar, sin estadísticas, insignias ni botones de amistad o
+// bloqueo, y solo la pestaña de inicio. Lo demás de la página no se
+// pinta. Si se le levanta el baneo, vuelve a verse entero.
+function mostrarCuentaBaneada(usuario) {
+  document.getElementById("nombreUsuario").textContent = usuario.nombre;
+  document.title = usuario.nombre + " - MacroReborn";
+
+  const bio = MRTexto.escrito({ texto: usuario.bio, autor_baneado: true });
+  ["biografia", "descripcionInicio"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = bio;
+  });
+
+  const caja = document.getElementById("avatarUsuario");
+  if (caja) {
+    caja.innerHTML = `<img src="${SILUETA_AVATAR.src}" alt="" style="width:100%;height:100%;object-fit:contain;">`;
+  }
+
+  ["nivel", "perfilMetaAvatar", "agregarAmigo", "bloquearUsuario"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+  const stats = document.querySelector(".tarjeta-stats");
+  if (stats) stats.style.display = "none";
+
+  // Solo la pestaña de inicio, con el aviso donde sale el del bloqueo.
+  perfilLimitadoPorBloqueo = true;
+  aplicarRestriccionTabsPorBloqueo();
+  const aviso = document.getElementById("avisoPerfilBloqueado");
+  if (aviso) aviso.textContent = "⛔ Cuenta baneada";
+}
+
 // ---------- AVATARES ----------
 // Una sola imagen por persona: su PNG de administrador, su avatar ya
 // compuesto por el servidor o la silueta. Lo decide imagenDeAvatar() en
@@ -149,6 +184,10 @@ try{
 if (!usuario) {
 
   alert("Usuario no encontrado");
+
+} else if (usuario.baneado) {
+
+  mostrarCuentaBaneada(usuario);
 
 } else {
 
