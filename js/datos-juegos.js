@@ -884,7 +884,7 @@ const juegos = [
     estado: "⭐ Nuevo",
     tipo: "destacado",
     descripcion: "Elegí a tus personajes favoritos de Fairy Tail y One Piece y enfrentate en intensos combates con ataques y habilidades especiales.",
-    iframe: "./html/juegos/fairytailvsonepiece.html"
+    iframe: "./html/juegos/fairytalevsonepiece.html"
 },
 
 {
