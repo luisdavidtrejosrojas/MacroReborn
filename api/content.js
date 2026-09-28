@@ -915,9 +915,12 @@ async function comments(req, res) {
       String(viewer).trim().toLowerCase() === String(username).trim().toLowerCase()
     );
 
+    // Lo que escribió una cuenta baneada sale tapado (api/_sanciones.js).
     const filas = await sql`
-      SELECT id, author_username AS usuario, texto, created_at
+      SELECT pc.id, pc.author_username AS usuario, pc.texto, pc.created_at,
+             ${sanciones.baneadaSQL(sql)} AS autor_baneado
       FROM profile_comments pc
+      LEFT JOIN users u ON u.id = pc.author_user_id
       WHERE profile_user_id = ${profileId}
         AND (
           ${viewerEsElPropioPerfil}
@@ -933,10 +936,10 @@ async function comments(req, res) {
               (LOWER(u1.username) = LOWER(pc.author_username) AND LOWER(u2.username) = LOWER(${viewer || ""}))
           )
         )
-      ORDER BY id DESC;
+      ORDER BY pc.id DESC;
     `;
 
-    return res.status(200).json({ success: true, comentarios: filas });
+    return res.status(200).json({ success: true, comentarios: filas.map(f => sanciones.tapar(f)) });
   }
 
   if (req.method === "POST") {
@@ -1187,9 +1190,13 @@ async function chat(req, res) {
     // viejo (misma consulta simple que ya funcionaba antes). El orden
     // para mostrarlos de más viejo a más nuevo se resuelve en
     // js/chat.js, así evitamos subconsultas SQL nuevas sin probar.
+    //
+    // Lo que escribió una cuenta baneada sale tapado (api/_sanciones.js).
     const filas = await sql`
-      SELECT id, username AS usuario, texto, created_at
+      SELECT cm.id, cm.username AS usuario, cm.texto, cm.created_at,
+             ${sanciones.baneadaSQL(sql)} AS autor_baneado
       FROM chat_messages cm
+      LEFT JOIN users u ON u.id = cm.user_id
       WHERE (
         ${viewer || null}::text IS NULL
         OR NOT EXISTS (
@@ -1203,11 +1210,11 @@ async function chat(req, res) {
             (a.username = cm.username AND blocked.username = ${viewer || ""})
         )
       )
-      ORDER BY id DESC
+      ORDER BY cm.id DESC
       LIMIT 200;
     `;
 
-    return res.status(200).json({ success: true, mensajes: filas });
+    return res.status(200).json({ success: true, mensajes: filas.map(f => sanciones.tapar(f)) });
   }
 
   if (req.method === "POST") {
@@ -1866,16 +1873,19 @@ async function reviews(req, res) {
       return res.status(400).json({ success: false, error: "Falta gameId" });
     }
 
+    // La reseña de una cuenta baneada sale tapada, también sus estrellas
+    // (api/_sanciones.js).
     const filas = await sql`
       SELECT u.username AS usuario, r.calificacion, r.texto,
-             r.created_at, r.updated_at, r.editado
+             r.created_at, r.updated_at, r.editado,
+             ${sanciones.baneadaSQL(sql)} AS autor_baneado
       FROM game_reviews r
       JOIN users u ON u.id = r.user_id
       WHERE r.game_id = ${String(gameId)}
       ORDER BY r.updated_at DESC;
     `;
 
-    return res.status(200).json({ success: true, resenas: filas });
+    return res.status(200).json({ success: true, resenas: filas.map(f => sanciones.tapar(f, { calificacion: null })) });
   }
 
   if (req.method === "POST") {
