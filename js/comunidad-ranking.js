@@ -73,8 +73,12 @@ let _rkUsuarios = [];       // lista completa ya con puntosLogros
 // moderacion, conectados y actividad, medidas en produccion. Ahora todas
 // las listas pasan la persona, y si alguna llegara sin ella, sale la
 // silueta: nunca una prenda suelta. Ver docs/AVATARES-SERVIDOR.md.
+//
+// Desde el 28/09/2026, su foto de perfil y no el cuerpo entero: todos los
+// huecos de esta pagina son cuadrados, y el cuerpo entero salia diminuto
+// con bandas a los lados. Ver fotoDeAvatar() en js/core.js.
 function rkImagenAvatar(avatarCrudo, usuario) {
-  return imagenDeAvatar(avatarCrudo, usuario, 62, 96) || SILUETA_AVATAR;
+  return fotoDeAvatar(avatarCrudo, usuario) || SILUETA_AVATAR;
 }
 
 // Esta pagina pinta 181 tarjetas, asi que aqui es donde se nota: 5.562
@@ -87,6 +91,15 @@ function rkAvatarHTML(avatarCrudo, contenedorClase, capaClase, defaultAncho, usu
     return `
       <div class="${contenedorClase}">
         <img src="${imagen.src}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+    `;
+  }
+
+  // La foto de perfil ya es cuadrada: llena el hueco entero.
+  if (imagen.tipo === "foto") {
+    return `
+      <div class="${contenedorClase}">
+        <img data-src="${imagen.src}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
       </div>
     `;
   }
@@ -351,6 +364,11 @@ function crAvatarHTML(avatarCrudo, claseCapa, usuario) {
   const imagen = rkImagenAvatar(avatarCrudo, usuario);
   if (imagen.tipo === "silueta") {
     return `<img src="${imagen.src}" alt="" loading="lazy">`;
+  }
+  // Sin la clase de capa, que la encoge para que quepa entera: la foto de
+  // perfil ya es cuadrada y llena el hueco.
+  if (imagen.tipo === "foto") {
+    return `<img data-src="${imagen.src}" alt="" loading="lazy">`;
   }
   const clase = imagen.tipo === "png" ? claseCapa + " avatar-png-personalizado" : claseCapa;
   return `<img class="${clase}" data-src="${imagen.src}" alt="" loading="lazy">`;

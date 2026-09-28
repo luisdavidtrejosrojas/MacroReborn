@@ -390,14 +390,17 @@ describe("la página de comunidad", () => {
   const CAPAS = { modelo: "tora", pelo: "tora_pelo3" };
   const PNG = { tipo: "png", url: "/api/users?action=avatar-png&username=jefa&v=abc" };
 
-  test("con la persona, su compuesto", () => {
+  test("con la persona, su foto de perfil, que llena el hueco", () => {
+    // Desde el 28/09/2026 la cara y no el cuerpo entero: los huecos de
+    // esta página son cuadrados. Va sin la clase de capa, que la encogería.
     const { rk, cr } = montarComunidad();
-    assert.match(cr(CAPAS, "cr-capa-chica", LUIS),
-      /<img class="cr-capa-chica" data-src="\/avatares\/38\/62x96\.jpg\?v=401ddea4553c"/);
-    assert.match(rk(CAPAS, "avatar-tarjeta", "capa-tarjeta", null, LUIS),
-      /data-src="\/avatares\/38\/62x96\.jpg\?v=401ddea4553c"/);
+    assert.equal(cr(CAPAS, "cr-capa-chica", LUIS),
+      '<img data-src="/avatares/38/cara.jpg?v=401ddea4553c" alt="" loading="lazy">');
+    const tarjeta = rk(CAPAS, "rk-mini-avatar", "capa-rk-mini", null, LUIS);
+    assert.match(tarjeta, /<img data-src="\/avatares\/38\/cara\.jpg\?v=401ddea4553c" alt="" loading="lazy" style="[^"]*object-fit:cover;"/);
+    assert.ok(!tarjeta.includes("capa-rk-mini"), "la foto lleva la clase que la encoge");
     // Sin huella, la direccion desnuda.
-    assert.match(cr(CAPAS, "cr-capa-chica", { id: 38 }), /data-src="\/avatares\/38\/62x96\.jpg"/);
+    assert.match(cr(CAPAS, "cr-capa-chica", { id: 38 }), /data-src="\/avatares\/38\/cara\.jpg"/);
   });
 
   test("el PNG de administrador, con su clase para el repliegue", () => {
