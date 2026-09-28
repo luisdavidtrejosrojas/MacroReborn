@@ -140,6 +140,23 @@ formulario.addEventListener("submit", async function(e){
 
 
 
+        }else if(datos.codigo === "cuenta-baneada"){
+
+            // Baneada (api/_sanciones.js): el motivo y dónde reclamar. Con
+            // textContent, que el motivo lo escribió una persona.
+            mostrarMensajeLogin(
+                "Esta cuenta está baneada. Motivo: " + (datos.motivo || "sin especificar") + ".",
+                "error"
+            );
+            if(mensajeLogin && datos.reclamar){
+                const enlace = document.createElement("a");
+                enlace.href = datos.reclamar;
+                enlace.target = "_blank";
+                enlace.rel = "noopener";
+                enlace.textContent = " ¿Creés que es un error? Escribinos en Discord.";
+                mensajeLogin.appendChild(enlace);
+            }
+
         }else{
 
 
