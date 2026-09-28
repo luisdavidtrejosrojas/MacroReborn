@@ -1,6 +1,10 @@
 (function(){
   "use strict";
   const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+  // El circulo de cada jugador: su foto de perfil (la cara de su avatar,
+  // fotoDeAvatar() de js/core.js) o su PNG de administrador; sin avatar,
+  // la inicial, que era lo unico que enseñaba hasta el 28/09/2026.
+  const avatarLiga=u=>{const i=typeof fotoDeAvatar==="function"?fotoDeAvatar(u.avatar,u):null;if(!i||(i.tipo!=="foto"&&i.tipo!=="png"))return esc(name(u).slice(0,1).toUpperCase());return `<img data-src="${esc(i.src)}"${i.tipo==="png"?' class="avatar-png-personalizado"':""} alt="" loading="lazy" style="width:100%;height:100%;border-radius:50%;object-fit:${i.tipo==="png"?"contain":"cover"}">`};
   const readActive=()=>{try{return JSON.parse(localStorage.getItem("usuarioActivo")||"null")}catch(_){return null}};
   let active=window.MRSession?window.MRSession.get():readActive();
   if(window.MRSession&&typeof window.MRSession.subscribe==="function"){window.MRSession.subscribe(function(d){active=d&&d.usuario?d.usuario:null;renderMe();});}
@@ -29,7 +33,7 @@
     if(filter==="ascenso")rows=rows.filter(u=>Number(u.rank_anterior)>Number(u.rank_actual));
     if(q)rows=rows.filter(u=>name(u).toLowerCase().includes(q));
     if(!rows.length){host.innerHTML='<div class="lg-empty">No hay jugadores con estos filtros.</div>';return}
-    host.innerHTML=`<table class="lg-table"><thead><tr><th>#</th><th>Jugador</th><th>Liga</th><th>Movimiento</th></tr></thead><tbody>${rows.slice(0,100).map(u=>{const pos=users.indexOf(u)+1,[ln,icon]=league(pos,users.length),prev=Number(u.rank_anterior||0),delta=prev?prev-pos:0;return `<tr><td class="lg-rank">${pos}</td><td><div class="lg-user"><span class="lg-avatar">${esc(name(u).slice(0,1).toUpperCase())}</span><span>@${esc(name(u))}</span></div></td><td class="lg-league">${icon} ${ln}</td><td class="${delta>0?'lg-up':delta<0?'lg-down':''}">${delta>0?`▲ ${delta}`:delta<0?`▼ ${Math.abs(delta)}`:"—"}</td></tr>`}).join("")}</tbody></table>`;
+    host.innerHTML=`<table class="lg-table"><thead><tr><th>#</th><th>Jugador</th><th>Liga</th><th>Movimiento</th></tr></thead><tbody>${rows.slice(0,100).map(u=>{const pos=users.indexOf(u)+1,[ln,icon]=league(pos,users.length),prev=Number(u.rank_anterior||0),delta=prev?prev-pos:0;return `<tr><td class="lg-rank">${pos}</td><td><div class="lg-user"><span class="lg-avatar">${avatarLiga(u)}</span><span>@${esc(name(u))}</span></div></td><td class="lg-league">${icon} ${ln}</td><td class="${delta>0?'lg-up':delta<0?'lg-down':''}">${delta>0?`▲ ${delta}`:delta<0?`▼ ${Math.abs(delta)}`:"—"}</td></tr>`}).join("")}</tbody></table>`;
   }
   async function init(){
     try{const r=await fetch("/api/users?limit=500");if(!r.ok)throw new Error("HTTP "+r.status);const d=await r.json();users=(Array.isArray(d?.users)?d.users:[]).slice().sort((a,b)=>(Number(a.rank_actual)||999999)-(Number(b.rank_actual)||999999));renderMe();const friends=await getFriends();renderTable(friends);document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("active"));b.classList.add("active");filter=b.dataset.filter;renderTable(friends)}));document.getElementById("lg-search")?.addEventListener("input",()=>renderTable(friends));}catch(err){document.getElementById("lg-me").innerHTML='<div class="lg-loading">No se pudo cargar el ranking global. El resto del sitio sigue funcionando normalmente.</div>';document.getElementById("lg-table").innerHTML='<div class="lg-empty">Ranking temporalmente no disponible.</div>'}}
