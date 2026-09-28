@@ -1383,6 +1383,11 @@ async function activity(req, res) {
       return res.status(200).json({ success: true, actividades: [] });
     }
 
+    // Una cuenta baneada no enseña su actividad (api/_sanciones.js).
+    if (await sanciones.baneadaEnBase(sql, userId)) {
+      return res.status(200).json({ success: true, actividades: [] });
+    }
+
     // "Actividad reciente" ya no muestra todo lo que hace el usuario:
     // solo reseñas de juegos, comentarios que mencionan a alguien
     // (@usuario), likes a juegos, amigos agregados y logros. Jugar,
@@ -1450,12 +1455,14 @@ async function activityFriends(req, res) {
     return res.status(200).json({ success: true, actividades: [] });
   }
 
-  // Mismo criterio de "solo estas 5 acciones" que en activity() de acá arriba.
+  // Mismo criterio de "solo estas 5 acciones" que en activity() de acá
+  // arriba, y sin la de las cuentas baneadas (api/_sanciones.js).
   const filas = await sql`
     SELECT u.username, a.tipo, a.detalle, a.created_at
     FROM activity_log a
     JOIN users u ON u.id = a.user_id
     WHERE u.username = ANY(${lista})
+      AND ${sanciones.noBaneadaSQL(sql)}
       AND (
         a.tipo IN ('resena', 'like_juego', 'amigo', 'logro')
         OR (a.tipo = 'comentario' AND a.detalle ~ '@[A-Za-z0-9_]{3,20}')
@@ -1518,12 +1525,14 @@ async function mencionesRecibidas(req, res) {
   // el resto de la app.
   const patronILIKE = "%@" + String(username).replace(/[\\%_]/g, c => "\\" + c) + "%";
 
+  // Las de una cuenta baneada, no (api/_sanciones.js).
   const filas = await sql`
     SELECT u.username AS autor, a.tipo, a.detalle, a.created_at
     FROM activity_log a
     JOIN users u ON u.id = a.user_id
     WHERE a.tipo IN ('comentario', 'resena')
       AND u.username <> ${username}
+      AND ${sanciones.noBaneadaSQL(sql)}
       AND a.detalle ILIKE ${patronILIKE} ESCAPE '\\'
     ORDER BY a.id DESC
     LIMIT 200;
@@ -2440,7 +2449,8 @@ async function communityFeed(req, res) {
 
   // usuario_id y no id: la fila es una actividad, no una persona. Con
   // el y la huella se pide el avatar ya compuesto; el PNG de
-  // administrador va recortado, ver api/_avatar-ligero.js.
+  // administrador va recortado, ver api/_avatar-ligero.js. Sin la de las
+  // cuentas baneadas (api/_sanciones.js).
   const filas = await sql`
     SELECT a.tipo, a.detalle, a.created_at,
            u.id AS usuario_id, u.username, u.avatar_compuesto,
@@ -2448,6 +2458,7 @@ async function communityFeed(req, res) {
     FROM activity_log a
     JOIN users u ON u.id = a.user_id
     WHERE a.tipo IN ('comentario','favorito','resena','like_juego','amigo','logro')
+      AND ${sanciones.noBaneadaSQL(sql)}
     ORDER BY a.id DESC
     LIMIT ${limite};
   `;
