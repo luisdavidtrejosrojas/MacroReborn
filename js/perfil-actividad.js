@@ -13,9 +13,10 @@ function avatarMiniActividad(nombre){
   // El avatar viaja embebido en el usuario (users.avatar, Neon); se lee
   // de la caché en memoria de js/core.js, precargada por
   // renderActividadAmigos() antes de pintar la lista, con su id y su
-  // huella. Una sola imagen por persona, con imagenDeAvatar(). Hasta el
-  // 24/09/2026 se dibujaba prenda por prenda.
-  const imagen = imagenDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre), 62, 96) ||
+  // huella. Una sola imagen por persona, su foto de perfil (la cara de su
+  // avatar, desde el 28/09/2026), con fotoDeAvatar(). Hasta el 24/09/2026
+  // se dibujaba prenda por prenda.
+  const imagen = fotoDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre)) ||
     SILUETA_AVATAR;
 
   if(imagen.tipo === "silueta"){
@@ -24,6 +25,11 @@ function avatarMiniActividad(nombre){
 
   if(imagen.tipo === "png"){
     return `<img data-src="${imagen.src}" class="avatar-comentario avatar-png-personalizado" alt="" loading="lazy">`;
+  }
+
+  // La foto ya es cuadrada: llena el hueco, como la silueta.
+  if(imagen.tipo === "foto"){
+    return `<img data-src="${imagen.src}" class="avatar-comentario" alt="" loading="lazy">`;
   }
 
   // Sin tamaño en línea: .avatar-mini ya mide 55px (ver css/perfil.css).

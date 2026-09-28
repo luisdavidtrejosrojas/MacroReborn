@@ -137,7 +137,9 @@ describe("el perfil propio", () => {
   for (const nombre of ["actualizarAvatarPrincipal", "renderAmigosPerfil", "obtenerAvatarComentario"]) {
     test(nombre + " pide una sola imagen, sin capas", () => {
       const texto = cuerpo(nombre);
-      assert.match(texto, /imagenDeAvatar\(/);
+      // Los comentarios, con fotoDeAvatar (la cara, desde el 28/09/2026),
+      // que usa imagenDeAvatar por dentro.
+      assert.match(texto, /imagenDeAvatar\(|fotoDeAvatar\(/);
       for (const rastro of ["rutaDePrenda", "ORDEN_CAPAS", "data-capas", "avatar-compuesto"]) {
         assert.ok(!texto.includes(rastro), nombre + " todavía usa " + rastro);
       }
@@ -155,11 +157,11 @@ describe("el perfil público", () => {
 
   test("los comentarios y la actividad le pasan la persona de la memoria", () => {
     // Sin ella imagenDeAvatar no sabe de quién es, y sale la silueta
-    // aunque lleve ropa.
+    // aunque lleve ropa. Desde el 28/09/2026 piden la foto de perfil.
     const usuario = leer("js", "usuario.js");
     const actividad = leer("js", "usuario-actividad.js");
-    assert.match(usuario, /imagenAvatarPerfil\(obtenerAvatarCacheado\(nombre\), obtenerPersonaCacheada\(nombre\)/);
-    assert.match(actividad, /imagenAvatarPerfil\(obtenerAvatarCacheado\(nombre\), obtenerPersonaCacheada\(nombre\)/);
+    assert.match(usuario, /fotoDeAvatar\(obtenerAvatarCacheado\(nombre\), obtenerPersonaCacheada\(nombre\)\)/);
+    assert.match(actividad, /fotoDeAvatar\(obtenerAvatarCacheado\(nombre\), obtenerPersonaCacheada\(nombre\)\)/);
   });
 
   test("el avatar grande pide el tamaño grande, y los amigos el pequeño", () => {

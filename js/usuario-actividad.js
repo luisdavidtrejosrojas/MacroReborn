@@ -74,11 +74,11 @@ renderActividadUsuario();
 
 const contenedorActividadAmigosUsuario = document.getElementById("listaActividadAmigosUsuario");
 
-// Una sola imagen por persona, como el resto de la página: ver
-// imagenAvatarPerfil() en js/usuario.js. La persona sale de la memoria
-// de js/core.js, que se llena antes de pintar.
+// Una sola imagen por persona: su foto de perfil (la cara de su avatar,
+// desde el 28/09/2026), con fotoDeAvatar() de js/core.js. La persona
+// sale de la memoria de js/core.js, que se llena antes de pintar.
 function avatarMiniActividadUsuario(nombre){
-  const imagen = imagenAvatarPerfil(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre), 62, 96);
+  const imagen = fotoDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre)) || SILUETA_AVATAR;
 
   if(imagen.tipo === "silueta"){
     return `<img src="${imagen.src}" class="avatar-comentario" alt="" loading="lazy">`;
@@ -86,6 +86,11 @@ function avatarMiniActividadUsuario(nombre){
 
   if(imagen.tipo === "png"){
     return `<img data-src="${imagen.src}" class="avatar-comentario avatar-png-personalizado" alt="" loading="lazy">`;
+  }
+
+  // La foto ya es cuadrada: llena el hueco, como la silueta.
+  if(imagen.tipo === "foto"){
+    return `<img data-src="${imagen.src}" class="avatar-comentario" alt="" loading="lazy">`;
   }
 
   return `<div class="avatar-mini"><img class="capa-comentario" data-src="${imagen.src}" alt="" loading="lazy"></div>`;

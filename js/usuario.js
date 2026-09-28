@@ -708,12 +708,17 @@ function escaparHTML(texto) {
     // El avatar viaja embebido en el usuario (users.avatar, Neon); se
     // lee de la caché en memoria de js/core.js, precargada antes de
     // pintar la lista de comentarios (ver renderComentarios más abajo).
-    const imagen = imagenAvatarPerfil(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre), 62, 96);
+    // Desde el 28/09/2026, su foto de perfil: la cara de su avatar.
+    const imagen = fotoDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre)) || SILUETA_AVATAR;
     if (imagen.tipo === "silueta") {
       return `<img src="${imagen.src}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #f0b429;" alt="" loading="lazy">`;
     }
     if (imagen.tipo === "png") {
       return `<img data-src="${imagen.src}" style="width:40px;height:40px;border-radius:50%;object-fit:contain;border:2px solid #f0b429;" class="avatar-png-personalizado" alt="" loading="lazy">`;
+    }
+    // La foto ya es cuadrada: llena el círculo, como la silueta.
+    if (imagen.tipo === "foto") {
+      return `<img data-src="${imagen.src}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #f0b429;" alt="" loading="lazy">`;
     }
     return `<div class="avatar-mini"><img class="capa-comentario" data-src="${imagen.src}" alt="" loading="lazy"></div>`;
   }

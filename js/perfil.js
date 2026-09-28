@@ -1647,8 +1647,9 @@ function obtenerAvatarComentario(nombre){
   // El avatar viaja embebido en el usuario (users.avatar, Neon); se lee
   // de la caché en memoria de js/core.js, precargada por
   // renderComentarios() antes de pintar la lista. La caché guarda
-  // también su id y su huella: una sola imagen por persona.
-  const imagen = imagenDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre), 62, 96) ||
+  // también su id y su huella: una sola imagen por persona, su foto de
+  // perfil (la cara de su avatar) desde el 28/09/2026.
+  const imagen = fotoDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre)) ||
     SILUETA_AVATAR;
 
   if(imagen.tipo === "silueta"){
@@ -1658,6 +1659,11 @@ function obtenerAvatarComentario(nombre){
   // El PNG de administrador aquí se quedaba en un círculo vacío.
   if(imagen.tipo === "png"){
     return `<img data-src="${imagen.src}" class="avatar-comentario avatar-png-personalizado" alt="" loading="lazy">`;
+  }
+
+  // La foto ya es cuadrada: llena el hueco, como la silueta.
+  if(imagen.tipo === "foto"){
+    return `<img data-src="${imagen.src}" class="avatar-comentario" alt="" loading="lazy">`;
   }
 
   return `<div class="avatar-mini"><img class="capa-comentario" data-src="${imagen.src}" alt="" loading="lazy"></div>`;
