@@ -72,6 +72,18 @@ Lo que se hizo, archivo por archivo:
 - La tarjeta nueva del perfil usa una medalla con los puntos de logros
   que no estaba en el HTML: se añadió.
 
+**Cambiado después, con el administrador:**
+
+- La tarjeta de "Mi perfil" recortaba el avatar en escritorio: su caja
+  tenía un alto fijo (563 px) y la imagen `object-fit: cover`, así que en
+  el tema oscuro se perdía un 24 % del dibujo por los lados y en el claro
+  un 9 % por arriba y por abajo; y la placa del nombre tapaba los pies.
+  El 28/09/2026, sobre capturas de antes, ahora y dos propuestas, se
+  eligió enseñar el avatar entero y llevar el nombre dentro de la imagen,
+  sobre un degradado, como en macrojuegos: la última sección de
+  `css/perfil-macrojuegos-light.css`, sujeta por
+  `tests/tarjeta-perfil.test.js`.
+
 ---
 
 ## 2. Para la próxima vez
