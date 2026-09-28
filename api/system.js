@@ -68,7 +68,9 @@ async function adminStats(req, res) {
   ] = await Promise.all([
 
     sql`SELECT COUNT(*)::int AS n FROM users;`,
-    sql`SELECT COUNT(*)::int AS n FROM users WHERE suspendido = true;`,
+    // Suspendidas o baneadas ahora (migración 026, api/_sanciones.js).
+    sql`SELECT COUNT(DISTINCT user_id)::int AS n FROM sanciones
+        WHERE levantada_en IS NULL AND (tipo = 'baneo' OR (tipo = 'suspension' AND hasta > now()));`,
     sql`SELECT COUNT(*)::int AS n FROM users WHERE last_login > now() - interval '7 days';`,
     sql`SELECT COUNT(*)::int AS n FROM users WHERE created_at > now() - interval '30 days';`,
     sql`SELECT COUNT(*)::int AS n FROM users WHERE last_login > now() - interval '5 minutes';`,
