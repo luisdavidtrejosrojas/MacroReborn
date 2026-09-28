@@ -3,6 +3,7 @@ const { obtenerSql } = require("./_db");
 const { PasswordService } = require("./_password");
 const { crearToken, requerirAuth } = require("./_auth");
 const { validarNombreUsuario } = require("./_nombre-usuario");
+const sanciones = require("./_sanciones");
 
 const sql = obtenerSql();
 const passwordService = new PasswordService(sql);
@@ -38,6 +39,24 @@ async function login(req, res) {
     return res.status(200).json({
       success: false,
       error: "Usuario o contraseña incorrectos"
+    });
+  }
+
+  // Una cuenta baneada no entra (api/_sanciones.js): se le dice por qué y
+  // dónde reclamar. Se mira en la base y no en la memoria de las
+  // sanciones, para que valga también en el primer segundo tras arrancar.
+  const baneo = await sql`
+    SELECT motivo FROM sanciones
+    WHERE user_id = ${usuario.id} AND tipo = 'baneo' AND levantada_en IS NULL
+    ORDER BY desde DESC LIMIT 1;
+  `;
+  if (baneo.length) {
+    return res.status(403).json({
+      success: false,
+      codigo: "cuenta-baneada",
+      error: "Esta cuenta está baneada.",
+      motivo: baneo[0].motivo,
+      reclamar: sanciones.DISCORD
     });
   }
 
