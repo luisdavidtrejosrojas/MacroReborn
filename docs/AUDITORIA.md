@@ -155,6 +155,7 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 82 | 2026-09-25 | Economía | El XP de cada pulso lo decidía el navegador: `cantidad` no tenía tope, y bastaba con pedir 1.000.000 | `api/users.js`, `sumarXp` | 15 min |
 | 83 | 2026-09-25 | Función rota | A los 7 días de iniciar sesión, todo lo que escribe fallaba en silencio (el XP de jugar, el chat, los comentarios) mientras la página seguía enseñando a la persona como conectada. El pase no se renovaba nunca y el navegador no se enteraba del 401. De 150 a 330 escrituras rechazadas al día | `api/_auth.js`, `js/core.js` | medio día |
 | 84 | 2026-09-28 | Función rota | De cada tres misiones cumplidas se cobraba una: para cobrar hay que entrar en "Mi día" o "Progreso", casi nadie entra, nada avisaba de que estaba cumplida, y la diaria se pierde a medianoche. Arreglado con un aviso al cumplirla (nota al pie) | `api/_misiones.js` | medio día |
+| 85 | 2026-09-28 | Función rota | Una misión cumplida se perdía si no se cobraba a tiempo: la diaria a las 00:00, la semanal al acabar la semana. La semana del 21/09 quedaron sin cobrar 12 diarias y 8 semanales, de 13 personas. Arreglado: espera hasta que se cobre (nota al pie) | `api/_misiones.js`, `api/progreso.js` | medio día |
 
 **Nota al 24 y al 78.** Hechos el 24/09/2026 con la tienda nueva
 (`tienda.html`, ver `docs/TIENDA.md`). El catálogo (`avatarShop`) y la
@@ -286,8 +287,36 @@ emergente aunque esté jugando (`js/realtime.js`). Lo miran el minuto de
 juego (`api/users.js`) y el botón "Jugar" (`api/content.js`), con
 `avisarSiSeCumplen` (`api/_misiones.js`): una sola vez por misión y
 período (`player_mission_avisos`, migración 025), y nunca de lo ya
-cobrado. Queda pendiente decidir si se da margen hasta el día siguiente
-para cobrar la diaria. Lo sujeta `tests/misiones-avisos.test.js`.
+cobrado. Lo sujeta `tests/misiones-avisos.test.js`. El margen para
+cobrar se decidió ese mismo día: ver la nota al 85.
+
+**Nota al 85.** Decidido el 28/09/2026, a petición del administrador,
+tras el aviso del 84: "da margen para cobrar la diaria en el momento que
+se desee, puede durar una cantidad infinita de días que haga falta y el
+día en que se reclame se muestra la siguiente". Lo mismo para la semanal.
+
+- **La cumplida espera.** Se queda en Mi día y en Progreso, con su fecha
+  ("Del 26/09 · sin cobrar"), los días que haga falta. Qué se cumplió lo
+  dice la fila que apunta el aviso (`player_mission_avisos`, migración
+  025): no hizo falta migración. `pendienteSinCobrar`
+  (`api/_misiones.js`) busca la de un período anterior sin cobrar.
+- **Una a la vez.** Mientras una espera no aparece otra del mismo tipo:
+  la de hoy ni se apunta ni se avisa. Al cobrarla aparece la de ese día
+  (o esa semana), y lo jugado mientras tanto cuenta: si ya está
+  cumplida, el cobro la apunta y la avisa en ese momento, para que
+  tampoco se pierda.
+- **El aviso** dice "Te espera hasta que la cobres" en vez de "antes de
+  las 00:00".
+- **Lo de la semana del 21/09**, también decidido ese día: a cada uno se
+  le guardó su diaria cumplida y sin cobrar más reciente de esa semana y
+  la semanal, con un aviso (`scripts/rescatar-misiones.js`, una sola
+  vez). Las diarias de juegos se contaron de menos: `game_history` solo
+  guarda la última vez que se jugó cada juego. Las de minutos del 22 y
+  el 24 no se podían saber: `actividad_diaria` empezó el 25.
+
+Lo sujetan `tests/progreso.test.js`, `tests/misiones-avisos.test.js`,
+`tests/mi-dia.test.js`, `tests/progreso-pagina.test.js` y
+`tests/rescatar-misiones.test.js`.
 
 ---
 
