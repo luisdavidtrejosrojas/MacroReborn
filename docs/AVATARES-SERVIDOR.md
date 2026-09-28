@@ -950,3 +950,80 @@ decide el cuadro, y ahí entra lo de una prenda sola antes que lo demás.
 Lo que habrá que decidir entonces: dónde se guarda lo corregido, que
 debería ser la base para poder cambiarlo sin desplegar, y que regenerar
 las automáticas nunca pise una corregida a mano.
+
+---
+
+## 13. La foto de perfil: la cara, con un cuadro por modelo
+
+Hecha el 28/09/2026. Las miniaturas (arriba a la derecha, Comunidad, el
+buscador, el portal) metían el cuerpo entero en un cuadrado: a 34 px lo
+que se veía era el centro del cuerpo, y casi nunca la cara. Ahora cada
+avatar puesto tiene además su **foto de perfil**: la cara del personaje
+recortada en un cuadrado de 96 px, que el servidor dibuja a la vez que
+el compuesto, en la misma carpeta y con la misma huella.
+
+    /avatares/<id>/cara.jpg?v=<huella>
+
+### Cómo se decidió
+
+El administrador eligió sobre páginas de prueba con avatares reales de
+la copia local. Primero entre cuatro encuadres (cara, cabeza, cabeza y
+hombros, medio cuerpo), con fondo o sin él, en cuadrado o en círculo:
+**la cara, con su fondo y en cuadrado**. Después pidió que cada modelo
+tuviera su propio cuadro, porque el primero le quedaba bien a cereza
+pero no a max.
+
+### Un cuadro por modelo, medido mirando
+
+El primer intento fue una cuenta automática, desde los ojos y la boca de
+cada modelo, y falló: max no tiene piezas de ojos y el cuadro caía a la
+derecha; en tora cortaba la frente y se llevaba el cuello; en fiora y
+fenglei dejaba la barbilla pegada al borde. Así que cada modelo tiene su
+cuadro en `api/recortes-cara.json`, medido sobre su dibujo con una
+cuadrícula: de la coronilla a la barbilla, con la composición del de
+cereza, que fue el que gustó (la coronilla casi en el borde de arriba, la
+barbilla hacia el 85 %, la cara centrada).
+
+| Modelo | x | y | lado | Cuentas el 28/09/2026 |
+|---|---|---|---|---|
+| tora | 103 | 59 | 97 | 73 |
+| cereza | 87 | 77 | 103 | 39 |
+| fiora | 117 | 42 | 73 | 2 |
+| max | 122 | 28 | 72 | 2 |
+| fenglei | 130 | 80 | 67 | 1 |
+| fengchao | 186 | 177 | 67 | 1 |
+
+Lo que se cuida en `api/_avatar-compuesto.js`, "LA FOTO DE PERFIL":
+
+- **Sin la mascota ni el marco.** Hay mascotas, como un zorro de nueve
+  colas, que tapan al personaje entero, y el marco es del cuerpo entero.
+  Son las dos últimas capas, así que se compone una sola vez: lo de
+  debajo da la foto, y con ellas encima, el cuerpo entero. Las pruebas
+  comprueban que el cuerpo entero sale con los mismos bytes que antes.
+- **El cuadro va en la huella.** Si se cambia el de un modelo, cambia la
+  huella de sus avatares, y con ella sus direcciones, que el navegador
+  guarda un año. Después hay que correr el relleno
+  (`node scripts/rellenar-avatares.js --produccion --aplicar`).
+- **Un modelo nuevo usa un cuadro genérico** (x 88, y 24, lado 150), más
+  grande, que en los modelos de pie coge la cabeza con aire. Antes de
+  publicar un modelo hay que medirle el suyo y añadirlo al archivo.
+- **Solo el avatar puesto** tiene foto; los diseños guardados, no. Si
+  falta, se compone al pedirla, como el compuesto.
+
+### Dónde se usa
+
+`avatarMiniaturaHTML()` y `fotoDeAvatar()` en `js/core.js`: la barra de
+arriba, el portal de inicio, el buscador y Explorar; y en Comunidad
+(`js/comunidad-ranking.js`) el podio, el ranking, los recién llegados, la
+moderación, los destacados y la actividad, más la página de actividad de
+la comunidad. En todos esos huecos, que son cuadrados, la foto ocupa el
+hueco entero. El perfil y las tarjetas de amigos siguen enseñando el
+avatar entero, y un PNG de administrador sale como siempre.
+
+### Al desplegarla
+
+La primera vez cambian todas las huellas (el cuadro entró en la receta),
+así que hay que correr el relleno justo después de reiniciar: compone
+el compuesto y la foto de cada cuenta. Mientras tanto, la foto que falte
+se compone al pedirla, dos a la vez, y las demás esperan con la silueta
+un minuto.
