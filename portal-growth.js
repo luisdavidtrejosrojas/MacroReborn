@@ -127,7 +127,7 @@
     if(!host || !activo) return;
     try{
       const datos=await json("/api/content?action=avatar-shop&username="+encodeURIComponent(activo.username||activo.nombre));
-      host.innerHTML=`<div class="mr-economy-line"><span>🪙</span><div><b>${Number(datos.monedas||0).toLocaleString("es-AR")}</b><small>Monedas disponibles</small></div><a href="comunidad-ranking.html#tienda">Abrir tienda</a></div>`;
+      host.innerHTML=`<div class="mr-economy-line"><span>🪙</span><div><b>${Number(datos.monedas||0).toLocaleString("es-AR")}</b><small>Monedas disponibles</small></div><a href="bazar.html">Abrir Bazar</a></div>`;
     }catch(_){ host.innerHTML=""; }
   }
 
