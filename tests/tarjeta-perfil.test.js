@@ -139,3 +139,12 @@ test("el perfil de otra persona usa la misma tarjeta que Mi perfil", () => {
   // Y en el perfil de una cuenta baneada, la medalla tampoco sale.
   assert.match(usuarioJs, /\["nivel", "tarjetaAvatarMedalla", "perfilMetaAvatar", "agregarAmigo", "bloquearUsuario"\]/);
 });
+
+test("y las mismas estadísticas: la barra de experiencia y la última conexión como en Mi perfil", () => {
+  const usuarioHtml = fs.readFileSync(path.join(__dirname, "..", "usuario.html"), "utf8");
+  assert.match(usuarioHtml, /<div class="fila-xp">\s*<div class="fila-xp-cabecera"><h3>Experiencia<\/h3><p id="xp">[^<]*<\/p><\/div>\s*<div class="barra-xp"><div id="progresoXP"><\/div><\/div>\s*<p id="textoXP"><\/p>/);
+  assert.match(usuarioHtml, /<div><h3>Última conexión<\/h3><p id="ultimaConexion">/);
+  const usuarioJs = fs.readFileSync(path.join(__dirname, "..", "js", "usuario.js"), "utf8");
+  assert.match(usuarioJs, /textoXP\.textContent = xpActual \+ " \/ " \+ xpNecesario \+ " XP"/);
+  assert.doesNotMatch(usuarioJs, /"Última conexión: " \+/, "vuelve a repetir la etiqueta dentro del valor");
+});

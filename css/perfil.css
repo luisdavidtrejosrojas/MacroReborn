@@ -2230,20 +2230,6 @@ a.actividad-cita:hover {
   text-align: right;
 }
 
-.tarjeta-stats .estadisticas .fila-etiqueta-propia {
-  display: block;
-}
-
-.tarjeta-stats .estadisticas .fila-etiqueta-propia h3 {
-  display: none;
-}
-
-.tarjeta-stats .estadisticas .fila-etiqueta-propia p {
-  text-align: left;
-  color: var(--text-secondary);
-  font-weight: 600;
-}
-
 /* ---- Fila de acciones (usuario.html: agregar amigo / bloquear) ---- */
 
 .perfil-acciones {

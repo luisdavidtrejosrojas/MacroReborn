@@ -256,7 +256,8 @@ if (!usuario) {
       ? tiempoRelativo(usuario.last_login, "Nunca")
       : (usuario.last_login || "Nunca");
 
-    document.getElementById("ultimaConexion").textContent = "Última conexión: " + textoUltimaConexion;
+    // Solo el valor: la etiqueta ya está en la fila, como en Mi perfil.
+    document.getElementById("ultimaConexion").textContent = textoUltimaConexion;
 
   }
 
@@ -269,7 +270,19 @@ if (!usuario) {
     pintarChapaNivel(nivelEl, usuario.nivel || 1);
   }
   document.getElementById("biografia").textContent = usuario.biografia || "Todavía no escribió una biografía.";
-  document.getElementById("xp").textContent = (usuario.xp || 0) + " XP";
+  // La experiencia y la barra del nivel, como en Mi perfil (js/perfil.js):
+  // lo que lleva de este nivel sobre lo que pide, 50, 100 y después 200
+  // más por nivel.
+  const xpActual = Number(usuario.xp) || 0;
+  const nivelXP = Math.max(1, Number(usuario.nivel) || 1);
+  const xpNecesario = nivelXP === 1 ? 50 : nivelXP === 2 ? 100 : 100 + ((nivelXP - 2) * 200);
+  document.getElementById("xp").textContent = "⚡ " + xpActual + " XP";
+  const barraXP = document.getElementById("progresoXP");
+  const textoXP = document.getElementById("textoXP");
+  if (barraXP && textoXP) {
+    barraXP.style.width = Math.min(100, (xpActual / xpNecesario) * 100) + "%";
+    textoXP.textContent = xpActual + " / " + xpNecesario + " XP";
+  }
 
   // LOGROS: se suman los puntos de los logros realmente desbloqueados,
   // con la misma función que usa perfil.js (calcularPuntosLogros, en
