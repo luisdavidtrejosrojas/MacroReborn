@@ -36,6 +36,7 @@
     buscar: document.getElementById("bazarBuscar"),
     categoria: document.getElementById("bazarCategoria"),
     modelo: document.getElementById("bazarModelo"),
+    rareza: document.getElementById("bazarRareza"),
     mostrarCompradas: document.getElementById("bazarMostrarCompradas"),
     destacado: document.getElementById("bazarDestacado"),
     verMas: document.getElementById("bazarVerMas"),
@@ -81,6 +82,13 @@
     };
     return nombres[String(valor || "").toLowerCase()] || String(valor || "Prenda");
   }
+
+  // La rareza de cada prenda (api/_precios.js), que es la que da su
+  // precio desde el 04/10/2026. Una sin rareza es común.
+  const NOMBRE_RAREZA = { comun: "Común", rara: "Rara", epica: "Épica", legendaria: "Legendaria" };
+  const rarezaDe = (item) => (item && NOMBRE_RAREZA[item.rareza]) ? item.rareza : "comun";
+  const etiquetaRareza = (item) =>
+    `<span class="bazar-rareza rareza-${rarezaDe(item)}">${NOMBRE_RAREZA[rarezaDe(item)]}</span>`;
 
   function nombrePersonaje(modelo) {
     const m = String(modelo || "");
@@ -138,11 +146,13 @@
     const q = String(els.buscar && els.buscar.value || "").trim().toLowerCase();
     const categoria = String(els.categoria && els.categoria.value || "");
     const modelo = String(els.modelo && els.modelo.value || "");
+    const rareza = String(els.rareza && els.rareza.value || "");
     const mostrarCompradas = !!(els.mostrarCompradas && els.mostrarCompradas.checked);
     return estado.items.filter(item => {
       if (!mostrarCompradas && laTiene(item)) return false;
       if (categoria && item.categoria !== categoria) return false;
       if (modelo && item.modelo !== modelo) return false;
+      if (rareza && rarezaDe(item) !== rareza) return false;
       if (q) {
         const texto = [item.nombre, nombreCategoria(item.categoria), item.modelo].join(" ").toLowerCase();
         if (!texto.includes(q)) return false;
@@ -180,7 +190,8 @@
     els.grid.innerHTML = items.slice(0, estado.mostrados).map(item => {
       const comprada = laTiene(item);
       return `
-        <article class="bazar-card ${comprada ? "comprada" : ""} ${esNueva(item) ? "nueva" : ""}" data-id="${Number(item.id)}">
+        <article class="bazar-card rareza-${rarezaDe(item)} ${comprada ? "comprada" : ""} ${esNueva(item) ? "nueva" : ""}" data-id="${Number(item.id)}">
+          ${etiquetaRareza(item)}
           <div class="bazar-media">${imagen(item, 'loading="lazy" width="96" height="96"')}</div>
           <div class="bazar-body">
             <h3 title="${esc(item.nombre)}">${esc(item.nombre)}</h3>
@@ -225,6 +236,7 @@
         <div class="bazar-destacado-meta">
           <span class="bazar-chip">${esc(nombreCategoria(item.categoria))}</span>
           <span class="bazar-chip">${esc(nombrePersonaje(item.modelo))}</span>
+          <span class="bazar-chip bazar-chip-rareza rareza-${rarezaDe(item)}">${NOMBRE_RAREZA[rarezaDe(item)]}</span>
           ${comprada ? '<span class="bazar-chip">✅ Ya es tuya</span>' : ""}
         </div>
         <div class="bazar-precio-grande">🪙 ${fmtMonedas(precio(item))}</div>
@@ -425,7 +437,7 @@
     clearTimeout(esperaBusqueda);
     esperaBusqueda = setTimeout(desdeElPrincipio, 150);
   });
-  [els.categoria, els.modelo, els.mostrarCompradas].forEach(control => {
+  [els.categoria, els.modelo, els.rareza, els.mostrarCompradas].forEach(control => {
     control?.addEventListener("change", desdeElPrincipio);
   });
   els.verMas?.addEventListener("click", () => {

@@ -349,6 +349,36 @@
   letter-spacing: .06em;
 }
 
+/* La rareza (api/_precios.js): una etiqueta arriba a la derecha, enfrente
+   de NUEVA, y el borde de su color. Común va sin color: es lo de siempre.
+   Va antes de .comprada, para que lo comprado siga con su borde verde. */
+.bazar-rareza {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 2;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(24, 22, 32, .82);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.bazar-rareza.rareza-rara { background: #1f63b5; }
+.bazar-rareza.rareza-epica { background: #6d28d9; }
+.bazar-rareza.rareza-legendaria { background: #f0a92e; color: #2a1a00; }
+.bazar-card.rareza-rara { border-color: rgba(31, 99, 181, .6); }
+.bazar-card.rareza-epica { border-color: rgba(109, 40, 217, .65); }
+.bazar-card.rareza-legendaria {
+  border-color: rgba(240, 169, 46, .8);
+  box-shadow: 0 0 0 1px rgba(240, 169, 46, .35), 0 7px 18px rgba(0,0,0,.12);
+}
+.bazar-chip-rareza.rareza-rara { color: #5598e7; }
+.bazar-chip-rareza.rareza-epica { color: #a78bfa; }
+.bazar-chip-rareza.rareza-legendaria { color: #f0a92e; }
+
 .bazar-card.comprada {
   border-color: rgba(53, 212, 136, .42);
 }

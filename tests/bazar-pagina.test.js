@@ -341,3 +341,34 @@ test("tienda.html lleva al Bazar, con la misma prenda", () => {
   assert.equal(ubicacion.fue, "bazar.html?prenda=tora_pelo3");
   assert.match(html, /<link rel="canonical" href="https:\/\/www\.macroreborn\.com\/bazar\.html">/);
 });
+
+describe("la rareza", () => {
+  // Desde el 04/10/2026 el precio de una prenda lo da su rareza
+  // (api/_precios.js, docs/ECONOMIA.md). El Bazar la enseña en cada
+  // prenda y deja filtrar por ella. Una sin rareza es común.
+  const CON_RAREZA = CATALOGO.map(item =>
+    item.id === 3 ? { ...item, rareza: "legendaria", precio: 6000 } :
+    item.id === 2 ? { ...item, rareza: "epica", precio: 1400 } : item);
+
+  test("cada prenda lleva su etiqueta y el marco de su rareza", async () => {
+    const p = await montar({ items: CON_RAREZA });
+    const etiqueta = (id) => p.tarjeta(id).querySelector(".bazar-rareza").textContent;
+    assert.equal(etiqueta(3), "Legendaria");
+    assert.equal(etiqueta(2), "Épica");
+    assert.equal(etiqueta(1), "Común");
+    assert.ok(p.tarjeta(3).classList.contains("rareza-legendaria"));
+    assert.ok(p.tarjeta(1).classList.contains("rareza-comun"));
+    p.cerrar();
+  });
+
+  test("el filtro deja solo las de una rareza", async () => {
+    const p = await montar({ items: CON_RAREZA });
+    await p.cambiar("bazarRareza", "legendaria");
+    assert.deepStrictEqual(p.nombres(), ["Dragón"]);
+    await p.cambiar("bazarRareza", "comun");
+    assert.deepStrictEqual(p.nombres(), ["Melena <b>larga</b>", "Coletas"]);
+    await p.cambiar("bazarRareza", "");
+    assert.equal(p.nombres().length, 4);
+    p.cerrar();
+  });
+});
