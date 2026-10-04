@@ -98,12 +98,13 @@ function respuestaOk(datos) {
 // ==============================
 
 describe("el HTML trae los contenedores que el editor necesita", () => {
-  test("los 15 botones de categoría y los 15 grupos siguen en perfil.html", () => {
+  test("los 16 botones de categoría y los 16 grupos siguen en perfil.html", () => {
     const { doc } = montar(respuestaOk(catalogoDePrueba()));
 
-    assert.equal(doc.querySelectorAll(".cat-btn").length, 15);
-    assert.equal(doc.querySelectorAll(".grupo-opcion").length, 15);
-    assert.equal(doc.querySelectorAll(".grupo-opcion .fila-opciones").length, 15);
+    // Uno por capa: las 16 desde el pelo de atrás (04/10/2026).
+    assert.equal(doc.querySelectorAll(".cat-btn").length, 16);
+    assert.equal(doc.querySelectorAll(".grupo-opcion").length, 16);
+    assert.equal(doc.querySelectorAll(".grupo-opcion .fila-opciones").length, 16);
   });
 
   test("y ya NO trae prendas escritas a mano", () => {
@@ -265,7 +266,7 @@ describe("cuando el catálogo no llega", () => {
 
     api.avisarCatalogoCaido();
     const avisos = doc.querySelectorAll(".sin-opciones");
-    assert.equal(avisos.length, 15, "debería avisar en los 15 grupos");
+    assert.equal(avisos.length, 16, "debería avisar en los 16 grupos");
     assert.match(avisos[0].textContent, /recargar/i);
   });
 

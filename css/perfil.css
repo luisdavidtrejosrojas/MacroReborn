@@ -1038,6 +1038,12 @@ a.actividad-cita:hover {
   white-space: nowrap;
 }
 
+/* El del pelo de atrás se esconde en los personajes que aún no tienen
+   ninguno (js/perfil.js). */
+.cat-btn[hidden] {
+  display: none;
+}
+
 .cat-btn:hover {
   border-color: var(--clasico-borde);
   color: var(--text-main);

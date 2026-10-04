@@ -378,7 +378,7 @@ function valoresDelCatalogo(){
 // ==============================
 // CONSTRUIR LAS OPCIONES DEL EDITOR
 // ==============================
-// perfil.html trae los 15 botones de categoría y los 15 contenedores,
+// perfil.html trae los 16 botones de categoría y los 16 contenedores,
 // que son fijos y tienen sus etiquetas y sus emojis. Lo que ya no trae
 // son los 622 divs de prenda: se generan acá desde el catálogo.
 //
@@ -501,6 +501,7 @@ let editorCapas={
   guantes:"ninguno",
   accesorio:"ninguno",
   cara:"ninguno",
+  peloatras:"ninguno",
   pelo:"ninguno",
   mascota:"ninguno",
   borde:"ninguno"
@@ -949,6 +950,19 @@ function filtrarOpcionesPorModelo(grupo){
     aviso.remove();
   }
 
+  // El pelo de atrás llegó el 04/10/2026 sin dibujos: su botón solo se
+  // enseña en los personajes que ya tienen alguno. Si se esconde el de
+  // la pestaña abierta, se pasa a la del pelo.
+  if(grupo.dataset.grupo === "peloatras"){
+    const boton = document.querySelector('.cat-btn[data-cat="peloatras"]');
+    if(boton){
+      boton.hidden = visibles === 0;
+      if(boton.hidden && boton.classList.contains("activa-cat")){
+        document.querySelector('.cat-btn[data-cat="pelo"]')?.click();
+      }
+    }
+  }
+
   // Lo que acaba de quedar a la vista ya puede pedir su dibujo.
   mostrarImagenesVisibles();
 }
@@ -1070,11 +1084,19 @@ document.getElementById("avatarAleatorio")?.addEventListener("click", ()=>{
   ORDEN_CAPAS.forEach(tipo=>{
     if(tipo === "modelo") return;
 
-    const opciones = valoresDelCatalogo()
-      .filter(k => k.startsWith(modeloElegido + "_" + tipo))
+    // Por la capa de cada prenda, no por cómo empieza su nombre:
+    // "tora_peloatras1" también empieza por "tora_pelo", y saldría
+    // un pelo de atrás puesto de pelo.
+    const opciones = (CATALOGO ? CATALOGO.prendas : [])
+      .filter(p => p.modelo === modeloElegido && p.capa === tipo)
+      .map(p => p.valor)
       // Las de la tienda sin comprar no se pueden poner, y la vista
       // previa del servidor tampoco las dibuja.
       .filter(k => !(_tiendaPremiumPrecio.has(k) && !_tiendaComprados.has(k)));
+
+    // El pelo de atrás, la mitad de las veces: los pelos de hoy ya
+    // traen su melena, y con los dos siempre saldría pelo doble.
+    if(tipo === "peloatras" && Math.random() < 0.5) return;
 
     if(opciones.length > 0){
       editorCapas[tipo] = opciones[Math.floor(Math.random() * opciones.length)];

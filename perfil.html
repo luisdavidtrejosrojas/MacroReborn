@@ -242,6 +242,8 @@
         <button class="cat-btn" data-cat="ojos">👀 Ojos</button>
         <button class="cat-btn" data-cat="boca">👄 Boca</button>
         <button class="cat-btn" data-cat="pelo">💇 Pelo</button>
+        <!-- Escondido hasta que el personaje tenga alguno: js/perfil.js. -->
+        <button class="cat-btn" data-cat="peloatras" hidden>🎀 Pelo de atrás</button>
         <button class="cat-btn" data-cat="remera">👕 Remera</button>
         <button class="cat-btn" data-cat="pantalon">👖 Pantalón</button>
         <button class="cat-btn" data-cat="botas">👢 Botas</button>
@@ -303,6 +305,12 @@
 
           <!-- PELO -->
           <div class="grupo-opcion" data-grupo="pelo" style="display:none;">
+            <div class="fila-opciones">
+            </div>
+          </div>
+
+          <!-- PELO DE ATRÁS: se dibuja justo debajo del pelo -->
+          <div class="grupo-opcion" data-grupo="peloatras" style="display:none;">
             <div class="fila-opciones">
             </div>
           </div>
