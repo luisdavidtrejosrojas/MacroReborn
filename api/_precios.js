@@ -8,7 +8,7 @@
 // uno a catorce meses.
 //
 // Los cuatro precios salen de lo que gana en un día quien juega 30
-// minutos, unas 200 monedas (api/_economia.js):
+// minutos, unas 200 monedas (api/_monedas.js):
 //
 //   comun          50   un cuarto de día
 //   rara          500   dos días y medio; las 500 de bienvenida la pagan
