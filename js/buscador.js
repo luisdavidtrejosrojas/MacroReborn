@@ -113,7 +113,7 @@
           type="text"
           id="inputBuscadorGlobal"
           class="buscador-input"
-          placeholder="Buscar"
+          placeholder="Buscar juegos, usuarios, comunidades..."
           autocomplete="off"
           aria-label="Buscar juegos, usuarios y noticias"
         >
