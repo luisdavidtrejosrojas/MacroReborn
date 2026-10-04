@@ -82,3 +82,18 @@ test("si el reparto de monedas falla, el saldo no se vuelve 0", async () => {
   assert.equal(p.sesion.monedas, 120);
   assert.equal(p.sesion.xp, 50, "el XP sí se actualiza");
 });
+
+test("sin nadie delante no se manda nada, y en cuanto alguien toca algo, sí", async () => {
+  // Desde el 04/10/2026: a los 3 minutos sin teclado, ratón ni toques el
+  // minuto no cuenta (js/motor/actividad-jugador.js).
+  const p = montar(bien);
+  let alguien = false;
+  p.contexto.MRActividad = { hayAlguien: () => alguien };
+  await p.minuto();
+  await p.minuto();
+  assert.equal(p.pedidas.length, 0);
+
+  alguien = true;
+  await p.minuto();
+  assert.equal(p.pedidas.length, 1);
+});

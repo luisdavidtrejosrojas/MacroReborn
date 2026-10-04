@@ -67,6 +67,10 @@ if (juego.iframe) {
         </iframe>
     `;
 
+    // Oídos dentro del juego, para saber si hay alguien jugando
+    // (js/motor/actividad-jugador.js).
+    if (window.MRActividad) window.MRActividad.vigilarJuego(contenedor.querySelector("iframe"));
+
     // ==============================
     // ESTADO DE CARGA (overlay) — puramente visual/aditivo.
     // Oculta el overlay de "Cargando..." cuando el iframe termina

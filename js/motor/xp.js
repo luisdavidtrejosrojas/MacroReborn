@@ -33,6 +33,10 @@ function iniciarXP(idJuego){
         // noche no es jugar. Y aunque haya varias pestañas a la vista, el
         // servidor cuenta un minuto por minuto (sumarXp, en api/users.js).
         if(document.visibilityState === "hidden") return;
+        // Y tiene que haber alguien delante: a los 3 minutos sin teclado,
+        // ratón ni toques, tampoco cuenta (js/motor/actividad-jugador.js,
+        // decidido el 04/10/2026).
+        if(window.MRActividad && !window.MRActividad.hayAlguien()) return;
 
         ganarXP(10);
 
