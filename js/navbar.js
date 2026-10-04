@@ -152,7 +152,7 @@ if(navbar && nav){
             const todos = document.createElement("a");
             todos.className = "nav-retro-todos";
             todos.href = "juegos.html";
-            todos.textContent = "Ver Todos";
+            todos.innerHTML = "🏠 Ver Todos";
             navCategorias.insertBefore(todos, navCategorias.firstChild);
         }
 
@@ -166,6 +166,25 @@ if(navbar && nav){
             const juegos = navCategorias.querySelector('a[href="juegos.html"]:not(.nav-retro-todos)');
             navCategorias.insertBefore(bazar, juegos ? juegos.nextSibling : null);
         }
+
+        // Resalta, con la pastilla violeta, el enlace de la página en la
+        // que estamos. "Ver Todos" cubre tanto el portal (index) como el
+        // catálogo completo (juegos.html).
+        const archivoActual = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+        const esPortal = archivoActual === "" || archivoActual === "index.html" || archivoActual === "juegos.html";
+        navCategorias.querySelectorAll("a").forEach((enlace) => {
+            const archivoEnlace = (enlace.getAttribute("href") || "").split("/").pop().toLowerCase();
+            let activo;
+            if(enlace.classList.contains("nav-retro-todos")){
+                activo = esPortal;
+            }else if(esPortal && archivoEnlace === "juegos.html"){
+                // "Ver Todos" ya cubre juegos.html; no duplicamos el resaltado.
+                activo = false;
+            }else{
+                activo = archivoEnlace === archivoActual;
+            }
+            enlace.classList.toggle("activa-nav", activo);
+        });
 
         navbar.dataset.retroPreparada = "1";
     }
