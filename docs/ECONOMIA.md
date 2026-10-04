@@ -175,6 +175,13 @@ mediana pasa de 500 a 630, y el 10 % más rico, de 907 a 1.395. 16
 jugadores recuperan lo pagado de más: 11.020 monedas entre todos, 3.570
 el que más. El equipo queda entre 1.020 y 5.723.
 
+Aplicado el 04/10/2026 a las 22:57 (hora del servidor, UTC), con ese
+mismo resultado: las 209 cuentas quedaron con el saldo calculado, y las
+cinco del equipo con las 759 prendas. La base de justo antes, por si
+hubiera que deshacerlo, está en el servidor:
+`~/respaldos/antes-de-la-economia-2026-10-04-2256.sql.gz` (fuera de la
+rotación de 14 días).
+
 ---
 
 ## 6. Las pruebas
