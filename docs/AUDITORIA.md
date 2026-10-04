@@ -371,7 +371,7 @@ de ser, y los puntos 38, 40, 41 y 42 caen dentro de esa misma tarea.
 | 54 | - | SEO | Las 112 fichas de juego comparten título, descripción y `canonical`. Ese `canonical` sin `?id=` las declara duplicados de una sola página | `juego.html` | 3 h |
 | 55 | - | SEO | `www` y el dominio raíz responden 200 los dos, sin redirección, mientras todo el SEO apunta a `www` | nginx | 15 min |
 | 56 | - | SEO | 9 páginas públicas sin `canonical`, `robots` ni Open Graph. Macro Snake no está en el sitemap | 9 `.html` | 2 h |
-| 57 | - | Privacidad | `motivo_suspension`, `last_login` y `monedas` de los 144 usuarios, públicos y sin sesión | `api/users.js:178` | 1 h |
+| 57 | 2026-10-04 | Privacidad | `motivo_suspension`, `last_login` y `monedas` de los 144 usuarios, públicos y sin sesión. Arreglado: el motivo (con las sanciones) y el saldo solo los ven la propia cuenta y la moderación. La última conexión se deja pública a propósito (nota al 3) | `api/users.js:178` | 1 h |
 | 58 | - | Privacidad | La lista de a quién bloqueó cada persona es pública | `api/social.js:533` | 30 min |
 | 59 | - | Privacidad | El chat, los muros y la actividad completos son legibles sin cuenta, y el filtro de bloqueo se apaga omitiendo un parámetro | `api/content.js` | 3 h |
 | 60 | - | Decisión | No hay política de privacidad, ni edad mínima declarada, ni enlace a los términos desde el registro | `terminos.html` | decisión |
@@ -385,8 +385,8 @@ de ser, y los puntos 38, 40, 41 y 42 caen dentro de esa misma tarea.
 
 **Nota al 79.** Visto el 24/09/2026 al auditar la tienda, y arreglado el
 mismo día: el saldo y las compras solo se devuelven a quien tiene la
-sesión. El saldo de cualquiera sigue saliendo por `/api/users?username=X`:
-eso es el punto 57.
+sesión. El saldo de cualquiera siguió saliendo por `/api/users?username=X`
+hasta el 04/10/2026 (punto 57).
 
 ---
 
