@@ -788,3 +788,49 @@ html[data-tema="claro"] .nav-categorias a.activa-nav { color: #fff !important; }
   box-shadow: 0 0 14px rgba(170, 57, 255, .35) !important;
   border-color: #6528c7 !important;
 }
+
+
+/* ================================================================
+   10. MODO CLARO — la barra es la misma que en el oscuro
+   ----------------------------------------------------------------
+   theme-canonical.css pinta en claro nav.navbar de azul, los <input>
+   de blanco y todos los <button> de celeste, con selectores más
+   específicos que los de arriba (el de los botones lleva cuatro
+   :not()). Sin esto, en claro la fila de arriba salía azul, el
+   buscador blanco dentro de su caja oscura y la campana, el tema, el
+   usuario, "Enter" y "Menú" celestes.
+   ================================================================ */
+
+html[data-tema="claro"] nav.navbar {
+  background: #100a25 !important;
+  border-bottom-color: #4f2192 !important;
+}
+
+html[data-tema="claro"] .navbar .buscador-input {
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+}
+
+html[data-tema="claro"] .navbar .buscador-input::placeholder {
+  color: #9286ae !important;
+}
+
+html[data-tema="claro"] .navbar button:is(.notif-bell-boton, .boton-tema, .nav-toggle, .user-guest-boton):not(.primary):not(.danger):not(.success):not(.accent) {
+  background: #120c2b !important;
+  border-color: #6528c7 !important;
+  color: #f4f1fb !important;
+}
+
+html[data-tema="claro"] .navbar button:is(.notif-bell-boton, .boton-tema, .nav-toggle, .user-guest-boton):not(.primary):not(.danger):not(.success):not(.accent):hover {
+  background: #211247 !important;
+}
+
+html[data-tema="claro"] .navbar button.buscador-submit:not(.primary):not(.danger):not(.success):not(.accent) {
+  background: #4d247e !important;
+  color: #fff !important;
+}
+
+html[data-tema="claro"] .navbar button.buscador-submit:not(.primary):not(.danger):not(.success):not(.accent):hover {
+  background: #7133bd !important;
+}
