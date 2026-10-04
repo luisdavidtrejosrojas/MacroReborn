@@ -23,7 +23,7 @@ El 24/09/2026, a partir de la auditoría de lo que había:
 |---|---|
 | Página propia, no un panel más grande | Son unas 750 prendas: hacen falta filtros, orden y una dirección que se pueda enlazar |
 | Sin probador, por ahora | Probarse lo que no se ha comprado es dibujar con el servidor prendas de pago para cualquiera. La vista previa del editor solo dibuja lo que se puede guardar (`api/_vista-previa.js`) |
-| Los precios del equipo de arte no se tocan | Los puso quien hizo la prenda, al subirla |
+| Los precios del equipo de arte no se tocan | Los puso quien hizo la prenda, al subirla. Hasta el 04/10/2026: desde entonces van por rareza (ver 2) |
 | Todo lo publicado tiene precio | Las 594 prendas del catálogo original eran gratis. Se les puso un precio por tipo (abajo) |
 | Lo que alguien ya llevaba, se le regala | Quien llevaba puesta o guardada una de esas 594 la tiene como comprada, a 0. Sin eso la seguiría llevando, pero al quitársela no podría volver a ponérsela sin pagar |
 
@@ -31,10 +31,23 @@ El 24/09/2026, a partir de la auditoría de lo que había:
 
 ## 2. Los precios
 
-Los de las 594, por tipo de prenda, calibrados con los 35 de la tienda
-original (migración 012). Los tipos que aquella no tenía van con los de
-su tamaño: boca y cara con lo más pequeño, piel con los ojos, espalda
-con el borde.
+Desde el 04/10/2026, por rareza (`docs/ECONOMIA.md`):
+
+| Rareza | Precio |
+|---|---|
+| Común | 50 |
+| Rara | 500 |
+| Épica | 1.400 |
+| Legendaria | 6.000 |
+
+La migración 027 le puso a cada prenda la rareza que le tocaba por lo
+que costaba (de 15.000 para arriba, legendaria; de 3.001, épica; de
+500, rara; el resto, común) y el precio de esa rareza. Ninguna subió.
+
+**Hasta entonces.** Las 594, por tipo de prenda, calibrados con los 35
+de la tienda original (migración 012). Los tipos que aquella no tenía
+iban con los de su tamaño: boca y cara con lo más pequeño, piel con los
+ojos, espalda con el borde.
 
 | Tipo | Precio | | Tipo | Precio |
 |---|---|---|---|---|
@@ -44,20 +57,18 @@ con el borde.
 | ojos, piel | 80 | | borde, espalda | 150 |
 | botas | 90 | | mascota | 220 |
 
-Los del equipo de arte van de 1.500 a 50.000 (mediana, 2.900). Los
+Los del equipo de arte iban de 1.500 a 50.000 (mediana, 2.900). Los
 personajes base no se venden.
 
-La tabla vive en `api/_precios.js`, y es la que se usa desde entonces
-para que ninguna prenda vuelva a quedar gratis sin querer (sección 5).
-La migración lleva su propia copia en SQL, porque no puede leer el
-módulo; `tests/precios.test.js` vigila que digan lo mismo.
+Las rarezas viven en `api/_precios.js`, que es lo que se usa para que
+ninguna prenda quede gratis sin querer (sección 5). La migración 027
+lleva su propia copia en SQL, porque no puede leer el módulo;
+`tests/precios.test.js` vigila que digan lo mismo.
 
 **Lo que da de sí el saldo.** Una cuenta nueva empieza con 500 monedas
-y no tiene nada puesto aparte del personaje: le alcanza para ojos,
-boca, pelo, remera y pantalón (450). Las monedas se ganan jugando: entre
-10 y 30 cada 10 minutos de juego, hasta 500 al día (`api/_monedas.js`).
-El 24/09/2026 el saldo más alto de alguien que no es del equipo era 980,
-así que lo del equipo de arte queda, de momento, lejos de todo el mundo.
+y no tiene nada puesto aparte del personaje: le alcanza para una rara,
+o para diez comunes. Cómo se ganan y cuánto se tarda en llegar a cada
+rareza, en `docs/ECONOMIA.md`.
 
 ---
 
@@ -142,19 +153,21 @@ arte del equipo y `/prendas/` está cerrado a los demás
 
 ## 5. El equipo de arte y los precios
 
-Decidido el 24/09/2026, el mismo día de la tienda. Todo lo que se
-publica se vende, entre 1 y 100.000 monedas:
+Decidido el 24/09/2026, el mismo día de la tienda: todo lo que se
+publica se vende. Desde el 04/10/2026 el equipo elige la rareza, no el
+precio (`docs/ECONOMIA.md`):
 
-- **Al subir** (`arte.html` y `taller.html`), cada prenda llega con el
-  precio de su ranura, y lo sigue al cambiar de ranura mientras nadie
-  lo toque a mano. El 0, que antes era gratis, ya no vale.
+- **Al subir** (`arte.html` y `taller.html`), cada prenda llega con la
+  rareza que se elija, común si no se elige otra. La API sigue
+  aceptando un `precio` en vez de una rareza, y lo convierte con los
+  mismos cortes que la migración 027.
 - **Al publicar** una prenda que no tenía precio (un borrador subido
   gratis antes de la tienda, o una del catálogo original que estaba
-  retirada cuando la migración 022), se le pone el de su ranura.
+  retirada cuando la migración 022), sale como común.
 - **Después de subirla**, el botón "Editar" de cada prenda del catálogo
   del panel (`avatarEditarPrenda`, en `api/content.js`):
-  - el **precio** lo cambia cualquiera del equipo, en cualquier prenda
-    ("confío en ellos");
+  - la **rareza**, y con ella el precio, la cambia cualquiera del
+    equipo, en cualquier prenda ("confío en ellos");
   - el **nombre**, quien la subió o un administrador, igual que publicar
     y retirar;
   - **descripción** no hay: se decidió no tenerla;
@@ -169,7 +182,7 @@ quién lo hizo y de qué a qué:
 
 ```bash
 journalctl -u macroreborn | grep "\[arte\]"
-# [arte] dibujante cambió tora_pelo8: precio 120 -> 150
+# [arte] dibujante cambió tora_pelo8: rareza comun -> rara
 ```
 
 ---
@@ -181,8 +194,6 @@ journalctl -u macroreborn | grep "\[arte\]"
 - **Quien llevaba una prenda de la tienda sin haberla comprado** (de
   antes de que se vendiera, anterior a la 022) la conserva, pero el
   editor se la enseña con candado.
-- **El saldo de cualquiera** sigue saliendo por `/api/users?username=X`:
-  es el punto 57 de `docs/AUDITORIA.md`.
 
 ---
 
@@ -191,13 +202,13 @@ journalctl -u macroreborn | grep "\[arte\]"
 | Archivo | Qué sujeta |
 |---|---|
 | `tests/tienda-catalogo-migracion.test.js` | La migración 022: precios, fechas, regalos, que se pueda aplicar dos veces |
-| `tests/precios.test.js` | Que la tabla de `api/_precios.js` sea la de la migración |
-| `tests/arte-editar.test.js` | Editar nombre y precio: quién puede, qué cambia, qué se rechaza |
-| `tests/avatar-panel.test.js` | Subir con precio y publicar poniendo el de la ranura |
-| `tests/arte-pagina.test.js`, `tests/taller.test.js` | El precio propuesto al subir y el botón Editar |
+| `tests/precios.test.js` | Las rarezas de `api/_precios.js` y la migración 027 |
+| `tests/arte-editar.test.js` | Editar nombre y rareza: quién puede, qué cambia, qué se rechaza |
+| `tests/avatar-panel.test.js` | Subir con rareza y publicar como común |
+| `tests/arte-pagina.test.js`, `tests/taller.test.js` | La rareza al subir y el botón Editar |
 | `tests/tienda-api.test.js` | Catálogo, privacidad, compra, clics dobles y `mis-monedas` |
 | `tests/transaccion.test.js` | `sql.transaccion` en los dos adaptadores |
-| `tests/bazar-pagina.test.js` | La página entera, con la compra, los enlaces y la redirección de `tienda.html` |
+| `tests/bazar-pagina.test.js` | La página entera, con la compra, la rareza, los enlaces y la redirección de `tienda.html` |
 | `tests/editor-tienda.test.js` | El candado del editor y `?ponerse=` |
 | `tests/comunidad-tienda.test.js` | El escaparate de Comunidad |
 | `tests/navbar-bazar.test.js`, `tests/navbar-monedas.test.js` | El enlace y el saldo de la barra |
