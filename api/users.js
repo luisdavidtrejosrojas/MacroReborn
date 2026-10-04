@@ -163,7 +163,7 @@ async function registrarTickTiempoJugado(userId, gameId, username) {
     RETURNING minutos;
   `;
 
-  const minutosHoy = await registrarMinutoJugado(sql, userId);
+  const { minutos: minutosHoy, rachaDeHoy } = await registrarMinutoJugado(sql, userId);
 
   // ¿Con este minuto se cumple la misión de hoy o la de la semana?
   // (api/_misiones.js). Solo se calcula lo que miden las de ahora: los
@@ -183,16 +183,18 @@ async function registrarTickTiempoJugado(userId, gameId, username) {
     console.warn("MacroReborn: no se pudo avisar de la misión cumplida.", error);
   }
 
+  // Para las monedas del minuto (sumarXp, más abajo).
+  return { minutosHoy, rachaDeHoy };
 }
 
 // ==============================
-// MONEDAS POR TIEMPO JUGADO
+// MONEDAS DEL PULSO
 // ==============================
 // El mismo pulso de 1 vez por minuto que suma XP y cuenta minutos para
-// el ranking también es el reloj con el que se GANAN monedas. Toda la
-// regla (cada 10 minutos, premio aleatorio de 10 a 30, tope de 500 por
-// día UTC con reseteo perezoso) vive en api/_monedas.js: acá solo se lo
-// llama y se agrega el resultado a la respuesta.
+// el ranking también es el reloj con el que se GANAN monedas: el premio
+// cada 10 minutos jugados, el de la racha con el primer minuto del día y
+// el de subir de nivel. Toda la regla vive en api/_monedas.js: acá solo
+// se la llama y se agrega el resultado a la respuesta.
 //
 // No hay endpoint nuevo a propósito: Vercel (plan Hobby) permite 12
 // Serverless Functions y ya están todas usadas, así que se reusa el
@@ -741,34 +743,43 @@ async function sumarXp(req, res) {
 
   // Ranking por tiempo jugado: cada pulso de XP mientras se está
   // jugando (1 por minuto) también cuenta como 1 minuto jugado para
-  // el ranking semanal. No debe romper la respuesta de XP si falla.
+  // el ranking semanal, y como un minuto de hoy y de la racha. No debe
+  // romper la respuesta de XP si falla.
+  let minuto = null;
   try {
-    await registrarTickTiempoJugado(id, gameId, auth.username);
+    minuto = await registrarTickTiempoJugado(id, gameId, auth.username);
   } catch (error) {
     console.warn("MacroReborn: no se pudo registrar el tiempo jugado para el ranking.", error);
   }
 
-  // Monedas por tiempo jugado: el mismo pulso, además de XP y minutos,
-  // puede otorgar monedas (cada 10 minutos, no cada minuto: la regla
-  // completa está en api/_monedas.js).
+  // Las monedas del pulso: el premio si este minuto es el 10, el 20…
+  // del día; la racha si es el primero; el nivel si se subió (la regla
+  // completa está en api/_monedas.js). Una recompensa sin juego solo
+  // puede dar la del nivel.
   // Mismo criterio defensivo que el tick de arriba: si el banco falla
-  // (columnas de la migración 015 sin aplicar todavía, base caída),
-  // se loguea y el usuario igual recibe su XP. Perder un otorgamiento
-  // de monedas es un problema chico; perder el XP del minuto sería
-  // visible en pantalla.
+  // (base caída), se loguea y el usuario igual recibe su XP. Perder un
+  // premio de monedas es un problema chico; perder el XP del minuto
+  // sería visible en pantalla.
   let monedas = MONEDAS_SIN_OTORGAR;
 
   try {
-    monedas = await monedasService.otorgarPorTiempoJugado(id);
+    monedas = await monedasService.otorgarPorMinuto(id, {
+      minutoDelDia: esMinuto && minuto ? minuto.minutosHoy : 0,
+      rachaDeHoy: esMinuto && minuto ? minuto.rachaDeHoy : 0,
+      nivelNuevo: subioNivel ? level : 0
+    });
   } catch (error) {
-    console.warn("MacroReborn: no se pudieron otorgar las monedas por tiempo jugado.", error);
+    console.warn("MacroReborn: no se pudieron otorgar las monedas del pulso.", error);
   }
 
   if (subioNivel) {
+    const premio = monedas && monedas.desglose ? monedas.desglose.nivel : 0;
     await crearNotificacionServidor(
       username,
       "⭐ Nuevo nivel",
-      `Subiste al nivel ${level}.`
+      premio > 0
+        ? `Subiste al nivel ${level}. Te llevás 🪙 ${premio}.`
+        : `Subiste al nivel ${level}.`
     );
   }
 

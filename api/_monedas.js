@@ -4,137 +4,114 @@
 // El "banco" del sitio: el único lugar que sabe cómo se GANAN y cómo
 // se GASTAN las monedas (users.monedas).
 //
-// Por qué: hasta ahora las monedas solo se restaban. La migración 012
+// Por qué: al principio las monedas solo se restaban. La migración 012
 // le dio a todos un saldo inicial de 500 y la tienda de avatares lo
-// gastaba con un UPDATE suelto dentro de api/content.js, pero no
-// existía ninguna forma de ganar monedas: el saldo solo podía bajar.
-// Acá vive la otra mitad (ganarlas jugando) y también se centraliza el
-// gasto, para que la resta del saldo no quede escrita a mano en un
-// handler HTTP.
+// gastaba con un UPDATE suelto dentro de api/content.js, pero no existía
+// ninguna forma de ganar monedas. Acá vive la otra mitad (ganarlas) y
+// también se centraliza el gasto, para que la resta del saldo no quede
+// escrita a mano en un handler HTTP.
 //
 // Estilo (el mismo que api/_password.js, a propósito):
-//   - Funciones puras / de lectura, fáciles de testear.
+//   - Funciones puras, fáciles de testear.
 //   - Una clase fina MonedasService que las usa y que consumen los
-//     handlers de la API (api/users.js, api/content.js).
+//     handlers de la API (api/users.js, api/content.js, api/social.js).
 //
 // ==============================
-// CÓMO SE GANAN (regla de negocio)
+// CÓMO SE GANAN (decidido el 04/10/2026, docs/ECONOMIA.md)
 // ==============================
-// Mientras el usuario juega, js/motor/xp.js ya manda un pulso por
-// minuto a POST /api/users?action=xp. Ese pulso es el reloj que usamos
-// (no se agrega ningún pedido nuevo al servidor, ni un cron), pero las
-// monedas NO se entregan cada minuto:
+// Los números salen de una simulación: con ellos, quien juega media
+// hora al día gana unas 200 monedas, y junta una épica (1.400) en una
+// semana y una legendaria (6.000) en un mes (api/_precios.js).
 //
-//   - Cada 10 minutos reales de juego se otorga una cantidad ALEATORIA
-//     entre 10 y 30 monedas. Los pulsos intermedios no otorgan nada:
-//     eso no es un error, es lo normal (9 de cada 10 pulsos).
-//   - Hay un tope de 500 monedas ganadas por día (UTC) por esta vía.
-//     El saldo inicial de bienvenida y lo gastado en la tienda no
-//     cuentan para el tope: solo lo ganado jugando.
-//   - Si un otorgamiento cruza el tope, se entrega COMPLETO (no se
-//     recorta al monto que faltaba). Se permite ese único "pasarse":
-//     recortar el premio a la mitad se siente peor que darlo entero, y
-//     el exceso máximo posible es de 29 monedas. Desde ahí y hasta la
-//     medianoche UTC, los otorgamientos siguientes dan 0.
+//   - JUGAR. Cada 10 minutos jugados del día, un premio al azar de 10 a
+//     30. "Jugados" quiere decir contados por el servidor, uno por
+//     minuto (api/users.js), y con alguien delante: el navegador deja de
+//     mandar el pulso a los 3 minutos sin teclado, ratón ni toques
+//     (js/motor/actividad-jugador.js). Los primeros 120 minutos del día
+//     pagan entero; de 120 a 240, la mitad; después, nada.
+//   - RACHA. El primer minuto de cada día, 5 monedas por cada día
+//     seguido jugando, hasta 35 desde el séptimo (api/_racha.js la
+//     cuenta).
+//   - SUBIR DE NIVEL. 15 × el nivel al que se sube.
+//   - LOGROS. Tantas monedas como puntos, una vez (api/_logros.js).
+//   - MISIONES. Las cobra api/progreso.js; sus premios están en
+//     api/_misiones.js.
 //
-// ==============================
-// RESETEO DIARIO PEREZOSO (sin cron)
-// ==============================
-// El contador diario NO se resetea con una tarea programada: se
-// resetea solo, en el momento en que se lo consulta. Es el mismo truco
-// que la migración perezosa de contraseñas (ver api/_password.js): si
-// la fecha guardada en monedas_ganadas_fecha es de otro día UTC que
-// hoy, el acumulado guardado se ignora y se trata como 0.
+// Hasta ese día, el premio por jugar caía cada 10 minutos de reloj,
+// estuviera quien estuviera delante, con un tope de 500 al día; y la
+// racha, los niveles y los logros no daban nada.
 //
-// Por qué así: un cron que corra a medianoche es una pieza más que
-// puede fallar, y Vercel (plan Hobby) tiene los crons contados. Si
-// nadie juega, tampoco hace falta resetear nada.
+// El día es el de Argentina, como el de los minutos y la racha: el
+// premio del minuto 120 lo decide el contador de actividad_diaria.
 
 // ==============================
 // CONSTANTES DE LA REGLA
 // ==============================
-// Exportadas para que los tests las usen en vez de repetir números
-// sueltos (misma idea que COSTO_HASH en api/_password.js).
+// Exportadas para que los tests y el recálculo de saldos
+// (scripts/recalcular-saldos.js) las usen en vez de repetir números.
 
-// Cada cuántos minutos reales se otorga (el pulso del cliente es de 1).
-const MINUTOS_ENTRE_OTORGAMIENTOS = 10;
+const MINUTOS_POR_PREMIO = 10;
+const PREMIO_MINIMO = 10;
+const PREMIO_MAXIMO = 30;
 
-// Rango del premio, ambos extremos incluidos.
-const MONEDAS_MINIMAS = 10;
-const MONEDAS_MAXIMAS = 30;
+// Del día: hasta aquí, entero; hasta la siguiente, la mitad; después, nada.
+const MINUTOS_ENTEROS = 120;
+const MINUTOS_A_MITAD = 240;
 
-// Tope de monedas GANADAS JUGANDO por día UTC.
-const TOPE_DIARIO = 500;
+const MONEDAS_POR_DIA_DE_RACHA = 5;
+const DIAS_DE_RACHA_CON_PREMIO = 7;
+
+const MONEDAS_POR_NIVEL = 15;
 
 // ==============================
 // FUNCIONES PURAS
 // ==============================
 
-// Devuelve un entero al azar entre MONEDAS_MINIMAS y MONEDAS_MAXIMAS,
-// incluyendo los dos extremos.
-function montoAleatorio() {
-  const rango = MONEDAS_MAXIMAS - MONEDAS_MINIMAS + 1;
-  return MONEDAS_MINIMAS + Math.floor(Math.random() * rango);
+// Un entero al azar de PREMIO_MINIMO a PREMIO_MAXIMO, los dos incluidos.
+function premioAlAzar(azar = Math.random) {
+  const rango = PREMIO_MAXIMO - PREMIO_MINIMO + 1;
+  return PREMIO_MINIMO + Math.floor(azar() * rango);
 }
 
-// Aplica el tope diario a un premio ya sorteado.
-//
-// Devuelve el premio COMPLETO mientras el acumulado del día todavía no
-// llegó al tope (aunque este premio lo cruce: el "pasarse" está
-// permitido una vez, ver el encabezado), y 0 cuando el tope ya está
-// alcanzado.
-function montoSegunTope(ganadasHoy, montoSorteado) {
-  if (ganadasHoy >= TOPE_DIARIO) return 0;
-  return montoSorteado;
+// Cuánto vale el premio que toca en el minuto "minuto" del día.
+function factorDelMinuto(minuto) {
+  if (minuto <= MINUTOS_ENTEROS) return 1;
+  if (minuto <= MINUTOS_A_MITAD) return 0.5;
+  return 0;
 }
 
-// Lee el estado de monedas de un usuario CON el reseteo diario
-// perezoso ya aplicado.
-//
-// Devuelve null si el usuario no existe, o:
-//   { id, saldo, ganadasHoy, tocaOtorgar }
-//
-// Las dos cuentas delicadas las hace Postgres, no Node, a propósito:
-//   - "¿pasaron los 10 minutos?" se mide contra el now() del servidor
-//     de base, así que no depende del reloj de la máquina que corre el
-//     código (ni del huso horario en que esté configurada).
-//   - "¿la fecha guardada es de hoy?" se compara contra la fecha UTC
-//     de la base. Si monedas_ganadas_fecha es de ayer -o NULL, para
-//     los usuarios que ya existían antes de la migración 015, la
-//     comparación no da verdadero y el acumulado arranca en 0: ese es
-//     el reseteo perezoso.
-async function leerEstadoMonedas(sql, userId) {
-  const filas = await sql`
-    SELECT
-      id,
-      monedas AS saldo,
-      COALESCE(monedas_ganadas_hoy, 0) AS ganadas_hoy_guardado,
-      (monedas_ganadas_fecha = (now() AT TIME ZONE 'UTC')::date) AS fecha_es_hoy,
-      (monedas_ultimo_otorgamiento IS NULL
-       OR monedas_ultimo_otorgamiento <= now() - (${MINUTOS_ENTRE_OTORGAMIENTOS}::int * INTERVAL '1 minute')) AS toca_otorgar
-    FROM users
-    WHERE id = ${userId};
-  `;
+// El premio por jugar al llegar al minuto "minuto" del día: solo en el
+// 10, el 20, el 30…, y redondeado si va a mitad.
+function premioDelMinuto(minuto, azar = Math.random) {
+  const m = Math.trunc(Number(minuto) || 0);
+  if (m <= 0 || m % MINUTOS_POR_PREMIO !== 0) return 0;
+  const factor = factorDelMinuto(m);
+  if (factor === 0) return 0;
+  return Math.round(premioAlAzar(azar) * factor);
+}
 
-  if (filas.length === 0) return null;
+// El premio del primer minuto de un día que hace "dias" de racha.
+function monedasPorRacha(dias) {
+  const d = Math.trunc(Number(dias) || 0);
+  return d <= 0 ? 0 : MONEDAS_POR_DIA_DE_RACHA * Math.min(d, DIAS_DE_RACHA_CON_PREMIO);
+}
 
-  const fila = filas[0];
+// El premio por llegar a "nivel". El nivel 1 es con el que se empieza.
+function monedasPorNivel(nivel) {
+  const n = Math.trunc(Number(nivel) || 0);
+  return n <= 1 ? 0 : MONEDAS_POR_NIVEL * n;
+}
 
-  return {
-    id: fila.id,
-    saldo: Number(fila.saldo) || 0,
-    ganadasHoy: fila.fecha_es_hoy ? (Number(fila.ganadas_hoy_guardado) || 0) : 0,
-    tocaOtorgar: !!fila.toca_otorgar
-  };
+// Por qué un minuto no dio nada, para quien lea la respuesta.
+function razonSinPremio(minuto) {
+  const m = Math.trunc(Number(minuto) || 0);
+  if (m > MINUTOS_A_MITAD) return "pasadas-las-4-horas";
+  return "aun-no-pasaron-10-minutos";
 }
 
 // ==============================
-// CLASE MonedasService
+// SERVICIO
 // ==============================
-// Capa fina de "servicio" que los handlers usan. Recibe la función sql
-// por constructor (inyección de dependencia, misma convención que
-// api/_password.js y api/_utils.js) para poder testearla contra la
-// base local PGlite.
 
 class MonedasService {
 
@@ -142,112 +119,50 @@ class MonedasService {
     this._sql = sql;
   }
 
-  // Otorga monedas por tiempo jugado, si corresponde.
-  //
-  // Se la llama en CADA pulso de XP (1 por minuto), así que el caso
-  // más frecuente por lejos es no otorgar nada. Eso no es un error:
-  // devuelve otorgado:false con una razon para poder loguear/debuggear
-  // sin adivinar.
-  //
-  //   { otorgado: boolean, monto: number, saldoNuevo: number, razon: string|null }
-  //
-  // razon se llena SOLO cuando otorgado es false:
-  //   "usuario-no-encontrado"      -> no existe ese id
-  //   "aun-no-pasaron-10-minutos"  -> el caso normal, todavía no toca
-  //   "tope-diario-alcanzado"      -> ya ganó 500 o más hoy (UTC)
-  async otorgarPorTiempoJugado(userId) {
-
-    const estado = await leerEstadoMonedas(this._sql, userId);
-
-    if (!estado) {
-      return { otorgado: false, monto: 0, saldoNuevo: 0, razon: "usuario-no-encontrado" };
-    }
-
-    if (!estado.tocaOtorgar) {
-      return {
-        otorgado: false,
-        monto: 0,
-        saldoNuevo: estado.saldo,
-        razon: "aun-no-pasaron-10-minutos"
-      };
-    }
-
-    const montoSorteado = montoAleatorio();
-
-    // El UPDATE se hace incluso cuando el monto es 0 (tope alcanzado):
-    // es un otorgamiento que entrega 0, y mover
-    // monedas_ultimo_otorgamiento evita volver a sortear en cada uno de
-    // los 10 pulsos siguientes. También deja monedas_ganadas_fecha
-    // anclada en el día de hoy, que es lo que hace que el reseteo
-    // perezoso funcione mañana.
-    //
-    // La condición de los 10 minutos se repite acá en el WHERE (ya la
-    // evaluó leerEstadoMonedas) para que dos pulsos simultáneos -dos
-    // pestañas del juego abiertas- no puedan cobrar dos premios: el
-    // primero mueve la marca de tiempo y el segundo no encuentra fila
-    // que actualizar.
-    // La fecha UTC, el contador vigente y el tope se resuelven dentro
-    // de esta misma sentencia. Así, incluso si la llamada cae justo en
-    // el cambio de día, el premio se contabiliza en un único día y con
-    // una sola fotografía coherente de la fila.
-    const actualizado = await this._sql`
-      WITH elegible AS (
-        SELECT
-          id,
-          CASE
-            WHEN monedas_ganadas_fecha = (now() AT TIME ZONE 'UTC')::date
-              THEN COALESCE(monedas_ganadas_hoy, 0)
-            ELSE 0
-          END AS ganadas_hoy,
-          CASE
-            WHEN monedas_ganadas_fecha = (now() AT TIME ZONE 'UTC')::date
-                 AND COALESCE(monedas_ganadas_hoy, 0) >= ${TOPE_DIARIO}
-              THEN 0
-            ELSE ${montoSorteado}
-          END AS monto_otorgado
-        FROM users
-        WHERE id = ${userId}
-          AND (monedas_ultimo_otorgamiento IS NULL
-               OR monedas_ultimo_otorgamiento <= now() - (${MINUTOS_ENTRE_OTORGAMIENTOS}::int * INTERVAL '1 minute'))
-      ), actualizado AS (
-        UPDATE users AS u
-        SET monedas = u.monedas + e.monto_otorgado,
-            monedas_ganadas_hoy = e.ganadas_hoy + e.monto_otorgado,
-            monedas_ganadas_fecha = (now() AT TIME ZONE 'UTC')::date,
-            monedas_ultimo_otorgamiento = now()
-        FROM elegible AS e
-        WHERE u.id = e.id
-          AND (u.monedas_ultimo_otorgamiento IS NULL
-               OR u.monedas_ultimo_otorgamiento <= now() - (${MINUTOS_ENTRE_OTORGAMIENTOS}::int * INTERVAL '1 minute'))
-        RETURNING u.monedas AS saldo_nuevo, e.monto_otorgado
-      )
-      SELECT saldo_nuevo, monto_otorgado FROM actualizado;
+  // Suma "monto" al saldo, en una sola instrucción. Devuelve el saldo
+  // nuevo, o null si la cuenta no existe. Un monto de 0 o menos no toca
+  // nada: este método solo da.
+  async otorgar(userId, monto) {
+    const n = Math.trunc(Number(monto) || 0);
+    if (n <= 0) return this.consultarSaldo(userId);
+    const filas = await this._sql`
+      UPDATE users SET monedas = monedas + ${n}
+      WHERE id = ${userId}
+      RETURNING monedas;
     `;
+    return filas.length ? Number(filas[0].monedas) || 0 : null;
+  }
 
-    // Sin filas: otro pulso simultáneo se quedó con este otorgamiento.
-    if (actualizado.length === 0) {
-      const saldoActual = await this.consultarSaldo(userId);
-
-      if (saldoActual === null) {
-        return { otorgado: false, monto: 0, saldoNuevo: 0, razon: "usuario-no-encontrado" };
-      }
-
-      return {
-        otorgado: false,
-        monto: 0,
-        saldoNuevo: saldoActual,
-        razon: "aun-no-pasaron-10-minutos"
-      };
+  // Lo que da un pulso: el premio del minuto si toca, la racha si es el
+  // primer minuto del día y el nivel si con él se subió. Todo en una
+  // sola suma.
+  //
+  //   datos: { minutoDelDia, rachaDeHoy, nivelNuevo }
+  //     minutoDelDia  los minutos de hoy contando este (0 si el pulso no
+  //                   era un minuto de juego)
+  //     rachaDeHoy    los días de racha, si este minuto la contó; si no, 0
+  //     nivelNuevo    el nivel al que se acaba de subir; si no, 0
+  //
+  // Devuelve { otorgado, monto, saldoNuevo, razon, desglose }, con
+  // desglose = { jugar, racha, nivel }.
+  async otorgarPorMinuto(userId, datos = {}, azar = Math.random) {
+    const desglose = {
+      jugar: premioDelMinuto(datos.minutoDelDia, azar),
+      racha: monedasPorRacha(datos.rachaDeHoy),
+      nivel: monedasPorNivel(datos.nivelNuevo)
+    };
+    const monto = desglose.jugar + desglose.racha + desglose.nivel;
+    const saldoNuevo = await this.otorgar(userId, monto);
+    if (saldoNuevo === null) {
+      return { otorgado: false, monto: 0, saldoNuevo: 0, razon: "usuario-no-encontrado", desglose };
     }
-
-    const saldoNuevo = Number(actualizado[0].saldo_nuevo) || 0;
-    const montoOtorgado = Number(actualizado[0].monto_otorgado) || 0;
-
-    if (montoOtorgado === 0) {
-      return { otorgado: false, monto: 0, saldoNuevo, razon: "tope-diario-alcanzado" };
-    }
-
-    return { otorgado: true, monto: montoOtorgado, saldoNuevo, razon: null };
+    return {
+      otorgado: monto > 0,
+      monto,
+      saldoNuevo,
+      razon: monto > 0 ? null : razonSinPremio(datos.minutoDelDia),
+      desglose
+    };
   }
 
   // Gasta monedas (tienda de avatares). Reemplaza al UPDATE que estaba
@@ -297,12 +212,18 @@ class MonedasService {
 }
 
 module.exports = {
-  MINUTOS_ENTRE_OTORGAMIENTOS,
-  MONEDAS_MINIMAS,
-  MONEDAS_MAXIMAS,
-  TOPE_DIARIO,
-  montoAleatorio,
-  montoSegunTope,
-  leerEstadoMonedas,
+  MINUTOS_POR_PREMIO,
+  PREMIO_MINIMO,
+  PREMIO_MAXIMO,
+  MINUTOS_ENTEROS,
+  MINUTOS_A_MITAD,
+  MONEDAS_POR_DIA_DE_RACHA,
+  DIAS_DE_RACHA_CON_PREMIO,
+  MONEDAS_POR_NIVEL,
+  premioAlAzar,
+  factorDelMinuto,
+  premioDelMinuto,
+  monedasPorRacha,
+  monedasPorNivel,
   MonedasService
 };

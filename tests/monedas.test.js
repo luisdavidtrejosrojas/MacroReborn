@@ -2,7 +2,7 @@
 // TESTS DE MONEDAS — tests/monedas.test.js
 // ==============================
 // Prueban el "banco" del sitio (api/_monedas.js) y su enganche en los
-// handlers REALES de la API (los mismos que corren en Vercel) contra
+// handlers REALES de la API (los mismos que corren en el servidor) contra
 // una base local PGlite. Cero contacto con la base de producción:
 // todo vive en esta computadora.
 //
@@ -11,12 +11,11 @@
 // corre en su propio proceso, no hay contaminación con los tests de
 // contraseñas.
 //
-// Qué se cubre:
-//   - Primer otorgamiento a un usuario nuevo.
-//   - Segundo otorgamiento antes de los 10 minutos (no debe dar nada).
-//   - Tope diario: una vez alcanzado, los otorgamientos dan 0.
-//   - Overshoot: el otorgamiento que cruza el tope se entrega COMPLETO.
-//   - Reseteo perezoso: acumulado de "ayer" que se ignora.
+// Qué se cubre (la regla del 04/10/2026, docs/ECONOMIA.md):
+//   - El premio por jugar: de 10 a 30, solo en el minuto 10, 20, 30… del
+//     día; entero hasta el 120, a mitad hasta el 240 y después nada.
+//   - La racha (5 por día seguido, hasta 35) y subir de nivel (15 × el
+//     nivel), sumados en el mismo pulso.
 //   - gastar(): rechaza compras sin saldo suficiente.
 //   - El enganche real en POST /api/users?action=xp.
 //   - La compra real en POST /api/content?action=avatar-shop-buy.
@@ -36,17 +35,21 @@ const { crearBaseLocal, crearSqlPGlite } = require("../scripts/pglite");
 const { usarSqlLocal } = require("../api/_db");
 const { crearToken } = require("../api/_auth");
 const {
-  MINUTOS_ENTRE_OTORGAMIENTOS,
-  MONEDAS_MINIMAS,
-  MONEDAS_MAXIMAS,
-  TOPE_DIARIO,
-  montoAleatorio,
-  montoSegunTope,
+  PREMIO_MINIMO,
+  PREMIO_MAXIMO,
+  premioAlAzar,
+  premioDelMinuto,
+  monedasPorRacha,
+  monedasPorNivel,
   MonedasService
 } = require("../api/_monedas");
 
 // Saldo con el que arranca todo usuario (migración 012).
 const SALDO_INICIAL = 500;
+
+// Un azar fijo: con 0 sale el mínimo; con 0.5, 10 + floor(0.5 × 21) = 20.
+const AL_MINIMO = () => 0;
+const AL_MEDIO = () => 0.5;
 
 let db;
 let sql;
@@ -80,7 +83,7 @@ before(async () => {
   contentHandler = require("../api/content");
 });
 
-// Llama a un handler como lo llamaría Vercel (req/res simulados).
+// Llama a un handler como lo llamaría el servidor (req/res simulados).
 function llamar(handler, metodo, query, body, headers) {
   return new Promise((resolve) => {
     const req = { method: metodo, query: query || {}, body: body || {}, headers: headers || {} };
@@ -113,252 +116,117 @@ async function headersParaUsuario(username) {
   };
 }
 
-// Lee las columnas de monedas de un usuario.
+// Lee el saldo de un usuario.
 async function estadoMonedas(userId) {
-  const filas = await db.query(
-    `SELECT monedas, monedas_ganadas_hoy, monedas_ganadas_fecha, monedas_ultimo_otorgamiento
-     FROM users WHERE id = $1`,
-    [userId]
-  );
+  const filas = await db.query("SELECT monedas FROM users WHERE id = $1", [userId]);
   return filas.rows[0];
 }
 
-// Simula que el último otorgamiento fue hace N minutos, para no tener
-// que esperar 10 minutos reales en un test.
-async function ultimoOtorgamientoHaceMinutos(userId, minutos) {
-  await db.query(
-    `UPDATE users SET monedas_ultimo_otorgamiento = now() - ($2 * INTERVAL '1 minute') WHERE id = $1`,
-    [userId, minutos]
-  );
+// Un pulso de juego de "username", como el que manda js/motor/xp.js.
+async function pulso(username, extra) {
+  const headers = await headersParaUsuario(username);
+  return llamar(usersHandler, "POST", { action: "xp" },
+    Object.assign({ username, cantidad: 10, gameId: "juego-de-prueba" }, extra || {}), headers);
 }
 
-// Deja al usuario con un acumulado del día ya cargado, fechado HOY o
-// AYER (para probar el reseteo perezoso).
-async function acumuladoDelDia(userId, ganadas, dia) {
-  const fecha = dia === "ayer"
-    ? `((now() AT TIME ZONE 'UTC')::date - 1)`
-    : `(now() AT TIME ZONE 'UTC')::date`;
-  await db.query(
-    `UPDATE users SET monedas_ganadas_hoy = $2, monedas_ganadas_fecha = ${fecha} WHERE id = $1`,
-    [userId, ganadas]
-  );
+// Deja preparado el siguiente minuto: el servidor no cuenta dos en menos
+// de 55 segundos (migración 024), y "minutos" son los que ya lleva hoy.
+async function prepararSiguienteMinuto(username, minutos) {
+  await db.query("UPDATE users SET ultimo_minuto_jugado = now() - interval '1 minute' WHERE username = $1", [username]);
+  if (minutos !== undefined) {
+    await db.query(
+      `UPDATE actividad_diaria SET minutos = $2
+       WHERE user_id = (SELECT id FROM users WHERE username = $1)
+         AND dia = (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date`,
+      [username, minutos]);
+  }
 }
 
 // ==============================
 // LA REGLA, PIEZA POR PIEZA
 // ==============================
 
-test("el monto sorteado siempre cae entre 10 y 30 monedas, incluidos los extremos", () => {
+test("el premio al azar siempre cae entre 10 y 30 monedas, incluidos los extremos", () => {
   // 2000 tiradas: suficiente para que un rango mal calculado (un
   // extremo que nunca sale, o uno que se pasa) aparezca.
   const vistos = new Set();
-
   for (let i = 0; i < 2000; i++) {
-    const monto = montoAleatorio();
-    assert.ok(Number.isInteger(monto), "el monto debe ser un entero");
-    assert.ok(monto >= MONEDAS_MINIMAS, `${monto} quedó por debajo del mínimo`);
-    assert.ok(monto <= MONEDAS_MAXIMAS, `${monto} se pasó del máximo`);
-    vistos.add(monto);
+    const m = premioAlAzar();
+    assert.ok(Number.isInteger(m), "el premio debe ser entero");
+    assert.ok(m >= PREMIO_MINIMO && m <= PREMIO_MAXIMO, "fuera de rango: " + m);
+    vistos.add(m);
   }
-
-  assert.ok(vistos.has(MONEDAS_MINIMAS), "el mínimo tiene que poder salir");
-  assert.ok(vistos.has(MONEDAS_MAXIMAS), "el máximo tiene que poder salir");
+  assert.ok(vistos.has(PREMIO_MINIMO), "el mínimo tiene que poder salir");
+  assert.ok(vistos.has(PREMIO_MAXIMO), "el máximo tiene que poder salir");
+  assert.equal(premioAlAzar(AL_MINIMO), 10);
+  assert.equal(premioAlAzar(() => 0.9999), 30);
 });
 
-test("el tope no recorta el premio: lo entrega completo o no entrega nada", () => {
-  // Todavía no llegó al tope -> premio completo, aunque se pase.
-  assert.equal(montoSegunTope(TOPE_DIARIO - 1, 30), 30, "no debe recortarse a lo que faltaba");
-  assert.equal(montoSegunTope(0, 25), 25);
+test("el premio solo cae en el minuto 10, 20, 30… del día", () => {
+  for (const sin of [0, 1, 9, 11, 19, 21, 119, -10, NaN]) {
+    assert.equal(premioDelMinuto(sin, AL_MEDIO), 0, "minuto " + sin);
+  }
+  for (const con of [10, 20, 60, 120]) {
+    assert.equal(premioDelMinuto(con, AL_MEDIO), 20, "minuto " + con);
+  }
+});
 
-  // Tope justo alcanzado o superado -> nada.
-  assert.equal(montoSegunTope(TOPE_DIARIO, 30), 0);
-  assert.equal(montoSegunTope(TOPE_DIARIO + 15, 30), 0);
+test("las 2 primeras horas pagan entero, de 2 a 4 la mitad, y después nada", () => {
+  assert.equal(premioDelMinuto(120, AL_MEDIO), 20);
+  assert.equal(premioDelMinuto(130, AL_MEDIO), 10);
+  assert.equal(premioDelMinuto(240, AL_MEDIO), 10);
+  assert.equal(premioDelMinuto(250, AL_MEDIO), 0);
+  assert.equal(premioDelMinuto(600, AL_MEDIO), 0);
+  // A mitad se redondea: 21 / 2 = 10,5 -> 11.
+  assert.equal(premioDelMinuto(130, () => 11 / 21), 11);
+});
+
+test("la racha: 5 por cada día seguido, hasta 35 desde el séptimo", () => {
+  assert.deepStrictEqual([0, 1, 2, 3, 6, 7, 8, 30].map(monedasPorRacha), [0, 5, 10, 15, 30, 35, 35, 35]);
+});
+
+test("subir de nivel: 15 × el nivel al que se sube", () => {
+  assert.deepStrictEqual([0, 1, 2, 10, 25, 100].map(monedasPorNivel), [0, 0, 30, 150, 375, 1500]);
 });
 
 // ==============================
 // OTORGAMIENTO
 // ==============================
 
-test("(a) primer otorgamiento a un usuario nuevo: cobra de entrada, sin esperar", async () => {
-  const id = await crearUsuario("jugador_nuevo");
-
-  const antes = await estadoMonedas(id);
-  assert.equal(antes.monedas, SALDO_INICIAL, "arranca con el saldo de bienvenida");
-  assert.equal(antes.monedas_ultimo_otorgamiento, null, "nunca tuvo un otorgamiento");
-  assert.equal(antes.monedas_ganadas_hoy, 0);
-  assert.equal(antes.monedas_ganadas_fecha, null);
-
-  const resultado = await monedas.otorgarPorTiempoJugado(id);
-
-  assert.equal(resultado.otorgado, true);
-  assert.equal(resultado.razon, null, "un otorgamiento exitoso no lleva razon");
-  assert.ok(resultado.monto >= MONEDAS_MINIMAS && resultado.monto <= MONEDAS_MAXIMAS);
-  assert.equal(resultado.saldoNuevo, SALDO_INICIAL + resultado.monto);
-
-  const despues = await estadoMonedas(id);
-  assert.equal(despues.monedas, SALDO_INICIAL + resultado.monto, "el saldo real debe haber subido");
-  assert.equal(despues.monedas_ganadas_hoy, resultado.monto, "el acumulado del día arranca en el premio");
-  assert.ok(despues.monedas_ultimo_otorgamiento, "debe quedar marcada la fecha del otorgamiento");
-  assert.ok(despues.monedas_ganadas_fecha, "debe quedar anclado el día del acumulado");
+test("otorgar suma y devuelve el saldo; 0 o menos no toca nada; sin cuenta, null", async () => {
+  const id = await crearUsuario("receptor");
+  assert.equal(await monedas.otorgar(id, 40), SALDO_INICIAL + 40);
+  assert.equal(await monedas.otorgar(id, 0), SALDO_INICIAL + 40);
+  assert.equal(await monedas.otorgar(id, -500), SALDO_INICIAL + 40, "otorgar no puede quitar");
+  assert.equal(await monedas.otorgar(999999, 40), null);
 });
 
-test("(b) un segundo otorgamiento antes de los 10 minutos no otorga nada", async () => {
-  const id = await crearUsuario("jugador_apurado");
-
-  const primero = await monedas.otorgarPorTiempoJugado(id);
-  assert.equal(primero.otorgado, true);
-
-  const saldoTrasPrimero = primero.saldoNuevo;
-
-  // Los 9 pulsos siguientes (1 por minuto) no deben cobrar. Se llama
-  // varias veces porque es el caso más frecuente en producción.
-  for (let intento = 0; intento < 3; intento++) {
-    const segundo = await monedas.otorgarPorTiempoJugado(id);
-    assert.equal(segundo.otorgado, false, "no debe otorgar antes de los 10 minutos");
-    assert.equal(segundo.monto, 0);
-    assert.equal(segundo.razon, "aun-no-pasaron-10-minutos");
-    assert.equal(segundo.saldoNuevo, saldoTrasPrimero, "el saldo no se debe mover");
-  }
-
-  const estado = await estadoMonedas(id);
-  assert.equal(estado.monedas, saldoTrasPrimero, "el saldo real tampoco se movió");
-  assert.equal(estado.monedas_ganadas_hoy, primero.monto, "el acumulado del día tampoco");
-
-  // Y cuando sí pasaron los 10 minutos, vuelve a cobrar.
-  await ultimoOtorgamientoHaceMinutos(id, MINUTOS_ENTRE_OTORGAMIENTOS);
-  const tercero = await monedas.otorgarPorTiempoJugado(id);
-  assert.equal(tercero.otorgado, true, "pasados los 10 minutos debe volver a otorgar");
-  assert.equal(tercero.saldoNuevo, saldoTrasPrimero + tercero.monto);
+test("otorgarPorMinuto junta el premio, la racha y el nivel en una sola suma", async () => {
+  const id = await crearUsuario("minuto_completo");
+  const r = await monedas.otorgarPorMinuto(id, { minutoDelDia: 10, rachaDeHoy: 3, nivelNuevo: 4 }, AL_MINIMO);
+  assert.deepStrictEqual(r.desglose, { jugar: 10, racha: 15, nivel: 60 });
+  assert.equal(r.monto, 85);
+  assert.equal(r.otorgado, true);
+  assert.equal(r.razon, null);
+  assert.equal(r.saldoNuevo, SALDO_INICIAL + 85);
+  assert.equal((await estadoMonedas(id)).monedas, SALDO_INICIAL + 85);
 });
 
-test("dos pulsos simultáneos solo pueden cobrar un otorgamiento", async () => {
-  const id = await crearUsuario("jugador_dos_pestanas");
+test("un minuto sin premio no toca el saldo y dice por qué", async () => {
+  const id = await crearUsuario("minuto_vacio");
+  const antes = await monedas.otorgarPorMinuto(id, { minutoDelDia: 7 });
+  assert.equal(antes.otorgado, false);
+  assert.equal(antes.monto, 0);
+  assert.equal(antes.saldoNuevo, SALDO_INICIAL);
+  assert.equal(antes.razon, "aun-no-pasaron-10-minutos");
 
-  const resultados = await Promise.all([
-    monedas.otorgarPorTiempoJugado(id),
-    monedas.otorgarPorTiempoJugado(id)
-  ]);
-
-  const otorgados = resultados.filter(resultado => resultado.otorgado);
-  const rechazados = resultados.filter(resultado => !resultado.otorgado);
-
-  assert.equal(otorgados.length, 1, "solo uno de los pulsos debe cobrar");
-  assert.equal(rechazados.length, 1);
-  assert.equal(rechazados[0].razon, "aun-no-pasaron-10-minutos");
-
-  const estado = await estadoMonedas(id);
-  assert.equal(estado.monedas, SALDO_INICIAL + otorgados[0].monto);
-  assert.equal(estado.monedas_ganadas_hoy, otorgados[0].monto);
-  assert.equal(resultados[0].saldoNuevo, estado.monedas);
-  assert.equal(resultados[1].saldoNuevo, estado.monedas);
+  const tarde = await monedas.otorgarPorMinuto(id, { minutoDelDia: 250 });
+  assert.equal(tarde.razon, "pasadas-las-4-horas");
+  assert.equal((await estadoMonedas(id)).monedas, SALDO_INICIAL);
 });
 
-test("(c) tope diario: alcanzado el tope, los otorgamientos siguientes dan 0", async () => {
-  const id = await crearUsuario("jugador_topeado");
-
-  await acumuladoDelDia(id, TOPE_DIARIO, "hoy");
-  await ultimoOtorgamientoHaceMinutos(id, MINUTOS_ENTRE_OTORGAMIENTOS + 5);
-
-  const saldoAntes = (await estadoMonedas(id)).monedas;
-
-  const resultado = await monedas.otorgarPorTiempoJugado(id);
-
-  assert.equal(resultado.otorgado, false);
-  assert.equal(resultado.monto, 0);
-  assert.equal(resultado.razon, "tope-diario-alcanzado");
-  assert.equal(resultado.saldoNuevo, saldoAntes, "el saldo no debe subir");
-
-  const estado = await estadoMonedas(id);
-  assert.equal(estado.monedas, saldoAntes);
-  assert.equal(estado.monedas_ganadas_hoy, TOPE_DIARIO, "el acumulado no debe moverse");
-
-  // Aunque haya entregado 0, ES un otorgamiento: la marca de tiempo se
-  // mueve, así no se vuelve a sortear en cada uno de los 10 pulsos
-  // siguientes. Y la fecha queda anclada en hoy, que es lo que hace
-  // funcionar el reseteo perezoso de mañana.
-  assert.ok(estado.monedas_ultimo_otorgamiento, "la marca de tiempo debe haberse movido");
-
-  const inmediato = await monedas.otorgarPorTiempoJugado(id);
-  assert.equal(
-    inmediato.razon,
-    "aun-no-pasaron-10-minutos",
-    "tras un otorgamiento de 0, el pulso del minuto siguiente ya no llega a sortear"
-  );
-
-  // Sigue dando 0 el resto del día, tantas veces como se lo llame.
-  await ultimoOtorgamientoHaceMinutos(id, MINUTOS_ENTRE_OTORGAMIENTOS + 5);
-  const otraVez = await monedas.otorgarPorTiempoJugado(id);
-  assert.equal(otraVez.otorgado, false);
-  assert.equal(otraVez.razon, "tope-diario-alcanzado");
-  assert.equal((await estadoMonedas(id)).monedas, saldoAntes);
-});
-
-test("(d) overshoot: el otorgamiento que cruza el tope se entrega COMPLETO, sin recortar", async () => {
-  const id = await crearUsuario("jugador_al_limite");
-
-  // A 5 monedas del tope: cualquier premio (10 a 30) lo cruza.
-  const acumuladoPrevio = TOPE_DIARIO - 5;
-  await acumuladoDelDia(id, acumuladoPrevio, "hoy");
-  await ultimoOtorgamientoHaceMinutos(id, MINUTOS_ENTRE_OTORGAMIENTOS);
-
-  const saldoAntes = (await estadoMonedas(id)).monedas;
-
-  const resultado = await monedas.otorgarPorTiempoJugado(id);
-
-  assert.equal(resultado.otorgado, true, "el otorgamiento que cruza el tope sí se entrega");
-  assert.ok(
-    resultado.monto >= MONEDAS_MINIMAS,
-    `el monto se recortó a ${resultado.monto}: tenía que entregarse completo`
-  );
-  assert.equal(resultado.monto, resultado.saldoNuevo - saldoAntes, "el saldo subió el monto completo");
-
-  const estado = await estadoMonedas(id);
-  assert.equal(estado.monedas_ganadas_hoy, acumuladoPrevio + resultado.monto);
-  assert.ok(
-    estado.monedas_ganadas_hoy > TOPE_DIARIO,
-    "el acumulado del día tiene que poder pasarse del tope (una vez)"
-  );
-
-  // Y a partir de acá, ya pasado el tope, el siguiente da 0.
-  await ultimoOtorgamientoHaceMinutos(id, MINUTOS_ENTRE_OTORGAMIENTOS);
-  const siguiente = await monedas.otorgarPorTiempoJugado(id);
-  assert.equal(siguiente.otorgado, false);
-  assert.equal(siguiente.monto, 0);
-  assert.equal(siguiente.razon, "tope-diario-alcanzado");
-});
-
-test("(e) reseteo perezoso: un acumulado fechado ayer se ignora y el día arranca en 0", async () => {
-  const id = await crearUsuario("jugador_de_ayer");
-
-  // Ayer llegó al tope. Sin reseteo, hoy no cobraría nada.
-  await acumuladoDelDia(id, TOPE_DIARIO, "ayer");
-  await ultimoOtorgamientoHaceMinutos(id, MINUTOS_ENTRE_OTORGAMIENTOS + (24 * 60));
-
-  const saldoAntes = (await estadoMonedas(id)).monedas;
-
-  const resultado = await monedas.otorgarPorTiempoJugado(id);
-
-  assert.equal(resultado.otorgado, true, "el tope de ayer no debe afectar a hoy");
-  assert.ok(resultado.monto >= MONEDAS_MINIMAS);
-  assert.equal(resultado.saldoNuevo, saldoAntes + resultado.monto);
-
-  const estado = await estadoMonedas(id);
-  assert.equal(
-    estado.monedas_ganadas_hoy,
-    resultado.monto,
-    "el acumulado debe arrancar de 0 y quedar en el premio de hoy, no en 500 + premio"
-  );
-
-  // Y la fecha quedó reanclada en hoy (sin cron, solo por consultarla).
-  const fechas = await db.query(
-    `SELECT (monedas_ganadas_fecha = (now() AT TIME ZONE 'UTC')::date) AS es_hoy FROM users WHERE id = $1`,
-    [id]
-  );
-  assert.equal(fechas.rows[0].es_hoy, true, "la fecha del acumulado debe quedar en el día de hoy");
-});
-
-test("otorgar a un usuario que no existe no explota: devuelve la razon correspondiente", async () => {
-  const resultado = await monedas.otorgarPorTiempoJugado(999999);
+test("otorgar a un usuario que no existe no explota: devuelve la razón correspondiente", async () => {
+  const resultado = await monedas.otorgarPorMinuto(999999, { minutoDelDia: 10 });
   assert.equal(resultado.otorgado, false);
   assert.equal(resultado.monto, 0);
   assert.equal(resultado.razon, "usuario-no-encontrado");
@@ -422,15 +290,9 @@ test("consultarSaldo devuelve el saldo, y null si el usuario no existe", async (
 // ENGANCHE REAL EN LOS HANDLERS
 // ==============================
 
-test("POST /api/users?action=xp otorga monedas y sigue devolviendo todo lo de antes", async () => {
+test("POST /api/users?action=xp: el primer minuto del día paga la racha, y sigue devolviendo todo lo de antes", async () => {
   await crearUsuario("pulso_jugando");
-  const headers = await headersParaUsuario("pulso_jugando");
-
-  const resp = await llamar(usersHandler, "POST", { action: "xp" }, {
-    username: "pulso_jugando",
-    cantidad: 10,
-    gameId: "juego-de-prueba"
-  }, headers);
+  const resp = await pulso("pulso_jugando");
 
   // La forma vieja de la respuesta no cambió.
   assert.equal(resp.success, true);
@@ -439,69 +301,78 @@ test("POST /api/users?action=xp otorga monedas y sigue devolviendo todo lo de an
   assert.equal(resp.user.xp, 10, "el XP se sumó igual que siempre");
   assert.equal(resp.subioNivel, false, "debe seguir devolviendo subioNivel");
 
-  // Y ahora además viajan las monedas.
+  // Primer minuto del día y primer día de racha: 5 monedas.
   assert.ok(resp.monedas, "la respuesta debe incluir el campo monedas");
-  assert.equal(resp.monedas.otorgado, true, "el primer pulso otorga (nunca hubo otorgamiento)");
-  assert.ok(resp.monedas.monto >= MONEDAS_MINIMAS && resp.monedas.monto <= MONEDAS_MAXIMAS);
-  assert.equal(resp.monedas.saldoNuevo, SALDO_INICIAL + resp.monedas.monto);
-  assert.equal(resp.monedas.razon, null);
+  assert.deepStrictEqual(resp.monedas.desglose, { jugar: 0, racha: 5, nivel: 0 });
+  assert.equal(resp.monedas.otorgado, true);
+  assert.equal(resp.monedas.saldoNuevo, SALDO_INICIAL + 5);
 
-  // El segundo pulso (un minuto después) suma XP pero no monedas. El
-  // minuto se simula: el servidor no cuenta dos en menos de 55 segundos
-  // (migración 024).
-  await db.query("UPDATE users SET ultimo_minuto_jugado = now() - interval '1 minute' WHERE username = $1", ["pulso_jugando"]);
-  const resp2 = await llamar(usersHandler, "POST", { action: "xp" }, {
-    username: "pulso_jugando",
-    cantidad: 10,
-    gameId: "juego-de-prueba"
-  }, headers);
-
-  assert.equal(resp2.success, true);
+  // El segundo minuto ya no paga la racha, y todavía no toca el premio.
+  await prepararSiguienteMinuto("pulso_jugando");
+  const resp2 = await pulso("pulso_jugando");
   assert.equal(resp2.user.xp, 20, "el XP sigue sumando en cada pulso");
   assert.equal(resp2.monedas.otorgado, false, "las monedas no se otorgan cada minuto");
   assert.equal(resp2.monedas.monto, 0);
-  assert.equal(resp2.monedas.saldoNuevo, resp.monedas.saldoNuevo, "el saldo quedó igual");
+  assert.equal(resp2.monedas.saldoNuevo, SALDO_INICIAL + 5, "el saldo quedó igual");
   assert.equal(resp2.monedas.razon, "aun-no-pasaron-10-minutos");
 });
 
-test("todo pulso de XP exitoso llama al servicio de monedas, aunque gameId no venga", async () => {
-  await crearUsuario("pulso_sin_juego");
-  const headers = await headersParaUsuario("pulso_sin_juego");
+test("el décimo minuto del día paga el premio, de 10 a 30", async () => {
+  await crearUsuario("pulso_diez");
+  await pulso("pulso_diez");                         // minuto 1: la racha
+  await prepararSiguienteMinuto("pulso_diez", 9);    // como si llevara 9
+  const resp = await pulso("pulso_diez");             // el décimo
 
-  const resp = await llamar(usersHandler, "POST", { action: "xp" }, {
-    username: "pulso_sin_juego",
-    cantidad: 10
-  }, headers);
+  assert.equal(resp.monedas.desglose.racha, 0, "la racha ya se pagó hoy");
+  assert.ok(resp.monedas.desglose.jugar >= 10 && resp.monedas.desglose.jugar <= 30);
+  assert.equal(resp.monedas.saldoNuevo, SALDO_INICIAL + 5 + resp.monedas.desglose.jugar);
+});
+
+test("pasadas las 4 horas del día, el minuto ya no paga", async () => {
+  await crearUsuario("pulso_tarde");
+  await pulso("pulso_tarde");
+  await prepararSiguienteMinuto("pulso_tarde", 249);
+  const resp = await pulso("pulso_tarde");            // el 250
+  assert.equal(resp.monedas.monto, 0);
+  assert.equal(resp.monedas.razon, "pasadas-las-4-horas");
+});
+
+test("subir de nivel paga 15 × el nivel, y lo dice el aviso", async () => {
+  const id = await crearUsuario("pulso_nivel");
+  await db.query("UPDATE users SET xp = 45 WHERE id = $1", [id]);   // el nivel 2 pide 50
+  const resp = await pulso("pulso_nivel");
+
+  assert.equal(resp.subioNivel, true);
+  assert.equal(resp.user.level, 2);
+  assert.equal(resp.monedas.desglose.nivel, 30);
+  const aviso = await db.query(
+    "SELECT mensaje FROM notifications WHERE user_id = $1 AND titulo = $2 ORDER BY id DESC LIMIT 1", [id, "⭐ Nuevo nivel"]);
+  assert.match(aviso.rows[0].mensaje, /nivel 2.*🪙 30/);
+});
+
+test("una recompensa sin juego no cuenta minuto: solo puede dar la del nivel", async () => {
+  await crearUsuario("pulso_sin_juego");
+  const resp = await pulso("pulso_sin_juego", { gameId: undefined });
 
   assert.equal(resp.success, true);
   assert.equal(resp.user.xp, 10, "el XP se suma igual");
-  assert.equal(resp.monedas.otorgado, true);
-  assert.ok(resp.monedas.monto >= MONEDAS_MINIMAS && resp.monedas.monto <= MONEDAS_MAXIMAS);
-  assert.equal(resp.monedas.razon, null);
-
-  const estado = await db.query("SELECT monedas, monedas_ultimo_otorgamiento FROM users WHERE username = $1", ["pulso_sin_juego"]);
-  assert.equal(estado.rows[0].monedas, SALDO_INICIAL + resp.monedas.monto);
-  assert.ok(estado.rows[0].monedas_ultimo_otorgamiento, "el otorgamiento quedó registrado");
+  assert.deepStrictEqual(resp.monedas.desglose, { jugar: 0, racha: 0, nivel: 0 });
+  assert.equal(resp.monedas.otorgado, false);
 });
 
 test("si falla el servicio de monedas, el pulso de XP igual responde correctamente", async () => {
   await crearUsuario("pulso_con_falla_monedas");
-  const headers = await headersParaUsuario("pulso_con_falla_monedas");
 
-  const otorgarOriginal = MonedasService.prototype.otorgarPorTiempoJugado;
+  const otorgarOriginal = MonedasService.prototype.otorgarPorMinuto;
   const warnOriginal = console.warn;
 
-  MonedasService.prototype.otorgarPorTiempoJugado = async () => {
+  MonedasService.prototype.otorgarPorMinuto = async () => {
     throw new Error("falla simulada del banco");
   };
   console.warn = () => {};
 
   try {
-    const resp = await llamar(usersHandler, "POST", { action: "xp" }, {
-      username: "pulso_con_falla_monedas",
-      cantidad: 10,
-      gameId: "juego-de-prueba"
-    }, headers);
+    const resp = await pulso("pulso_con_falla_monedas");
 
     assert.equal(resp.success, true);
     assert.equal(resp.user.xp, 10, "el XP no debe perderse por una falla de monedas");
@@ -513,7 +384,7 @@ test("si falla el servicio de monedas, el pulso de XP igual responde correctamen
       razon: "error-al-otorgar"
     });
   } finally {
-    MonedasService.prototype.otorgarPorTiempoJugado = otorgarOriginal;
+    MonedasService.prototype.otorgarPorMinuto = otorgarOriginal;
     console.warn = warnOriginal;
   }
 });

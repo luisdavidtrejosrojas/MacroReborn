@@ -22,8 +22,13 @@
 // en api/users.js). Sin juego no hay pulso que cuente: abrir el sitio
 // no suma racha.
 
-// Devuelve los minutos de hoy que quedan con este: con ellos se mira si
-// se acaba de cumplir la misión del día (api/_misiones.js).
+// Devuelve { minutos, rachaDeHoy }:
+//   minutos     los de hoy contando este. Con ellos se mira si se acaba
+//               de cumplir la misión del día (api/_misiones.js) y si toca
+//               el premio por jugar (api/_monedas.js).
+//   rachaDeHoy  los días de racha, si este fue el minuto que contó el día;
+//               si no, 0. Es lo que paga el premio de la racha, una vez al
+//               día (desde el 04/10/2026, docs/ECONOMIA.md).
 async function registrarMinutoJugado(sql, userId) {
   const dia = await sql`
     INSERT INTO actividad_diaria (user_id, dia, minutos)
@@ -34,8 +39,9 @@ async function registrarMinutoJugado(sql, userId) {
 
   // La racha, una vez al día. Si ayer se jugó, suma uno; si no, vuelve a
   // empezar en 1. La mejor se queda con la más alta. Si hoy ya contó, el
-  // WHERE deja la fila como estaba: el pulso llega cada minuto.
-  await sql`
+  // WHERE deja la fila como estaba (el pulso llega cada minuto) y el
+  // RETURNING no devuelve nada: así se sabe que el premio ya se dio.
+  const racha = await sql`
     INSERT INTO player_streaks (user_id, current_streak, best_streak, last_checkin_date, updated_at)
     VALUES (${userId}, 1, 1, (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date, now())
     ON CONFLICT (user_id) DO UPDATE SET
@@ -51,10 +57,14 @@ async function registrarMinutoJugado(sql, userId) {
       END),
       last_checkin_date = EXCLUDED.last_checkin_date,
       updated_at = now()
-    WHERE player_streaks.last_checkin_date IS DISTINCT FROM EXCLUDED.last_checkin_date;
+    WHERE player_streaks.last_checkin_date IS DISTINCT FROM EXCLUDED.last_checkin_date
+    RETURNING current_streak;
   `;
 
-  return Number(dia[0]?.minutos) || 0;
+  return {
+    minutos: Number(dia[0]?.minutos) || 0,
+    rachaDeHoy: racha.length ? Number(racha[0].current_streak) || 0 : 0
+  };
 }
 
 module.exports = { registrarMinutoJugado };
