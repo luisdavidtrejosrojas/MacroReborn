@@ -104,11 +104,11 @@ test("guarda a cada uno lo suyo, avisa una vez, y Mi día lo enseña", async () 
 
   assert.deepStrictEqual(await avisos(ana), [{
     titulo: "🎁 Tenés una misión sin cobrar",
-    mensaje: "Las misiones cumplidas ahora te esperan hasta que las cobres. En Mi día tenés «Cambio de juego» del 27/09 (+50 XP y 🪙 40)."
+    mensaje: "Las misiones cumplidas ahora te esperan hasta que las cobres. En Mi día tenés «Cambio de juego» del 27/09 (+50 XP y 🪙 50)."
   }]);
   assert.deepStrictEqual(await avisos(beto), [{
     titulo: "🎁 Tenés misiones sin cobrar",
-    mensaje: "Las misiones cumplidas ahora te esperan hasta que las cobres. En Mi día tenés «Veterano del día» del 26/09 (+65 XP y 🪙 45) y «Jugador constante» de la semana del 21/09 (+250 XP y 🪙 180)."
+    mensaje: "Las misiones cumplidas ahora te esperan hasta que las cobres. En Mi día tenés «Veterano del día» del 26/09 (+65 XP y 🪙 56) y «Jugador constante» de la semana del 21/09 (+250 XP y 🪙 225)."
   }]);
 
   // Otra vez: nada nuevo, ni filas ni avisos.

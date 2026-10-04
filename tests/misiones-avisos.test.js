@@ -83,7 +83,7 @@ describe("la regla", () => {
     const lista = await avisos(p);
     assert.equal(lista.length, 1);
     assert.equal(lista[0].titulo, "🎯 ¡Misión cumplida!");
-    assert.equal(lista[0].mensaje, "«Tiempo de juego»: cobrá +55 XP y 🪙 40 en Mi día. Te espera hasta que la cobres.");
+    assert.equal(lista[0].mensaje, "«Tiempo de juego»: cobrá +55 XP y 🪙 50 en Mi día. Te espera hasta que la cobres.");
   });
 
   test("la semanal, con su propio aviso", async () => {
@@ -92,7 +92,7 @@ describe("la regla", () => {
     const lista = await avisos(p);
     assert.equal(lista.length, 1);
     assert.equal(lista[0].titulo, "🏆 ¡Misión semanal cumplida!");
-    assert.equal(lista[0].mensaje, "«Descubridor»: cobrá +180 XP y 🪙 140 en Mi día. Te espera hasta que la cobres.");
+    assert.equal(lista[0].mensaje, "«Descubridor»: cobrá +180 XP y 🪙 175 en Mi día. Te espera hasta que la cobres.");
   });
 
   test("de lo que no miden las misiones de ese día, nada", async () => {

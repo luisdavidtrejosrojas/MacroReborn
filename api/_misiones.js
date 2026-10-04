@@ -24,21 +24,24 @@ function semanaActual(d = new Date()) {
   return base.toISOString().slice(0, 10);
 }
 
+// Las monedas de cada misión subieron un 25 % el 04/10/2026, con la
+// economía nueva (docs/ECONOMIA.md): eran 25-60 las diarias y 140-300 las
+// semanales. El XP no cambió.
 const MISIONES_DIARIAS = [
-  { key: "daily_3_games", title: "Explorador diario", description: "Jugá 3 juegos distintos hoy.", metric: "games_today", target: 3, xp: 40, coins: 35 },
-  { key: "daily_15_minutes", title: "Tiempo de juego", description: "Jugá al menos 15 minutos hoy.", metric: "minutes_today", target: 15, xp: 55, coins: 40 },
-  { key: "daily_2_games", title: "Entrá en calor", description: "Jugá 2 juegos distintos hoy.", metric: "games_today", target: 2, xp: 30, coins: 25 },
-  { key: "daily_30_minutes", title: "Sesión larga", description: "Acumulá 30 minutos de juego hoy.", metric: "minutes_today", target: 30, xp: 85, coins: 60 },
-  { key: "daily_5_games", title: "Coleccionista", description: "Probá 5 juegos distintos hoy.", metric: "games_today", target: 5, xp: 70, coins: 55 },
-  { key: "daily_20_minutes", title: "Veterano del día", description: "Jugá 20 minutos hoy.", metric: "minutes_today", target: 20, xp: 65, coins: 45 },
-  { key: "daily_4_games", title: "Cambio de juego", description: "Jugá 4 juegos distintos hoy.", metric: "games_today", target: 4, xp: 50, coins: 40 }
+  { key: "daily_3_games", title: "Explorador diario", description: "Jugá 3 juegos distintos hoy.", metric: "games_today", target: 3, xp: 40, coins: 44 },
+  { key: "daily_15_minutes", title: "Tiempo de juego", description: "Jugá al menos 15 minutos hoy.", metric: "minutes_today", target: 15, xp: 55, coins: 50 },
+  { key: "daily_2_games", title: "Entrá en calor", description: "Jugá 2 juegos distintos hoy.", metric: "games_today", target: 2, xp: 30, coins: 31 },
+  { key: "daily_30_minutes", title: "Sesión larga", description: "Acumulá 30 minutos de juego hoy.", metric: "minutes_today", target: 30, xp: 85, coins: 75 },
+  { key: "daily_5_games", title: "Coleccionista", description: "Probá 5 juegos distintos hoy.", metric: "games_today", target: 5, xp: 70, coins: 69 },
+  { key: "daily_20_minutes", title: "Veterano del día", description: "Jugá 20 minutos hoy.", metric: "minutes_today", target: 20, xp: 65, coins: 56 },
+  { key: "daily_4_games", title: "Cambio de juego", description: "Jugá 4 juegos distintos hoy.", metric: "games_today", target: 4, xp: 50, coins: 50 }
 ];
 
 const MISIONES_SEMANALES = [
-  { key: "weekly_6_games", title: "Descubridor", description: "Jugá 6 juegos distintos esta semana.", metric: "games_week", target: 6, xp: 180, coins: 140 },
-  { key: "weekly_90_minutes", title: "Jugador constante", description: "Jugá 90 minutos esta semana.", metric: "minutes_week", target: 90, xp: 250, coins: 180 },
-  { key: "weekly_180_minutes", title: "Maratón Macro", description: "Jugá 180 minutos esta semana.", metric: "minutes_week", target: 180, xp: 400, coins: 300 },
-  { key: "weekly_10_games", title: "Turista del catálogo", description: "Jugá 10 juegos distintos esta semana.", metric: "games_week", target: 10, xp: 320, coins: 240 }
+  { key: "weekly_6_games", title: "Descubridor", description: "Jugá 6 juegos distintos esta semana.", metric: "games_week", target: 6, xp: 180, coins: 175 },
+  { key: "weekly_90_minutes", title: "Jugador constante", description: "Jugá 90 minutos esta semana.", metric: "minutes_week", target: 90, xp: 250, coins: 225 },
+  { key: "weekly_180_minutes", title: "Maratón Macro", description: "Jugá 180 minutos esta semana.", metric: "minutes_week", target: 180, xp: 400, coins: 375 },
+  { key: "weekly_10_games", title: "Turista del catálogo", description: "Jugá 10 juegos distintos esta semana.", metric: "games_week", target: 10, xp: 320, coins: 300 }
 ];
 
 function pickDaily(dateText) {
