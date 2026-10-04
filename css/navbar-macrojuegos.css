@@ -1,5 +1,5 @@
 /* ================================================================
-   NAVBAR — Referencia visual MacroJuegos
+   NAVBAR — Referencia visual MacroReborn (imagen + mock provisto)
    ----------------------------------------------------------------
    Este archivo es SOLO CSS. No toca JS, API, sesión ni Neon.
    Cargarlo al final del <head>, DESPUÉS de theme-canonical.css.
@@ -8,15 +8,7 @@
 
 /* ================================================================
    0. FIX ESTRUCTURAL MÓVIL — la navbar pierde el flex en mobile
-   ----------------------------------------------------------------
-   css/inicio.css trae una capa vieja ("NAVBAR RETRO / ESTILO
-   MACROJUEGOS") que fuerza `.navbar { display: grid !important; }`
-   con columnas fijas pensadas para escritorio, sin ningún @media
-   que las adapte a pantallas chicas. Como esta hoja se carga
-   después, reafirmamos acá el flex SOLO en mobile: así vuelven a
-   funcionar el order/flex-wrap de abajo (que ya estaban escritos
-   para flex) y el toggle deja de quedar cortado fuera de pantalla.
-   No toca nada del layout de escritorio (ese grid queda intacto). */
+   ================================================================ */
 @media (max-width: 768px) {
   body.macro-consolidado .navbar,
   body.mr-root .navbar,
@@ -31,63 +23,84 @@
    ================================================================ */
 
 .navbar {
-  background: linear-gradient(180deg, #1e0c3a 0%, #150a28 100%);
-  border-bottom: 1px solid #3a1f70;
-  padding: 0 28px;        /* sin padding vertical: cada hijo lo maneja */
-  gap: 0 12px;
+  background: #100a25 !important;
+  border-bottom: 1px solid #4f2192 !important;
+  min-height: 68px;
+  padding: 10px 22px;
+  gap: 10px 12px;
   flex-wrap: wrap;
-  align-items: stretch;   /* hijos se estiran en altura */
+  align-items: center;
 }
 
-/* Espaciado interno de los ítems de la fila principal */
-.nav-logo,
-.nav-boton-comunidad {
-  padding-top: 11px;
-  padding-bottom: 11px;
-  align-self: center;
+html[data-tema="claro"] .navbar {
+  background: #100a25 !important;
+  border-bottom-color: #4f2192 !important;
 }
 
 
 /* ================================================================
-   2. LOGO
+   2. LOGO — arte provisto (macro-reborn-wordmark.png)
    ================================================================ */
 
-.nav-logo {
-  color: #f4f1fb;
-  font-family: var(--font-display);
-  font-size: 18px;
-  letter-spacing: 0.3px;
-  gap: 10px;
+.navbar .nav-logo {
+  width: 150px;
+  aspect-ratio: 1536 / 777;
+  flex-shrink: 0;
+  display: block;
+  background: transparent url('../imagenes/macro-reborn-wordmark.png') no-repeat center / contain;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0;
 }
 
-.nav-logo img {
-  width: 34px;
-  height: 34px;
-  filter: drop-shadow(0 0 6px rgba(200, 160, 255, 0.45));
+.navbar .nav-logo img {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .navbar .nav-logo { width: 125px; }
+}
+
+@media (max-width: 650px) {
+  .navbar .nav-logo { width: 108px; }
 }
 
 
 /* ================================================================
-   3. BOTÓN "COMUNIDAD" → pink/magenta (referencia MacroJuegos)
+   3. BOTÓN "COMUNIDAD" — pastilla oscura con borde violeta
    ================================================================ */
 
 .nav-boton-comunidad {
-  background: linear-gradient(135deg, #e91e8c 0%, #c2185b 100%) !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  background: #120c2b !important;
+  border: 1px solid #6528c7 !important;
+  box-shadow: inset 0 0 15px rgba(117, 42, 220, .08) !important;
   color: #fff !important;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.5px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
   text-transform: uppercase;
-  padding: 8px 18px;
-  border-radius: 999px;
-  box-shadow: 0 2px 14px rgba(233, 30, 140, 0.35);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  padding: 9px 16px;
+  border-radius: 18px;
+  white-space: nowrap;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav-boton-comunidad::before {
+  content: "👥";
+  font-size: 12px;
 }
 
 .nav-boton-comunidad:hover {
-  background: linear-gradient(135deg, #f525a0 0%, #d81b60 100%) !important;
-  box-shadow: 0 4px 20px rgba(233, 30, 140, 0.55) !important;
-  transform: translateY(-1px);
+  background: #211247 !important;
+  box-shadow: 0 0 14px rgba(170, 57, 255, .35) !important;
+  transform: none;
+}
+
+@media (max-width: 650px) {
+  .nav-boton-comunidad { font-size: 11px; padding: 10px 14px; }
 }
 
 
@@ -96,271 +109,410 @@
    ================================================================ */
 
 .nav-buscador {
-  flex: 1;
-  max-width: 300px;
+  flex: 1 1 auto;
+  min-width: 200px;
+  max-width: none;
   position: relative;
   align-self: center;
-  padding: 11px 0;
+  padding: 0;
 }
 
-/* Caja de búsqueda: campo + botón */
 .buscador-caja {
   display: flex;
   align-items: center;
-  height: 34px;
-  background: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 6px;
+  height: 38px;
+  gap: 7px;
+  background: #120c2b;
+  border: 1px solid #6528c7;
+  box-shadow: inset 0 0 15px rgba(117, 42, 220, .08);
+  border-radius: 14px;
+  padding: 4px 4px 4px 13px;
   overflow: hidden;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .buscador-caja:focus-within {
-  border-color: rgba(255, 255, 255, 0.30);
-  background: rgba(255, 255, 255, 0.13);
+  border-color: #8d3cff;
+  background: #170f33;
 }
 
-/* Ícono lupa (izquierda del input) */
 .buscador-icono {
   flex-shrink: 0;
-  padding: 0 6px 0 10px;
-  color: rgba(200, 180, 255, 0.40);
-  font-size: 12px;
+  color: #c67cff;
+  font-size: 15px;
   line-height: 1;
   pointer-events: none;
 }
 
-/* Campo de texto */
 .buscador-input {
   flex: 1 1 0;
   min-width: 0;
   background: transparent !important;
   border: none !important;
   outline: none !important;
-  color: #f4f1fb !important;
+  color: #fff !important;
   font-family: var(--font-body);
   font-size: 13px;
-  padding: 0 6px !important;
+  padding: 0 !important;
   height: 100%;
 }
 
 .buscador-input::placeholder {
-  color: rgba(200, 180, 255, 0.38) !important;
+  color: #9286ae !important;
 }
 
-/* Botón naranja de búsqueda (referencia: MacroJuegos) */
 .buscador-submit {
   flex-shrink: 0;
-  width: 42px;
-  height: 100%;
-  background: #f97316 !important;
+  height: 30px;
+  padding: 0 13px;
+  background: #4d247e !important;
   border: none !important;
-  border-radius: 0 !important;
+  border-radius: 10px !important;
   cursor: pointer;
   color: #fff;
-  font-size: 13px;
+  font-size: 11.5px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.15s ease;
 }
 
-/* El <button> no tiene texto: el ícono viene de acá */
-.buscador-submit:empty::before {
-  content: "🔍";
-  font-size: 13px;
-  line-height: 1;
+.buscador-submit::before {
+  content: "Enter";
 }
 
 .buscador-submit:hover {
-  background: #ea6c0c !important;
+  background: #7133bd !important;
 }
 
-/* Panel de resultados — sin cambios funcionales, solo fondo */
 .buscador-panel {
-  background: #1e0e3e !important;
-  border: 1px solid #3d2166 !important;
-  border-radius: 10px !important;
+  background: #150e2e !important;
+  border: 1px solid #4f2192 !important;
+  border-radius: 12px !important;
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55) !important;
   z-index: 300 !important;
 }
 
+@media (max-width: 900px) {
+  .nav-buscador { order: 10; flex: 1 1 100%; }
+}
+
 
 /* ================================================================
-   5. NAV-LINKS (fila derecha: monedas, 🔔, menú usuario)
+   5. NAV-LINKS (fila derecha: monedas, botones circulares, usuario)
    ================================================================ */
 
 .nav-links {
   align-self: center;
-  padding: 11px 0;
+  padding: 0;
+  gap: 10px !important;
+  flex-wrap: nowrap;
 }
 
-/* Monedas (🪙 XXXX) */
+/* Monedas (🪙 XXXX) + botón "conseguir más" */
+.nav-monedas-wrap {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+}
+
 .nav-monedas {
-  background: rgba(240, 180, 41, 0.10) !important;
-  border: 1px solid rgba(240, 180, 41, 0.32) !important;
-  color: #ffd060 !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  background: #120c2b !important;
+  border: 1px solid #6528c7 !important;
+  box-shadow: inset 0 0 15px rgba(117, 42, 220, .08) !important;
+  color: #ffd83d !important;
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 800;
-  padding: 6px 12px;
-  border-radius: 999px;
-  gap: 5px;
+  padding: 9px 11px;
+  border-radius: 14px;
   white-space: nowrap;
 }
 
-/* Botón de ayuda ❔ */
-.nav-ayuda {
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #c8b8e0;
-  background: rgba(255, 255, 255, 0.05);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+.nav-monedas-mas {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 24px !important;
+  height: 24px !important;
+  flex-shrink: 0;
+  border-radius: 50% !important;
+  border: 1px solid #7140c5 !important;
+  background: #211143 !important;
+  color: #fff !important;
   font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 
-.nav-ayuda:hover {
-  border-color: rgba(255, 255, 255, 0.38);
-  color: #f4f1fb;
-  background: rgba(255, 255, 255, 0.10);
+.nav-monedas-mas:hover {
+  background: #33205f !important;
+  box-shadow: 0 0 14px rgba(170, 57, 255, .35) !important;
 }
 
-/* Botón de usuario (invitado o logueado) */
-.user-guest-boton {
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-radius: 999px !important;
+@media (max-width: 900px) {
+  .nav-monedas-mas { display: none !important; }
+}
+
+/* Botones circulares: ayuda ❔ / campana 🔔 / tema ☀️🌙 */
+.nav-ayuda,
+.notif-bell-boton,
+.boton-tema {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  border: 1px solid #6528c7 !important;
+  background: #120c2b !important;
+  box-shadow: inset 0 0 15px rgba(117, 42, 220, .08) !important;
   color: #f4f1fb !important;
-  gap: 8px;
-  padding: 5px 13px 5px 5px !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 
-.user-guest-boton:hover {
-  border-color: rgba(255, 255, 255, 0.32) !important;
-  background: rgba(255, 255, 255, 0.09) !important;
+.nav-ayuda:hover,
+.notif-bell-boton:hover,
+.boton-tema:hover {
+  background: #211247 !important;
+  box-shadow: 0 0 14px rgba(170, 57, 255, .35) !important;
 }
 
-/* Badge "1" del usuario temporal */
-.user-guest-badge {
-  background: var(--green) !important;
-  color: #06280f !important;
-  font-size: 9px;
-  font-weight: 900;
-  border: 2px solid #1e0c3a !important;
+#contadorNotificaciones:empty { display: none; }
+
+@media (max-width: 900px) {
+  .nav-ayuda { display: none !important; }
 }
 
 
 /* ================================================================
-   6. BARRA INFERIOR DE CATEGORÍAS — strip plano (referencia MJ)
+   6. CUENTA — avatar circular + nombre + barra de XP
    ================================================================ */
 
-/* Contenedor: strip oscuro sin bordes redondeados */
+.navbar .user-guest-boton,
+.navbar .user-guest-boton.sesion-activa {
+  height: auto;
+  min-width: 160px;
+  max-width: 210px;
+  padding: 5px 12px 5px 5px !important;
+  gap: 8px !important;
+  border: 1px solid #6528c7 !important;
+  border-radius: 14px !important;
+  background: #120c2b !important;
+  box-shadow: inset 0 0 15px rgba(117, 42, 220, .08) !important;
+}
+
+.navbar .user-guest-boton:hover,
+.navbar .user-guest-boton.sesion-activa:hover {
+  background: #211247 !important;
+  box-shadow: 0 0 14px rgba(170, 57, 255, .35) !important;
+}
+
+.navbar .user-guest-boton .user-guest-avatar,
+.navbar .user-guest-boton.sesion-activa .user-guest-avatar {
+  width: 32px !important;
+  height: 32px !important;
+  flex: 0 0 32px;
+  border-radius: 50% !important;
+  border: 2px solid #8d3cff !important;
+  background: #16082e !important;
+  color: #fff !important;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.navbar .user-guest-boton.sesion-activa .user-guest-avatar::before {
+  content: none !important;
+  display: none !important;
+}
+
+.navbar .user-guest-boton .user-guest-avatar > img,
+.navbar .user-guest-boton.sesion-activa .user-guest-avatar > img,
+.navbar .user-guest-boton.sesion-activa .user-guest-avatar > .avatar-compuesto {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  object-fit: cover;
+}
+
+.navbar .user-guest-boton .user-guest-nombre,
+.navbar .user-guest-boton.sesion-activa .user-guest-nombre {
+  display: flex !important;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 170px;
+  padding-top: 0 !important;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  color: #f5f2ff !important;
+  font: 700 11.5px/1.1 var(--font-body), Inter, Arial, sans-serif !important;
+}
+
+.navbar .user-guest-boton.sesion-activa .user-guest-nombre::before {
+  content: none !important;
+  display: none !important;
+}
+
+.user-guest-nombre-text {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-guest-xp {
+  width: 100%;
+  max-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.user-guest-xp-track {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 44px;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #302047;
+}
+
+.user-guest-xp-fill {
+  display: block;
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: #b53dff;
+  box-shadow: 0 0 8px #b53dff;
+  transition: width .25s ease;
+}
+
+.user-guest-xp-text {
+  flex: 0 0 auto;
+  color: #aaa0ba;
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.navbar .user-guest-badge {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .navbar .user-guest-boton,
+  .navbar .user-guest-boton.sesion-activa {
+    min-width: 0;
+    max-width: none;
+  }
+  .navbar .user-guest-boton .user-guest-nombre,
+  .navbar .user-guest-boton.sesion-activa .user-guest-nombre {
+    display: none !important;
+  }
+}
+
+
+/* ================================================================
+   7. BARRA INFERIOR DE NAVEGACIÓN
+   ================================================================ */
+
 .nav-categorias {
-  flex: 1 0 100%;
+  flex: 1 0 100% !important;
   display: flex !important;
   flex-wrap: nowrap !important;
-  gap: 0 !important;
   align-items: stretch !important;
+  gap: 0 !important;
 
-  /* Fondo ligeramente más oscuro que el top bar */
-  background: rgba(6, 2, 16, 0.55) !important;
-
-  /* Sin tarjeta: borde redondeado y borde exterior eliminados */
+  background: #100a25 !important;
   border: none !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-top: 1px solid #5423a0 !important;
   border-radius: 0 !important;
 
-  /* Sangrar hasta los bordes del navbar (padding = 28px) */
-  margin: 0 -28px !important;
-  padding: 0 28px !important;
+  margin: 0 -22px !important;
+  padding: 0 14px !important;
 
-  /* Scroll horizontal sin scrollbar visible */
   overflow-x: auto !important;
   overflow-y: hidden !important;
-  scrollbar-width: none !important;   /* Firefox */
-  -ms-overflow-style: none !important; /* IE 11 */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 .nav-categorias::-webkit-scrollbar {
-  display: none !important; /* Chrome / Safari */
+  display: none !important;
 }
 
-/* Links de la barra inferior */
 .nav-categorias a {
+  flex: 1 1 0 !important;
+  min-width: max-content;
   display: inline-flex !important;
   align-items: center !important;
-  padding: 10px 13px !important;
+  justify-content: center !important;
+  gap: 5px;
+  padding: 11px 12px !important;
   border-radius: 0 !important;
-  font-size: 12.5px !important;
-  font-weight: 600 !important;
-  color: #bfaedd !important;
-  white-space: nowrap !important;
-  border-bottom: 3px solid transparent !important;
-  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease !important;
+  border-right: 1px solid #33204f !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #cfc4e6 !important;
+  white-space: nowrap;
+  border-bottom: none !important;
+  transition: color 0.15s ease, background 0.15s ease !important;
+}
+
+.nav-categorias a:last-child {
+  border-right: none !important;
 }
 
 .nav-categorias a:hover {
-  color: #f4f1fb !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  border-bottom-color: #f97316 !important;
+  color: #d18aff !important;
+  background: #1b1037 !important;
 }
 
-/* Ítem activo */
 .nav-categorias a.activa-nav {
-  background: none !important;
+  margin: 6px 4px !important;
+  border: 1px solid #8338df !important;
+  border-right: 1px solid #8338df !important;
+  border-radius: 14px !important;
+  background: linear-gradient(180deg, #4d2090 0%, #241044 100%) !important;
+  box-shadow: 0 0 16px rgba(172, 57, 255, .35) !important;
   color: #fff !important;
-  border-bottom-color: #f97316 !important;
 }
 
 .nav-categorias a.activa-nav:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: linear-gradient(180deg, #5a26a8 0%, #2c1554 100%) !important;
   color: #fff !important;
 }
 
-/* "Ver Todos" — primer ítem creado por navbar.js */
 .nav-retro-todos {
   font-weight: 700 !important;
-  color: #e0d4f8 !important;
-  padding-right: 16px !important;
-}
-
-.nav-retro-todos:hover {
-  color: #fff !important;
-}
-
-
-/* ================================================================
-   7. MODO CLARO — mantener navbar y bottom bar siempre oscuros
-   ================================================================ */
-
-html[data-tema="claro"] .navbar {
-  background: linear-gradient(180deg, #1e0c3a 0%, #150a28 100%) !important;
-  border-bottom-color: #3a1f70 !important;
-}
-
-html[data-tema="claro"] .nav-logo {
-  color: #f4f1fb !important;
 }
 
 html[data-tema="claro"] .nav-categorias {
-  background: rgba(6, 2, 16, 0.60) !important;
-  border-top-color: rgba(255, 255, 255, 0.06) !important;
+  background: #100a25 !important;
+  border-top-color: #5423a0 !important;
 }
+html[data-tema="claro"] .nav-categorias a { color: #cfc4e6 !important; }
+html[data-tema="claro"] .nav-categorias a:hover { color: #d18aff !important; background: #1b1037 !important; }
+html[data-tema="claro"] .nav-categorias a.activa-nav { color: #fff !important; }
 
-html[data-tema="claro"] .nav-categorias a {
-  color: #bfaedd !important;
-}
-
-html[data-tema="claro"] .nav-categorias a:hover {
-  color: #f4f1fb !important;
-  background: rgba(255, 255, 255, 0.07) !important;
-  border-bottom-color: #f97316 !important;
-}
-
-html[data-tema="claro"] .nav-categorias a.activa-nav {
-  color: #fff !important;
-  border-bottom-color: #f97316 !important;
+@media (max-width: 900px) {
+  .nav-categorias a span { display: none; }
 }
 
 
@@ -370,36 +522,26 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
 
 @media (max-width: 768px) {
   .navbar {
-    padding: 10px 16px 10px 16px !important;
+    padding: 10px 16px !important;
     gap: 10px 10px !important;
+    min-height: 0;
   }
 
-  /* En mobile el hamburguesa toma el control:
-     restaurar el padding vertical de los ítems */
-  .nav-logo,
-  .nav-boton-comunidad,
-  .nav-buscador,
-  .nav-links {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    align-self: center !important;
-  }
-
-  /* Bottom bar: vuelve al panel vertical del hamburguesa */
   .nav-categorias {
     margin: 0 -16px !important;
     padding: 8px !important;
     flex-wrap: wrap !important;
     overflow-x: visible !important;
     overflow-y: visible !important;
-    background: var(--bg-panel, #241145) !important;
-    border: 1px solid var(--line, #3d2166) !important;
-    border-top: 1px solid var(--line, #3d2166) !important;
+    background: var(--bg-panel, #150e2e) !important;
+    border: 1px solid var(--line, #4f2192) !important;
+    border-top: 1px solid var(--line, #4f2192) !important;
     border-radius: 0 0 12px 12px !important;
   }
 
   .nav-categorias a {
-    border-bottom: none !important;
+    flex: 1 1 auto !important;
+    border-right: none !important;
     border-radius: 8px !important;
     padding: 13px 14px !important;
     font-size: 15px !important;
@@ -407,15 +549,9 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
   }
 
   .nav-categorias a.activa-nav {
-    background: linear-gradient(135deg, #fb923c, #ea580c) !important;
+    margin: 0 !important;
+    background: linear-gradient(180deg, #4d2090, #241044) !important;
     color: #fff !important;
-    border-bottom: none !important;
-  }
-
-  .nav-buscador {
-    max-width: 100% !important;
-    flex: 1 1 100% !important;
-    padding: 6px 0 !important;
   }
 }
 
@@ -430,7 +566,6 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
    MOBILE EXTRA — correcciones para pantallas pequeñas
    ================================================================ */
 
-/* Evitar que la bottom bar empuje contenido fuera del viewport */
 @media (max-width: 768px) {
   .navbar {
     flex-wrap: wrap !important;
@@ -439,7 +574,6 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
     z-index: 100 !important;
   }
 
-  /* El menú abierto no debe causar scroll horizontal */
   .nav-links.nav-abierto,
   .nav-categorias.nav-abierto {
     width: 100% !important;
@@ -447,42 +581,35 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
     box-sizing: border-box !important;
   }
 
-  /* Barra de categorías cerrada: oculta fuera del hamburguesa */
   .nav-categorias:not(.nav-abierto) {
     display: none !important;
   }
 
-  /* El nav-toggle (hamburguesa) debe ser visible y en el lugar correcto */
   .nav-toggle {
     display: flex !important;
     order: 2 !important;
     margin-left: auto !important;
   }
 
-  /* Logo siempre primero */
   .nav-logo {
     order: 0 !important;
   }
 
-  /* Botón Comunidad después del logo */
   .nav-boton-comunidad {
     order: 1 !important;
   }
 
-  /* Buscador debajo en mobile */
   .nav-buscador {
     order: 10 !important;
     flex: 1 1 100% !important;
   }
 
-  /* nav-links y categorias al fondo del stack mobile */
   .nav-links,
   .nav-categorias {
     order: 20 !important;
     flex: 1 1 100% !important;
   }
 
-  /* Hacer el menú de usuario accesible en pantallas pequeñas */
   .user-guest-dropdown {
     right: 0 !important;
     left: auto !important;
@@ -490,28 +617,16 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
   }
 }
 
-/* Pantallas muy pequeñas (< 380px) */
 @media (max-width: 380px) {
   .nav-boton-comunidad {
     font-size: 10px !important;
-    padding: 6px 10px !important;
-  }
-
-  .nav-logo {
-    font-size: 14px !important;
-  }
-
-  .nav-logo img {
-    width: 26px !important;
-    height: 26px !important;
+    padding: 8px 10px !important;
   }
 }
 
+
 /* ================================================================
    MOBILE — CAPA AISLADA DE NAVEGACIÓN
-   ----------------------------------------------------------------
-   Importante: este bloque NO modifica la navbar de escritorio.
-   El panel y el acceso de perfil existen visualmente solo en móvil.
    ================================================================ */
 .nav-mobile-menu,
 .nav-mobile-user {
@@ -519,8 +634,6 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
 }
 
 @media (max-width: 768px) {
-  /* Los contenedores originales siguen existiendo para la lógica de la
-     aplicación, pero su representación visual móvil la controla el panel. */
   .navbar > .nav-links,
   .navbar > .nav-categorias {
     display: none !important;
@@ -539,8 +652,8 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
     box-sizing: border-box !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    background: #1e0e3e !important;
-    border: 1px solid #3d2166 !important;
+    background: #150e2e !important;
+    border: 1px solid #4f2192 !important;
     border-radius: 9px !important;
     box-shadow: 0 12px 28px rgba(0,0,0,.32) !important;
     z-index: 120 !important;
@@ -552,7 +665,6 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
     gap: 2px !important;
   }
 
-  /* Evita que los paneles antiguos aparezcan detrás o antes del nuevo. */
   .navbar .nav-links.nav-abierto,
   .navbar .nav-categorias.nav-abierto {
     display: none !important;
@@ -587,7 +699,7 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
   }
 
   .navbar .nav-mobile-item.activa-nav {
-    background: linear-gradient(180deg, #ff9a45 0%, #e86e18 100%) !important;
+    background: linear-gradient(180deg, #4d2090 0%, #241044 100%) !important;
     color: #fff !important;
   }
 
@@ -612,9 +724,9 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
     height: 36px !important;
     padding: 0 9px !important;
     box-sizing: border-box !important;
-    border: 1px solid #3d2166 !important;
+    border: 1px solid #4f2192 !important;
     border-radius: 7px !important;
-    background: #241145 !important;
+    background: #150e2e !important;
     color: #f4f1fb !important;
     text-decoration: none !important;
     font: 800 12px/1 var(--font-body) !important;
@@ -622,8 +734,8 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
 
   .navbar .nav-mobile-user:hover,
   .navbar .nav-mobile-user:focus-visible {
-    background: #2f1a5c !important;
-    border-color: #55348f !important;
+    background: #211247 !important;
+    border-color: #8338df !important;
     outline: none !important;
   }
 
@@ -652,162 +764,27 @@ html[data-tema="claro"] .nav-categorias a.activa-nav {
   }
 }
 
+
 /* ================================================================
-   9. CUENTA ACTIVA — avatar cuadrado + barra de experiencia
-   ----------------------------------------------------------------
-   Reemplaza el indicador antiguo de "? / Nivel X" por una cuenta
-   compacta coherente con la estética púrpura de MacroReborn.
+   9. BOTÓN "MENÚ" (hamburguesa) — mismo estilo que los círculos
    ================================================================ */
 
-.navbar .user-guest-boton.sesion-activa {
-  height: 42px;
-  min-width: 172px;
-  max-width: 238px;
-  padding: 3px 10px 3px 4px !important;
-  gap: 8px !important;
-  border: 1px solid rgba(137, 82, 239, 0.32) !important;
-  border-radius: 10px !important;
-  background: rgba(33, 13, 73, 0.72) !important;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.025), 0 0 18px rgba(122, 61, 230, .12);
-}
-
-.navbar .user-guest-boton.sesion-activa:hover {
-  border-color: rgba(168, 105, 255, 0.58) !important;
-  background: rgba(45, 18, 92, 0.88) !important;
-}
-
-.navbar .user-guest-boton.sesion-activa .user-guest-avatar {
-  width: 34px !important;
-  height: 34px !important;
-  flex: 0 0 34px;
-  border-radius: 6px !important;
-  border: 1px solid rgba(201, 153, 255, 0.55) !important;
-  background: #16082e !important;
-  color: #fff !important;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(165, 96, 255, .20);
-}
-
-.navbar .user-guest-boton.sesion-activa .user-guest-avatar::before {
-  content: none !important;
-  display: none !important;
-}
-
-.navbar .user-guest-boton.sesion-activa .user-guest-avatar > img,
-.navbar .user-guest-boton.sesion-activa .user-guest-avatar > .avatar-compuesto {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-}
-
-.navbar .user-guest-boton.sesion-activa .user-guest-avatar .avatar-compuesto {
-  position: relative;
-}
-
-.navbar .user-guest-boton.sesion-activa .user-guest-nombre {
-  display: flex !important;
-  flex: 1 1 auto;
-  min-width: 0;
-  max-width: 170px;
-  padding-top: 0 !important;
-  overflow: hidden;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 4px;
-  color: #f5f2ff !important;
-  font: 700 12px/1.1 var(--font-body), Inter, Arial, sans-serif !important;
-}
-
-.navbar .user-guest-boton.sesion-activa .user-guest-nombre::before {
-  content: none !important;
-  display: none !important;
-}
-
-.user-guest-nombre-text {
-  display: block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.user-guest-xp {
-  width: 100%;
-  max-width: 142px;
-  display: flex;
-  align-items: center;
+.nav-toggle {
   gap: 6px;
-  min-width: 0;
-}
-
-.user-guest-xp-track {
-  position: relative;
-  flex: 1 1 auto;
-  min-width: 44px;
-  height: 5px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255,255,255,.10);
-  border: 1px solid rgba(185, 133, 255, .22);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,.3);
-}
-
-.user-guest-xp-fill {
-  display: block;
-  width: 0%;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #8b3dff 0%, #c38cff 55%, #f2d5ff 100%);
-  box-shadow: 0 0 8px rgba(167, 91, 255, .48);
-  transition: width .25s ease;
-}
-
-.user-guest-xp-text {
-  flex: 0 0 auto;
-  color: #beaee1;
-  font-size: 9px;
+  width: auto !important;
+  height: 44px !important;
+  padding: 0 14px !important;
+  background: #120c2b !important;
+  border: 1px solid #6528c7 !important;
+  box-shadow: inset 0 0 15px rgba(117, 42, 220, .08) !important;
+  border-radius: 12px !important;
+  color: #f4f1fb !important;
   font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
+  font-size: 13px;
 }
 
-.navbar .user-guest-boton.sesion-activa .user-guest-badge {
-  display: none !important;
-}
-
-@media (max-width: 900px) {
-  .navbar .user-guest-boton.sesion-activa {
-    min-width: 148px;
-    max-width: 195px;
-  }
-  .navbar .user-guest-boton.sesion-activa .user-guest-nombre {
-    max-width: 132px;
-  }
-  .user-guest-xp {
-    max-width: 118px;
-  }
-}
-
-@media (max-width: 650px) {
-  .navbar .user-guest-boton.sesion-activa {
-    min-width: 34px;
-    width: 34px;
-    max-width: 34px;
-    padding: 0 !important;
-    justify-content: center;
-    border-radius: 7px !important;
-    background: rgba(33, 13, 73, 0.72) !important;
-  }
-
-  .navbar .user-guest-boton.sesion-activa .user-guest-avatar {
-    width: 28px !important;
-    height: 28px !important;
-    flex-basis: 28px;
-    border-radius: 5px !important;
-  }
-
-  .navbar .user-guest-boton.sesion-activa .user-guest-nombre {
-    display: none !important;
-  }
+.nav-toggle:hover {
+  background: #211247 !important;
+  box-shadow: 0 0 14px rgba(170, 57, 255, .35) !important;
+  border-color: #6528c7 !important;
 }
