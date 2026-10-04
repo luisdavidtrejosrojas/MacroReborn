@@ -5,6 +5,8 @@ const sanciones = require("./_sanciones");
 const { crearNotificacionServidor } = require("./_notifications");
 const { obtenerSql } = require("./_db");
 const { fragmentoAvatarLigero, aligerarAvatarPNG } = require("./_avatar-ligero");
+const logros = require("./_logros");
+const { MonedasService } = require("./_monedas");
 
 const sql = obtenerSql();
 
@@ -398,29 +400,61 @@ async function achievements(req, res) {
       return res.status(400).json({ success: false, error: "Datos incompletos" });
     }
 
+    // Solo los que existen (api/_logros.js, copia de js/motor/logros.js).
+    if (!logros.existe(achievementId)) {
+      return res.status(400).json({ success: false, error: "Ese logro no existe" });
+    }
+
     const usuarios = await sql`SELECT id FROM users WHERE username = ${username};`;
     if (!usuarios.length) {
       return res.status(404).json({ success: false, error: "Usuario no encontrado" });
     }
+    const userId = usuarios[0].id;
 
     const yaExiste = await sql`
-      SELECT 1 FROM achievements WHERE user_id = ${usuarios[0].id} AND achievement_id = ${achievementId};
+      SELECT 1 FROM achievements WHERE user_id = ${userId} AND achievement_id = ${achievementId};
     `;
 
     if (yaExiste.length) {
       return res.status(200).json({ success: true, nuevo: false });
     }
 
-    await sql`
-      INSERT INTO achievements (user_id, achievement_id)
-      VALUES (${usuarios[0].id}, ${achievementId})
-      ON CONFLICT (user_id, achievement_id) DO NOTHING;
-    `;
+    // Desde el 04/10/2026 un logro da monedas, así que se comprueba que se
+    // cumple de verdad antes de guardarlo. Si no, el navegador deshace lo
+    // que había pintado (desbloquearLogro, en js/motor/logros.js).
+    if (!(await logros.seCumple(sql, achievementId, userId))) {
+      return res.status(200).json({ success: false, nuevo: false, error: "Ese logro todavía no se cumple" });
+    }
 
+    // De dos pedidos a la vez solo guarda uno, y solo ese cobra.
+    const guardado = await sql`
+      INSERT INTO achievements (user_id, achievement_id)
+      VALUES (${userId}, ${achievementId})
+      ON CONFLICT (user_id, achievement_id) DO NOTHING
+      RETURNING id;
+    `;
+    if (!guardado.length) {
+      return res.status(200).json({ success: true, nuevo: false });
+    }
+
+    // Tantas monedas como puntos (docs/ECONOMIA.md).
+    const monedas = logros.monedasDeLogro(achievementId);
+    let saldoNuevo = null;
+    if (monedas > 0) {
+      try {
+        saldoNuevo = await new MonedasService(sql).otorgar(userId, monedas);
+      } catch (error) {
+        console.warn("MacroReborn: no se pudieron dar las monedas del logro.", error);
+      }
+    }
+
+    const nombreLogro = logros.LOGROS[achievementId].nombre;
     await crearNotificacionServidor(
       username,
       "🏅 Nuevo logro desbloqueado",
-      `Conseguiste: ${achievementId}`
+      saldoNuevo !== null && monedas > 0
+        ? `Conseguiste «${nombreLogro}» y 🪙 ${monedas}.`
+        : `Conseguiste «${nombreLogro}».`
     );
 
     // Push en tiempo real: refresca la pestaña "Logros" sin recargar.
@@ -434,7 +468,7 @@ async function achievements(req, res) {
       console.warn("Avisos: no se pudo avisar el nuevo logro en vivo.", error);
     }
 
-    return res.status(200).json({ success: true, nuevo: true });
+    return res.status(200).json({ success: true, nuevo: true, monedas: saldoNuevo !== null ? monedas : 0, saldoNuevo });
   }
 
   return res.status(405).json({ success: false, error: "Método no permitido" });
