@@ -342,6 +342,18 @@ test("tienda.html lleva al Bazar, con la misma prenda", () => {
   assert.match(html, /<link rel="canonical" href="https:\/\/www\.macroreborn\.com\/bazar\.html">/);
 });
 
+test("el pelo de atrás sale con su nombre, en el filtro y en la tarjeta", async () => {
+  // La capa del 04/10/2026 (docs/AVATARES-SERVIDOR.md, sección 14).
+  const items = [...CATALOGO, { id: 5, categoria: "peloatras", modelo: "tora", valorCapa: "tora_peloatras1",
+    nombre: "Colas largas", precio: 500, rareza: "rara", creadoEl: hace(50),
+    previsualizacion: "/previsualizaciones/5.jpg?v=dddddddddddd" }];
+  const p = await montar({ items });
+  const opcion = [...p.$("bazarCategoria").options].find(o => o.value === "peloatras");
+  assert.equal(opcion.textContent, "Pelo de atrás");
+  assert.match(p.tarjeta(5).querySelector(".bazar-descriptor").textContent, /^Pelo de atrás · /);
+  p.cerrar();
+});
+
 describe("la rareza", () => {
   // Desde el 04/10/2026 el precio de una prenda lo da su rareza
   // (api/_precios.js, docs/ECONOMIA.md). El Bazar la enseña en cada

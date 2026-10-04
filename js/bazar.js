@@ -76,7 +76,7 @@
 
   function nombreCategoria(valor) {
     const nombres = {
-      pelo: "Pelo", ojos: "Ojos", cara: "Cara", piel: "Piel", boca: "Boca",
+      pelo: "Pelo", peloatras: "Pelo de atrás", ojos: "Ojos", cara: "Cara", piel: "Piel", boca: "Boca",
       botas: "Botas", pantalon: "Pantalón", remera: "Remera", guantes: "Guantes",
       accesorio: "Accesorio", mascota: "Mascota", borde: "Borde", fondo: "Fondo", espalda: "Espalda"
     };
