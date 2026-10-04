@@ -1,7 +1,7 @@
 # CAMBIOS QUE LLEGAN DE OTROS DEVS
 
 Cómo se meten en el proyecto los cambios que otra persona manda en un
-zip, y el caso del 28/09/2026.
+zip, y los casos del 28/09/2026 y del 03/10/2026.
 
 ---
 
@@ -94,7 +94,55 @@ Lo que se hizo, archivo por archivo:
 
 ---
 
-## 2. Para la próxima vez
+## 2. El caso del 03/10/2026
+
+Llegó `MacroReborn-main.zip`. Esta vez partía del código del día: su
+base era `51cd7aa`, el último commit, así que no hubo que fundir nada a
+tres bandas. Traía 9 archivos cambiados y 3 nuevos, y no borraba
+ninguno:
+
+| Qué | Archivos |
+|---|---|
+| Barra nueva: fondo violeta oscuro, botones en pastilla, logo de imagen, la página actual resaltada y un "+" junto a las monedas que lleva al Bazar | `css/navbar-macrojuegos.css` (reescrita), `css/inicio.css` (fuera su bloque de barra en rejilla), `js/navbar.js`, `imagenes/macro-reborn-wordmark.png` |
+| Buscador: el texto de ayuda dice qué busca | `js/buscador.js` |
+| Comunidad: fuera la pestaña General, que repetía los números de arriba, y el panel Conectados, que estaba oculto, vuelve a verse | `comunidad-ranking.html`, `css/comunidad-ranking.css`, `js/comunidad-ranking.js` |
+| Perfil en modo claro con el diseño de referencia de macrojuegos | `css/perfil-macrojuegos-referencia.css`, `js/perfil-referencia.js` y su carga en `perfil.html` y `usuario.html` |
+
+Entró todo, en un commit por cambio. Las pruebas pasaban con el zip tal
+cual, y en capturas de antes y después la barra nueva se reparte mejor
+que la vieja entre 900 y 1100 px de ancho, donde la vieja se montaba.
+
+**Arreglado al meterlo:**
+
+- En modo claro la barra salía a medias: `theme-canonical.css` pinta en
+  claro `nav.navbar` de azul, los `<input>` de blanco y los `<button>` de
+  celeste, con selectores más específicos (el de los botones lleva cuatro
+  `:not()`). La fila de arriba quedaba azul y la de abajo oscura. Ahora
+  es la misma que en el oscuro: sección 10 de `css/navbar-macrojuegos.css`.
+- En la tarjeta del modo claro, un nombre de más de unos diez caracteres
+  se metía debajo de la estrella. Ahora se achica hasta que cabe
+  (`js/perfil-referencia.js`).
+- El logo llegó a 1536x777 (678 KB) para pintarse a 150 px de ancho, en
+  todas las páginas: va a 360x182 (84 KB). El de antes,
+  `imagenes/navbar-macroreborn.png`, el que llevaba el "1.0" dibujado,
+  queda sin usar.
+- No subía el `?v=` de nada. Con la barra en rejilla de la hoja vieja y
+  la flex de la nueva, quien tuviera guardada una de las dos la habría
+  visto rota un rato. Se subió en las 28 páginas.
+
+**Decisiones suyas que quedan como llegaron**, por si hay que revisarlas:
+
+- En modo claro, encima del perfil sale la palabra "Anuncio" sobre un
+  hueco vacío, como el de la publicidad en macrojuegos.
+- En modo claro, quien no ha iniciado sesión ve "Enviar petición
+  amistad" en amarillo. El botón sigue sin hacer nada, y al pasar el
+  ratón explica que hace falta una cuenta.
+- En modo claro, el nombre de la tarjeta va en una banda rosa. El
+  degradado del 28/09 sigue en el oscuro.
+
+---
+
+## 3. Para la próxima vez
 
 Lo que ahorraría casi todo lo de arriba, para pedírselo a quien mande
 cambios:
