@@ -281,6 +281,25 @@
     });
   }
 
+  // ---------- NOMBRE DE LA BANDA: que quepa ----------
+  // La banda deja libre el hueco de la estrella y la letra va a 32 px:
+  // un nombre largo (llegan a 25 caracteres) se metía debajo de la
+  // estrella y se cortaba. Se achica de uno en uno hasta que cabe. Va con
+  // !important porque la hoja fija el tamaño con !important.
+  const NOMBRE_MINIMO = 14;
+
+  function ajustarNombreTarjeta() {
+    const el = document.getElementById("tarjetaAvatarNombre");
+    if (!el) return;
+    el.style.removeProperty("font-size");
+    if (!esClaro()) return;
+    let tam = parseFloat(getComputedStyle(el).fontSize) || 32;
+    while (el.scrollWidth > el.clientWidth + 1 && tam > NOMBRE_MINIMO) {
+      tam -= 1;
+      el.style.setProperty("font-size", tam + "px", "important");
+    }
+  }
+
   // ---------- ORQUESTA ----------
   function sincronizarTodo() {
     sincronizarRol();
@@ -289,6 +308,7 @@
     sincronizarMigas();
     sincronizarBotonAmigo();
     moverAcciones();
+    ajustarNombreTarjeta();
   }
 
   function iniciar() {
@@ -299,13 +319,21 @@
 
     if (typeof MutationObserver !== "undefined") {
       const obs = new MutationObserver(() => sincronizarTodo());
-      ["nombreUsuario", "insigniasPerfil", "nivel", "estadoOnlinePerfil", "estado", "agregarAmigo"].forEach(id => {
+      ["nombreUsuario", "tarjetaAvatarNombre", "insigniasPerfil", "nivel", "estadoOnlinePerfil", "estado", "agregarAmigo"].forEach(id => {
         const el = document.getElementById(id);
         if (el) obs.observe(el, { childList: true, characterData: true, subtree: true, attributes: id === "estado" || id === "estadoOnlinePerfil" });
       });
       new MutationObserver(() => sincronizarTodo())
         .observe(document.documentElement, { attributes: true, attributeFilter: ["data-tema"] });
     }
+
+    // La banda cambia de ancho con la ventana (y la tarjeta, de columna
+    // en el móvil): el nombre se vuelve a medir.
+    let esperaAncho = null;
+    window.addEventListener("resize", () => {
+      clearTimeout(esperaAncho);
+      esperaAncho = setTimeout(ajustarNombreTarjeta, 150);
+    });
 
     // Red de seguridad: el nombre y las insignias llegan por fetch.
     let intentos = 0;
