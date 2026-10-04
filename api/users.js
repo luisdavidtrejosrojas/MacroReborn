@@ -248,6 +248,13 @@ async function listarUsuarios(req, res) {
     ? fila
     : { ...fila, motivo_suspension: null };
 
+  // El saldo de monedas, igual: solo la propia cuenta y la moderación.
+  // Hasta el 04/10/2026 cualquiera lo leía con ?username=X; no salía en
+  // ninguna página, pero se podía pedir.
+  const conSaldo = (fila) => (moderacion || (auth && Number(auth.sub) === Number(fila.id)))
+    ? fila
+    : (({ monedas, ...resto }) => resto)(fila);
+
   // El estado de moderación de cada cuenta, de la tabla sanciones
   // (migración 026, api/_sanciones.js): suspendida hasta cuándo y por qué,
   // y si está baneada. El motivo del baneo no sale en ninguna lista: se le
@@ -320,7 +327,7 @@ async function listarUsuarios(req, res) {
     //
     // Pasó: el parámetro se añadió sin esta línea y los avatares PNG de
     // otras personas desaparecieron de las menciones y los comentarios.
-    let uno = conMotivo(req.query.ligero ? aligerarAvatarPNG(usuario[0]) : usuario[0]);
+    let uno = conSaldo(conMotivo(req.query.ligero ? aligerarAvatarPNG(usuario[0]) : usuario[0]));
 
     // Baneada: su perfil dice "Cuenta baneada" (js/usuario.js), con el
     // aviso en lugar de la biografía y sin avatar. En las menciones, los
