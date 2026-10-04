@@ -69,7 +69,7 @@ const PRODUCCION = process.argv.includes("--produccion");
 const CAPAS = [
   "fondo", "espalda", "modelo", "piel", "ojos", "boca",
   "botas", "pantalon", "remera", "guantes", "accesorio",
-  "cara", "pelo", "mascota", "borde"
+  "cara", "peloatras", "pelo", "mascota", "borde"
 ];
 const CAPAS_VALIDAS = new Set(CAPAS);
 const NO_MODELOS = new Set(["juegos"]);

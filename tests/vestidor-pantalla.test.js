@@ -31,12 +31,17 @@ const ARTE = fs.readFileSync(path.join(RAIZ, "js", "arte.js"), "utf8");
 // Lo que devuelve el canvas de mentira cuando el horno le pide el PNG.
 const HORNEADO = "data:image/png;base64,HORNEADO";
 
-// Las 15 capas y el activador de imágenes perezosas viven en js/core.js.
+// Las capas y el activador de imágenes perezosas viven en js/core.js.
 // Se inyectan en vez de evaluar core.js entero, que pide el catálogo por
-// red y monta un MutationObserver sobre todo el documento.
+// red y monta un MutationObserver sobre todo el documento. La lista se
+// lee de él, para que no se quede atrás si cambia.
+const CORE = fs.readFileSync(path.join(RAIZ, "js", "core.js"), "utf8");
+const ORDEN = (() => {
+  const k = CORE.indexOf("const ORDEN_CAPAS_AVATAR");
+  return CORE.slice(k, CORE.indexOf("];", k)).match(/"[a-z]+"/g).map(s => s.slice(1, -1));
+})();
 const DE_CORE = `
-var ORDEN_CAPAS_AVATAR = ["fondo","espalda","modelo","piel","ojos","boca",
-  "botas","pantalon","remera","guantes","accesorio","cara","pelo","mascota","borde"];
+var ORDEN_CAPAS_AVATAR = ${JSON.stringify(ORDEN)};
 var _perezosasLlamadas = [];
 function activarImagenesPerezosas(raiz) {
   _perezosasLlamadas.push(raiz);
@@ -158,7 +163,7 @@ describe("la página es el taller", () => {
 
   test("y el maniquí se monta solo al cargar", async () => {
     const { doc } = await montar();
-    assert.strictEqual(doc.querySelectorAll(".vest-capa").length, 15);
+    assert.strictEqual(doc.querySelectorAll(".vest-capa").length, ORDEN.length);
   });
 
   test("sin sesión y sin rol no se enseña nada", async () => {
@@ -168,7 +173,7 @@ describe("la página es el taller", () => {
 });
 
 describe("el escenario se monta una sola vez", () => {
-  // Las quince capas se crean al abrir y no se vuelven a crear NUNCA:
+  // Las capas se crean al abrir y no se vuelven a crear NUNCA:
   // despues solo se les cambia el src, el hidden y las cuatro medidas.
   // Recrearlas dispararia el MutationObserver de js/core.js, que ante
   // cualquier nodo nuevo reescanea el documento entero.
@@ -178,7 +183,7 @@ describe("el escenario se monta una sola vez", () => {
     $(doc, "vestAbrir").click();
     $(doc, "vestAbrir").click();
 
-    assert.strictEqual(doc.querySelectorAll(".vest-capa").length, 15);
+    assert.strictEqual(doc.querySelectorAll(".vest-capa").length, ORDEN.length);
   });
 
   // En arte.html el maniqui escondia las secciones hermanas al abrirse.
@@ -193,7 +198,7 @@ describe("el escenario se monta una sola vez", () => {
 });
 
 describe("el maniquí", () => {
-  test("son las 15 capas de core.js, en su orden de dibujo", async () => {
+  test("son las capas de core.js, en su orden de dibujo", async () => {
     const { doc, win } = await montar();
     $(doc, "vestAbrir").click();
 

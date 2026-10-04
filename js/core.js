@@ -788,12 +788,13 @@ function usuarioEstaConectado(usuario){
 // "botas". El orden es el orden de dibujo, así que el mismo avatar salía
 // con las botas encima del pantalón en esas dos páginas y debajo en el
 // resto. Si hay que cambiar el orden, se cambia acá y en CAPAS de
-// api/_avatar-catalogo.js, que es el gemelo del servidor.
+// api/_avatar-catalogo.js, que es el gemelo del servidor. Allí se
+// cuenta también por qué "peloatras" va justo debajo de "pelo".
 
 const ORDEN_CAPAS_AVATAR = [
   "fondo","espalda","modelo","piel","ojos","boca",
   "botas","pantalon","remera","guantes","accesorio",
-  "cara","pelo","mascota","borde"
+  "cara","peloatras","pelo","mascota","borde"
 ];
 
 // ------------------------------------------------------------------

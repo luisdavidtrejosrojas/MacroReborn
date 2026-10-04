@@ -59,7 +59,7 @@ const CALIDAD = (() => {
 const ORDEN = [
   "fondo", "espalda", "modelo", "piel", "ojos", "boca",
   "botas", "pantalon", "remera", "guantes", "accesorio",
-  "cara", "pelo", "mascota", "borde"
+  "cara", "peloatras", "pelo", "mascota", "borde"
 ];
 
 const kb = n => (n / 1024).toFixed(1) + " kB";

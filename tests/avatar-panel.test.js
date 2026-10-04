@@ -216,7 +216,9 @@ describe("quién entra al panel", () => {
     const r = await panel(ARTISTA());
     assert.ok(!r.cuerpo.capas.includes("modelo"));
     assert.ok(r.cuerpo.capas.includes("remera"));
-    assert.equal(r.cuerpo.capas.length, 14);
+    // Las 16 menos el modelo. El pelo de atrás, desde el 04/10/2026.
+    assert.ok(r.cuerpo.capas.includes("peloatras"));
+    assert.equal(r.cuerpo.capas.length, 15);
   });
 
   test("subir requiere el rol igual que mirar", async () => {

@@ -32,9 +32,15 @@
 // habrá que invalidar la caché al publicar una prenda.
 
 
-// Las 15 capas que componen un avatar, en el mismo orden en que se
+// Las 16 capas que componen un avatar, en el mismo orden en que se
 // dibujan. Acá vive la versión del servidor, que es la que manda para
 // validar.
+//
+// "peloatras", el pelo de atrás, llegó el 04/10/2026 justo debajo de
+// "pelo": se dibuja como él, encima de la ropa, y el de delante lo
+// tapa. Con dos capas de pelo se combinan el flequillo de un peinado y
+// las colas de otro, como en macrojuegos (docs/AVATARES-SERVIDOR.md,
+// sección 14).
 //
 // El frontend tenía esta lista copiada en once archivos, y dos de ellos
 // (js/ranking.js y js/comunidad-ranking.js) llevaban "pantalon" antes
@@ -45,7 +51,7 @@
 const CAPAS = [
   "fondo", "espalda", "modelo", "piel", "ojos", "boca",
   "botas", "pantalon", "remera", "guantes", "accesorio",
-  "cara", "pelo", "mascota", "borde"
+  "cara", "peloatras", "pelo", "mascota", "borde"
 ];
 
 const CAPAS_VALIDAS = new Set(CAPAS);

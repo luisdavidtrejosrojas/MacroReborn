@@ -30,17 +30,22 @@ const ARTE = fs.readFileSync(path.join(RAIZ, "js", "arte.js"), "utf8");
 
 // De js/core.js sólo hacen falta dos cosas; evaluarlo entero pediría el
 // catálogo por red y montaría dos observadores sobre todo el documento.
+// La lista de capas se lee de él, para que no se quede atrás si cambia.
+const CORE = fs.readFileSync(path.join(RAIZ, "js", "core.js"), "utf8");
+const ORDEN = (() => {
+  const k = CORE.indexOf("const ORDEN_CAPAS_AVATAR");
+  return CORE.slice(k, CORE.indexOf("];", k)).match(/"[a-z]+"/g).map(s => s.slice(1, -1));
+})();
 const DE_CORE = `
-var ORDEN_CAPAS_AVATAR = ["fondo","espalda","modelo","piel","ojos","boca",
-  "botas","pantalon","remera","guantes","accesorio","cara","pelo","mascota","borde"];
+var ORDEN_CAPAS_AVATAR = ${JSON.stringify(ORDEN)};
 function activarImagenesPerezosas() {}
 `;
 
 function panelDePrueba() {
   return {
     success: true,
-    capas: ["fondo", "espalda", "piel", "ojos", "boca", "botas", "pantalon",
-            "remera", "guantes", "accesorio", "cara", "pelo", "mascota", "borde"],
+    // Las que manda avatar-panel: todas menos el modelo.
+    capas: ORDEN.filter(c => c !== "modelo"),
     modelos: [
       { id: 1, valor: "tora", modelo: "tora", capa: "modelo", nombre: "Tora", url: "/p/a.png", medidas: "327x504", peso: 1, publicada: true, autor: null, precio: null },
       { id: 2, valor: "cereza", modelo: "cereza", capa: "modelo", nombre: "Cereza", url: "/p/b.png", medidas: "326x503", peso: 1, publicada: true, autor: null, precio: null }
@@ -166,7 +171,7 @@ describe("el taller se abre en el paso del personaje", () => {
   test("el maniquí ya está montado desde el primer paso", async () => {
     const { doc } = await montar();
     await abrir(doc);
-    assert.strictEqual(doc.querySelectorAll(".vest-capa").length, 15);
+    assert.strictEqual(doc.querySelectorAll(".vest-capa").length, ORDEN.length);
   });
 });
 

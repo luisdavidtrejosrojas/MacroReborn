@@ -9,7 +9,7 @@ const precios = require("./_precios");
 const { metricasEnJuego, avisarSiSeCumplen, juegosDeHoy, fechaLocalAR } = require("./_misiones");
 const avatarCompuesto = require("./_avatar-compuesto");
 const previsualizaciones = require("./_previsualizaciones");
-// CAPAS es la lista de las 15 capas en su orden de dibujo. Es la del
+// CAPAS es la lista de las 16 capas en su orden de dibujo. Es la del
 // servidor, gemela de ORDEN_CAPAS_AVATAR en js/core.js. Se manda dentro
 // del catálogo para que el editor no tenga que llevar su propia copia.
 const { validarAvatar, CAPAS: CAPAS_AVATAR } = require("./_avatar-catalogo");

@@ -238,10 +238,10 @@ test("y la de su previsualización cuando la tiene, o null si todavía no", asyn
   assert.ok(otras.length > 0 && otras.every(p => p.previsualizacion === null));
 });
 
-test("manda las 15 capas en su orden de dibujo", async () => {
+test("manda las 16 capas en su orden de dibujo", async () => {
   const r = await conSesion();
 
-  assert.equal(r.cuerpo.capas.length, 15);
+  assert.equal(r.cuerpo.capas.length, 16);
   assert.equal(r.cuerpo.capas[0], "fondo");
   assert.equal(r.cuerpo.capas[r.cuerpo.capas.length - 1], "borde");
   // Las botas van ANTES que el pantalón: se dibujan debajo.
@@ -249,6 +249,8 @@ test("manda las 15 capas en su orden de dibujo", async () => {
     r.cuerpo.capas.indexOf("botas") < r.cuerpo.capas.indexOf("pantalon"),
     "las botas deben dibujarse bajo el pantalón"
   );
+  // El pelo de atrás, justo debajo del pelo: el de delante lo tapa.
+  assert.equal(r.cuerpo.capas.indexOf("peloatras") + 1, r.cuerpo.capas.indexOf("pelo"));
 });
 
 test("el catálogo completo se cachea en privado, nunca compartido", async () => {
