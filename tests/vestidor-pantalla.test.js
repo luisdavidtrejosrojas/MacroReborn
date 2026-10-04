@@ -198,6 +198,14 @@ describe("el escenario se monta una sola vez", () => {
 });
 
 describe("el maniquí", () => {
+  test("la ranura del pelo de atrás se llama así, no 'Peloatras'", async () => {
+    const { doc } = await montar();
+    $(doc, "vestAbrir").click();
+    const nombres = [...doc.querySelectorAll(".vest-ranura")].map(b => b.textContent);
+    assert.ok(nombres.includes("Pelo de atrás"), nombres.join(", "));
+    assert.ok(!nombres.includes("Peloatras"));
+  });
+
   test("son las capas de core.js, en su orden de dibujo", async () => {
     const { doc, win } = await montar();
     $(doc, "vestAbrir").click();

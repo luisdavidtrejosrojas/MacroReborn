@@ -155,6 +155,16 @@ describe("los controles se llenan con lo que hay", () => {
     assert.ok(opciones.includes("botas"));
   });
 
+  test("el pelo de atrás se ofrece con su nombre, no como 'Peloatras'", async () => {
+    const capas = panelDePrueba().capas.flatMap(c => c === "pelo" ? ["peloatras", "pelo"] : [c]);
+    const { doc } = await montar(servidorOk(panelDePrueba({ capas })));
+
+    const opcion = [...doc.getElementById("arteTodosCapa").options].find(o => o.value === "peloatras");
+    assert.equal(opcion.textContent, "Pelo de atrás");
+    const pelo = [...doc.getElementById("arteTodosCapa").options].find(o => o.value === "pelo");
+    assert.equal(pelo.textContent, "Pelo");
+  });
+
   test("sin archivos elegidos no se ofrece subir", async () => {
     const { doc } = await montar(servidorOk(panelDePrueba()));
 

@@ -88,7 +88,13 @@
     valores.forEach(v => select.appendChild(opcion(v, etiqueta ? etiqueta(v) : v)));
   }
 
+  // Las ranuras se nombran con su mayúscula ("botas" -> "Botas"), salvo
+  // las que así no se leen: el pelo de atrás (04/10/2026) es "peloatras".
+  // El panel, el taller y el maniquí las nombran todas por aquí.
+  const NOMBRES_DE_RANURA = { peloatras: "Pelo de atrás" };
+
   function conMayuscula(texto) {
+    if (Object.prototype.hasOwnProperty.call(NOMBRES_DE_RANURA, texto)) return NOMBRES_DE_RANURA[texto];
     return texto.charAt(0).toUpperCase() + texto.slice(1);
   }
 
