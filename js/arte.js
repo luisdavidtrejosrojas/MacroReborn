@@ -108,20 +108,35 @@
            capas[0];
   }
 
-  // El precio que se propone para una ranura. La tabla la manda el
-  // servidor (api/_precios.js), la misma con la que se puso precio al
-  // catálogo original: todo lo que se publica se vende en la tienda.
-  function precioDeRanura(capa) {
-    const tabla = (DATOS && DATOS.preciosPorCapa) || {};
-    return Number.isInteger(tabla[capa]) ? tabla[capa] : 100;
+  // Las rarezas que se pueden elegir, con su precio. Las manda el servidor
+  // (api/_precios.js): desde el 04/10/2026 el precio de una prenda lo da su
+  // rareza, y todo lo que se publica se vende en la tienda. La copia de
+  // aquí solo sirve si el servidor todavía no la manda.
+  const RAREZAS_DE_RESERVA = [
+    { id: "comun", nombre: "Común", precio: 50 },
+    { id: "rara", nombre: "Rara", precio: 500 },
+    { id: "epica", nombre: "Épica", precio: 1400 },
+    { id: "legendaria", nombre: "Legendaria", precio: 6000 }
+  ];
+
+  function rarezas() {
+    return DATOS && Array.isArray(DATOS.rarezas) && DATOS.rarezas.length ? DATOS.rarezas : RAREZAS_DE_RESERVA;
   }
 
-  // Cambiar la ranura de una prenda preparada. Su precio sigue al de la
-  // ranura mientras el artista no lo haya tocado a mano: el que se puso a
-  // propósito no se pisa.
+  function rarezaPorDefecto() {
+    return (DATOS && DATOS.rarezaPorDefecto) || "comun";
+  }
+
+  // "Épica · 1.400": lo que se lee en los desplegables y en las fichas.
+  function textoRareza(id) {
+    const r = rarezas().find(x => x.id === id);
+    return r ? r.nombre + " · " + String(r.precio).replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "Sin rareza";
+  }
+
+  // Cambiar la ranura de una prenda preparada. Hasta el 04/10/2026
+  // arrastraba el precio de la ranura; ahora el precio lo da la rareza.
   function ponerRanura(item, capa) {
     item.capa = capa;
-    if (!item.precioTocado) item.precio = precioDeRanura(capa);
   }
 
   // Y el personaje, si el archivo lo trae delante: "tora_botas3.png".
@@ -227,6 +242,8 @@
   function prepararPanelClasico(modelos, capas) {
     llenarSelect($("arteTodosModelo"), modelos, conMayuscula);
     llenarSelect($("arteTodosCapa"), capas, conMayuscula);
+    llenarSelect($("arteTodosRareza"), [""].concat(rarezas().map(r => r.id)),
+      v => v === "" ? "La de cada una" : textoRareza(v));
 
     llenarSelect($("arteFiltroModelo"), ["todos"].concat(modelos),
       v => v === "todos" ? "Todos" : conMayuscula(v));
@@ -272,7 +289,9 @@
         urlDelModelo,
         modelosDisponibles,
         conMayuscula,
-        ponerRanura
+        ponerRanura,
+        rarezas,
+        textoRareza
       });
       T().llenarCapas();
     }
@@ -339,8 +358,7 @@
           ($("arteTodosModelo") ? $("arteTodosModelo").value : modelosDisponibles()[0]),
         capa,
         nombre: nombreDesdeArchivo(file.name),
-        precio: precioDeRanura(capa),
-        precioTocado: false,
+        rareza: rarezaPorDefecto(),
         // Mientras sea null, el artista no movió nada y el PNG se sube
         // byte a byte. Un solo campo, no dos: ver vestHayQueHornear.
         ajuste: null
@@ -363,17 +381,13 @@
     if (!HAY_PANEL()) return;
     const modelo = $("arteTodosModelo").value;
     const capa = $("arteTodosCapa").value;
-    // Vacío, cada una se queda con el precio de su ranura, o con el que
-    // se le puso a mano.
-    const crudo = $("arteTodosPrecio").value.trim();
+    // Vacía, cada una se queda con la rareza que tenía.
+    const rareza = $("arteTodosRareza").value;
 
     ARCHIVOS.forEach(a => {
       a.modelo = modelo;
       ponerRanura(a, capa);
-      if (crudo !== "") {
-        a.precio = Math.max(0, Math.trunc(Number(crudo) || 0));
-        a.precioTocado = true;
-      }
+      if (rareza) a.rareza = rareza;
     });
     pintarLista();
   }
@@ -485,16 +499,15 @@
 
       datos.appendChild(campoSelect("Ranura", DATOS.capas, item.capa, conMayuscula, v => {
         ponerRanura(item, v);
-        pintarLista();   // el precio propuesto y el destino cambian con ella
+        pintarLista();   // el destino cambia con ella
       }));
 
       datos.appendChild(campoTexto("Nombre visible", item.nombre, 60, v => {
         item.nombre = v;
       }));
 
-      datos.appendChild(campoNumero("Precio", item.precio, v => {
-        item.precio = v;
-        item.precioTocado = true;
+      datos.appendChild(campoSelect("Rareza", rarezas().map(r => r.id), item.rareza, textoRareza, v => {
+        item.rareza = v;
       }));
 
       fila.appendChild(datos);
@@ -530,18 +543,6 @@
     input.value = actual;
     input.maxLength = maximo;
     input.addEventListener("input", () => alCambiar(input.value));
-    return envoltorio(etiqueta, input);
-  }
-
-  function campoNumero(etiqueta, actual, alCambiar) {
-    const input = document.createElement("input");
-    input.type = "number";
-    input.min = "1";
-    input.step = "10";
-    input.value = String(actual);
-    input.addEventListener("input", () => {
-      alCambiar(Math.max(0, Math.trunc(Number(input.value) || 0)));
-    });
     return envoltorio(etiqueta, input);
   }
 
@@ -628,7 +629,7 @@
           modelo: t.item.modelo,
           capa: t.item.capa,
           nombre: t.item.nombre,
-          precio: t.item.precio,
+          rareza: t.item.rareza,
           png: t.texto
         }))
       };
@@ -814,18 +815,18 @@
     caja.appendChild(meta);
 
     const etiquetas = elem("div");
-    // Todo lo publicado tiene precio; "Sin precio" solo puede verse en
-    // un borrador retirado, y avisa de que al publicarlo tendrá el de su
-    // ranura.
+    // Todo lo publicado tiene rareza y precio; "Sin precio" solo puede
+    // verse en un borrador retirado, y avisa de que al publicarlo saldrá
+    // como común.
     etiquetas.appendChild(p.precio
-      ? elem("span", "arte-etiqueta precio", "🪙 " + p.precio)
+      ? elem("span", "arte-etiqueta precio rareza-" + (p.rareza || "comun"), "🪙 " + textoRareza(p.rareza || "comun"))
       : elem("span", "arte-etiqueta apagada", "Sin precio"));
     if (!p.publicada) etiquetas.appendChild(elem("span", "arte-etiqueta apagada", "Retirada"));
     caja.appendChild(etiquetas);
 
     const acciones = elem("div", "arte-tarjeta-acciones");
 
-    // Editar lo ve todo el equipo: el precio lo puede cambiar cualquiera.
+    // Editar lo ve todo el equipo: la rareza la puede cambiar cualquiera.
     const editar = elem("button", "arte-editar", "Editar");
     editar.type = "button";
     editar.addEventListener("click", () => abrirEdicion(caja, p, acciones));
@@ -849,9 +850,10 @@
   // ==============================
   // EDITAR UNA PRENDA YA SUBIDA
   // ==============================
-  // El nombre y el precio (avatarEditarPrenda, en api/content.js).
-  // Decidido el 24/09/2026: el precio lo cambia cualquiera del equipo, en
-  // cualquier prenda; el nombre, quien la subió o un administrador. A
+  // El nombre y la rareza (avatarEditarPrenda, en api/content.js), que
+  // desde el 04/10/2026 da el precio. Decidido el 24/09/2026: el precio
+  // (ahora la rareza) lo cambia cualquiera del equipo, en cualquier
+  // prenda; el nombre, quien la subió o un administrador. A
   // quien no le toca el nombre no se le ofrece; el servidor lo
   // comprobaría igual. Personaje y ranura no se editan: para eso se sube
   // otra y se retira esta.
@@ -870,13 +872,13 @@
       form.appendChild(envoltorio("Nombre", nombre));
     }
 
-    const precio = document.createElement("input");
-    precio.type = "number";
-    precio.min = "1";
-    precio.max = "100000";
-    precio.step = "10";
-    precio.value = String(p.precio || precioDeRanura(p.capa));
-    form.appendChild(envoltorio("Precio", precio));
+    const rareza = document.createElement("select");
+    llenarSelect(rareza, rarezas().map(r => r.id), textoRareza);
+    rareza.value = p.rareza || rarezaPorDefecto();
+    // Lo que había al abrir: guardar sin tocarla no la manda, tampoco en un
+    // borrador que todavía no tenía.
+    const rarezaAlAbrir = rareza.value;
+    form.appendChild(envoltorio("Rareza", rareza));
 
     const error = elem("p", "arte-edicion-error");
     error.hidden = true;
@@ -898,7 +900,7 @@
       // Solo viaja lo que cambió.
       const cambios = { id: p.id };
       if (nombre && nombre.value.trim() !== p.nombre) cambios.nombre = nombre.value.trim();
-      if (Number(precio.value) !== p.precio) cambios.precio = Number(precio.value);
+      if (rareza.value !== rarezaAlAbrir) cambios.rareza = rareza.value;
       if (Object.keys(cambios).length === 1) { cerrar(); return; }
 
       guardar.disabled = true;
@@ -920,8 +922,9 @@
 
         p.nombre = datos.prenda.nombre;
         p.precio = datos.prenda.precio;
+        p.rareza = datos.prenda.rareza;
         pintarCatalogo();
-        decir("Guardado: «" + p.nombre + "», " + p.precio + " monedas.");
+        decir("Guardado: «" + p.nombre + "», " + textoRareza(p.rareza) + " monedas.");
       } catch (_) {
         error.textContent = "Se cortó la conexión. Probá de nuevo.";
         error.hidden = false;
@@ -931,7 +934,7 @@
 
     acciones.hidden = true;
     caja.appendChild(form);
-    (nombre || precio).focus();
+    (nombre || rareza).focus();
   }
 
   async function cambiarEstado(prenda, boton) {

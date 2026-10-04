@@ -249,6 +249,11 @@
   background: var(--chip-bg);
 }
 .arte-etiqueta.precio { color: var(--gold); }
+/* La rareza, con el color de su marco en el Bazar (css/bazar.css). */
+.arte-etiqueta.rareza-comun { color: #a3a7b0; }
+.arte-etiqueta.rareza-rara { color: #5598e7; }
+.arte-etiqueta.rareza-epica { color: #a78bfa; }
+.arte-etiqueta.rareza-legendaria { color: #f0a92e; }
 .arte-etiqueta.apagada { color: var(--danger); }
 
 .arte-tarjeta button {

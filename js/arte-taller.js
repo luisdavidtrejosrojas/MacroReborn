@@ -389,8 +389,7 @@
       if (item.clave === activa) {
         const campos = elem("div", "taller-campos");
         campos.appendChild(campo("Ranura", select(capas, item.capa, v => {
-          // Con su precio, que sigue al de la ranura mientras no se haya
-          // tocado a mano (ponerRanura, en js/arte.js).
+          // ponerRanura, en js/arte.js.
           if (CTX.ponerRanura) CTX.ponerRanura(item, v); else item.capa = v;
           if (!nombreSirve(item.nombre)) item.nombre = nombrePropuesto(item);
           pintarTodo();
@@ -400,7 +399,7 @@
           pintarTodo();
         })));
         campos.appendChild(campo("Nombre", texto(item.nombre, v => { item.nombre = v; pintarNav(); })));
-        campos.appendChild(campo("Precio", numero(item.precio, v => { item.precio = v; item.precioTocado = true; })));
+        campos.appendChild(campo("Rareza", selectRareza(item.rareza, v => { item.rareza = v; pintarNav(); })));
         ficha.appendChild(campos);
 
         if (!nombreSirve(item.nombre)) {
@@ -414,7 +413,7 @@
       } else {
         const resumen = elem("div", "vest-dato",
           CTX.conMayuscula(item.modelo) + " · " + CTX.conMayuscula(item.capa) +
-          " · «" + item.nombre + "»" + (item.precio ? " · " + item.precio + " monedas" : " · sin precio"));
+          " · «" + item.nombre + "» · " + CTX.textoRareza(item.rareza));
         ficha.appendChild(resumen);
       }
 
@@ -457,15 +456,19 @@
     return i;
   }
 
-  function numero(valor, alCambiar) {
-    const i = document.createElement("input");
-    i.type = "number";
-    i.min = "1";
-    i.step = "10";
-    i.value = String(valor || 0);
-    i.addEventListener("click", e => e.stopPropagation());
-    i.addEventListener("input", () => alCambiar(Math.max(0, Math.trunc(Number(i.value) || 0))));
-    return i;
+  // La rareza, que da el precio (api/_precios.js): "Épica · 1.400".
+  function selectRareza(actual, alCambiar) {
+    const s = document.createElement("select");
+    for (const r of CTX.rarezas()) {
+      const o = document.createElement("option");
+      o.value = r.id;
+      o.textContent = CTX.textoRareza(r.id);
+      s.appendChild(o);
+    }
+    s.value = actual;
+    s.addEventListener("click", e => e.stopPropagation());
+    s.addEventListener("change", () => alCambiar(s.value));
+    return s;
   }
 
   // ==============================
@@ -622,7 +625,7 @@
       medio.appendChild(elem("div", null, item.nombre));
       medio.appendChild(elem("div", "sera",
         CTX.conMayuscula(item.modelo) + " · " + CTX.conMayuscula(item.capa) +
-        (item.precio ? " · " + item.precio + " monedas" : " · sin precio")));
+        " · " + CTX.textoRareza(item.rareza)));
       linea.appendChild(medio);
 
       const hornea = V().hayQueHornear(item);

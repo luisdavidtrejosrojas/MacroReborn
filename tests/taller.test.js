@@ -49,9 +49,14 @@ function panelDePrueba() {
       { id: 10, valor: "tora_pelo1", modelo: "tora", capa: "pelo", nombre: "Pelo 1", url: "/p/c.png", medidas: "327x504", peso: 1, publicada: true, autor: null, precio: null },
       { id: 11, valor: "tora_accesorio1", modelo: "tora", capa: "accesorio", nombre: "Accesorio 1", url: "/p/d.png", medidas: "327x504", peso: 1, publicada: true, autor: null, precio: null }
     ],
-    // La de api/_precios.js, que es la que manda el servidor.
-    preciosPorCapa: { boca: 50, cara: 50, accesorio: 60, guantes: 70, ojos: 80, piel: 80, botas: 90,
-                      pantalon: 100, remera: 100, pelo: 120, fondo: 130, borde: 150, espalda: 150, mascota: 220 },
+    // Las de api/_precios.js, que son las que manda el servidor.
+    rarezas: [
+      { id: "comun", nombre: "Común", precio: 50 },
+      { id: "rara", nombre: "Rara", precio: 500 },
+      { id: "epica", nombre: "Épica", precio: 1400 },
+      { id: "legendaria", nombre: "Legendaria", precio: 6000 }
+    ],
+    rarezaPorDefecto: "comun",
     esAdmin: true,
     yo: "soydegurime"
   };
@@ -599,10 +604,11 @@ describe("mover la prenda sólo se puede en el paso de colocar", () => {
   });
 });
 
-describe("el precio en el taller", () => {
-  // Todo lo que se publica se vende en la tienda (docs/TIENDA.md): se
-  // propone el precio de la ranura, que la sigue mientras nadie lo toque.
-  test("se propone el de la ranura, y la sigue mientras no se toque a mano", async () => {
+describe("la rareza en el taller", () => {
+  // Todo lo que se publica se vende en la tienda (docs/TIENDA.md), al
+  // precio de su rareza (desde el 04/10/2026, docs/ECONOMIA.md). Se
+  // propone común, y la ranura ya no la mueve.
+  test("se propone común, y cambiar la ranura no la mueve", async () => {
     const { win, doc } = await montar();
     await abrir(doc);
     $(doc, "tallerSeguir").click();
@@ -610,22 +616,23 @@ describe("el precio en el taller", () => {
     $(doc, "tallerSeguir").click();
     doc.querySelector(".taller-ficha").click();
 
-    const precio = () => doc.querySelector("#tallerFichas input[type=number]");
+    const selects = () => doc.querySelectorAll("#tallerFichas select");
+    const rareza = () => selects()[selects().length - 1];
     const cambiarRanura = (capa) => {
-      const ranura = doc.querySelector("#tallerFichas select");
+      const ranura = selects()[0];
       ranura.value = capa;
       ranura.dispatchEvent(new win.Event("change", { bubbles: true }));
     };
 
-    assert.equal(precio().value, "120");
-    assert.equal(precio().min, "1");
+    assert.equal(rareza().value, "comun");
+    assert.match(rareza().selectedOptions[0].textContent, /Común · 50/);
     cambiarRanura("mascota");
-    assert.equal(precio().value, "220");
+    assert.equal(rareza().value, "comun");
 
-    precio().value = "999";
-    precio().dispatchEvent(new win.Event("input", { bubbles: true }));
+    rareza().value = "epica";
+    rareza().dispatchEvent(new win.Event("change", { bubbles: true }));
     cambiarRanura("fondo");
-    assert.equal(precio().value, "999", "pisó el precio puesto a mano");
+    assert.equal(rareza().value, "epica", "la ranura le cambió la rareza");
     assert.ok(!/gratis/i.test($(doc, "tallerFichas").textContent));
   });
 });
