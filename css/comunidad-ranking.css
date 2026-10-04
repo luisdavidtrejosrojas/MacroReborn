@@ -761,6 +761,12 @@
   border-color: var(--gold);
 }
 
+.cr-panel-conectados .cr-panel-heading { margin-bottom: 10px; }
+
+.cr-panel-conectados .cr-buscar-usuarios {
+  margin-bottom: 10px;
+}
+
 /* ==========================================================================
    CENTRO DE AVATARES + TIENDA + AYUDA (3 columnas)
    ========================================================================== */
@@ -1109,32 +1115,8 @@ body.mr-root::before {
 
 body.mr-root > * { position: relative; z-index: 1; }
 
-/* NAVBAR */
-body.mr-root .navbar {
-  min-height: 70px;
-  padding: 0 24px !important;
-  background: linear-gradient(180deg, rgba(25, 7, 54, .98), rgba(16, 5, 36, .96)) !important;
-  border-bottom: 1px solid rgba(147, 85, 255, .55) !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,.28);
-}
-
-body.mr-root .nav-logo {
-  color: #fff !important;
-  text-shadow: 0 0 14px rgba(179, 113, 255, .35);
-}
-
-body.mr-root .nav-boton-comunidad {
-  background: linear-gradient(135deg, #7f39ff, #a64cff) !important;
-  color: #fff !important;
-  border: 1px solid rgba(226, 194, 255, .25);
-  box-shadow: 0 0 24px rgba(136, 61, 255, .28);
-  text-transform: none;
-}
-
-body.mr-root .nav-links a,
-body.mr-root .nav-categorias a { color: #ded2ff !important; }
-body.mr-root .nav-links a:hover,
-body.mr-root .nav-categorias a:hover { color: #fff !important; }
+/* NAVBAR: sin overrides acá — usa la hoja canónica navbar-macrojuegos.css,
+   igual que en index.html y el resto del sitio. */
 
 /* HERO */
 body.mr-root .rk-hero {
@@ -1386,19 +1368,19 @@ body.mr-root .cr-stat-card {
   background:linear-gradient(180deg, rgba(37,19,76,.88), rgba(25,11,54,.92));
 }
 body.mr-root .cr-stat-symbol {
-  width:40px; height:40px; flex:0 0 40px;
+  width:46px; height:46px; flex:0 0 46px;
   display:grid; place-items:center;
   border-radius:10px;
-  font-size:18px;
+  font-size:20px;
   background:rgba(124,58,237,.17);
   border:1px solid rgba(153,110,255,.45);
 }
 body.mr-root .cr-stat-green .cr-stat-symbol { background:rgba(53,212,136,.12); border-color:rgba(53,212,136,.42); }
 body.mr-root .cr-stat-blue .cr-stat-symbol { background:rgba(56,189,248,.11); border-color:rgba(56,189,248,.42); }
 body.mr-root .cr-stat-gold .cr-stat-symbol { background:rgba(240,180,41,.11); border-color:rgba(240,180,41,.40); color:#ffd666; }
-body.mr-root .cr-stat-copy { display:flex; flex-direction:column; min-width:0; }
-body.mr-root .cr-stat-copy strong { color:#f4eaff; font-size:18px; line-height:1.05; }
-body.mr-root .cr-stat-copy small { color:#9f91bc; font-size:11px; margin-top:4px; }
+body.mr-root .cr-stat-copy { display:flex; flex-direction:column-reverse; min-width:0; }
+body.mr-root .cr-stat-copy strong { color:#fff; font-size:28px; font-weight:800; line-height:1.15; }
+body.mr-root .cr-stat-copy small { color:#b9a8d9; font-size:11px; text-transform:uppercase; letter-spacing:.03em; }
 body.mr-root .cr-panel-reciens .cr-panel-heading { margin-bottom:8px; }
 body.mr-root .cr-recien-llegados { display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:7px; }
 body.mr-root .cr-recien-llegados .cr-avatar-chico { width:auto; height:auto; aspect-ratio:1; border-radius:8px; border-color:rgba(130,81,210,.52); }
@@ -1418,8 +1400,6 @@ body.mr-root .cr-destacado-avatar img { position:absolute; inset:0; width:100%; 
 body.mr-root .cr-destacado-corona {
   position:absolute; top:-1px; right:2px; font-size:12px; color:#ffcc52; filter:drop-shadow(0 0 4px rgba(255,202,82,.45));
 }
-body.mr-root .cr-panel-conectados { display:none; }
-
 /* MEDIA + LISTADO DE COMUNIDAD */
 body.mr-root .cr-seccion-media,
 body.mr-root .cr-seccion-actividad { max-width:1400px; }

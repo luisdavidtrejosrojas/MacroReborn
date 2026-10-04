@@ -165,18 +165,18 @@
         <div id="crRecienLlegados" class="cr-recien-llegados"></div>
       </div>
 
+      <div class="cr-panel cr-panel-conectados">
+        <div class="cr-panel-heading"><span class="cr-panel-icon">🟢</span><h2>Conectados</h2></div>
+        <input id="crBuscarConectado" type="text" class="cr-buscar-usuarios" placeholder="🔍 Buscar usuarios...">
+        <div id="crGridConectados" class="cr-grid-conectados"></div>
+      </div>
+
       <div class="cr-panel cr-panel-tabs">
         <div class="cr-tabs" role="tablist">
-          <button type="button" class="cr-tab cr-tab-activa" data-tab="general" role="tab">General</button>
-          <button type="button" class="cr-tab" data-tab="moderacion" role="tab">Moderación</button>
+          <button type="button" class="cr-tab cr-tab-activa" data-tab="moderacion" role="tab">Moderación</button>
           <button type="button" class="cr-tab" data-tab="rangos" role="tab">Rangos</button>
         </div>
-        <div id="crTabGeneral" class="cr-tab-panel cr-tab-panel-activo">
-          <div class="cr-tab-summary-row"><span>👥 Usuarios conectados</span><strong id="crTabConectados">—</strong></div>
-          <div class="cr-tab-summary-row"><span>♟ Registrados en total</span><strong id="crTabRegistrados">—</strong></div>
-          <div class="cr-tab-summary-row"><span>💬 Comentarios / hora</span><strong id="crTabComentarios">—</strong></div>
-        </div>
-        <div id="crTabModeracion" class="cr-tab-panel">
+        <div id="crTabModeracion" class="cr-tab-panel cr-tab-panel-activo">
           <p class="cr-subtitulo">Mentores y administradores</p>
           <div id="crListaModeracion" class="cr-lista-staff"></div>
         </div>
@@ -191,12 +191,6 @@
       <div class="cr-panel cr-panel-destacados">
         <div class="cr-panel-heading"><span class="cr-panel-icon">♛</span><h2>Usuarios destacados</h2></div>
         <div id="crGridDestacados" class="cr-grid-destacados"></div>
-      </div>
-
-      <div class="cr-panel cr-panel-conectados">
-        <h3 class="cr-panel-titulo">🟢 Conectados</h3>
-        <div id="crGridConectados" class="cr-grid-conectados"></div>
-        <input id="crBuscarConectado" type="text" class="cr-buscar-usuarios" placeholder="🔍 Buscar usuarios...">
       </div>
 
     </aside>

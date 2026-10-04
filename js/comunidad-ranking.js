@@ -381,7 +381,7 @@ document.querySelectorAll(".cr-tab").forEach(boton => {
     document.querySelectorAll(".cr-tab").forEach(b => b.classList.remove("cr-tab-activa"));
     boton.classList.add("cr-tab-activa");
 
-    const tab = boton.dataset.tab; // "general" | "moderacion" | "rangos"
+    const tab = boton.dataset.tab; // "moderacion" | "rangos"
     const idPanel = "crTab" + tab.charAt(0).toUpperCase() + tab.slice(1);
 
     document.querySelectorAll(".cr-tab-panel").forEach(p => p.classList.remove("cr-tab-panel-activo"));
