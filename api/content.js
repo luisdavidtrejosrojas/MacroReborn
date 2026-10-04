@@ -5,7 +5,7 @@ const sanciones = require("./_sanciones");
 const { crearNotificacionServidor, notificarMencionesServidor } = require("./_notifications");
 const { obtenerSql } = require("./_db");
 const { MonedasService } = require("./_monedas");
-const { PRECIO_POR_CAPA, precioDeCapa, precioValido } = require("./_precios");
+const precios = require("./_precios");
 const { metricasEnJuego, avisarSiSeCumplen, juegosDeHoy, fechaLocalAR } = require("./_misiones");
 const avatarCompuesto = require("./_avatar-compuesto");
 const previsualizaciones = require("./_previsualizaciones");
@@ -86,7 +86,7 @@ async function avatarPanel(req, res) {
   const filas = await sql`
     SELECT p.id, p.valor, p.modelo, p.capa, p.nombre, p.publicada,
            a.sha256, a.ancho, a.alto, a.peso,
-           u.username AS autor, s.precio
+           u.username AS autor, s.precio, s.rareza
     FROM avatar_prendas p
     JOIN avatar_archivos a ON a.id = p.archivo_id
     LEFT JOIN users u ON u.id = p.autor_id
@@ -109,7 +109,8 @@ async function avatarPanel(req, res) {
       url: firmas.firmar(f.sha256),
       medidas: f.ancho + "x" + f.alto,
       peso: Number(f.peso),
-      precio: f.precio === null || f.precio === undefined ? null : Number(f.precio)
+      precio: f.precio === null || f.precio === undefined ? null : Number(f.precio),
+      rareza: f.rareza || null
     };
     if (f.capa === "modelo") modelos.push(item);
     else prendas.push(item);
@@ -123,8 +124,9 @@ async function avatarPanel(req, res) {
     capas: CAPAS_AVATAR.filter(c => c !== "modelo"),
     modelos,
     prendas,
-    // El precio que se propone al subir, según la ranura (api/_precios.js).
-    preciosPorCapa: PRECIO_POR_CAPA,
+    // Las rarezas que se eligen al subir, con su precio (api/_precios.js).
+    rarezas: precios.RAREZAS.map(r => ({ id: r, nombre: precios.NOMBRE_DE_RAREZA[r], precio: precios.PRECIO_POR_RAREZA[r] })),
+    rarezaPorDefecto: precios.RAREZA_POR_DEFECTO,
     esAdmin: permiso.esAdmin,
     yo: permiso.auth.username
   });
@@ -133,7 +135,8 @@ async function avatarPanel(req, res) {
 // ==============================
 // POST /api/content?action=avatar-subir-prendas
 // ==============================
-// Recibe una tanda: { prendas: [{ modelo, capa, nombre, precio, png }] }
+// Recibe una tanda: { prendas: [{ modelo, capa, nombre, rareza, png }] }
+// (o "precio" en vez de "rareza", de un panel abierto antes del 04/10/2026).
 //
 // Cada prenda se valida por separado y el resultado vuelve una por una.
 // Es a propósito: si alguien sube doce dibujos y uno está mal exportado,
@@ -318,14 +321,11 @@ async function avatarSubirPrendas(req, res) {
       continue;
     }
 
-    // Todo lo publicado tiene precio (docs/TIENDA.md). Hasta la migración
-    // 022, 0 era gratis, como la mayoría del catálogo; ya no se acepta.
-    // El panel propone el de la ranura (api/_precios.js).
-    const precio = Number(item.precio);
-    if (!precioValido(precio)) {
-      resultados.push({ archivo: etiqueta, ok: false, error: "El precio tiene que ser un número entero entre 1 y 100.000" });
-      continue;
-    }
+    // Todo lo publicado tiene precio (docs/TIENDA.md), y desde el
+    // 04/10/2026 lo da su rareza (api/_precios.js). Sin rareza ni precio,
+    // común.
+    const rareza = precios.rarezaDelPedido(item) || precios.RAREZA_POR_DEFECTO;
+    const precio = precios.precioDeRareza(rareza);
 
     const png = leerPngSubido(item.png);
     if (png.error) {
@@ -371,9 +371,9 @@ async function avatarSubirPrendas(req, res) {
           if (!filas.length) continue;
 
           await tx`
-            INSERT INTO avatar_shop_items (categoria, modelo, valor_capa, nombre, precio)
-            VALUES (${capa}, ${modelo}, ${filas[0].valor}, ${nombre}, ${precio})
-            ON CONFLICT (valor_capa) DO UPDATE SET precio = EXCLUDED.precio;
+            INSERT INTO avatar_shop_items (categoria, modelo, valor_capa, nombre, precio, rareza)
+            VALUES (${capa}, ${modelo}, ${filas[0].valor}, ${nombre}, ${precio}, ${rareza})
+            ON CONFLICT (valor_capa) DO UPDATE SET precio = EXCLUDED.precio, rareza = EXCLUDED.rareza;
           `;
           return filas[0];
         }
@@ -393,7 +393,8 @@ async function avatarSubirPrendas(req, res) {
         valor: guardada.valor,
         url: firmas.firmar(sha),
         medidas: png.ancho + "x" + png.alto,
-        precio
+        precio,
+        rareza
       });
     } catch (error) {
       console.error("avatar-subir-prendas:", error);
@@ -463,8 +464,8 @@ async function avatarEstadoPrenda(req, res) {
   // Todo lo publicado tiene precio (docs/TIENDA.md). Si esta no lo
   // tenía -un borrador que se subió gratis antes de la tienda, o una del
   // catálogo original que estaba retirada cuando la migración 022 puso
-  // los precios-, se le pone el de su ranura (api/_precios.js), en la
-  // misma transacción: publicada y sin precio sería gratis para todos.
+  // los precios-, sale como común (api/_precios.js), en la misma
+  // transacción: publicada y sin precio sería gratis para todos.
   await sql.transaccion(async (tx) => {
     await tx`
       UPDATE avatar_prendas
@@ -474,8 +475,8 @@ async function avatarEstadoPrenda(req, res) {
     `;
     if (publicada) {
       await tx`
-        INSERT INTO avatar_shop_items (categoria, modelo, valor_capa, nombre, precio)
-        SELECT capa, modelo, valor, nombre, ${precioDeCapa(filas[0].capa)}
+        INSERT INTO avatar_shop_items (categoria, modelo, valor_capa, nombre, precio, rareza)
+        SELECT capa, modelo, valor, nombre, ${precios.precioDeRareza(precios.RAREZA_POR_DEFECTO)}, ${precios.RAREZA_POR_DEFECTO}
         FROM avatar_prendas WHERE id = ${id}
         ON CONFLICT (valor_capa) DO NOTHING;
       `;
@@ -490,13 +491,15 @@ async function avatarEstadoPrenda(req, res) {
 // ==============================
 // POST /api/content?action=avatar-editar-prenda
 // ==============================
-// Cambiar el nombre o el precio de una prenda ya subida:
-// { id, nombre?, precio? }. Hasta el 24/09/2026 no se podía desde la
-// web: lo que se ponía al subir quedaba fijo.
+// Cambiar el nombre o la rareza de una prenda ya subida:
+// { id, nombre?, rareza? }. Hasta el 24/09/2026 no se podía desde la
+// web: lo que se ponía al subir quedaba fijo. Hasta el 04/10/2026 se
+// cambiaba el precio; desde entonces el precio es el de la rareza
+// (api/_precios.js), y un "precio" que llegue se traduce a su rareza.
 //
-// Quién puede, decidido ese día:
-//   - el precio, cualquiera del equipo de arte, en cualquier prenda
-//     ("confío en ellos");
+// Quién puede, decidido el 24/09/2026:
+//   - la rareza (antes, el precio), cualquiera del equipo de arte, en
+//     cualquier prenda ("confío en ellos");
 //   - el nombre, como publicar y retirar: quien la subió o un
 //     administrador.
 //
@@ -518,8 +521,8 @@ async function avatarEditarPrenda(req, res) {
   }
 
   const cambiaNombre = cuerpo.nombre !== undefined;
-  const cambiaPrecio = cuerpo.precio !== undefined;
-  if (!cambiaNombre && !cambiaPrecio) {
+  const cambiaRareza = cuerpo.rareza !== undefined || cuerpo.precio !== undefined;
+  if (!cambiaNombre && !cambiaRareza) {
     return res.status(400).json({ success: false, error: "No hay nada que cambiar" });
   }
 
@@ -527,13 +530,14 @@ async function avatarEditarPrenda(req, res) {
   if (cambiaNombre && (nombre.length < 1 || nombre.length > 60)) {
     return res.status(400).json({ success: false, error: "El nombre tiene que tener entre 1 y 60 caracteres" });
   }
-  if (cambiaPrecio && !precioValido(cuerpo.precio)) {
-    return res.status(400).json({ success: false, error: "El precio tiene que ser un número entero entre 1 y 100.000" });
+  const rareza = cambiaRareza ? precios.rarezaDelPedido(cuerpo) : null;
+  if (cambiaRareza && !rareza) {
+    return res.status(400).json({ success: false, error: "La rareza tiene que ser común, rara, épica o legendaria" });
   }
-  const precio = cambiaPrecio ? Number(cuerpo.precio) : null;
+  const precio = cambiaRareza ? precios.precioDeRareza(rareza) : null;
 
   const filas = await sql`
-    SELECT p.id, p.valor, p.modelo, p.capa, p.nombre, p.autor_id, s.precio
+    SELECT p.id, p.valor, p.modelo, p.capa, p.nombre, p.autor_id, s.precio, s.rareza
     FROM avatar_prendas p
     LEFT JOIN avatar_shop_items s ON s.valor_capa = p.valor
     WHERE p.id = ${id} LIMIT 1;
@@ -556,34 +560,36 @@ async function avatarEditarPrenda(req, res) {
 
   // El nombre vive en dos sitios, la prenda (lo que ve el editor) y su
   // fila de la tienda: cambian juntos, para que no digan cosas distintas.
-  // Una prenda sin fila en la tienda la estrena al recibir precio.
+  // Una prenda sin fila en la tienda la estrena al recibir rareza.
   const nombreFinal = cambiaNombre ? nombre : prenda.nombre;
   await sql.transaccion(async (tx) => {
     if (cambiaNombre) {
       await tx`UPDATE avatar_prendas SET nombre = ${nombreFinal} WHERE id = ${id};`;
       await tx`UPDATE avatar_shop_items SET nombre = ${nombreFinal} WHERE valor_capa = ${prenda.valor};`;
     }
-    if (cambiaPrecio) {
+    if (cambiaRareza) {
       await tx`
-        INSERT INTO avatar_shop_items (categoria, modelo, valor_capa, nombre, precio)
-        VALUES (${prenda.capa}, ${prenda.modelo}, ${prenda.valor}, ${nombreFinal}, ${precio})
-        ON CONFLICT (valor_capa) DO UPDATE SET precio = EXCLUDED.precio;
+        INSERT INTO avatar_shop_items (categoria, modelo, valor_capa, nombre, precio, rareza)
+        VALUES (${prenda.capa}, ${prenda.modelo}, ${prenda.valor}, ${nombreFinal}, ${precio}, ${rareza})
+        ON CONFLICT (valor_capa) DO UPDATE SET precio = EXCLUDED.precio, rareza = EXCLUDED.rareza;
       `;
     }
   });
 
   await subirVersionCatalogo();
 
+  const rarezaAntes = prenda.rareza || null;
+  const rarezaFinal = cambiaRareza ? rareza : rarezaAntes;
   const precioAntes = prenda.precio === null || prenda.precio === undefined ? null : Number(prenda.precio);
-  const precioFinal = cambiaPrecio ? precio : precioAntes;
+  const precioFinal = cambiaRareza ? precio : precioAntes;
   const cambios = [];
   if (nombreFinal !== prenda.nombre) cambios.push("nombre " + JSON.stringify(prenda.nombre) + " -> " + JSON.stringify(nombreFinal));
-  if (precioFinal !== precioAntes) cambios.push("precio " + (precioAntes === null ? "ninguno" : precioAntes) + " -> " + precioFinal);
+  if (rarezaFinal !== rarezaAntes) cambios.push("rareza " + (rarezaAntes || "ninguna") + " -> " + rarezaFinal);
   if (cambios.length) {
     console.log("[arte] " + permiso.auth.username + " cambió " + prenda.valor + ": " + cambios.join(", "));
   }
 
-  return res.status(200).json({ success: true, prenda: { id, nombre: nombreFinal, precio: precioFinal } });
+  return res.status(200).json({ success: true, prenda: { id, nombre: nombreFinal, precio: precioFinal, rareza: rarezaFinal } });
 }
 
 // ==============================
@@ -628,7 +634,7 @@ async function construirCatalogo(version) {
   // pago": la tienda sigue viviendo en avatar_shop_items, que no se
   // tocó, y se enlaza por el mismo texto del valor de capa.
   const filas = await sql`
-    SELECT p.id, p.valor, p.modelo, p.capa, p.nombre, p.previsualizacion, s.precio
+    SELECT p.id, p.valor, p.modelo, p.capa, p.nombre, p.previsualizacion, s.precio, s.rareza
     FROM avatar_prendas p
     JOIN avatar_archivos a ON a.id = p.archivo_id
     LEFT JOIN avatar_shop_items s ON s.valor_capa = p.valor
@@ -651,7 +657,8 @@ async function construirCatalogo(version) {
       previsualizacion: f.previsualizacion
         ? previsualizaciones.urlDe(Number(f.id), f.previsualizacion)
         : null,
-      precio: f.precio === null || f.precio === undefined ? null : Number(f.precio)
+      precio: f.precio === null || f.precio === undefined ? null : Number(f.precio),
+      rareza: f.rareza || null
     };
     // La capa "modelo" son los personajes base, no ropa: el editor los
     // muestra en su propio selector.
@@ -2517,7 +2524,7 @@ async function avatarShop(req, res) {
   // vendidas: las que regaló la migración 022 (precio_pagado = 0) no
   // cuentan, y las de antes de ella (NULL, no se apuntaba) sí.
   const filasItems = await sql`
-    SELECT s.id, s.categoria, s.modelo, s.valor_capa AS "valorCapa", s.nombre, s.precio,
+    SELECT s.id, s.categoria, s.modelo, s.valor_capa AS "valorCapa", s.nombre, s.precio, s.rareza,
            s.created_at AS "creadoEl", p.id AS "prendaId", p.previsualizacion,
            COALESCE(v.vendidas, 0) AS vendidas
     FROM avatar_shop_items s

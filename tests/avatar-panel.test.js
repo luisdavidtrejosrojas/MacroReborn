@@ -9,13 +9,13 @@
 //   - Una tanda con un fichero malo no tumba a los buenos.
 //   - Lo que se rechaza al subir: lo que no es un PNG de verdad, lo que
 //     pesa de más, la ranura inventada, el personaje inexistente, el
-//     nombre vacío y el precio fuera de 1 a 100.000.
+//     nombre vacío.
 //   - El identificador lo genera el servidor, nunca el artista.
 //   - Dos prendas con el mismo dibujo comparten fichero.
-//   - Toda prenda entra en la tienda con su precio: desde la migración
-//     022, 0 ya no es gratis, no vale (docs/TIENDA.md).
+//   - Toda prenda entra en la tienda con su rareza y el precio de esa
+//     rareza (desde el 04/10/2026, docs/ECONOMIA.md); sin rareza, común.
 //   - Retirar no borra, y solo puede el autor o un administrador.
-//   - Publicar una prenda que no tenía precio le pone el de su ranura.
+//   - Publicar una prenda que no tenía precio la pone como común.
 //   - Cada cambio sube la versión del catálogo, que es lo que hace que
 //     los dos procesos del cluster se enteren.
 //
@@ -131,7 +131,7 @@ function prendaDePrueba(extra) {
     modelo: "tora",
     capa: "remera",
     nombre: "Remera nueva",
-    precio: 100,
+    rareza: "rara",
     png: comoDataUrl(PNG_A)
   }, extra || {});
 }
@@ -183,9 +183,9 @@ describe("quién entra al panel", () => {
     assert.equal(r.codigo, 200);
     assert.equal(r.cuerpo.esAdmin, false);
     assert.equal(r.cuerpo.yo, "dibujante");
-    // Para proponer el precio al subir (api/_precios.js).
-    assert.equal(r.cuerpo.preciosPorCapa.pelo, 120);
-    assert.equal(r.cuerpo.preciosPorCapa.mascota, 220);
+    // Las rarezas que se eligen al subir, con su precio (api/_precios.js).
+    assert.deepStrictEqual(r.cuerpo.rarezas.map(x => [x.id, x.precio]), [["comun", 50], ["rara", 500], ["epica", 1400], ["legendaria", 6000]]);
+    assert.equal(r.cuerpo.rarezaPorDefecto, "comun");
   });
 
   test("un administrador también", async () => {
@@ -279,18 +279,19 @@ describe("subir prendas", () => {
     assert.ok(prendas.rows[0].n >= 2, "pero varias prendas pueden apuntarlo");
   });
 
-  test("entra en la tienda con su precio, y 0 ya no es gratis: no vale", async () => {
+  test("entra en la tienda con su rareza y su precio; sin rareza, común", async () => {
     const r = await subir([
-      prendaDePrueba({ capa: "guantes", nombre: "Guantes caros", precio: 250, png: comoDataUrl(PNG_B) }),
-      prendaDePrueba({ capa: "guantes", nombre: "Guantes gratis", precio: 0 })
+      prendaDePrueba({ capa: "guantes", nombre: "Guantes épicos", rareza: "epica", png: comoDataUrl(PNG_B) }),
+      prendaDePrueba({ capa: "guantes", nombre: "Guantes sin rareza", rareza: undefined }),
+      prendaDePrueba({ capa: "guantes", nombre: "Guantes de un panel viejo", rareza: undefined, precio: 2500 })
     ], ARTISTA());
 
-    assert.equal(r.cuerpo.entraron, 1);
-    const caros = r.cuerpo.resultados[0].valor;
-    assert.match(r.cuerpo.resultados[1].error, /precio/i);
-
-    const tienda = await db.query("SELECT precio FROM avatar_shop_items WHERE valor_capa = $1", [caros]);
-    assert.equal(Number(tienda.rows[0].precio), 250);
+    assert.equal(r.cuerpo.entraron, 3);
+    const enTienda = async (i) => (await db.query("SELECT precio, rareza FROM avatar_shop_items WHERE valor_capa = $1", [r.cuerpo.resultados[i].valor])).rows[0];
+    assert.deepStrictEqual(await enTienda(0), { precio: 1400, rareza: "epica" });
+    assert.deepStrictEqual(await enTienda(1), { precio: 50, rareza: "comun" });
+    assert.deepStrictEqual(await enTienda(2), { precio: 500, rareza: "rara" });
+    assert.equal(r.cuerpo.resultados[0].rareza, "epica");
   });
 
   test("un fichero malo no tumba a los buenos de la tanda", async () => {
@@ -352,10 +353,6 @@ describe("subir prendas", () => {
       [{ modelo: "inventado" }, /personaje/i],
       [{ nombre: "   " }, /nombre/i],
       [{ nombre: "x".repeat(61) }, /nombre/i],
-      [{ precio: -5 }, /precio/i],
-      [{ precio: 0 }, /precio/i],
-      [{ precio: 1.5 }, /precio/i],
-      [{ precio: 100001 }, /precio/i],
       [{ png: "no soy una imagen" }, /PNG/i],
       // Un JPEG renombrado: la firma de los bytes lo delata.
       [{ png: "data:image/png;base64," + Buffer.from([255, 216, 255, 224, 0, 16, 74, 70, 73, 70, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0]).toString("base64") }, /PNG de verdad/i]
@@ -439,7 +436,7 @@ describe("publicar y retirar", () => {
     assert.equal((await estado(999999, false, ADMIN())).codigo, 404);
   });
 
-  test("publicar una prenda que no tenía precio le pone el de su ranura", async () => {
+  test("publicar una prenda que no tenía precio la pone como común", async () => {
     // Un borrador subido gratis antes de la tienda: sin fila en ella.
     const archivo = await db.query("SELECT archivo_id FROM avatar_prendas WHERE id = $1", [idPropia]);
     const borrador = await db.query(
@@ -449,8 +446,8 @@ describe("publicar y retirar", () => {
 
     const r = await estado(Number(borrador.rows[0].id), true, ADMIN());
     assert.equal(r.codigo, 200);
-    const tienda = await db.query("SELECT precio, nombre FROM avatar_shop_items WHERE valor_capa = 'tora_mascota77'");
-    assert.deepStrictEqual(tienda.rows, [{ precio: 220, nombre: "Borrador" }]);
+    const tienda = await db.query("SELECT precio, rareza, nombre FROM avatar_shop_items WHERE valor_capa = 'tora_mascota77'");
+    assert.deepStrictEqual(tienda.rows, [{ precio: 50, rareza: "comun", nombre: "Borrador" }]);
   });
 
   test("y a la que ya lo tenía no se lo cambia", async () => {
@@ -458,7 +455,7 @@ describe("publicar y retirar", () => {
     await estado(idPropia, false, ARTISTA());
     await estado(idPropia, true, ARTISTA());
     const tienda = await db.query("SELECT precio FROM avatar_shop_items WHERE valor_capa = $1", [fila.rows[0].valor]);
-    assert.equal(Number(tienda.rows[0].precio), 100, "el precio que se puso al subirla");
+    assert.equal(Number(tienda.rows[0].precio), 500, "el de la rareza que se puso al subirla");
   });
 
   test("lo retirado sigue saliendo en el panel, pero no en el catálogo del editor", async () => {
