@@ -199,7 +199,7 @@ if(navbar && nav){
     document.getElementById("userMenuWrap")?.remove();
     document.getElementById("userGuestWrap")?.remove();
     document.getElementById("notifBellWrap")?.remove();
-    document.getElementById("navMonedas")?.remove();
+    document.getElementById("navMonedasWrap")?.remove();
     nav.querySelectorAll(":scope > .nav-ayuda").forEach(e => e.remove());
 
     if(usuarioNav){
@@ -210,7 +210,10 @@ if(navbar && nav){
 
             <a class="sesion-extra nav-ayuda" href="chat.html" title="¿Necesitás ayuda? Preguntá en el chat">❔</a>
 
-            <span class="nav-monedas" id="navMonedas" title="Tus monedas"></span>
+            <span class="nav-monedas-wrap" id="navMonedasWrap">
+                <span class="nav-monedas" id="navMonedas" title="Tus monedas"></span>
+                <a class="nav-monedas-mas" href="bazar.html" title="Conseguir más monedas">+</a>
+            </span>
 
             <div class="notif-bell-wrap" id="notifBellWrap">
                 <button type="button" class="sesion-extra notif-bell-boton" id="botonNotificaciones" aria-haspopup="true" aria-expanded="false">
