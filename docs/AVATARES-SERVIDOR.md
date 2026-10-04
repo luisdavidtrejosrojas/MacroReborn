@@ -1034,3 +1034,61 @@ así que hay que correr el relleno justo después de reiniciar: compone
 el compuesto y la foto de cada cuenta. Mientras tanto, la foto que falte
 se compone al pedirla, dos a la vez, y las demás esperan con la silueta
 un minuto.
+
+---
+
+## 14. El pelo de atrás: dos capas de pelo
+
+Decidido el 04/10/2026, porque la comunidad lo pedía mucho: en
+macrojuegos el pelo eran dos piezas, el de delante y el de atrás, y se
+podía llevar el flequillo de un peinado con las colas de otro. Aquí era
+una sola.
+
+Desde entonces el avatar tiene 16 capas. La nueva, `peloatras` ("Pelo
+de atrás" en el editor, el Bazar, el panel de arte y el taller), va
+**justo debajo del pelo**:
+
+    … accesorio, cara, peloatras, pelo, mascota, borde
+
+Así lo eligió el administrador. Se dibuja como el pelo de siempre:
+encima de la ropa y de la cara, y el de delante la tapa. El equipo de
+arte la dibuja igual que dibuja los pelos, pero solo con la melena o
+las colas, en el mismo lienzo de su personaje.
+
+Lo que se decidió con ella:
+
+- **Los 68 pelos de entonces se quedan enteros.** Siguen funcionando
+  solos, con su melena. Para combinar, el equipo de arte dibuja pelos de
+  atrás y, si quiere, pelos de delante sin melena. Partir los de
+  entonces habría cambiado prendas que la gente ya tenía.
+- **En el editor, su botón solo sale en los personajes que ya tienen
+  alguno** (`js/perfil.js`, `filtrarOpcionesPorModelo`). La capa llegó
+  sin dibujos; en el panel y el taller se puede subir y probar desde el
+  primer día.
+- **Se vende por rareza**, como todo (`docs/ECONOMIA.md`).
+
+Lo que NO hizo falta:
+
+- **Migración.** `avatar_prendas.capa` es texto libre; quien decide qué
+  capas existen es `CAPAS`, en `api/_avatar-catalogo.js`, y su gemela
+  del navegador, `ORDEN_CAPAS_AVATAR` en `js/core.js`.
+- **Recomponer los avatares.** La huella solo cuenta las capas que se
+  llevan puestas (`recetaDe`), así que los que no llevan pelo de atrás
+  conservan su huella, su imagen y su dirección.
+- **Tocar el compositor, la vista previa, la foto de perfil o las
+  miniaturas de la tienda.** Todos siguen el orden de `CAPAS`. La
+  miniatura de un pelo de atrás sale como la de un pelo: encima del
+  maniquí, con el cuadro automático.
+
+Lo que muerde: el nombre `peloatras` empieza por `pelo`, así que nada
+puede buscar las prendas de una capa por cómo empieza su valor
+(`tora_peloatras1` empieza por `tora_pelo`). El avatar aleatorio del
+editor lo hacía, y se cambió para mirar la capa de cada prenda. El
+número de la siguiente prenda (`siguienteValor`, en `api/content.js`) no
+tiene el problema: filtra por capa y exige un número justo detrás del
+prefijo. Y en el panel de arte, adivinar la ranura por el nombre del
+archivo funciona porque `peloatras` va antes que `pelo` en la lista.
+
+Las pruebas: `tests/pelo-de-atras.test.js` (orden, huella, guardado y
+tienda) y `tests/editor-pelo-de-atras.test.js` (el botón y el avatar
+aleatorio).
