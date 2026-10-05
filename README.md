@@ -9,6 +9,7 @@ pruebas) y su documentación, que empieza aquí.
 
 - Para trabajar en local (la base de práctica, el servidor local y las pruebas):
   [DESARROLLO](docs/guias/DESARROLLO.md).
+- Para desplegar un cambio: [DESPLEGAR](docs/guias/DESPLEGAR.md).
 - Para saber qué queda por arreglar: [AUDITORIA](docs/listas/AUDITORIA.md).
 
 ## Las reglas
@@ -38,6 +39,7 @@ pruebas) y su documentación, que empieza aquí.
 | Documento | Para quién | Qué cuenta |
 |---|---|---|
 | [DESARROLLO](docs/guias/DESARROLLO.md) | El equipo de desarrollo | Trabajar en local: la base de práctica, el servidor local, las pruebas, los datos de verdad y cómo mirar a ojo los avatares y las previsualizaciones |
+| [DESPLEGAR](docs/guias/DESPLEGAR.md) | Quien despliega, con el OK de Luis | Cómo se pone en producción un cambio: las migraciones, el código, el reinicio, la comprobación y cómo se deshace |
 | [JUEGOS](docs/guias/JUEGOS.md) | Quien añade o quita juegos | Cómo se añade un juego al catálogo y cómo se quita, con casos reales |
 | [CAMBIOS-DE-OTROS-DEVS](docs/guias/CAMBIOS-DE-OTROS-DEVS.md) | Quien funde el trabajo de otra persona | Cómo se funde lo que manda otro dev: el método, qué pedirle y la tabla de rutas de antes |
 | [RETOMAR](docs/guias/RETOMAR.md) | Luis, tras formatear el PC | Lo que no está en el repositorio y dónde se guarda (la llave SSH, los secretos, las copias), y cómo levantar el entorno |

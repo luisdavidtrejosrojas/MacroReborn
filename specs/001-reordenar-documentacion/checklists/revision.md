@@ -42,7 +42,7 @@ Lo que había antes de tocar nada (T001): cuántas pruebas y archivos de prueba,
 |---|---|---|---|---|
 | `docs/guias/SUMARSE.md` | | | | |
 | `docs/guias/DESARROLLO.md` | | | | |
-| `docs/guias/DESPLEGAR.md` | | | | |
+| `docs/guias/DESPLEGAR.md` | 05/10/2026 | El `CLAUDE.md`, §4 de `RETOMAR.md` y §5 de `VPS.md`; el servidor, solo con lectura (el servicio activo, `receive.denyCurrentBranch=updateInstead` en `~/MacroReborn`, `sudo` sin contraseña para `azureuser` y que se entra por el dominio); y la comprobación mínima, contra la web real (200, 404 y 400 como se espera) | «`git pull`» en el servidor (§5 de `VPS.md`): ya no se despliega así. La IP entera de §4 de `RETOMAR.md`: fuera, se usa el dominio |  |
 | `docs/guias/JUEGOS.md` | | | | |
 | `docs/guias/CAMBIOS-DE-OTROS-DEVS.md` | | | | |
 | `docs/guias/RETOMAR.md` | | | | |

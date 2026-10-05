@@ -77,7 +77,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | §3.5 `package.json` | 84-88 | `historia/MUDANZA-AL-VPS.md` | Si `@neondatabase/serverless` sigue, «Lo que falta» lo dice | 05/10/2026 |
 | §4 Configuración y secretos | 89-109 | `ref/VPS.md` | | |
 | §5 Operación: estado, base de datos y respaldos | 110-122 y 132-162 | `ref/VPS.md` | | |
-| §5 «Desplegar un cambio» | 123-131 | `guias/DESPLEGAR.md` | Dice `git pull`: se corrige | |
+| §5 «Desplegar un cambio» | 123-131 | `guias/DESPLEGAR.md` | Dice `git pull`: se corrige | 05/10/2026 |
 | §6 El cron semanal | 163-175 | `ref/VPS.md` | | |
 | §7 La migración de los datos | 176-210 | `historia/MUDANZA-AL-VPS.md` | | 05/10/2026 |
 | §8 Dominio y HTTPS | 211-235 | `ref/VPS.md` | Sin la IP | |
@@ -98,7 +98,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | §1.3 Dónde vive ahora la llave, y por qué ahí | 78-124 | `guias/RETOMAR.md` | | |
 | §2 Dónde vive cada cosa | 125-142 | `ref/ARQUITECTURA.md` y `guias/RETOMAR.md` | Lo general a la visión; lo de Luis (Bitwarden, Drive) se queda. Sin la IP | |
 | §3 Levantar el entorno en un PC nuevo | 143-180 | `guias/SUMARSE.md` y `guias/RETOMAR.md` | Lo de todos a la guía para sumarse; lo que solo restaura Luis (llaves, `.env`, `datos-locales/`, memoria) se queda | |
-| §4 Desplegar un cambio | 181-206 | `guias/DESPLEGAR.md` | | |
+| §4 Desplegar un cambio | 181-206 | `guias/DESPLEGAR.md` | | 05/10/2026 |
 | §5 En qué punto está el trabajo | 207-234 | `historia/HISTORIAL.md` | En la semana del 14 al 20/09; la guía enlaza las listas, `specs/` y el historial | |
 | §6 Lo que muerde si no se sabe | 235-250 | Cada trampa a su documento | fail2ban y la IP de `ignoreip`, a `ref/VPS.md`; las de formatear se quedan | |
 
@@ -149,5 +149,5 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | `ref/ARQUITECTURA.md` | Lo que llega del `README.md`, `DESARROLLO.md` §2, `VPS.md` §3 y `RETOMAR.md` §2, más un párrafo por cada área sin documento propio, leído del código | |
 | `ref/AVISOS.md` | `DESARROLLO.md` §2.3 y §9 | |
 | `guias/SUMARSE.md` | `RETOMAR.md` §3, el «Cómo probar localmente» del `README.md`, lo práctico del `CLAUDE.md` y lo comprobado de Spec Kit (research D14) | |
-| `guias/DESPLEGAR.md` | `VPS.md` §5, `RETOMAR.md` §4 y el `CLAUDE.md` | |
+| `guias/DESPLEGAR.md` | `VPS.md` §5, `RETOMAR.md` §4 y el `CLAUDE.md` | 05/10/2026 |
 | `historia/HISTORIAL.md` | El historial de git, semana a semana (research D6) | |

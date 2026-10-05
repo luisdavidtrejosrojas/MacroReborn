@@ -146,29 +146,9 @@ token en Windows. Tiene que ser una cuenta con permiso de escritura en
 
 ## 4. Desplegar un cambio
 
-El servidor tiene `receive.denyCurrentBranch=updateInstead`, así que un
-push actualiza su árbol de trabajo solo. Después hay que reiniciar:
+Lo explica entero [DESPLEGAR](DESPLEGAR.md).
 
-```bash
-GIT_SSH_COMMAND='ssh -i "<ruta>"' git push vps main
-ssh -i "<ruta>" azureuser@172.184.203.20 "sudo systemctl restart macroreborn"
-```
-
-`npm install --omit=dev` solo si cambió `package-lock.json`.
-
-Comprobación mínima después de desplegar:
-
-```bash
-for R in / /comunidad-ranking.html; do curl -s -o /dev/null -w "%{http_code} $R\n" https://macroreborn.com$R; done
-for R in /.env /.git/config /server.js; do curl -s -o /dev/null -w "%{http_code} $R\n" https://macroreborn.com$R; done   # las tres deben dar 404
-curl -s -o /dev/null -w "%{http_code} URI mal formada\n" 'https://macroreborn.com/%C0%80'                                 # debe dar 400
-```
-
-Vuelta atrás, si algo falla:
-
-```bash
-ssh -i "<ruta>" azureuser@172.184.203.20 "cd ~/MacroReborn && git reset --hard <commit anterior> && sudo systemctl restart macroreborn"
-```
+---
 
 ## 5. En qué punto está el trabajo
 

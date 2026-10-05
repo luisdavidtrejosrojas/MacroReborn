@@ -90,12 +90,8 @@ la máquina.
 
 ### Desplegar un cambio
 
-```bash
-cd ~/MacroReborn
-git pull
-npm install --omit=dev     # solo si cambiaron las dependencias
-sudo systemctl restart macroreborn
-```
+Lo explica entero [DESPLEGAR](../guias/DESPLEGAR.md): las migraciones primero, `git push vps main`
+desde el PC (el servidor se actualiza solo), el reinicio y la comprobación.
 
 ### Base de datos
 
