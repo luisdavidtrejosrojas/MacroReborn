@@ -7,6 +7,8 @@ pruebas) y su documentación, que empieza aquí.
 
 ## Por dónde empezar
 
+- Para sumarse al equipo: preparar el entorno, Spec Kit, los commits, las pruebas y el despliegue,
+  en [SUMARSE](docs/guias/SUMARSE.md).
 - Para entender el sistema de un vistazo, sus partes y qué documento lleva cada área:
   [ARQUITECTURA](docs/referencia/ARQUITECTURA.md).
 - Para trabajar en local (la base de práctica, el servidor local y las pruebas):
@@ -41,6 +43,7 @@ pruebas) y su documentación, que empieza aquí.
 
 | Documento | Para quién | Qué cuenta |
 |---|---|---|
+| [SUMARSE](docs/guias/SUMARSE.md) | Quien se suma al equipo | Preparar el entorno y trabajar como se trabaja aquí: Spec Kit, los commits y las ramas, cómo se prueba y cómo se despliega |
 | [DESARROLLO](docs/guias/DESARROLLO.md) | El equipo de desarrollo | Trabajar en local: la base de práctica, el servidor local, las pruebas, los datos de verdad y cómo mirar a ojo los avatares y las previsualizaciones |
 | [DESPLEGAR](docs/guias/DESPLEGAR.md) | Quien despliega, con el OK de Luis | Cómo se pone en producción un cambio: las migraciones, el código, el reinicio, la comprobación y cómo se deshace |
 | [JUEGOS](docs/guias/JUEGOS.md) | Quien añade o quita juegos | Cómo se añade un juego al catálogo y cómo se quita, con casos reales |

@@ -229,7 +229,7 @@ trabaja aquí.
 abre el sitio en local en menos de 30 minutos (quickstart, escenario 5). Es una prueba manual larga:
 se hace en la validación final (T073), como pide la regla IV.
 
-- [ ] T060 [US4] Escribir `docs/guias/SUMARSE.md` (RF-006, research D14), con su cabecera. Debe contar:
+- [X] T060 [US4] Escribir `docs/guias/SUMARSE.md` (RF-006, research D14), con su cabecera. Debe contar:
   - **Preparar el entorno**: Node 20.19 o más nuevo, `git clone`, `npm ci`, `npm test`, `npm run db:local` y qué hacer si el puerto 3001 está ocupado.
   - **Cómo se trabaja con Spec Kit**: instalar uv y `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@v1.1.0`; con Claude Code basta abrir la carpeta del proyecto; con otro asistente, `specify integration install <asistente>` en una rama, mirando `git status` antes del commit; en macOS y Linux hace falta PowerShell 7; y los pasos `/speckit-*`, ninguno encadenado sin el OK de Luis.
   - **Commits y ramas**: el formato `Área: qué cambia`; cada dev firma con su propia identidad (la regla V, que aclara la enmienda v1.0.1, es para los commits de Luis y de Claude); nadie añade líneas de asistentes; un commit por cambio, una rama por spec y la unión a `main` sin pull request, con la integración continua en verde.

@@ -148,6 +148,6 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 |---|---|---|
 | `ref/ARQUITECTURA.md` | Lo que llega del `README.md`, `DESARROLLO.md` §2, `VPS.md` §3 y `RETOMAR.md` §2, más un párrafo por cada área sin documento propio, leído del código | |
 | `ref/AVISOS.md` | `DESARROLLO.md` §2.3 y §9 | |
-| `guias/SUMARSE.md` | `RETOMAR.md` §3, el «Cómo probar localmente» del `README.md`, lo práctico del `CLAUDE.md` y lo comprobado de Spec Kit (research D14) | |
+| `guias/SUMARSE.md` | `RETOMAR.md` §3, el «Cómo probar localmente» del `README.md`, lo práctico del `CLAUDE.md` y lo comprobado de Spec Kit (research D14) | 05/10/2026 |
 | `guias/DESPLEGAR.md` | `VPS.md` §5, `RETOMAR.md` §4 y el `CLAUDE.md` | 05/10/2026 |
 | `historia/HISTORIAL.md` | El historial de git, semana a semana (research D6) | |
