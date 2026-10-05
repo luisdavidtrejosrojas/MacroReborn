@@ -148,7 +148,7 @@ explica `docs/guias/DESPLEGAR.md`; y la comprobación 6 está en verde.
 - [X] T031 [US2] Crear `docs/historia/FUGA-DEL-ENV.md` con «La fuga del `.env`» de §9 de `docs/referencia/VPS.md`, con las IP de fuera tapadas (`130.x.x.x`, research D8); en `VPS.md` quedan el resumen y lo que dejó (la lista blanca de `server.js`).
 - [X] T032 [US2] Crear `docs/historia/LLAVE-SSH.md` con §1.1 y §1.2 de `docs/guias/RETOMAR.md`; en la guía queda la advertencia en dos líneas.
 - [X] T033 [US2] Crear `docs/historia/SALDOS-REHECHOS.md` con §5 de `docs/referencia/ECONOMIA.md`; en la referencia quedan el resumen y el aviso de que el recálculo ya se aplicó y no se repite.
-- [ ] T034 [US2] Crear `docs/historia/ACTIVAR-LA-MODERACION.md` con §5 de `docs/referencia/MODERACION.md`.
+- [X] T034 [US2] Crear `docs/historia/ACTIVAR-LA-MODERACION.md` con §5 de `docs/referencia/MODERACION.md`.
 - [ ] T035 [US2] Crear `docs/historia/CASOS-DE-OTROS-DEVS.md` con §1 y §2 de `docs/guias/CAMBIOS-DE-OTROS-DEVS.md`; la guía se queda con el método (lo que se repite en los dos casos, más §3) y con la tabla de rutas.
 
 ### Un tema, un documento (RF-009)

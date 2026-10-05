@@ -54,6 +54,7 @@ pruebas) y su documentación, que empieza aquí.
 | Fecha | Documento | Qué cuenta |
 |---|---|---|
 | 04/10/2026 | [SALDOS-REHECHOS](docs/historia/SALDOS-REHECHOS.md) | El recálculo de una sola vez de todos los saldos con la economía nueva: qué calculó, cómo se corrió, lo que salió y el respaldo de antes |
+| 28/09/2026 | [ACTIVAR-LA-MODERACION](docs/historia/ACTIVAR-LA-MODERACION.md) | Lo que se hizo el día que se activaron las sanciones: la cuenta que quedó baneada y las columnas viejas que dejaron de usarse |
 | 22/09/2026 | [FRONTEND](docs/historia/FRONTEND.md) | Por qué el navegador está como está, qué se usaría empezando de cero y por qué no se reescribe |
 | 21/09/2026 | [AVATARES-AL-SERVIDOR](docs/historia/AVATARES-AL-SERVIDOR.md) | El plan de pasar los avatares al servidor: por qué, lo medido sobre el VPS, sus cinco fases, lo aprendido de macrojuegos y cómo se decidió la foto de perfil |
 | 19/09/2026 | [LLAVE-SSH](docs/historia/LLAVE-SSH.md) | Las dos veces que se perdió la llave para entrar al servidor, la lección que dejó y lo que se cambió el 19/09 |

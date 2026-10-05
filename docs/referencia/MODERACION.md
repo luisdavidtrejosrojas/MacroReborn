@@ -139,14 +139,12 @@ ya abierto en pantalla, hasta que recargue.
 
 ---
 
-## 5. Lo que se hizo al activarlo
+## 5. Al activarla
 
-- **"Pene grande"**, la cuenta suspendida el 15/09 por nombre
-  inapropiado (que siguió entrando: el 20/09 lo hizo), quedó baneada,
-  también decidido ese día.
-- Las columnas viejas (`users.suspendido`, `fecha_suspension`,
-  `motivo_suspension`) ya no se usan. Se quedan, sin tocar, hasta
-  quitarlas en una migración aparte.
+La moderación se activó el 28/09/2026, y lo que se hizo ese día lo cuenta
+[ACTIVAR LA MODERACIÓN](../historia/ACTIVAR-LA-MODERACION.md). De entonces queda una cosa: las columnas
+viejas (`users.suspendido`, `fecha_suspension` y `motivo_suspension`) ya no se usan, y se quedan sin
+tocar hasta quitarlas en una migración aparte.
 
 ---
 

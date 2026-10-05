@@ -72,7 +72,7 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 | `docs/historia/CONTRASENAS-EN-CLARO.md` | 05/10/2026 | Con §1, §3 y §5 de `CUENTAS.md` y §2.4, §3.3 y §4 de `DESARROLLO.md`, de donde salieron enteras; §2.2 de `DESARROLLO.md` se fundió en §2 de `CUENTAS.md` | Nada: es historia. Sus tres citas a `CUENTAS.md` pasaron a enlaces dentro del propio documento |  |
 | `docs/historia/LLAVE-SSH.md` | 05/10/2026 | Con §1.1 (el relato y la lección) y §1.2 de `RETOMAR.md`, de donde salieron enteras | Nada: es historia |  |
 | `docs/historia/SALDOS-REHECHOS.md` | 05/10/2026 | Con §5 de `ECONOMIA.md`, de donde salió entera | Nada: es historia |  |
-| `docs/historia/ACTIVAR-LA-MODERACION.md` | | | | |
+| `docs/historia/ACTIVAR-LA-MODERACION.md` | 05/10/2026 | Con §5 de `MODERACION.md`, de donde salió entera | Nada: es historia. Lo que sigue vigente (las columnas viejas sin usar, comprobado en el código) se queda también resumido en la referencia |  |
 | `docs/historia/CASOS-DE-OTROS-DEVS.md` | | | | |
 
 ## Fuera de `docs/`
