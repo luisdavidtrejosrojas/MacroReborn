@@ -25,7 +25,7 @@ la integración continua (Node 20 y 22). Las decisiones que hay detrás están e
 | 1 | Enlaces de Markdown relativos `[texto](destino)` | Todo `.md`, incluido `specs/`, fuera de bloques de código y de texto entre comillas invertidas | El destino existe (archivo o carpeta), resuelto desde la carpeta del documento; si lleva `#ancla`, el título existe en el destino |
 | 2 | Menciones `docs/...md`, con ancla o sin ella | Todo archivo de texto, salvo `specs/` | El documento existe, desde la raíz; si lleva `#ancla`, el título también |
 | 3 | Rutas del repositorio entre comillas invertidas | Documentación fuera de `docs/historia/` y `specs/` | Existe, desde la raíz o desde la carpeta del documento |
-| 4 | Comandos `npm test` y `npm run X` entre comillas invertidas | La misma que la 3 | El script está en `package.json` |
+| 4 | Comandos `npm test` y `npm run X`, entre comillas invertidas o en bloques de código | La misma que la 3 | El script está en `package.json` |
 | 5 | El índice | `README.md` y `docs/` | Cada `.md` de `docs/` está enlazado desde el `README.md` |
 | 6 | La cabecera | `docs/` | Cada `.md` empieza por un título `# ` y las líneas `> **De qué trata:**`, `> **Para quién:**` y `> **Revisado:** DD/MM/AAAA` |
 
@@ -44,7 +44,8 @@ Antes de comprobarla se le quitan el número de línea (`js/amigos.js:212`), la 
 - las URL y las rutas del servidor (empiezan por `/` o por `~`);
 - los patrones y marcadores: con `*`, `<`, `>`, `{`, `}` o espacios, y las plantillas como
   `specs/NNN-nombre/`;
-- lo que el `.gitignore` deja fuera a propósito (`datos-locales/...`, `memoria-claude/...`).
+- lo que el `.gitignore` deja fuera a propósito (`datos-locales/...`, `memoria-claude/...`), y
+  tampoco los enlaces que llevan ahí.
 
 ## Las anclas
 
