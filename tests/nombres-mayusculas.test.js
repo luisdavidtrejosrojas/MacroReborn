@@ -27,7 +27,7 @@ const { crearBaseLocal, crearSqlPGlite } = require("../scripts/pglite");
 const { usarSqlLocal } = require("../api/_db");
 const { cuentaPorNombre, getUserId } = require("../api/_utils");
 
-let db, sql;
+let db, sql, users;
 const CLAVE = "clave-de-prueba";
 const ids = {};
 
@@ -35,6 +35,7 @@ before(async () => {
   db = await crearBaseLocal();
   sql = crearSqlPGlite(db);
   usarSqlLocal(sql);
+  users = require("../api/users");
   const hash = bcrypt.hashSync(CLAVE, 4);
   for (const username of ["MATEO503", "jader", "Jader"]) {
     const r = await db.query(
@@ -48,6 +49,21 @@ const nombreDe = async (escrito) => {
   const cuenta = await cuentaPorNombre(sql, escrito);
   return cuenta ? cuenta.username : null;
 };
+
+function llamar(handler, metodo, query, body, headers) {
+  return new Promise((resolve) => {
+    const req = { method: metodo, query: query || {}, body: body || {}, headers: headers || {} };
+    handler(req, {
+      statusCode: 200,
+      status(c) { this.statusCode = c; return this; },
+      setHeader() {},
+      json(o) { resolve({ codigo: this.statusCode, cuerpo: o }); },
+      end() { resolve({ codigo: this.statusCode, cuerpo: null }); }
+    });
+  });
+}
+
+const perfil = (escrito, extra) => llamar(users, "GET", { username: escrito, ...extra });
 
 test("el nombre exacto, como siempre", async () => {
   assert.equal(await nombreDe("MATEO503"), "MATEO503");
@@ -77,4 +93,20 @@ test("lo que no existe sigue sin existir", async () => {
   assert.equal(await nombreDe("Nadie"), null);
   assert.equal(await nombreDe(""), null);
   assert.equal(await nombreDe(null), null);
+});
+
+test("el perfil se abre con otras mayúsculas, y dice el nombre guardado", async () => {
+  for (const extra of [{}, { ligero: "1" }]) {
+    const r = await perfil("Mateo503", extra);
+    assert.equal(r.codigo, 200, JSON.stringify(extra));
+    assert.equal(r.cuerpo.user.username, "MATEO503");
+    assert.equal(Number(r.cuerpo.user.id), ids.MATEO503);
+  }
+});
+
+test("el perfil de cada mitad de una pareja es el suyo, y el ambiguo no abre ninguno", async () => {
+  assert.equal(Number((await perfil("jader")).cuerpo.user.id), ids.jader);
+  assert.equal(Number((await perfil("Jader")).cuerpo.user.id), ids.Jader);
+  assert.equal((await perfil("JADER")).codigo, 404);
+  assert.equal((await perfil("Nadie")).codigo, 404);
 });

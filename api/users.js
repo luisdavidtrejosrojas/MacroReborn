@@ -1,4 +1,4 @@
-const { setCors } = require("./_utils");
+const { setCors, cuentaPorNombre } = require("./_utils");
 const { avisar, canalNotificaciones } = require("./_avisos");
 const { obtenerSql } = require("./_db");
 const { PasswordService } = require("./_password");
@@ -303,7 +303,11 @@ async function listarUsuarios(req, res) {
     // ca518e6, así que para dibujar no cambia nada.
     const avatarUno = req.query.ligero ? avatarLigeroSQL : sql`u.avatar AS avatar`;
 
-    const usuario = await sql`
+    // Con las mayúsculas que sea: un enlace a "Mateo503" abre el perfil
+    // de "MATEO503" (cuentaPorNombre() en api/_utils.js).
+    const cuenta = await cuentaPorNombre(sql, username);
+
+    const usuario = !cuenta ? [] : await sql`
       SELECT u.id, u.username, u.level, u.xp, u.monedas, u.status, u.bio, ${avatarUno}, u.avatar_compuesto, u.created_at, u.last_login,
              ${sancionSQL},
              u.rank_actual, u.rank_anterior, u.ranking_puntuacion,
@@ -313,7 +317,7 @@ async function listarUsuarios(req, res) {
       LEFT JOIN ranking_actividad_semanal ras
         ON ras.user_id = u.id AND ras.semana = ${semanaActualSQL}
       ${sancionJoinSQL}
-      WHERE u.username = ${username};
+      WHERE u.id = ${cuenta.id};
     `;
 
     if (usuario.length === 0) {
