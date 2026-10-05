@@ -1,19 +1,27 @@
-# LA ECONOMÍA
+# ECONOMIA — las monedas: cómo se ganan y en qué se gastan
+
+> **De qué trata:** la economía del sitio desde el 04/10/2026: lo que se decidió, los precios por
+> rareza, cómo se ganan las monedas, que el tiempo solo cuenta con alguien delante, el recálculo de los
+> saldos y las pruebas que lo sujetan.
+>
+> **Para quién:** el equipo de desarrollo, y quien decida precios o premios.
+>
+> **Revisado:** 05/10/2026
 
 Rehecha el 4 de octubre de 2026, porque la gente se quejaba de que todo
 estaba muy caro. Y lo estaba: las prendas del equipo de arte iban de
 1.500 a 50.000 monedas, y se ganaban como mucho 500 al día. Los números
 de abajo salen de simular jugadores de distintos tipos, día a día,
 probando 1.152 combinaciones de precios y premios hasta dar con la que
-cumplía lo que se pidió (sección 1).
+cumplía lo que se pidió ([lo que se decidió](#1-lo-que-se-decidió)).
 
 Desde entonces:
 
-- las prendas tienen **rareza**, y la rareza el precio (sección 2);
-- se gana por **jugar, misiones, racha, logros y niveles** (sección 3);
-- el tiempo de juego solo cuenta **con alguien delante** (sección 4);
+- las prendas tienen **rareza**, y la rareza el precio ([los precios](#2-los-precios));
+- se gana por **jugar, misiones, racha, logros y niveles** ([cómo se ganan](#3-cómo-se-ganan));
+- el tiempo de juego solo cuenta **con alguien delante** ([solo con alguien delante](#4-solo-con-alguien-delante));
 - y el saldo de cada cuenta se **rehízo** con las reglas nuevas, sin
-  que nadie perdiera (sección 5).
+  que nadie perdiera ([los saldos rehechos](#5-los-saldos-rehechos)).
 
 ---
 
@@ -42,7 +50,7 @@ Desde entonces:
 | Épica | 1.400 | en 7 a 9 días | de 3.001 a 14.999 (60) |
 | Legendaria | 6.000 | en 29 a 32 días | de 15.000 en adelante (17) |
 
-Todo el catálogo junto costaba 1.049.547 monedas; ahora, 243.500.
+Todo el catálogo junto costaba 1.049.547 monedas; con la bajada del 04/10/2026, 243.500.
 
 Una cuenta nueva empieza con 500: le alcanza para una rara, o para
 vestirse entera de comunes.
@@ -58,7 +66,8 @@ que digan lo mismo. Se puede aplicar más de una vez.
 `taller.html`) y la puede cambiar después con "Editar"; el precio sale
 solo. La API sigue aceptando un `precio` en vez de una `rareza`, y lo
 convierte con los mismos cortes que la migración. Lo ya pagado no se
-toca: cada compra guarda lo que costó (`precio_pagado`, `docs/referencia/TIENDA.md`).
+toca: cada compra guarda lo que costó (`precio_pagado`, en
+[la migración 022](TIENDA.md#3-la-migración-022)).
 
 **El Bazar** enseña la rareza en cada tarjeta, con su color, y deja
 filtrar por ella.
@@ -86,7 +95,7 @@ pedirlos todos de golpe daría miles, así que `api/_logros.js` mira en la
 base lo mismo que el navegador: nivel, juegos jugados, avatar,
 comentarios, amigos y puesto del ranking. Si no se cumple, no se guarda.
 
-**Lo que da al día**, según la simulación (400 jugadores de cada tipo,
+**Lo que da al día**, según la simulación del 04/10/2026 (400 jugadores de cada tipo,
 90 días; el día de la épica y la legendaria es la mediana, entre
 paréntesis lo que tarda el 10 % más rápido y el 10 % más lento):
 
@@ -118,7 +127,7 @@ había alguien: había días de 24 horas "jugadas".
 
 `js/motor/actividad-jugador.js` escucha el teclado, el ratón y los
 toques, en la página y **dentro del juego**: 108 de los 112 juegos son
-de la propia web y se puede escuchar dentro. A los **3 minutos** sin
+de la propia web (05/10/2026) y se puede escuchar dentro. A los **3 minutos** sin
 nada, el navegador deja de mandar el pulso (`js/motor/xp.js`): ni
 minuto, ni XP, ni racha, ni monedas, hasta que se vuelva a tocar algo.
 
