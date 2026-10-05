@@ -47,7 +47,7 @@ de un minuto.
 - El comportamiento del sitio no cambia: en el código solo cambian comentarios.
 - Nada en el servidor cambia: el VPS solo se lee. Si `infra/` no coincide con él, se corrige la copia.
 - Las listas vivas conservan sus filas y sus números (regla XXXI).
-- Sin IP enteras ni datos personales en lo que se escriba (regla XXV, research D8).
+- Sin IP enteras, correos ni datos personales en lo que se escriba (regla XXV, research D8).
 - Sin subagentes (regla VIII): la investigación y las tareas, una tras otra.
 - La integración continua está en rojo por la prueba de humo de monedas (spec 002): la rama no se une a
   `main` hasta que esté en verde o Luis decida otra cosa.
@@ -68,15 +68,15 @@ historia.
 |---|---|---|
 | I. Idioma | Todo en español, también la prueba y sus mensajes | Cumple |
 | II. Discutir antes de construir | Especificación aclarada; nada se implementa hasta que Luis apruebe este plan y las tareas | Cumple |
-| IV. Desarrollar primero, pulir al final | En cada paso, solo `npm test`. Las validaciones largas van juntas al final ([quickstart.md](quickstart.md)); lo que no se pueda hacer queda «Pendiente de probar» | Cumple |
-| V. Un commit por paso mínimo | Una mudanza, una separación o una revisión por commit, firmados por Luis y sin líneas de Claude (research D13) | Cumple |
+| IV. Desarrollar primero, pulir al final | En cada paso, solo `npm test`. Las validaciones largas, como la guía de los 30 minutos sobre una copia limpia, van juntas al final ([quickstart.md](quickstart.md)); lo que no se pueda hacer queda «Pendiente de probar» | Cumple |
+| V. Un commit por paso mínimo | Una mudanza, una separación o una revisión por commit, firmados por Luis y sin líneas de Claude (research D13). La guía para sumarse dirá que cada dev firma con su propia identidad, y la enmienda v1.0.1 lo aclara en esta regla (research D12) | Cumple |
 | VI. Pasos manuales de uno en uno | Lo único que hace Luis es aprobar: el plan, las tareas y la enmienda v1.0.1 | Cumple |
 | VII. Sin gastos | Nada de pago | Cumple |
 | VIII. Sin subagentes | La investigación se hizo sin ellos y las tareas irán una tras otra | Cumple |
 | IX. Conversación breve, documentos completos | Los documentos son completos; a Luis se le resume en pocas líneas | Cumple |
 | X. Respaldo en GitHub | `git push origin` al acabar cada tarea | Cumple |
 | XI. Simplicidad | Sin dependencias nuevas, sin scripts que se queden en el repositorio para el historial. Lo que va más allá de lo mínimo está justificado abajo | Cumple, con justificación |
-| XII. Terminado significa comprobado | La prueba entra primero y se activa por partes para que `npm test` esté en verde tras cada tarea (research D5) | Cumple |
+| XII. Terminado significa comprobado | La prueba entra primero y se activa por partes para que `npm test` esté en verde tras cada tarea (research D5). Toda tarea deja su commit: las que trabajan fuera del repositorio (la memoria de Claude, los scripts de un solo uso) dejan constancia en la lista de revisión o van con la tarea vecina | Cumple |
 | XIII. Nunca fallar en silencio | La prueba junta todos los fallos y cada mensaje dice qué corregir | Cumple |
 | XV. Seguro | Ningún secreto en la documentación: el `.env` de ejemplo lleva marcadores | Cumple |
 | XVII. Todo reversible | Cada mudanza y cada separación es un commit; se deshacen por piezas. Sin migraciones | Cumple |
@@ -85,7 +85,7 @@ historia.
 | XXI. Desplegar solo con el OK de Luis | No hace falta desplegar: en el código solo cambian comentarios. La copia del VPS se pone al día en el próximo despliegue | Cumple |
 | XXII. Pruebas sin tocar lo real | La prueba solo lee archivos del repositorio. La unión a `main` espera a que la integración continua esté en verde | Cumple |
 | XXIV. Lo que no se rompe | No cambia ninguna lista blanca: `server.js` y nginx ya cierran `docs/` entera y cualquier `.md`, subcarpetas incluidas. El marcador de la IP del administrador no se toca | Cumple |
-| XXV. Los datos de la comunidad no salen | La IP del servidor y las de fuera salen de la documentación; las excepciones están en research D8 | Cumple |
+| XXV. Los datos de la comunidad no salen | La IP del servidor, las de fuera y los correos salen de la documentación, sin excepciones (research D8) | Cumple |
 | XXVII. Los cambios de otros devs se funden | La guía gana la tabla «ruta vieja → ruta nueva» | Cumple |
 | XXIX. El arte no se publica | La documentación no incluye arte | Cumple |
 | XXX. Sin emojis | Se quitan los de `SUGERENCIAS.md`; los antiguos se quedan (research D16) | Cumple |
@@ -98,6 +98,10 @@ interfaz ni el rendimiento del sitio.
 **Después del diseño**: se repasó la tabla con el diseño terminado y sigue igual. También se respeta
 la sección de gobierno de la constitución: la enmienda v1.0.1 se hace con `/speckit-constitution` y el
 OK expreso de Luis (research D12).
+
+**Después de `/speckit-analyze`** (05/10/2026): el análisis encontró tres choques con la constitución,
+ya corregidos: dos correos que el plan dejaba en documentos (regla XXV), seis tareas sin commit
+(regla XII) y una prueba manual larga en medio del trabajo (regla IV).
 
 ## Estructura
 
@@ -194,7 +198,7 @@ Lo que va más allá de lo mínimo, con su motivo (regla XI):
 
 | Qué | Por qué hace falta | Lo más simple, y por qué no basta |
 |---|---|---|
-| El `CLAUDE.md` repite resúmenes cortos, una excepción a RF-009 | Claude Code solo carga el `CLAUDE.md` al empezar cada sesión, no los documentos que enlaza | Solo enlaces: cada sesión leería varios documentos antes de poder probar o desplegar |
+| El `CLAUDE.md` repite resúmenes cortos, la excepción que recoge RF-009 | Claude Code solo carga el `CLAUDE.md` al empezar cada sesión, no los documentos que enlaza | Solo enlaces: cada sesión leería varios documentos antes de poder probar o desplegar |
 | La prueba vigila también el índice y las cabeceras (comprobaciones 5 y 6) | CE-002 y CE-004 piden que estén siempre, y a mano se olvida en la primera spec que añada un documento | Comprobarlo a mano en cada spec |
 | `CUENTAS.md` estrena una sección sobre los nombres de usuario | El área de cuentas no tiene documento, y el cambio del punto 31 solo lo cuenta la auditoría | Dejarlo en un párrafo de `ARQUITECTURA.md`: sería el único cambio de hoy sin referencia |
 | `AUDITORIA.md` estrena una sección de enlaces a los pendientes de otros documentos | «¿Qué queda por arreglar?» se responde desde un solo sitio (historia 1) | Dejar los pendientes repartidos en seis documentos |
