@@ -99,6 +99,13 @@ Lo que solo sirve para volver a montar el PC de Luis (la llave, Bitwarden, la co
 | Los juegos | [JUEGOS](../guias/JUEGOS.md) | `js/datos-juegos.js`, `html/juegos/`, `js/juego.js`, `js/jugar.js` |
 | El servidor y producción | [VPS](VPS.md) y [DESPLEGAR](../guias/DESPLEGAR.md) | `server.js`, `cluster.js`, `infra/` |
 | Trabajar en local | [DESARROLLO](../guias/DESARROLLO.md) | `scripts/pglite.js`, `scripts/servidor-local.js`, `tests/` |
+| Perfiles | Sin documento propio: [abajo](#las-áreas-sin-documento-propio) | `perfil.html`, `usuario.html`, `js/perfil.js`, `js/usuario.js`, `api/users.js` |
+| Amigos | Sin documento propio: [abajo](#las-áreas-sin-documento-propio) | `amigos.html`, `js/amigos.js`, `api/social.js` |
+| Chat | Sin documento propio: [abajo](#las-áreas-sin-documento-propio) | `chat.html`, `js/chat.js`, la acción `chat` de `api/content.js` |
+| Comunidad y rankings | Sin documento propio: [abajo](#las-áreas-sin-documento-propio) | `comunidad-ranking.html`, `liga-global.html`, `js/comunidad-ranking.js`, `api/system.js`, `api/originales-ranking.js` |
+| Misiones y logros | Sin documento propio: [abajo](#las-áreas-sin-documento-propio) | `mi-dia.html`, `progreso.html`, `api/_misiones.js`, `api/progreso.js`, `api/_logros.js` |
+| Notificaciones y noticias | Sin documento propio: [abajo](#las-áreas-sin-documento-propio) | `notificaciones.html`, `js/notificaciones.js`, `api/_notifications.js`, `noticias.html` |
+| Descubrir juegos | Sin documento propio: [abajo](#las-áreas-sin-documento-propio) | `index.html`, `explorar.html`, `js/home-portal.js`, `js/descubrimiento.js` |
 | Lo que hay por arreglar | [AUDITORIA](../listas/AUDITORIA.md) | — |
 | Lo que pidió la comunidad | [SUGERENCIAS](../listas/SUGERENCIAS.md) | — |
 
