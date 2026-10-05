@@ -371,6 +371,9 @@ las reglas V, XIX y XXXII, la versión, la fecha y el informe de sincronización
 con su fecha, en cuanto Luis lo dé. Mientras tanto la rama no se une a
 `main`, así que `main` nunca ve una constitución a medias.
 
+**Aprobada**: Luis aprobó los cuatro cambios (las rutas, la regla XIX, la regla XXXII y la regla V) el
+05/10/2026, antes de la primera mudanza (T004).
+
 **Alternativas descartadas**: subir a v1.1.0 metiendo la regla del historial en el flujo de trabajo
 (sería un cambio MINOR que la spec no pide; Luis puede pedirlo después).
 
