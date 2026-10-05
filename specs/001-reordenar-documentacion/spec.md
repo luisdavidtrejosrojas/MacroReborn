@@ -25,6 +25,17 @@ MacroReborn tiene mucha documentación y buena: 15 documentos en `docs/` (unas 5
 Esta especificación pide que la documentación quede ordenada, al día y fácil de recorrer, sin perder
 nada de lo que ya cuenta. No cambia el comportamiento del sitio.
 
+## Aclaraciones
+
+### Sesión 2026-10-05
+
+- P: ¿Desde cuándo se reconstruye el historial de cambios? → R: Desde el inicio del proyecto (agosto de
+  2026), a partir del historial de git y agrupado por semanas.
+- P: ¿Dónde va el contenido histórico o de investigación? → R: En una carpeta de historia, un documento
+  por tema. En el documento de referencia queda un resumen de dos líneas con el enlace.
+- P: ¿Los documentos se reparten en subcarpetas por tipo? → R: Sí: referencia, guías, listas vivas e
+  historia. Se actualizan todas las menciones que los citan.
+
 ## Escenarios de uso y pruebas *(obligatorio)*
 
 ### Historia 1 - Encontrar rápido lo que se busca (Prioridad: P1)
@@ -164,17 +175,19 @@ sin mayúsculas) y encontrarlos en el historial con su fecha.
   - cómo se nombran los commits y cómo se usan las ramas;
   - cómo se prueba y cómo se despliega;
   - que la constitución manda.
-- **RF-007**: DEBE existir un historial de cambios ordenado por fecha, donde cada entrada diga qué cambió
-  y enlace a donde se explica. [NEEDS CLARIFICATION: ¿desde cuándo se reconstruye el historial?]
+- **RF-007**: DEBE existir un historial de cambios ordenado por fecha, desde el inicio del proyecto
+  (agosto de 2026), reconstruido a partir del historial de git y agrupado por semanas. Cada entrada dice
+  qué cambió y enlaza a donde se explica.
 - **RF-008**: Cada documento DEBE revisarse contra el estado actual del proyecto, y toda afirmación
   caducada DEBE corregirse.
 - **RF-009**: Cada tema DEBE tener un único documento de referencia; si aparece en otros, esos enlazan al
   de referencia en lugar de repetirlo.
-- **RF-010**: El contenido histórico o de investigación DEBE conservarse entero, separado de la
-  referencia. [NEEDS CLARIFICATION: ¿dónde va lo histórico?]
-- **RF-011**: Después de reordenar, DEBEN funcionar todos los enlaces entre documentos y todas las
-  menciones a documentos desde el código y sus comentarios.
-  [NEEDS CLARIFICATION: ¿se reparten los documentos en subcarpetas por tipo o se quedan todos en `docs/`?]
+- **RF-010**: El contenido histórico o de investigación DEBE conservarse entero en una carpeta de
+  historia, un documento por tema. En el documento de referencia DEBE quedar un resumen de dos líneas con
+  el enlace.
+- **RF-011**: Los documentos DEBEN repartirse en subcarpetas por tipo (referencia, guías, listas vivas e
+  historia). Después de moverlos DEBEN funcionar todos los enlaces entre documentos y todas las menciones
+  a documentos desde el código y sus comentarios, el `CLAUDE.md`, el `.gitignore` y la constitución.
 - **RF-012**: Todo lo nuevo o reescrito DEBE cumplir la constitución:
   - español;
   - sin emojis, quitando los de `docs/SUGERENCIAS.md`;
@@ -221,8 +234,10 @@ sin mayúsculas) y encontrarlos en el historial con su fecha.
   Lo existente se documenta en `docs/` y lo nuevo entra por Spec Kit.
 - Las listas vivas mantienen su formato y su numeración.
 - `memoria-claude/` y `sugerencias-discord/` siguen fuera de git (regla XXV).
-- Los nombres actuales de los documentos se conservan salvo que haya un buen motivo, porque el código los
-  cita.
+- Los documentos conservan su nombre de archivo dentro de su nueva subcarpeta, salvo que haya un buen
+  motivo; lo que cambia es la ruta.
+- La constitución cita rutas de documentos (por ejemplo `docs/AUDITORIA.md` y `docs/VPS.md`). Se
+  corrigen con una enmienda PATCH (v1.0.1) que Luis aprueba, como pide su sección de gobierno.
 - La integración continua está en rojo por una causa ajena (la prueba de humo de monedas). No bloquea esta
   especificación, pero esta rama no se une a `main` hasta que esté en verde o Luis decida otra cosa
   (regla XXII).

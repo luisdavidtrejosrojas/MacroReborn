@@ -13,7 +13,7 @@
 
 ## Requisitos completos
 
-- [ ] No quedan marcas [NEEDS CLARIFICATION]
+- [x] No quedan marcas [NEEDS CLARIFICATION]
 - [x] Los requisitos se pueden comprobar y no son ambiguos
 - [x] Los criterios de éxito se pueden medir
 - [x] Los criterios de éxito no dependen de una tecnología
@@ -34,7 +34,8 @@
 - **Sobre "sin detalles de implementación":** la especificación nombra archivos (`README.md`, `docs/`,
   `CLAUDE.md`) porque en este caso el producto es la documentación misma. No dice cómo construir nada:
   ni herramientas ni formatos.
-- **Quedan tres marcas [NEEDS CLARIFICATION]** (RF-007, RF-010 y RF-011), que se le preguntan a Luis
-  antes de seguir: desde cuándo se reconstruye el historial, dónde va lo histórico y si los documentos se
-  reparten en subcarpetas.
-- Primera revisión: 2026-10-05. Todo lo demás pasa.
+- **Primera revisión (2026-10-05):** quedaban tres marcas [NEEDS CLARIFICATION] (RF-007, RF-010 y
+  RF-011).
+- **Segunda revisión (2026-10-05):** Luis respondió A, A, B: historial desde agosto de 2026, una carpeta
+  de historia y subcarpetas por tipo. Las respuestas están en la sección de aclaraciones de la
+  especificación, y ya pasa todo.
