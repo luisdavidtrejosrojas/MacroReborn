@@ -30,8 +30,8 @@ Un archivo de documentación dentro de `docs/`.
 | Está enlazado desde el `README.md` con una frase | RF-002, CE-002 | Prueba, comprobación 5 |
 | Sus enlaces y menciones a otros documentos llevan a algo que existe, ancla incluida | RF-011, CE-003 | Prueba, comprobaciones 1 y 2 |
 | Si no es de historia, las rutas y comandos que cita existen | RF-008, CE-004 | Prueba, comprobaciones 3 y 4 |
-| Sin IP enteras, correos ni datos personales, salvo las dos excepciones de research D8 | RF-012, regla XXV | A mano, con una búsqueda |
-| Si es nuevo o reescrito, sin emojis | RF-012, CE-007 | A mano, con una búsqueda |
+| Sin IP enteras, correos ni datos personales, sin excepciones (research D8) | RF-012, regla XXV | A mano, con una búsqueda |
+| Lo nuevo y los pasajes reescritos, sin emojis; los antiguos de lo que solo se revisa se quedan | RF-012, CE-007 | A mano, con una búsqueda |
 | Las cifras que cambian solas llevan su fecha | RF-008, research D7 | A mano, al revisarlo |
 
 **Estados** de cada documento de hoy:
