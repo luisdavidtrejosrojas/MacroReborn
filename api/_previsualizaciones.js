@@ -3,7 +3,7 @@
 // ==============================
 // api/_previsualizacion.js dibuja una y api/_recortes.js decide su
 // cuadro. Esto decide con que nombre se guarda, donde, cuando hay que
-// rehacerla y como se sirve. Fase 4 de docs/AVATARES-SERVIDOR.md.
+// rehacerla y como se sirve. Fase 4 de docs/referencia/AVATARES.md.
 // Calcado de api/_avatar-compuesto.js, que hace lo mismo con los avatares.
 //
 // ---------------------------------------------------------------

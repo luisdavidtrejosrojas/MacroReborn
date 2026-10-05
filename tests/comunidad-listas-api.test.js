@@ -1,7 +1,7 @@
 // ==============================
 // LAS LISTAS PEQUEÑAS DE COMUNIDAD — tests/comunidad-listas-api.test.js
 // ==============================
-// Fase 3 de docs/AVATARES-SERVIDOR.md, página de comunidad. Además de
+// Fase 3 de docs/referencia/AVATARES.md, página de comunidad. Además de
 // la cuadrícula principal, la página pinta tres listas con su propia
 // consulta: recién llegados (community-stats), moderación
 // (moderators-status) y la actividad (community-feed).

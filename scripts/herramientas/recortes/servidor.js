@@ -6,7 +6,7 @@
 // previsualizacion, y forzar uno para toda una capa de un modelo si hace
 // falta: la prenda puesta sobre su maniqui, el cuadro encima y la
 // miniatura final en vivo. Lo forzado va a
-// api/recortes-previsualizacion.json. Fase 4 de docs/AVATARES-SERVIDOR.md.
+// api/recortes-previsualizacion.json. Fase 4 de docs/referencia/AVATARES.md.
 //
 // SOLO EXISTE EN EL SERVIDOR LOCAL. Esto lo engancha
 // scripts/servidor-local.js y nadie mas: server.js no lo carga, y la

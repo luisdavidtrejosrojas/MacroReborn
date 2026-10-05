@@ -1,7 +1,7 @@
 // ==============================
 // LAS PRENDAS SUELTAS, SOLO CON FIRMA — api/_prendas-firma.js
 // ==============================
-// Fase 5 de docs/AVATARES-SERVIDOR.md: el dibujo suelto de una prenda,
+// Fase 5 de docs/referencia/AVATARES.md: el dibujo suelto de una prenda,
 // /prendas/<huella>.png, deja de servirse a cualquiera. Solo lo ven el
 // equipo de arte y los administradores, que lo necesitan en el panel, el
 // taller y el vestidor. El resto del sitio enseña los avatares ya

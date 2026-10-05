@@ -147,7 +147,7 @@ ventas y el "solo lo que puedo comprar", que el Bazar no trae.
 **Nunca el dibujo suelto.** El Bazar solo enseña previsualizaciones:
 la prenda puesta en un maniquí, 96 px, en JPG. El dibujo suelto es el
 arte del equipo y `/prendas/` está cerrado a los demás
-(`docs/AVATARES-SERVIDOR.md`, fase 5).
+(`docs/referencia/AVATARES.md`, fase 5).
 
 ---
 

@@ -42,7 +42,7 @@
   // fotoDeAvatar() de js/core.js. La persona sale de la memoria de
   // avatares, que se llena antes de pintar (renderResenas). Hasta el
   // 24/09/2026 se dibujaba prenda por prenda; hasta el 28/09, el cuerpo
-  // entero diminuto en el cuadrado. Ver docs/AVATARES-SERVIDOR.md.
+  // entero diminuto en el cuadrado. Ver docs/referencia/AVATARES.md.
 
   function avatarHTMLResena(nombre) {
     const imagen = fotoDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre)) ||

@@ -229,7 +229,7 @@ por `/api/avisos`.
 
 **Aparte de la auditoría, hay un trabajo a medias:** que el servidor
 componga los avatares y deje de repartir las prendas sueltas. Está en
-`docs/AVATARES-SERVIDOR.md`, y su tabla de fases (punto 5) dice cuáles
+`docs/referencia/AVATARES.md`, y su tabla de fases (punto 5) dice cuáles
 están hechas y cuál toca.
 
 ## 6. Lo que muerde si no se sabe

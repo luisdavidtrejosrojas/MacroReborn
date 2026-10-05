@@ -322,7 +322,7 @@ suscribirPerfilSesion();
 // previsualización. Publicar una prenda deja de necesitar un despliegue.
 //
 // Lo que ya no trae es dónde está el dibujo de cada una. Desde la fase 5
-// de docs/AVATARES-SERVIDOR.md esta página no dibuja prenda por prenda en
+// de docs/referencia/AVATARES.md esta página no dibuja prenda por prenda en
 // ningún sitio: los avatares son una sola imagen cada uno, y la vista
 // previa del editor la dibuja el servidor (ver actualizarPreview).
 
@@ -430,7 +430,7 @@ function construirOpcionesDelEditor(){
       //
       // La miniatura es la previsualizacion: la prenda puesta en su
       // maniqui, un JPG pequeño y cuadrado. Fase 4 de
-      // docs/AVATARES-SERVIDOR.md. Si faltara, la caja se queda sin
+      // docs/referencia/AVATARES.md. Si faltara, la caja se queda sin
       // imagen y con su nombre: el dibujo suelto de la prenda es justo lo
       // que no tiene que salir del equipo de arte. Toda prenda la tiene
       // desde que se sube.
@@ -820,7 +820,7 @@ const _estadoTiendaListo = cargarEstadoTiendaAvatares();
 // La ropa que se va eligiendo la dibuja el servidor, igual que el avatar
 // guardado: POST /api/users?action=avatar-vista-previa devuelve el JPG.
 // Antes se apilaban aquí las prendas sueltas, una por capa, y era lo
-// último que las pedía. Fase 5 de docs/AVATARES-SERVIDOR.md.
+// último que las pedía. Fase 5 de docs/referencia/AVATARES.md.
 //
 // Cada petición es un dibujo en el servidor, así que:
 //   - se espera a que se deje de hacer clic (250 ms) antes de pedirla;

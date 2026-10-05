@@ -90,7 +90,7 @@ el latido de última conexión, y se dejó pública porque el perfil ya la
 enseña a cualquiera: si eso cambia, es el punto 57.
 
 **Nota al 77.** Visto el 24/09/2026, durante la fase 3 de
-`docs/AVATARES-SERVIDOR.md`, y arreglado el mismo día. El registro
+`docs/referencia/AVATARES.md`, y arreglado el mismo día. El registro
 (`api/auth.js`) solo comprobaba que el nombre no estuviera vacío: ni
 caracteres ni largo. Y `js/amigos.js` metía el nombre en el HTML sin
 escapar en tres sitios: la tarjeta de cada amigo, la solicitud recibida
@@ -134,7 +134,7 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 20 | - | Función rota | `explorar.html` está vacía para todos: lee `window.juegos` y `datos-juegos.js` declara un `const`, que no cuelga de `window` | `js/explorar.js:14` | 10 min |
 | 21 | - | Contenido | 15 de 113 juegos no cargan. El usuario ve una pantalla negra sin mensaje | `js/datos-juegos.js` | 2 h |
 | 22 | 2026-09-28 | Contenido | Un juego roto por una errata de un carácter: `fairytail` frente a `fairytale`. Arreglado: el catálogo apunta al archivo que existe, y el juego arranca | `js/datos-juegos.js:887` | 1 min |
-| 23 | 2026-09-24 | Función rota | La tienda muestra 12 cajas vacías con precio. 130 de 152 artículos no tienen dibujo en el índice público. Arreglado con las previsualizaciones: 162 de 162 artículos con imagen (docs/AVATARES-SERVIDOR.md 12) | `js/comunidad-ranking.js:617` | 2 h |
+| 23 | 2026-09-24 | Función rota | La tienda muestra 12 cajas vacías con precio. 130 de 152 artículos no tienen dibujo en el índice público. Arreglado con las previsualizaciones: 162 de 162 artículos con imagen (docs/referencia/AVATARES.md#12-las-previsualizaciones-automáticas-y-corregibles-una-a-una-más-adelante) | `js/comunidad-ranking.js:617` | 2 h |
 | 24 | 2026-09-24 | Función rota | Se puede comprar una prenda retirada y no poder ponérsela nunca. Arreglado con la tienda nueva: el catálogo y la compra solo aceptan prendas publicadas (nota al pie) | `api/content.js`, `avatarShop` y `avatarShopBuy` | 1 h |
 | 25 | 2026-09-25 | Economía | 3 de 7 misiones diarias piden `minutes_today`, métrica que el servidor nunca calcula. 14 días de cada 31 son incompletables. Arreglado con `actividad_diaria` (migración 023; nota al pie) | `api/progreso.js`, `obtenerMetricas` | 3 h |
 | 26 | - | Economía | El reto global anuncia 500 XP y 250 monedas que ningún código reparte. El 25/09/2026 se decidió dejarlo para después (nota al pie) | `api/progreso.js:60` | 2 h |

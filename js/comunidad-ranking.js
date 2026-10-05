@@ -72,7 +72,7 @@ let _rkUsuarios = [];       // lista completa ya con puntosLogros
 // traia su compuesto: 64 imagenes sueltas de /prendas/ en las listas de
 // moderacion, conectados y actividad, medidas en produccion. Ahora todas
 // las listas pasan la persona, y si alguna llegara sin ella, sale la
-// silueta: nunca una prenda suelta. Ver docs/AVATARES-SERVIDOR.md.
+// silueta: nunca una prenda suelta. Ver docs/referencia/AVATARES.md.
 //
 // Desde el 28/09/2026, su foto de perfil y no el cuerpo entero: todos los
 // huecos de esta pagina son cuadrados, y el cuerpo entero salia diminuto
@@ -547,7 +547,7 @@ async function crCargarTienda() {
 
       const yaLaTiene = comprados.has(item.id);
       // La previsualizacion: la prenda puesta en su maniqui, un JPG
-      // cuadrado que existe para todas. Fase 4 de docs/AVATARES-SERVIDOR.md.
+      // cuadrado que existe para todas. Fase 4 de docs/referencia/AVATARES.md.
       //
       // Sin ella la caja se queda vacia, y ya no se cae al dibujo suelto
       // de la prenda: ese es justo el archivo que no tiene que salir del

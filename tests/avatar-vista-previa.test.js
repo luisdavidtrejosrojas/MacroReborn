@@ -1,7 +1,7 @@
 // ==============================
 // LA VISTA PREVIA DEL EDITOR — tests/avatar-vista-previa.test.js
 // ==============================
-// Fase 5 de docs/AVATARES-SERVIDOR.md: la ropa que se va eligiendo en
+// Fase 5 de docs/referencia/AVATARES.md: la ropa que se va eligiendo en
 // el editor la dibuja el servidor, en vez de apilar las prendas sueltas
 // en el navegador. Ver api/_vista-previa.js.
 //

@@ -1,7 +1,7 @@
 // ==============================
 // EL PELO DE ATRÁS EN EL EDITOR — tests/editor-pelo-de-atras.test.js
 // ==============================
-// La capa nueva del 04/10/2026 (docs/AVATARES-SERVIDOR.md, sección 14)
+// La capa nueva del 04/10/2026 (docs/referencia/AVATARES.md#14-el-pelo-de-atrás-dos-capas-de-pelo)
 // llegó sin dibujos. En el editor del perfil:
 //
 //   - su botón solo se ve en los personajes que ya tienen alguno, y si se

@@ -9,7 +9,8 @@
 --
 -- LA IMAGEN NO ENTRA AQUI. Solo la huella, que son 64 caracteres. Los
 -- JPG viven en disco (MR_AVATARES_DIR), y el motivo esta en
--- docs/AVATARES-SERVIDOR.md 4: la base mide 127 MB contra 128 de
+-- docs/referencia/AVATARES.md#4-por-qué-en-disco-y-no-en-postgres: la base
+-- mide 127 MB contra 128 de
 -- shared_buffers, asi que hoy lee el 100 % de memoria y cruzar esa
 -- linea se paga de golpe. Ademas el arte es la fuente y se respalda
 -- cada noche; un compuesto es derivado y se rehace en 150 ms.

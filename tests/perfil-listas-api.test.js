@@ -1,7 +1,7 @@
 // ==============================
 // LAS LISTAS DEL PERFIL MANDAN LA HUELLA — tests/perfil-listas-api.test.js
 // ==============================
-// Fase 3 de docs/AVATARES-SERVIDOR.md, perfil público. Dos listas del
+// Fase 3 de docs/referencia/AVATARES.md, perfil público. Dos listas del
 // perfil tenían su propia consulta y no mandaban con qué pedir el
 // avatar compuesto, así que se dibujaba prenda por prenda:
 //

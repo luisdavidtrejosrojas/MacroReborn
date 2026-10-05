@@ -3,7 +3,7 @@
 // ==============================
 // api/_previsualizaciones.js decide con que nombre se guarda cada
 // previsualizacion, donde, cuando rehacerla y como se sirve. Fase 4 de
-// docs/AVATARES-SERVIDOR.md.
+// docs/referencia/AVATARES.md.
 //
 // Lo que hay que sujetar:
 //

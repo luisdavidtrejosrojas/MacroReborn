@@ -9,7 +9,7 @@
 //
 // Aquí se apilan en el servidor y sale UNA imagen. Es lo que hacía
 // macrojuegos durante una década, y el porqué entero, con lo medido y
-// lo que este cambio NO compra, está en docs/AVATARES-SERVIDOR.md.
+// lo que este cambio NO compra, está en docs/referencia/AVATARES.md.
 //
 // ESTE MÓDULO NO SABE DE HTTP NI DE LA BASE, a propósito: recibe bytes
 // de PNG ya en orden de dibujo y devuelve bytes. Por eso se puede

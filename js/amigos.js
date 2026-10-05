@@ -50,7 +50,7 @@ async function cargarDatosAmigos(nombre){
 // Una sola imagen por amigo: su PNG de administrador, su avatar ya
 // compuesto o la silueta, con imagenDeAvatar() de js/core.js. La lista
 // de amigos trae su id y su huella. Hasta el 24/09/2026 se dibujaba
-// prenda por prenda. Ver docs/AVATARES-SERVIDOR.md, fase 3.
+// prenda por prenda. Ver docs/referencia/AVATARES.md, fase 3.
 
 function htmlAvatarMini(amigo){
 
