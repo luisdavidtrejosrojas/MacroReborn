@@ -139,7 +139,7 @@ explica `docs/guias/DESPLEGAR.md`; y la comprobación 6 está en verde.
    commit.
 
 - [X] T024 [US2] Crear `docs/historia/LIENZO-DEL-CATALOGO.md` con §6 de `docs/guias/DESARROLLO.md`; resumen en §3 de `docs/referencia/ARTE.md` y enlace a sus pendientes desde su §7.
-- [ ] T025 [US2] Crear `docs/historia/IMAGEN-NO-ENCONTRADA.md` con §7 de `docs/guias/DESARROLLO.md`; resumen en `docs/referencia/AVATARES.md`.
+- [X] T025 [US2] Crear `docs/historia/IMAGEN-NO-ENCONTRADA.md` con §7 de `docs/guias/DESARROLLO.md`; resumen en `docs/referencia/AVATARES.md`.
 - [ ] T026 [US2] Crear `docs/referencia/AVISOS.md` con §2.3 y §9 de `docs/guias/DESARROLLO.md`, con su cabecera y revisado al escribirlo contra `api/_avisos.js`, `api/_avisos-sse.js` y el navegador. Crear también `docs/historia/AVISOS-ROTOS.md`, con «Por qué llevaba dos semanas roto» y la sustitución del antiguo `_pusher.js`. Las menciones a `#9-los-avisos-en-vivo` pasan a `docs/referencia/AVISOS.md`.
 - [ ] T027 [US2] Crear `docs/historia/CONTRASENAS-EN-CLARO.md` con §1, §3 y §5 de `docs/referencia/CUENTAS.md` y §2.4, §3.3 y §4 de `docs/guias/DESARROLLO.md`; §2.2 de `DESARROLLO.md` pasa a `CUENTAS.md`; reapuntar las menciones a esas secciones (por ejemplo, desde las migraciones).
 - [ ] T028 [US2] Crear `docs/historia/AVATARES-AL-SERVIDOR.md` con lo que el mapa manda a historia desde `docs/referencia/AVATARES.md`: el título y la entrada, §1, §2, el razonamiento largo de §4, las fases 1 a 5 con lo validado y medido, lo de macrojuegos de §8 y §12, la publicación del 24/09 y, de §13, cómo se decidió y el relleno al desplegarla. En `AVATARES.md` quedan las decisiones vigentes y lo que dejaron las fases. «Cómo mirarlo con los ojos», §11 y la herramienta de §12 pasan a `docs/guias/DESARROLLO.md`.

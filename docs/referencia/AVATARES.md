@@ -491,6 +491,9 @@ baja entero con una petición.
   Es el único agujero que queda abierto, y queda abierto porque el
   equipo de arte no puede trabajar de otra forma. Una dirección firmada
   sirve a quien se la pasen mientras no caduque, unas seis horas.
+- **Una capa que no carga no deja marca.** Solo el vestidor del equipo de arte apila capas todavía; si
+  una no carga, `js/core.js` la esconde en vez de dejar sobre el avatar la marca de imagen rota del
+  navegador. Cómo se encontró y se arregló: [IMAGEN-NO-ENCONTRADA](../historia/IMAGEN-NO-ENCONTRADA.md).
 - **JPG no tiene alfa.** Los 6 avatares sin capa de fondo salen en PNG.
   Si algún día se decide que todos lleven fondo, eso desaparece.
 - **El orden de las capas tiene que salir de un solo sitio.** Está
