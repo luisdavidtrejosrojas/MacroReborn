@@ -1,7 +1,13 @@
 # SUGERENCIAS — lo que pidió la comunidad
 
-Todas las ideas del canal viejo de sugerencias de Discord
-(`╭ᰍ📌﹒sugerencias`), del 12 de agosto al 29 de septiembre de 2026. Se
+> **De qué trata:** cada idea concreta del canal viejo de sugerencias de Discord, una por fila, con lo
+> que hay hoy en la web, su estado y una recomendación para decidir.
+>
+> **Para quién:** todo el equipo, y quien decida qué se hace.
+>
+> **Revisado:** 05/10/2026
+
+Todas las ideas del canal viejo de sugerencias de Discord, del 12 de agosto al 29 de septiembre de 2026. Se
 exportó el 29/09/2026 con DiscordChatExporter, antes de que el canal
 desapareciera: hoy en su lugar está el foro `ᨳଓ．．sugerencias`, que esta
 lista **no** incluye todavía.
@@ -11,7 +17,7 @@ MOBA, bromas, un reporte de broma); aquí está cada idea concreta, una
 por fila, con lo que hay hoy en la web (revisado contra el código el
 05/10/2026) y una recomendación para decidir.
 
-Es una lista de trabajo, como `docs/listas/AUDITORIA.md`: se va decidiendo una
+Es una lista de trabajo, como [AUDITORIA](AUDITORIA.md): se va decidiendo una
 por una y se marca aquí.
 
 ---
@@ -94,7 +100,7 @@ Además del estado, dos campos que cruzan a todos:
 | 8 | Pendiente | Juegos | Más XP en los juegos de Pokémon | Jerez (14/08) | No | Equipo |
 | 9 | Pendiente | Juegos | Que la gente pueda publicar sus propios juegos | SuiryBell (15/08) | Solo los Macro Originals del equipo | Equipo |
 | 10 | Pendiente | Juegos | Aprender de Macroplay (juegos propios en 3D) | SoyDegurime (19/08) | Idea | Equipo |
-| 11 | Hecha | Avatares | Varios avatares guardados y poder votarlos | 1234478 (12/08) | Galería de 6 diseños con 👍/👎 | - |
+| 11 | Hecha | Avatares | Varios avatares guardados y poder votarlos | 1234478 (12/08) | Galería de 6 diseños con votos a favor y en contra | - |
 | 12 | Pendiente | Avatares | Poder ponerse un diseño guardado de la galería | Lucass (15/09) | Solo "Reemplazar" y "Quitar" | Programación |
 | 13 | Por confirmar | Avatares | Que el círculo de los comentarios muestre la cabeza | SuiryBell (12/08), 1234478 (12/08) | Arreglado en parte el 13/08 | Programación |
 | 14 | Pendiente | Avatares | Mascotas detrás del avatar, no encima | Raicireth (17/08), KYOTO | La mascota es la última capa | Arte + Programación |
@@ -110,7 +116,7 @@ Además del estado, dos campos que cruzan a todos:
 | 24 | Pendiente | Cuenta | Recuperar la contraseña olvidada | Raicireth (17/08), SuiryBell | No | Programación |
 | 25 | Hecha | Cuenta | Botón de eliminar cuenta | SuiryBell (14/08) | Funciona | - |
 | 26 | Pendiente | Perfil | Estado como en Discord: en línea, invisible, ausente, no molestar | SuiryBell (15/08) | Solo "en línea" automático | Programación |
-| 27 | Por confirmar | Perfil | Poder contraer la información de arriba del perfil | 🌙Naay (15/09), valen | Sin comprobar | Programación |
+| 27 | Por confirmar | Perfil | Poder contraer la información de arriba del perfil | Naay (15/09), valen | Sin comprobar | Programación |
 | 28 | Pendiente | Perfil | Biografía con formato e imágenes enlazadas | SoyDegurime (15/08) | Texto plano | Programación |
 | 29 | Hecha en parte | Interfaz | Modo claro y perfil como en el Macrojuegos viejo | 1234478 (16/08) | Hay modo claro y tarjeta clásica | Programación |
 | 30 | Pendiente | Avatares | Nivel mínimo para crear el avatar | ✿ ꪀﺃ᥅ (17/08) | No | Equipo |
@@ -128,7 +134,7 @@ Además del estado, dos campos que cruzan a todos:
 | 42 | Hecha | Interfaz | Barra de arriba con avatar, nombre, nivel y experiencia | SuiryBell (08/09) | Barra nueva del 03/10 | - |
 | 43 | Hecha en parte | Economía | El Bazar viejo: ropa, pilas de experiencia, rasca y gana | 1234478 (18/08) | Ropa sí; pilas y rasca no | Equipo |
 | 44 | Hecha en parte | Economía | Más monedas, como en el Macro viejo | Lucass (15/09) | Economía nueva del 04/10 | Equipo |
-| 45 | Hecha | Economía | Monedas al subir de nivel, más cuanto más alto | 🌙Naay (25/09) | 15 × el nivel nuevo, desde el 04/10 | - |
+| 45 | Hecha | Economía | Monedas al subir de nivel, más cuanto más alto | Naay (25/09) | 15 × el nivel nuevo, desde el 04/10 | - |
 | 46 | Planeada | Economía | Pasar monedas a amigos, tras unos días de amistad | Lucass (16/09) | Anunciado el 04/10 | Programación |
 | 47 | Pendiente | Economía | Logros únicos, que solo tenga quien los consiga | ✿ ꪀﺃ᥅ (14/08) | Hay logros, no exclusivos | Equipo |
 | 48 | Pendiente | Eventos | Eventos temporales con premios exclusivos | ✿ ꪀﺃ᥅ (14/08) | Hay retos y misiones, no eventos | Equipo |
@@ -205,7 +211,7 @@ partida; decide el equipo.
 ### 1. Filtro de juegos Flash
 - **Pedida por:** Clover, 10/09: "yo vengo por los juegos flash, no para
   ver en el primer puesto a brawl". Lucass le contestó que ya hay
-  algunos; Clover insistió en que quiere un filtro, no buscarlos. 🌙Naay
+  algunos; Clover insistió en que quiere un filtro, no buscarlos. Naay
   dijo que vendrán más cambios en los juegos.
 - **Hoy:** las categorías de `js/datos-juegos.js` son géneros
   (Plataformas, RPG, Acción...). Ningún campo dice si un juego es Flash.
@@ -282,7 +288,7 @@ partida; decide el equipo.
 ### 11. Varios avatares y poder votarlos — Hecha
 - **Pedida por:** 1234478, 12/08.
 - **Hoy:** galería de hasta 6 diseños por persona, que los demás votan
-  con 👍 o 👎 (`js/perfil-avatares-galeria.js`).
+  con un voto a favor o en contra (`js/perfil-avatares-galeria.js`).
 
 ### 12. Ponerse un diseño guardado de la galería
 - **Pedida por:** Lucass, 15/09: "Estaría bueno poder tener la opción de
@@ -342,7 +348,7 @@ partida; decide el equipo.
   porque habría que moderar cada imagen subida.
 
 ### 18. Prendas pedidas por Aura_
-- **Pedida por:** Aura_, 21/08, a SuiryBell y 🌙Naay. Captura:
+- **Pedida por:** Aura_, 21/08, a SuiryBell y Naay. Captura:
   `capturas/18-prendas-que-pide-aura.png`: una tarjeta del Macro viejo
   con pelo blanco, parche, top negro, mangas de rejilla, medias a rayas,
   botas con hebillas y un hacha-guitarra.
@@ -413,7 +419,7 @@ partida; decide el equipo.
 - **Esfuerzo:** 3-4 h.
 
 ### 27. Contraer la información del perfil
-- **Pedida por:** 🌙Naay, 15/09: "ocupa espacio en la pantalla. Para ver
+- **Pedida por:** Naay, 15/09: "ocupa espacio en la pantalla. Para ver
   los comentarios o amigos hay que bajar siempre". Captura:
   `capturas/27-perfil-ocupa-mucho-naay.png`. valen propuso quitar la
   actividad de juego y los favoritos.
@@ -533,7 +539,7 @@ partida; decide el equipo.
   semanas con datos reales.
 
 ### 45. Monedas al subir de nivel — Hecha
-- **Pedida por:** 🌙Naay, 25/09. Desde el 04/10: 15 × el nivel nuevo.
+- **Pedida por:** Naay, 25/09. Desde el 04/10: 15 × el nivel nuevo.
 
 ### 46. Pasar monedas a amigos
 - **Pedida por:** Lucass, 16/09, solo entre amigos y tras unos días (en
@@ -602,4 +608,4 @@ partida; decide el equipo.
   resolvieron solos.
 - **El foro nuevo `ᨳଓ．．sugerencias`**, que sustituyó a este canal.
   Para añadirlo hay que leerlo, y el bot de lectura no tiene acceso
-  desde el 30/09 (hay que prestarle el rol 👑 un momento).
+  desde el 30/09 (hay que prestarle un momento el rol [de la corona]).

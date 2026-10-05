@@ -52,7 +52,7 @@ Lo que había antes de tocar nada (T001): cuántas pruebas y archivos de prueba,
 | Documento | Leído entero | Comparado con | Caducado y corregido | Pendiente de probar |
 |---|---|---|---|---|
 | `docs/listas/AUDITORIA.md` | 05/10/2026 | Los puntos 14 y 75 y sus notas, la cabecera y las notas en prosa frente a los documentos que citan; las filas, comparadas antes y después por script, quedan idénticas (regla XXXI) | Faltaba la cabecera. Los puntos 14 y 75 decían «público»: el repositorio es privado (comprobado el 05/10, sin fecha exacta del cambio), con una nota fechada en cada uno. Las cinco menciones a documentos de las notas, a enlaces; la «fase 3 de AVATARES.md» ahora está en la historia. Las filas no se tocan: el estado de cada punto lo lleva quien lo arregla. La fila del mapa se fecha con T069, que le añade la sección de pendientes |  |
-| `docs/listas/SUGERENCIAS.md` | | | | |
+| `docs/listas/SUGERENCIAS.md` | 05/10/2026 | La cabecera y la entrada; dos filas al azar contra el código (la galería de 6 diseños con sus votos, en la migración 020 y `js/perfil-avatares-galeria.js`, y las 15 monedas por nivel, en `api/_monedas.js`); el resto ya se había revisado contra el código ese mismo día. Números y estados, comparados antes y después por script | Faltaba la cabecera. Los 12 emojis, fuera (research D16): el nombre del canal viejo se escribe sin ellos, el nombre de una persona sin el suyo, los votos se describen y el rol de la corona, entre corchetes. `emojis.js` cuenta 0. La mención a la auditoría, como enlace. Números, estados y filas, intactos (regla XXXI) | Lo que dice de la exportación (452 mensajes de 19 personas): está en `sugerencias-discord/`, fuera de git, con datos de la comunidad; no se volvió a contar |
 
 ## Historia
 
@@ -85,7 +85,7 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 | `.gitignore` (sus comentarios) | | | | |
 | `memoria-claude/LEEME.md` (fuera de git) | 05/10/2026 | La copia y la memoria viva | Decía que el repositorio es público (es privado, comprobado el 05/10/2026); «nueve archivos» de memoria (son dieciséis); la carpeta de Claude para una ruta en `C:` estaba mal calculada; la receta de refresco empezaba con `rm -rf` y se llevaba el propio `LEEME.md` y el zip; citaba la auditoría con su ruta de antes. Todo corregido | |
 | La memoria de Claude, la viva y su copia (fuera de git) | 05/10/2026, solo sus citas a documentos | Las rutas nuevas | 12 citas en seis archivos con las rutas de antes; las dos que citaban por número (1.1 a 1.3 de `RETOMAR.md`, la sección 3 de `ECONOMIA.md`) citan ahora por tema. La copia tenía 13 archivos y ahora tiene los 17 de la viva | |
-| `sugerencias-discord/` (fuera de git; solo guarda la exportación) | | | | |
+| `sugerencias-discord/` (fuera de git; solo guarda la exportación) | 05/10/2026 | Lo que contiene, sin abrir los mensajes: la exportación y las capturas | Nada: solo guarda la exportación (mensajes y capturas) y no lleva documentación que pueda caducar |  |
 
 ## Validación final
 
