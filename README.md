@@ -39,7 +39,7 @@ pruebas) y su documentación, que empieza aquí.
 |---|---|---|
 | [DESARROLLO](docs/guias/DESARROLLO.md) | El equipo de desarrollo | Trabajar en local: la base de práctica, el servidor local, las pruebas, los datos de verdad y cómo mirar a ojo los avatares y las previsualizaciones |
 | [JUEGOS](docs/guias/JUEGOS.md) | Quien añade o quita juegos | Cómo se añade un juego al catálogo y cómo se quita, con casos reales |
-| [CAMBIOS-DE-OTROS-DEVS](docs/guias/CAMBIOS-DE-OTROS-DEVS.md) | Quien funde el trabajo de otra persona | Cómo se funde lo que manda otro dev, los casos del 28/09 y del 03/10/2026, y la tabla de rutas de antes |
+| [CAMBIOS-DE-OTROS-DEVS](docs/guias/CAMBIOS-DE-OTROS-DEVS.md) | Quien funde el trabajo de otra persona | Cómo se funde lo que manda otro dev: el método, qué pedirle y la tabla de rutas de antes |
 | [RETOMAR](docs/guias/RETOMAR.md) | Luis, tras formatear el PC | Lo que no está en el repositorio y dónde se guarda (la llave SSH, los secretos, las copias), y cómo levantar el entorno |
 
 ## Listas vivas: lo pendiente
@@ -54,6 +54,7 @@ pruebas) y su documentación, que empieza aquí.
 | Fecha | Documento | Qué cuenta |
 |---|---|---|
 | 04/10/2026 | [SALDOS-REHECHOS](docs/historia/SALDOS-REHECHOS.md) | El recálculo de una sola vez de todos los saldos con la economía nueva: qué calculó, cómo se corrió, lo que salió y el respaldo de antes |
+| 03/10/2026 | [CASOS-DE-OTROS-DEVS](docs/historia/CASOS-DE-OTROS-DEVS.md) | Los dos primeros zips de otro dev, del 28/09 y del 03/10: qué traían, qué entró y qué no, y qué se arregló al meterlos |
 | 28/09/2026 | [ACTIVAR-LA-MODERACION](docs/historia/ACTIVAR-LA-MODERACION.md) | Lo que se hizo el día que se activaron las sanciones: la cuenta que quedó baneada y las columnas viejas que dejaron de usarse |
 | 22/09/2026 | [FRONTEND](docs/historia/FRONTEND.md) | Por qué el navegador está como está, qué se usaría empezando de cero y por qué no se reescribe |
 | 21/09/2026 | [AVATARES-AL-SERVIDOR](docs/historia/AVATARES-AL-SERVIDOR.md) | El plan de pasar los avatares al servidor: por qué, lo medido sobre el VPS, sus cinco fases, lo aprendido de macrojuegos y cómo se decidió la foto de perfil |

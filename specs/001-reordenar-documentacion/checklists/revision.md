@@ -73,7 +73,7 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 | `docs/historia/LLAVE-SSH.md` | 05/10/2026 | Con §1.1 (el relato y la lección) y §1.2 de `RETOMAR.md`, de donde salieron enteras | Nada: es historia |  |
 | `docs/historia/SALDOS-REHECHOS.md` | 05/10/2026 | Con §5 de `ECONOMIA.md`, de donde salió entera | Nada: es historia |  |
 | `docs/historia/ACTIVAR-LA-MODERACION.md` | 05/10/2026 | Con §5 de `MODERACION.md`, de donde salió entera | Nada: es historia. Lo que sigue vigente (las columnas viejas sin usar, comprobado en el código) se queda también resumido en la referencia |  |
-| `docs/historia/CASOS-DE-OTROS-DEVS.md` | | | | |
+| `docs/historia/CASOS-DE-OTROS-DEVS.md` | 05/10/2026 | Con §1 y §2 de `CAMBIOS-DE-OTROS-DEVS.md`, de donde salieron enteras | Nada: es historia. La guía se queda con el método, sacado de lo que se repite en los dos casos |  |
 
 ## Fuera de `docs/`
 
