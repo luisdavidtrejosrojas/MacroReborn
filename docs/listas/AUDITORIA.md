@@ -77,6 +77,7 @@ que pueden costar una cuenta de usuario o el sitio entero.
 | 14 | 2026-09-21 | Decisión | El repositorio es público: 630 prendas descargables con `git clone`. Anula todo lo que promete `docs/referencia/ARTE.md` | GitHub | decisión |
 | 75 | descartado | Decisión | Las prendas siguen en el historial de GitHub desde el 23/07/2026: con `git clone` se bajan igual aunque ya no estén en el árbol. Sacarlas exige reescribir el historial, subir a la fuerza, pedir a GitHub que purgue lo que ya sirvió y resincronizar el servidor | GitHub | 2 h + decisión |
 | 77 | 2026-09-24 | Seguridad | XSS almacenado en el nombre de usuario: el registro acepta cualquier texto y la página de amigos lo pinta sin escapar. Basta con mandar una solicitud de amistad para que se ejecute en quien la recibe, administradores incluidos | `js/amigos.js:212` | 1 h |
+| 86 | - | Seguridad | Dos volcados de Neon del 01/09/2026, de la mudanza, siguen en `~/respaldos/` del servidor con 21 contraseñas en claro: la limpieza de 14 días solo borra `diarios/`. Hay otra copia en el PC | VPS | 10 min + decisión |
 
 **Nota al 14.** Se decidió mantener el repositorio público y sacar las prendas
 del árbol: el 21/09/2026 salieron 636 archivos (commit `bbe813a`). El sitio
@@ -133,6 +134,12 @@ Lo sujeta `tests/nombres-de-usuario.test.js`, que ejecuta
 `js/amigos.js` entero sobre `amigos.html` con nombres maliciosos. La red
 que falta debajo de todo esto sigue siendo el punto 6.
 
+**Nota al 86.** Visto el 05/10/2026 al revisar CUENTAS, que decía que los respaldos de antes del
+16/09/2026, los que llevan contraseñas en claro, se borran solos en el servidor a los 14 días. Los
+diarios sí; estos dos no, porque están fuera de `diarios/`. Borrarlos, o guardarlos solo donde haga
+falta, lo decide Luis. Lo cuentan [CUENTAS](../referencia/CUENTAS.md#lo-que-queda) y
+[VPS](../referencia/VPS.md#respaldos).
+
 ---
 
 ## Bloque 2 — Funciones que existen y no funcionan
@@ -172,6 +179,7 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 83 | 2026-09-25 | Función rota | A los 7 días de iniciar sesión, todo lo que escribe fallaba en silencio (el XP de jugar, el chat, los comentarios) mientras la página seguía enseñando a la persona como conectada. El pase no se renovaba nunca y el navegador no se enteraba del 401. De 150 a 330 escrituras rechazadas al día | `api/_auth.js`, `js/core.js` | medio día |
 | 84 | 2026-09-28 | Función rota | De cada tres misiones cumplidas se cobraba una: para cobrar hay que entrar en "Mi día" o "Progreso", casi nadie entra, nada avisaba de que estaba cumplida, y la diaria se pierde a medianoche. Arreglado con un aviso al cumplirla (nota al pie) | `api/_misiones.js` | medio día |
 | 85 | 2026-09-28 | Función rota | Una misión cumplida se perdía si no se cobraba a tiempo: la diaria a las 00:00, la semanal al acabar la semana. La semana del 21/09 quedaron sin cobrar 12 diarias y 8 semanales, de 13 personas. Arreglado: espera hasta que se cobre (nota al pie) | `api/_misiones.js`, `api/progreso.js` | medio día |
+| 87 | - | Función rota | El "Abrir Bazar" con el saldo que pinta `portal-growth.js` no sale nunca: ninguna página tiene su hueco, `#mrEconomiaPerfil` | `portal-growth.js:126` | 15 min |
 
 **Nota al 24 y al 78.** Hechos el 24/09/2026 con la tienda nueva
 (`tienda.html`, ver [TIENDA](../referencia/TIENDA.md)). El catálogo (`avatarShop`) y la
@@ -375,6 +383,9 @@ perfil si el nombre del enlace coincide con el tuyo sin mirar
 mayúsculas, así que "jader" no puede ver el perfil de "Jader". Lo sujeta
 `tests/nombres-mayusculas.test.js`.
 
+**Nota al 87.** Visto el 05/10/2026 al revisar TIENDA, que lo daba como uno de los caminos al
+Bazar. Es el mismo archivo que el punto 28.
+
 ---
 
 ## Bloque 3 — Que el sitio se sienta terminado
@@ -405,6 +416,9 @@ de ser, y los puntos 38, 40, 41 y 42 caen dentro de esa misma tarea.
 | 52 | - | Contenido | Tuteo y voseo mezclados en la misma pantalla, "1 juegos", textos de 9 px y placeholders cortados a media palabra | varias | 2 h |
 | 53 | - | Rendimiento | El editor de avatares reconstruye el DOM entero en cada `pointermove`, sin `requestAnimationFrame` | `js/arte-vestidor.js:1548` | 3 h |
 
+**Nota al 37, del 05/10/2026.** Hoy son 30 páginas y 16 tienen pie, y dos de esos pies, los de
+`explorar.html` y `mi-dia.html`, no llevan el enlace a los términos.
+
 ---
 
 ## Bloque 4 — Contenido, SEO, privacidad y moderación
@@ -425,11 +439,21 @@ de ser, y los puntos 38, 40, 41 y 42 caen dentro de esa misma tarea.
 | 65 | - | Moderación | El registro de moderación lo escribe el navegador después de la acción y se puede falsear. El filtro por rol nunca encuentra nada por una diferencia de mayúsculas | `api/content.js:2277` | 3 h |
 | 66 | - | Moderación | No se puede silenciar temporalmente, ni borrar contenido sin pasar por un reporte, ni deshacer una acción, ni ver la ficha de una persona | `admin.html` | 1 semana |
 | 79 | 2026-09-24 | Privacidad | `avatar-shop?username=X` enseñaba a cualquiera, sin sesión, el saldo y las compras de cualquiera | `api/content.js`, `avatarShop` | 30 min |
+| 88 | - | Privacidad | `scripts/traer-base.js` lleva la IP entera del servidor como valor por defecto (regla XXV), cuando todo lo demás entra por el dominio | `scripts/traer-base.js:47` | 5 min |
 
 **Nota al 79.** Visto el 24/09/2026 al auditar la tienda, y arreglado el
 mismo día: el saldo y las compras solo se devuelven a quien tiene la
 sesión. El saldo de cualquiera siguió saliendo por `/api/users?username=X`
 hasta el 04/10/2026 (punto 57).
+
+**Nota al 56, del 05/10/2026.** Sigue abierto. Siete páginas se indexan sin `robots` y sin estar en
+el sitemap (`actividad-comunidad.html`, `explorar.html`, `liga-global.html`, `macro-originals.html`,
+`mi-dia.html`, `originales-competicion.html` y `progreso.html`); tres de las que están en él no tienen
+Open Graph (`categoria.html`, `coleccion.html` y `terminos.html`), y Macro Snake sigue fuera. El
+detalle, en [SEO](../referencia/SEO.md#tabla-de-indexación-por-página).
+
+**Nota al 88.** Visto el 05/10/2026 al revisar DESARROLLO. Se puede apuntar a otra máquina con
+`MR_VPS_HOST`, y el dominio ya funciona: es por donde se entra hoy al servidor.
 
 ---
 
@@ -445,6 +469,19 @@ hasta el 04/10/2026 (punto 57).
 | 72 | - | Infraestructura | El despliegue no tiene comprobación de salud ni vuelta atrás, y las 595 pruebas no han visto ninguno de los 75 commits que están en producción | `infra/scripts/` | 1 día |
 | 73 | - | Mantenibilidad | 19 copias de la función de escapar HTML en 3 variantes distintas, y `xpNecesaria` copiada en 7 archivos | `js/` | 1 día |
 | 74 | - | Mantenibilidad | Cero pruebas de autorización, del ranking, de moderación y de todo el sistema social | `tests/` | 2-3 días |
+| 89 | - | Decisión | fail2ban sigue apagado desde el 17/09/2026, aunque su causa principal, el punto 18, se arregló el 25/09. Antes de encenderlo hay que poner al día la IP de `ignoreip` | VPS | decisión |
+| 90 | - | Mantenibilidad | Comentarios caducados en seis archivos: `api/_rafaga.js`, `avatarPrenda` en `api/content.js` y `scripts/hornear-catalogo.js` cuentan una caché de `/prendas/` y un índice público que ya no existen; `scripts/servidor-local.js` habla de Vercel y Neon; `scripts/revision-avatares.js`, de un navegador que apila capas; y `js/perfil.js`, del antiguo `tienda.js` | esos seis archivos | 30 min |
+
+**Nota al 68, del 05/10/2026.** Por estas dos tablas la base ya no cabe en `shared_buffers`: ocupa
+179 MB, contra 128, y 140 de esos MB son ellas. El 99,99 % de las lecturas siguen saliendo de
+memoria: [la base y la memoria](../referencia/VPS.md#la-base-y-la-memoria).
+
+**Nota al 89.** Visto el 05/10/2026 al revisar VPS. Lo que hay que saber antes de encenderlo:
+[fail2ban, apagado](../referencia/VPS.md#fail2ban-apagado).
+
+**Nota al 90.** Visto el 05/10/2026 al revisar la documentación. La spec 001 solo cambia en el código
+las rutas de documentos, así que estos comentarios se quedaron como estaban. El del freno de
+`api/_avatar-compuesto.js` sí se corrigió entonces.
 
 ---
 
