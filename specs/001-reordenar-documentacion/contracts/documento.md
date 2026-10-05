@@ -12,13 +12,16 @@ Lo que cumple todo documento de `docs/`, hoy y en cada spec futura. Las reglas m
 
 ## La cabecera (RF-003) **(prueba)**
 
-Las cuatro primeras líneas con texto son el título y tres campos, en este orden y con estas etiquetas:
+El documento empieza por el título y tres campos, en este orden y con estas etiquetas. Las líneas `>`
+vacías entre campos hacen falta: sin ellas, GitHub junta los tres en un solo párrafo.
 
 ```markdown
 # TÍTULO — subtítulo corto
 
 > **De qué trata:** una o dos frases.
+>
 > **Para quién:** quién lo lee.
+>
 > **Revisado:** DD/MM/AAAA
 ```
 

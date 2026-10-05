@@ -126,6 +126,9 @@ Eso es un pantallazo o un dibujo sin recortar, subido sin querer.
 El `327×505` que abunda es el lienzo original de macrojuegos: su editor
 servía un `<img>` de 327×505 y parte del arte se hizo para ese marco.
 
+Cómo se midió el catálogo heredado, qué dice la base y qué trabajo dejó pendiente lo cuenta la
+investigación del 16/09/2026, [EL LIENZO DEL CATÁLOGO](../historia/LIENZO-DEL-CATALOGO.md).
+
 ### Y los que ya estaban dentro: `scripts/encajar-lienzo.js`
 
 ```
@@ -264,6 +267,8 @@ El análisis completo de su sistema está en la memoria del proyecto.
 
 - El buzón de `macroreborn0@gmail.com`.
 - Los 80 archivos fuera del lienzo: decisión del equipo de arte.
+- El trabajo que dejó pendiente la investigación del lienzo:
+  [lo que destapó](../historia/LIENZO-DEL-CATALOGO.md#trabajo-pendiente-que-esto-destapa).
 - Un navegador que ya tuviera cacheada una `imagenes/<modelo>/<x>.png`
   la conserva hasta 30 días (`immutable`). El cierre de esa ruta aplica a
   partir de ahora, no hacia atrás.

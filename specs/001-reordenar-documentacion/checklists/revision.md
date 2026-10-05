@@ -64,7 +64,7 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 | `docs/historia/HISTORIAL.md` | | | | |
 | `docs/historia/FRONTEND.md` | | | | |
 | `docs/historia/AVATARES-AL-SERVIDOR.md` | | | | |
-| `docs/historia/LIENZO-DEL-CATALOGO.md` | | | | |
+| `docs/historia/LIENZO-DEL-CATALOGO.md` | 05/10/2026 | Con §6 de `DESARROLLO.md`, de donde salió entera (149 líneas, movidas por script) | Nada: es historia | |
 | `docs/historia/IMAGEN-NO-ENCONTRADA.md` | | | | |
 | `docs/historia/AVISOS-ROTOS.md` | | | | |
 | `docs/historia/MUDANZA-AL-VPS.md` | | | | |

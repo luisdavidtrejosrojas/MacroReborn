@@ -32,7 +32,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | §3.8 Verificación manual en navegador | 175-200 | `guias/DESARROLLO.md` | | |
 | §4 Despliegue de estos cambios | 201-231 | `historia/CONTRASENAS-EN-CLARO.md` | Fue el despliegue de bcrypt; lo general está en `guias/DESPLEGAR.md` | |
 | §5 Convenciones del proyecto | 232-252 | La constitución | Se quita después de comprobar que cada punto está en la constitución; lo que no, a `guias/SUMARSE.md` | |
-| §6 El lienzo del catálogo | 253-404 | `historia/LIENZO-DEL-CATALOGO.md` | Resumen en `ref/ARTE.md` §3; sus pendientes, enlazados desde «Lo que sigue abierto» de `ref/ARTE.md` | |
+| §6 El lienzo del catálogo | 253-404 | `historia/LIENZO-DEL-CATALOGO.md` | Resumen en `ref/ARTE.md` §3; sus pendientes, enlazados desde «Lo que sigue abierto» de `ref/ARTE.md` | 05/10/2026 |
 | §7 La marca de «imagen no encontrada» | 405-521 | `historia/IMAGEN-NO-ENCONTRADA.md` | Resumen en `ref/AVATARES.md` | |
 | §8 Probar contra los datos de verdad | 522-614 | `guias/DESARROLLO.md` | Sección propia; el código y el `CLAUDE.md` la citan por su ancla | |
 | §9 Los avisos en vivo, salvo lo de abajo | 615-632 y 651-812 | `ref/AVISOS.md` | | |

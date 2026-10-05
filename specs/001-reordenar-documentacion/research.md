@@ -152,7 +152,9 @@ por número (se rompen en silencio, que es justo lo que pasaría al sacar §6 y 
 # ECONOMÍA — las monedas: cuánto valen las cosas y cómo se ganan
 
 > **De qué trata:** los precios por rareza, de dónde salen las monedas y los límites que las protegen.
+>
 > **Para quién:** el equipo de desarrollo y quien decida precios.
+>
 > **Revisado:** 05/10/2026
 ```
 

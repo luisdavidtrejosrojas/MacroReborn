@@ -9,7 +9,9 @@
 # HISTORIAL — qué cambió y cuándo
 
 > **De qué trata:** todo lo que cambió en MacroReborn, semana a semana, desde la primera subida.
+>
 > **Para quién:** el equipo de desarrollo.
+>
 > **Revisado:** DD/MM/AAAA
 
 Cómo se mantiene: una línea con la regla de RF-017 y el enlace a la guía para sumarse.
