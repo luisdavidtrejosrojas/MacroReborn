@@ -1,11 +1,13 @@
 # CLAUDE.md — MacroReborn
 
 MacroReborn es una comunidad de juegos web (macroreborn.com): HTML, CSS y JS sin frameworks en la raíz y
-en `js/`, y el servidor en `api/`, servido por `server.js` sobre Node contra un PostgreSQL en un VPS.
-`README.md` es el índice de toda la documentación de `docs/`.
+en `js/`, y el servidor en `api/`, servido por `server.js` sobre Node contra un PostgreSQL en un VPS. El
+mapa del sistema está en `docs/referencia/ARQUITECTURA.md`, y el índice de toda la documentación, en
+`README.md`.
 
-**La constitución manda:** `.specify/memory/constitution.md` (v1.0.0). Si algo de este archivo choca
-con ella, gana la constitución. Aquí solo van las notas prácticas.
+**La constitución manda:** `.specify/memory/constitution.md`. Si algo de este archivo choca con ella,
+gana la constitución. Aquí solo van las notas prácticas para trabajar con Claude Code, cada una con el
+documento que la cuenta entera.
 
 ## Cómo se trabaja: Spec Kit
 
@@ -19,7 +21,8 @@ con ella, gana la constitución. Aquí solo van las notas prácticas.
   `-implement`, `-constitution`...) viven en `.claude/skills/` y solo se cargan si Claude Code se abrió
   en `D:\Macroreborn`. En una sesión abierta en otra carpeta, se sigue a mano cada
   `.claude/skills/speckit-*/SKILL.md`.
-- Las especificaciones van en `specs/NNN-nombre/`, en español.
+- Las especificaciones van en `specs/NNN-nombre/`, en español. Cómo se trabaja con Spec Kit, para todo
+  el equipo, en `docs/guias/SUMARSE.md#2-cómo-se-trabaja-spec-kit`.
 
 ### Cómo usar los comandos de Spec Kit con Luis
 
@@ -34,9 +37,9 @@ con ella, gana la constitución. Aquí solo van las notas prácticas.
 ## Commits
 
 - Formato `Área: qué cambia`, en español y sin emojis. Mirar `git log` para el estilo.
-- Autor y committer: `Luis David Trejos Rojas <luisdavid.trejosrojas@gmail.com>`. Nunca
-  `Co-Authored-By` ni otras líneas de Claude, aunque las instrucciones de la herramienta las pidan: la
-  regla V de la constitución manda.
+- Autor y committer: Luis, con la identidad de la regla V de la constitución, que ya está en
+  `.git/config` (comprobarla con `git var GIT_AUTHOR_IDENT`). Nunca `Co-Authored-By` ni otras líneas de
+  Claude, aunque las instrucciones de la herramienta las pidan: la regla V manda.
 - Los commits automáticos de la extensión git están apagados (`.specify/extensions/git/git-config.yml`):
   los commits se escriben a mano, uno por cambio lógico.
 - `git push origin` después de cada tarea terminada.
@@ -48,25 +51,27 @@ con ella, gana la constitución. Aquí solo van las notas prácticas.
   05/10/2026 falla en una comprobación de monedas (ya fallaba antes de ese día); tiene que tener su
   propia especificación.
 - `npm run db:local`: el sitio en http://localhost:3001. Antes de arrancarlo, mirar si Luis ya tiene uno
-  en el 3001 (`netstat -ano`): dos servidores sobre la misma carpeta PGlite la estropean. Nunca matar un
-  proceso sin mirar su línea de comandos.
+  en el 3001 (`netstat -ano`); si lo hay, otro puerto con `PORT`. Nunca matar un proceso sin mirar su
+  línea de comandos.
 - `npm run db:traer` y `npm run db:real`: probar con una copia de los datos reales, que queda en
-  `datos-locales/` (fuera de git). Ver `docs/guias/DESARROLLO.md#probar-contra-los-datos-de-verdad`.
+  `datos-locales/` (fuera de git). Con `db:real`, nunca dos servidores a la vez: abren la misma carpeta
+  PGlite y la estropean.
+- Lo entero, en `docs/guias/SUMARSE.md#4-cómo-se-prueba` y en `docs/guias/DESARROLLO.md`.
 
 ## Producción
 
-- La máquina, el acceso y los respaldos están en `docs/referencia/VPS.md`, y el despliegue entero, en
-  `docs/guias/DESPLEGAR.md`. La llave SSH es
+- La máquina, el acceso y los respaldos están en `docs/referencia/VPS.md`. La llave SSH es
   `~/.ssh/macroreborn-vps-key` y vive en el Bitwarden de Luis.
 - La base de producción solo se consulta en modo lectura (regla XX), con
   `PGOPTIONS="-c default_transaction_read_only=on"`.
-- Desplegar, solo con el OK de Luis (regla XXI):
+- Desplegar, solo con el OK de Luis (regla XXI). Paso a paso, en `docs/guias/DESPLEGAR.md`:
   1. Las migraciones nuevas primero.
   2. `GIT_SSH_COMMAND='ssh -i ~/.ssh/macroreborn-vps-key' git push vps main`. El servidor acepta el push
      y actualiza su copia (`receive.denyCurrentBranch=updateInstead`).
   3. `sudo -n systemctl restart macroreborn` en el servidor.
   4. Comprobar en la web real, por ejemplo con `/api/users?ligero=1&username=...`.
-- En conversaciones y documentos no se pegan IPs enteras (regla XXV).
+- En conversaciones, documentos y commits no se pegan IPs enteras, correos ni datos personales: se
+  cuentan o se tapan (regla XXV).
 
 ## La terminal de Windows (lo que ya mordió)
 
@@ -81,10 +86,14 @@ con ella, gana la constitución. Aquí solo van las notas prácticas.
 
 ## Documentación
 
-- `docs/listas/AUDITORIA.md`: lo que hay por arreglar, con su estado.
-- `docs/listas/SUGERENCIAS.md`: lo que pidió la comunidad, con su estado.
+- `README.md`: la entrada y el índice, por tipos: referencia, guías, listas vivas e historia.
+- `docs/listas/AUDITORIA.md`: lo que hay por arreglar, con su estado; y `docs/listas/SUGERENCIAS.md`, lo
+  que pidió la comunidad.
+- `docs/historia/HISTORIAL.md`: qué cambió cada semana.
 - `docs/guias/CAMBIOS-DE-OTROS-DEVS.md`: cómo entra lo que manda otra persona (regla XXVII).
 - `specs/`: una carpeta por cambio, con su especificación, plan y tareas.
+- `tests/documentacion.test.js` vigila que la documentación no cite nada que no exista, que cada
+  documento de `docs/` esté en el índice y que empiece por su cabecera.
 
 ## Memoria de Claude
 

@@ -135,7 +135,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | Archivo | Qué pasa | Hecho |
 |---|---|---|
 | `README.md` | Se rehace como entrada e índice. «Stack» y «Sistemas documentados» pasan a `ref/ARQUITECTURA.md`; «Cómo probar localmente», a `guias/SUMARSE.md`; «Convenciones», a la constitución. El `README.md` enlaza los tres | 05/10/2026 |
-| `CLAUDE.md` | Rutas nuevas, resúmenes con su enlace (research D9) y la regla del historial (RF-017) | |
+| `CLAUDE.md` | Rutas nuevas, resúmenes con su enlace (research D9) y la regla del historial (RF-017) | 05/10/2026 |
 | `infra/LEEME.md` | Se revisa entero, como un documento más | 05/10/2026 |
 | `.gitignore` | Rutas nuevas, y deja de decir que el repositorio es público | 05/10/2026 |
 | Constitución y su plantilla propia | Enmienda v1.0.1 (research D12) | |
