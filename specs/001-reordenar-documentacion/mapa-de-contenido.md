@@ -126,7 +126,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | `SEO.md` (206) | `ref/SEO.md` | Nada. Se corrigen las cifras (15 páginas) | 05/10/2026 |
 | `JUEGOS.md` (253) | `guias/JUEGOS.md` | §6 Convenciones (212-223) se cambia por el enlace a la constitución, después de comprobar que no dice nada más | 05/10/2026 |
 | `CAMBIOS-DE-OTROS-DEVS.md` (157) | `guias/CAMBIOS-DE-OTROS-DEVS.md` | §1 y §2, los casos del 28/09 y del 03/10 (8-144), a `historia/CASOS-DE-OTROS-DEVS.md`. Queda el método (lo que se repite de los dos casos, más §3) y gana la tabla «ruta vieja → ruta nueva» | 05/10/2026 |
-| `FRONTEND.md` (151) | `historia/FRONTEND.md` | Entero: es el documento de decisión del 22/09. Resumen en `ref/ARQUITECTURA.md`; las cifras, con su fecha |  |
+| `FRONTEND.md` (151) | `historia/FRONTEND.md` | Entero: es el documento de decisión del 22/09. Resumen en `ref/ARQUITECTURA.md`; las cifras, con su fecha | 05/10/2026 |
 | `AUDITORIA.md` (460) | `listas/AUDITORIA.md` | Nada. Filas y números intactos. Notas fechadas a los puntos 14 y 75 (el repositorio ya es privado) y la sección «Pendientes que viven en otros documentos» (research D10) | |
 | `SUGERENCIAS.md` (605) | `listas/SUGERENCIAS.md` | Nada. Se quitan sus 12 emojis; estados intactos | 05/10/2026 |
 

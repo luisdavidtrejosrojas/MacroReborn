@@ -206,7 +206,7 @@ lleva cada área.
 **Prueba independiente**: leyendo solo `ARQUITECTURA.md` se nombran las partes del sistema y el
 documento de cada una (quickstart, escenario 4).
 
-- [ ] T057 [US3] Escribir `docs/referencia/ARQUITECTURA.md` (RF-005, RF-014), con su cabecera y leyendo el código. Debe contar:
+- [X] T057 [US3] Escribir `docs/referencia/ARQUITECTURA.md` (RF-005, RF-014), con su cabecera y leyendo el código. Debe contar:
   - **Las partes**: el navegador (las páginas de la raíz y `js/`); el servidor (`server.js`, `cluster.js`, `api/` y sus módulos `api/_*.js`); la base de datos y `migrations/`; producción (el VPS, nginx, systemd y los respaldos); las pruebas y la integración continua; las herramientas de `scripts/`; `infra/`; y los datos fuera de git.
   - **Cómo se conectan y dónde vive cada cosa.**
   - **La tabla «área → documento → código principal»**, con un párrafo para cada área sin documento propio: perfiles, amigos, chat, comunidad y rankings, misiones y logros, notificaciones y noticias.

@@ -7,6 +7,8 @@ pruebas) y su documentación, que empieza aquí.
 
 ## Por dónde empezar
 
+- Para entender el sistema de un vistazo, sus partes y qué documento lleva cada área:
+  [ARQUITECTURA](docs/referencia/ARQUITECTURA.md).
 - Para trabajar en local (la base de práctica, el servidor local y las pruebas):
   [DESARROLLO](docs/guias/DESARROLLO.md).
 - Para desplegar un cambio: [DESPLEGAR](docs/guias/DESPLEGAR.md).
@@ -24,6 +26,7 @@ pruebas) y su documentación, que empieza aquí.
 
 | Documento | Para quién | Qué cuenta |
 |---|---|---|
+| [ARQUITECTURA](docs/referencia/ARQUITECTURA.md) | Quien llega al proyecto, y quien busca dónde está algo | El sistema de un vistazo: sus partes, cómo se conectan, dónde vive cada una y qué documento lleva cada área |
 | [ARTE](docs/referencia/ARTE.md) | El equipo de desarrollo | Cómo se protege el arte de las prendas: qué consigue cada medida y qué no |
 | [AVATARES](docs/referencia/AVATARES.md) | El equipo de desarrollo | Cómo se componen, se guardan y se sirven los avatares: sus piezas, sus direcciones, el freno, las previsualizaciones, la foto de perfil y el pelo de atrás |
 | [AVISOS](docs/referencia/AVISOS.md) | El equipo de desarrollo | Lo que aparece sin recargar: los avisos en vivo por Server-Sent Events, sus piezas, los dos procesos, los límites y quién puede oír qué |
