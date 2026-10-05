@@ -1,24 +1,63 @@
-# MacroReborn — documentación para desarrolladores
+# MacroReborn
 
-Documentación técnica del proyecto MacroReborn, pensada para cualquier
-desarrollador que trabaje en el código: cómo está armado, qué sistemas
-existen y cómo probar los cambios localmente.
+MacroReborn es una comunidad de juegos web, en [macroreborn.com](https://macroreborn.com): un catálogo
+de juegos gratis con ficha, calificaciones y ranking, más avatares, perfiles, amigos, chat, una
+economía de monedas y moderación. Este repositorio es el sitio entero (las páginas, el servidor y las
+pruebas) y su documentación, que empieza aquí.
 
-Índice de guías:
+## Por dónde empezar
 
-| Guía | Contenido |
-|---|---|
-| `docs/guias/DESARROLLO.md` | Módulos del backend, infraestructura local (PGlite, servidor local, tests) y despliegue |
-| `docs/referencia/CUENTAS.md` | Sistema de hash de contraseñas, migración de datos existentes y plan de activación |
-| `docs/guias/JUEGOS.md` | Cómo agregar un juego al catálogo: proceso completo, prueba local y notas de Ruffle/CORS e iframes |
-| `docs/referencia/ARTE.md` | Cómo se protege el catálogo de prendas: qué compra cada pieza y qué no |
-| `docs/referencia/AVATARES.md` | Pasar la composicion de avatares al servidor: por que, lo medido sobre el VPS y las cinco fases |
-| `docs/historia/FRONTEND.md` | Por que el navegador esta como esta, que se usaria empezando de cero, y por que no se reescribe |
-| `docs/referencia/VPS.md` | El servidor: máquina, nginx, base de datos, respaldos, seguridad y despliegue |
-| `docs/referencia/SEO.md` | Metadatos, sitemap, robots y lo que quedó recomendado para la v1.0 |
-| `docs/listas/AUDITORIA.md` | Lista viva de lo que hay por arreglar, por orden de importancia, con su estado |
-| `docs/listas/SUGERENCIAS.md` | Lo que pidió la comunidad en el canal viejo de sugerencias de Discord, cada idea con su estado y una recomendación |
-| `docs/guias/RETOMAR.md` | Cómo volver a trabajar tras formatear el PC: qué no está en el repo, cómo levantar el entorno y en qué punto está todo |
+- Para trabajar en local (la base de práctica, el servidor local y las pruebas):
+  [DESARROLLO](docs/guias/DESARROLLO.md).
+- Para saber qué queda por arreglar: [AUDITORIA](docs/listas/AUDITORIA.md).
+
+## Las reglas
+
+- [La constitución](.specify/memory/constitution.md): las reglas del proyecto. Está por encima de
+  cualquier otro documento, y en ella están también las convenciones: español, sin emojis, un commit
+  por cambio y reutilizar lo que ya existe.
+- [CLAUDE.md](CLAUDE.md): las notas prácticas para trabajar con Claude Code en este repositorio.
+- [specs/](specs/): cada cambio desde el 05/10/2026, con su especificación, su plan y sus tareas.
+
+## Referencia: cómo es hoy
+
+| Documento | Para quién | Qué cuenta |
+|---|---|---|
+| [ARTE](docs/referencia/ARTE.md) | El equipo de desarrollo | Cómo se protege el arte de las prendas: qué consigue cada medida y qué no |
+| [AVATARES](docs/referencia/AVATARES.md) | El equipo de desarrollo | Los avatares compuestos en el servidor: el plan del 21/09/2026, sus fases y cómo funcionan hoy las previsualizaciones, la foto de perfil y el pelo de atrás |
+| [CUENTAS](docs/referencia/CUENTAS.md) | El equipo de desarrollo | Las contraseñas: el hash con bcrypt, cómo se dejó de guardarlas en claro y qué no cubre |
+| [ECONOMIA](docs/referencia/ECONOMIA.md) | El equipo de desarrollo y quien decida precios | Las monedas: los precios por rareza, cómo se ganan, los límites y el recálculo de saldos del 04/10/2026 |
+| [MODERACION](docs/referencia/MODERACION.md) | El equipo de desarrollo y los administradores | Advertir, suspender y banear: qué hace cada sanción, quién puede ponerla, el panel y lo que ven los demás |
+| [SEO](docs/referencia/SEO.md) | El equipo de desarrollo | Los metadatos, los datos estructurados, el sitemap, robots y las imágenes, y lo que queda para las URL limpias |
+| [TIENDA](docs/referencia/TIENDA.md) | El equipo de desarrollo y el de arte | El Bazar: el catálogo entero a la venta, los precios por rareza, la migración 022 y lo que decide el equipo de arte |
+| [VPS](docs/referencia/VPS.md) | Quien opera el servidor | El servidor de producción: la máquina, nginx, la base de datos, los respaldos, el cron, el dominio y la seguridad |
+
+## Guías: cómo hacer algo
+
+| Documento | Para quién | Qué cuenta |
+|---|---|---|
+| [DESARROLLO](docs/guias/DESARROLLO.md) | El equipo de desarrollo | Trabajar en local: la base de práctica, el servidor local, las pruebas y los datos de verdad. Todavía guarda algunas investigaciones (el lienzo del catálogo, la marca de imagen no encontrada, los avisos en vivo) |
+| [JUEGOS](docs/guias/JUEGOS.md) | Quien añade o quita juegos | Cómo se añade un juego al catálogo y cómo se quita, con casos reales |
+| [CAMBIOS-DE-OTROS-DEVS](docs/guias/CAMBIOS-DE-OTROS-DEVS.md) | Quien funde el trabajo de otra persona | Cómo se funde lo que manda otro dev, los casos del 28/09 y del 03/10/2026, y la tabla de rutas de antes |
+| [RETOMAR](docs/guias/RETOMAR.md) | Luis, tras formatear el PC | Lo que no está en el repositorio y dónde se guarda (la llave SSH, los secretos, las copias), y cómo levantar el entorno |
+
+## Listas vivas: lo pendiente
+
+| Documento | Para quién | Qué cuenta |
+|---|---|---|
+| [AUDITORIA](docs/listas/AUDITORIA.md) | Todo el equipo | Lo que hay por arreglar, por orden de importancia, con su estado |
+| [SUGERENCIAS](docs/listas/SUGERENCIAS.md) | Todo el equipo | Lo que pidió la comunidad en el canal viejo de sugerencias de Discord, cada idea con su estado y una recomendación |
+
+## Historia y decisiones: por qué está como está
+
+| Fecha | Documento | Qué cuenta |
+|---|---|---|
+| 22/09/2026 | [FRONTEND](docs/historia/FRONTEND.md) | Por qué el navegador está como está, qué se usaría empezando de cero y por qué no se reescribe |
+
+## Especificaciones
+
+Cada cambio pasa por Spec Kit y deja su carpeta en [specs/](specs/), con la especificación, el plan y
+las tareas. La primera, [001](specs/001-reordenar-documentacion/spec.md), reordena esta documentación.
 
 ---
 
@@ -63,13 +102,3 @@ servidor de producción. Detalles en `docs/guias/DESARROLLO.md`.
 - **Avisos en vivo**: cómo aparece una notificación sin recargar, con
   Server-Sent Events servidos por la propia máquina — ver
   `docs/guias/DESARROLLO.md#9-los-avisos-en-vivo`.
-
-## Convenciones del proyecto
-
-- Comentarios y mensajes en español, explicando el "por qué".
-- Sin emojis en código, consola, commits y documentación nueva.
-- Un cambio lógico por commit, sin firmas ni pies de autoría
-  automáticos.
-- Reutilizar lo que ya existe (helpers compartidos, patrones del
-  catálogo) en lugar de crear sistemas paralelos.
-
