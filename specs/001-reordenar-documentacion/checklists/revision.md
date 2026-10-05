@@ -11,6 +11,16 @@ afirmación caducada y cómo quedó, y lo que no se pudo comprobar (con su motiv
 caducada nunca se queda sin corregir: si no se puede arreglar en esta spec, pasa a «Pendiente de
 probar» con su motivo.
 
+## Punto de partida
+
+Lo que había antes de tocar nada (T001): cuántas pruebas y archivos de prueba, cuánto tarda
+`npm test`, y que `npm run test:smoke` falla solo en la comprobación de monedas (la causa de la spec
+002).
+
+| Fecha | Pruebas | Archivos de prueba | `npm test` tarda | Prueba de humo |
+|---|---|---|---|---|
+| | | | | |
+
 ## Referencia
 
 | Documento | Leído entero | Comparado con | Caducado y corregido | Pendiente de probar |
@@ -72,7 +82,10 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 | `README.md` | | | | |
 | `CLAUDE.md` | | | | |
 | `infra/LEEME.md` | | | | |
+| `.gitignore` (sus comentarios) | | | | |
 | `memoria-claude/LEEME.md` (fuera de git) | | | | |
+| La memoria de Claude, la viva y su copia (fuera de git) | | | | |
+| `sugerencias-discord/` (fuera de git; solo guarda la exportación) | | | | |
 
 ## Validación final
 
