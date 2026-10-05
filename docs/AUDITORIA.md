@@ -142,7 +142,7 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 28 | - | Función rota | El panel "Tus amigos jugaron esto" nunca aparece: lee un global que solo define la copia duplicada de la raíz | `portal-growth.js:106` | 15 min |
 | 29 | - | Función rota | El chat anunciado "en tiempo real" no se actualiza solo: nadie emite evento de mensaje nuevo | `js/chat.js:411` | 3 h |
 | 30 | - | Función rota | 12 usuarios no son mencionables porque la regex no cubre sus nombres. El botón Responder inserta la arroba igual | `api/_notifications.js:47` | 1 h |
-| 31 | - | Datos | Dos personas no pudieron entrar y se registraron de nuevo: `jader`/`Jader` y `yotter`/`Yotter`. El registro compara exacto y `getUserId` con `LOWER()` | `api/_utils.js:15` | 2 h |
+| 31 | 2026-10-05 | Datos | Dos personas no pudieron entrar y se registraron de nuevo: `jader`/`Jader` y `yotter`/`Yotter`. El registro compara exacto y `getUserId` con `LOWER()`. Arreglado: el perfil, entrar y el registro ya no distinguen mayúsculas, y las dos parejas siguen separadas (nota al pie) | `api/_utils.js:15` | 2 h |
 | 32 | - | Función rota | El guardado del avatar se traga todos los errores del servidor: el editor se cierra igual y no dice nada | `js/perfil.js:1065` | 30 min |
 | 33 | - | Función rota | El "top 20" de Macro Snake muestra dos o tres personas: deduplica por usuario después del `LIMIT` | `api/originales-ranking.js:29` | 30 min |
 | 34 | - | Economía | La puntuación la fija el cliente hasta 1.000.000.000, sin validar que sea múltiplo de 10 ni el tiempo transcurrido | `api/originales-ranking.js:70` | 1 h |
@@ -331,6 +331,33 @@ día en que se reclame se muestra la siguiente". Lo mismo para la semanal.
 Lo sujetan `tests/progreso.test.js`, `tests/misiones-avisos.test.js`,
 `tests/mi-dia.test.js`, `tests/progreso-pagina.test.js` y
 `tests/rescatar-misiones.test.js`.
+
+**Nota al 31.** Hecho el 05/10/2026, a raíz de un caso: el perfil pedido
+como "Mateo503" decía "Usuario no encontrado" para la cuenta MATEO503, y
+parecía que esa cuenta había bloqueado a quien la buscaba. La regla vive
+en `cuentaPorNombre()` (`api/_utils.js`): primero el nombre exacto; si no
+hay, la única cuenta que coincida sin mirar mayúsculas; si coinciden
+varias, ninguna, porque no se puede saber de quién es.
+
+- **El perfil** (`/api/users?username=`) se abre con otras mayúsculas y
+  dice el nombre guardado. La página (`js/usuario.js`) ya usaba ese
+  nombre para los botones, así que agregar, bloquear o comentar
+  funcionan aunque el enlace venga escrito de otra forma.
+- **Entrar** también, y la sesión lleva el nombre guardado. Vale igual
+  para cambiar la contraseña y borrar la cuenta.
+- **El registro** compara sin mayúsculas: "Jader" no se crea si ya existe
+  "jader", y el aviso dice que entre con su cuenta.
+- **`getUserId()`** usa la misma regla: antes devolvía la primera cuenta
+  que saliera de cada pareja.
+
+Lo que queda abierto, a sabiendas: las dos parejas siguen siendo cuatro
+cuentas, y juntarlas es cosa de cada persona. `api/social.js` y
+`api/_sanciones.js` tienen su propia búsqueda exacta (la de sanciones
+también se llama `cuentaPorNombre`): reciben el nombre de listas y
+perfiles, que ya es el guardado. Y `js/usuario.js` manda a tu propio
+perfil si el nombre del enlace coincide con el tuyo sin mirar
+mayúsculas, así que "jader" no puede ver el perfil de "Jader". Lo sujeta
+`tests/nombres-mayusculas.test.js`.
 
 ---
 
