@@ -442,7 +442,7 @@ tocar algo de aquí, conviene saber que ya se pensó:
   propio código y no hay ningún `ORDER BY` construido con entrada del
   usuario.
 - **Las contraseñas están terminadas.** 144 de 144 con bcrypt, cero en
-  texto plano. El backfill de `docs/referencia/CUENTAS.md` acabó.
+  texto plano. El backfill de `docs/historia/CONTRASENAS-EN-CLARO.md` acabó.
 - **`api/_monedas.js` es el modelo a copiar.** Resuelve el otorgamiento en
   una sola sentencia condicionada contra el `now()` de Postgres, no
   contando peticiones. Es la única pieza del sitio que hoy no se puede

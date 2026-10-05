@@ -26,7 +26,7 @@ pruebas) y su documentación, que empieza aquí.
 | [ARTE](docs/referencia/ARTE.md) | El equipo de desarrollo | Cómo se protege el arte de las prendas: qué consigue cada medida y qué no |
 | [AVATARES](docs/referencia/AVATARES.md) | El equipo de desarrollo | Los avatares compuestos en el servidor: el plan del 21/09/2026, sus fases y cómo funcionan hoy las previsualizaciones, la foto de perfil y el pelo de atrás |
 | [AVISOS](docs/referencia/AVISOS.md) | El equipo de desarrollo | Lo que aparece sin recargar: los avisos en vivo por Server-Sent Events, sus piezas, los dos procesos, los límites y quién puede oír qué |
-| [CUENTAS](docs/referencia/CUENTAS.md) | El equipo de desarrollo | Las contraseñas: el hash con bcrypt, cómo se dejó de guardarlas en claro y qué no cubre |
+| [CUENTAS](docs/referencia/CUENTAS.md) | El equipo de desarrollo | Las contraseñas: el hash con bcrypt, lo que queda de cuando se guardaban en claro y qué no cubre |
 | [ECONOMIA](docs/referencia/ECONOMIA.md) | El equipo de desarrollo y quien decida precios | Las monedas: los precios por rareza, cómo se ganan, los límites y el recálculo de saldos del 04/10/2026 |
 | [MODERACION](docs/referencia/MODERACION.md) | El equipo de desarrollo y los administradores | Advertir, suspender y banear: qué hace cada sanción, quién puede ponerla, el panel y lo que ven los demás |
 | [SEO](docs/referencia/SEO.md) | El equipo de desarrollo | Los metadatos, los datos estructurados, el sitemap, robots y las imágenes, y lo que queda para las URL limpias |
@@ -54,6 +54,7 @@ pruebas) y su documentación, que empieza aquí.
 | Fecha | Documento | Qué cuenta |
 |---|---|---|
 | 22/09/2026 | [FRONTEND](docs/historia/FRONTEND.md) | Por qué el navegador está como está, qué se usaría empezando de cero y por qué no se reescribe |
+| 16/09/2026 | [CONTRASENAS-EN-CLARO](docs/historia/CONTRASENAS-EN-CLARO.md) | Cómo se dejó de guardar las contraseñas en texto plano: el relleno de las que quedaban, el plan de activación y su despliegue |
 | 16/09/2026 | [AVISOS-ROTOS](docs/historia/AVISOS-ROTOS.md) | Por qué los avisos en vivo pasaron dos semanas sin funcionar tras la mudanza al VPS, y el adiós a Pusher |
 | 16/09/2026 | [IMAGEN-NO-ENCONTRADA](docs/historia/IMAGEN-NO-ENCONTRADA.md) | La marca de imagen rota que dejaba sobre el avatar una prenda quitada o retirada: de dónde salía y cómo se arregló |
 | 16/09/2026 | [LIENZO-DEL-CATALOGO](docs/historia/LIENZO-DEL-CATALOGO.md) | Los dibujos del catálogo que no miden el lienzo de 327x504: cuántos son, qué dice la base y el trabajo que quedó pendiente |

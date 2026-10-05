@@ -38,34 +38,6 @@ arregló —contra un Postgres normal habrían seguido intentando hablar con
 Neon— y hoy **los siete handlers** pasan por `obtenerSql()`. Ver
 `docs/referencia/VPS.md#33-apisocialjs-y-apisystemjs`.
 
-### 2.2 `api/_password.js` — contraseñas
-
-El único lugar que sabe hashear y verificar contraseñas:
-
-- Funciones puras: `hashContrasena(plana)`, `verificarHash(plana,
-  hash)`, `verificarContrasenaYMigrar(sql, username, plana)`.
-- Clase `PasswordService(sql)` con `registrar`, `verificar`,
-  `cambiarContrasena` y `eliminarCuenta`.
-
-Detalles del flujo (ver `docs/referencia/CUENTAS.md` para el panorama
-completo):
-
-- **Registro**: guarda solo `password_hash`; el texto plano nunca se
-  escribe.
-- **Login**: si el usuario tiene hash, compara con bcrypt; si todavía
-  tiene texto plano (usuario viejo), compara el texto y, si coincide,
-  migra a hash en la misma operación (migración perezosa).
-
-### 2.4 Cambios en `api/auth.js` y `api/users.js`
-
-| Archivo | Acciones que ahora usan `PasswordService` |
-|---|---|
-| `api/auth.js` | `login`, `register`, `delete-account` |
-| `api/users.js` | `change-password` |
-
-Las respuestas al frontend mantienen exactamente la misma forma que
-antes (el contrato de la API no cambió).
-
 ## 3. Infraestructura local
 
 ### 3.1 `scripts/pglite.js` — base de práctica
@@ -108,16 +80,6 @@ Abre `http://localhost:3001`:
   activados en el modo local; las secciones que los usan se ven vacías
   (esperado).
 - Y para probar contra los datos DE VERDAD, ver la sección 8.
-
-### 3.3 `scripts/migrar-passwords.js` — backfill
-
-Pica las contraseñas en texto plano restantes y borra el texto.
-Protecciones (ver `docs/referencia/CUENTAS.md`):
-
-- Sin `--local` ni `--produccion` se niega a correr.
-- `--produccion` exige confirmación escrita ("SI").
-- `--simular` solo muestra qué haría.
-- Con `--produccion` verifica que la migración 013 esté aplicada.
 
 ### 3.4 `tests/password.test.js` — tests
 
@@ -189,37 +151,6 @@ pantalla de tienda y el panel de arte también se pueden mirar en el navegador
 sin tocar producción: con datos de mentira (`npm run db:local`) o con una copia
 de los de verdad (`npm run db:real`, sección 8).
 
-## 4. Despliegue de estos cambios
-
-Orden estricto (la migración SIEMPRE antes que el código que la usa):
-
-1. Aplicar la migración 013 a la base de producción (agrega
-   `users.password_hash`).
-2. Aplicar la migración 014 (quita el NOT NULL de `users.password`;
-   sin ella, registro y login fallan con el error de not-null
-   constraint — ver `docs/referencia/CUENTAS.md`).
-3. Aplicar la migración 015 (agrega la contabilidad de monedas por tiempo;
-   no modifica `users.monedas`).
-4. Desplegar el código nuevo (todo el repo).
-5. Verificar: registrar un usuario de prueba y entrar con un usuario
-   existente (se migra solo).
-6. Correr el backfill con `--produccion` (cubre a los que no entran).
-7. Verificar que no quede texto plano:
-   `SELECT COUNT(*) FROM users WHERE password IS NOT NULL;` → 0.
-8. Recién entonces planificar una migración futura (borrar
-   `users.password` y la rama legacy de `api/_password.js`).
-
-**Estado (16/09/2026)**: los pasos 1 a 7 están hechos. El backfill se
-corrió contra el VPS y no queda ni una contraseña en texto plano. El
-paso 8 sigue pendiente a propósito; el detalle está en
-`docs/referencia/CUENTAS.md#5-plan-de-activación-en-producción`.
-
-Si se despliega el código sin la 013, registro y login fallan (la
-columna `password_hash` no existe). Si se despliega sin la 014,
-fallan por la restricción NOT NULL de `password`. Si se despliega sin la
-015, el primer pulso de XP intentará usar columnas que no existen. Las tres
-migraciones van antes que el código.
-
 ## 5. Convenciones del proyecto
 
 - **Idioma**: comentarios y mensajes en español, explicando el "por
@@ -271,7 +202,7 @@ picadas con bcrypt en `password_hash`.
 
 Hasta el 16/09/2026 el respaldo traía además `password` **en texto
 plano** para quien no hubiera entrado desde la migración perezosa. El
-backfill cerró ese hueco en la base (`docs/referencia/CUENTAS.md#5-plan-de-activación-en-producción`), pero no en
+backfill cerró ese hueco en la base (`docs/historia/CONTRASENAS-EN-CLARO.md#plan-de-activación-en-producción`), pero no en
 los respaldos ya sacados: **un `.sql.gz` anterior a esa fecha sigue
 llevando 17 contraseñas en claro**. Los del VPS se borran solos a los 14
 días; el que esté en `datos-locales/` de un portátil, no. Si hay uno

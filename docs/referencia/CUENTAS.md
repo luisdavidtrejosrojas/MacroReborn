@@ -6,13 +6,10 @@ para activarlo en producción.
 
 ---
 
-## 1. El problema que se atacó
+## 1. De dónde viene
 
-El proyecto guardaba las contraseñas en TEXTO PLANO en la columna
-`users.password`, y el login comparaba directo en SQL
-(`WHERE username = ? AND password = ?`). Cualquiera con acceso a la
-base podía leer la contraseña de todos los usuarios. Ese era el riesgo
-más grave y fue lo primero que se resolvió.
+Hasta septiembre de 2026 las contraseñas se guardaban en claro. Cómo se pasó a bcrypt sin que nadie
+perdiera el acceso lo cuenta [CONTRASENAS-EN-CLARO](../historia/CONTRASENAS-EN-CLARO.md).
 
 ## 2. La solución
 
@@ -22,9 +19,11 @@ más grave y fue lo primero que se resolvió.
   vieja `password` se conserva durante la transición (sin su
   restricción NOT NULL, ver migración 014) y se borra recién en una
   migración futura, después del período de gracia.
-- **Módulo `api/_password.js`**: funciones puras (`hashContrasena`,
+- **Módulo `api/_password.js`**, el único lugar que sabe hashear y
+  verificar contraseñas: funciones puras (`hashContrasena`,
   `verificarHash`, `verificarContrasenaYMigrar`) + clase
-  `PasswordService`.
+  `PasswordService` (`registrar`, `verificar`, `cambiarContrasena` y
+  `eliminarCuenta`).
 
 ### 2.1 Qué hace cada operación
 
@@ -48,39 +47,11 @@ hash se genera a partir de la misma contraseña. No existe un estado
 intermedio en el que el texto desaparezca sin que el hash quede
 guardado y funcione.
 
-## 3. Backfill (`scripts/migrar-passwords.js`)
+## 3. El relleno (`scripts/migrar-passwords.js`)
 
-La migración perezosa cubre a los usuarios que vuelven a entrar. El
-backfill cubre al resto (los que nunca más entran), picando todas las
-contraseñas en texto plano de una sola vez.
-
-### 3.1 Alcance
-
-Solo toca las columnas `password` / `password_hash` de la tabla
-`users`. No borra usuarios ni modifica ninguna otra tabla. Es seguro
-de re-ejecutar.
-
-### 3.2 Protecciones
-
-- **`--local`** → corre contra la maqueta PGlite (crea usuarios de
-  prueba). Sin riesgo.
-- **`--produccion`** → obligatorio para tocar la base real; sin esa
-  bandera el script se niega a correr.
-- **Confirmación escrita**: con `--produccion`, pide tipear "SI"
-  antes de tocar nada.
-- **`--simular`** → solo muestra qué haría, no cambia nada.
-- **Chequeo de migración**: con `--produccion` verifica que la
-  columna `password_hash` exista (migración 013); si no, se detiene
-  sin cambios.
-
-### 3.3 Uso
-
-```bash
-node scripts/migrar-passwords.js --local --simular   # ver qué haría (local)
-node scripts/migrar-passwords.js --local             # ejecutar en la maqueta
-DATABASE_URL="postgres://..." node scripts/migrar-passwords.js --produccion --simular  # ver qué haría (real)
-DATABASE_URL="postgres://..." node scripts/migrar-passwords.js --produccion           # ejecutar (pide confirmación)
-```
+Pasó a bcrypt, de una vez, las contraseñas en claro de quienes no habían vuelto a entrar. Se corrió el
+16/09/2026 y no queda ninguna; el script sigue en el repositorio. Su alcance, sus protecciones y cómo
+se usa: [el relleno](../historia/CONTRASENAS-EN-CLARO.md#backfill-scriptsmigrar-passwordsjs).
 
 ## 4. Pruebas
 
@@ -98,61 +69,16 @@ práctica y ejercita los handlers reales:
   usuario.
 - El registro rechaza nombres de usuario duplicados.
 
-## 5. Plan de activación en producción
+## 5. Lo que queda de la activación
 
-Orden estricto:
+- `users.password` sigue existiendo y `api/_password.js` conserva su rama para el texto plano: el
+  último paso del plan, borrar las dos cosas tras un período de gracia, queda pendiente a propósito.
+- Los respaldos sacados antes del 16/09/2026 llevan 17 contraseñas en claro. En el VPS se borran
+  solos a los 14 días; una copia bajada a un portátil, no
+  (ver `docs/guias/DESARROLLO.md#8-probar-contra-los-datos-de-verdad`).
 
-1. Aplicar la migración 013 (agrega `users.password_hash`).
-2. Aplicar la migración 014 (quita el NOT NULL de `users.password`).
-   Este paso es OBLIGATORIO: sin él, el registro y el login fallan con
-   `null value in column "password" violates not-null constraint`,
-   porque el código nuevo ya no escribe en `password` pero la columna
-   sigue marcada como obligatoria (fue el error que se vio en
-   producción).
-3. Desplegar el código nuevo (`api/_db.js`, `api/_password.js`,
-   `api/auth.js`, `api/users.js` y el antiguo `_pusher.js`).
-4. Verificar: registrar un usuario de prueba y entrar con un usuario
-   existente (se migra solo).
-5. Correr el backfill con `--produccion` (cubre a los que no entran).
-6. Verificar que no quede texto plano:
-   `SELECT COUNT(*) FROM users WHERE password IS NOT NULL;` → 0.
-7. Tras un período de gracia: crear una migración futura para borrar
-   `users.password` y quitar la rama de comparación legacy de
-   `api/_password.js`.
-
-### Estado (16/09/2026)
-
-Los pasos 1 a 6 están hechos. El backfill se corrió contra el VPS ese
-día y migró 17 cuentas: las que tenían texto plano y ningún hash, o sea
-las que no habían vuelto a entrar desde el despliegue (las otras 124 ya
-las había migrado el login). Hoy `SELECT COUNT(*) FROM users WHERE
-password IS NOT NULL` devuelve 0, y las 141 filas guardan un hash `$2b$`
-de 60 caracteres.
-
-Se comprobó además lo que el backfill no puede comprobar por sí solo:
-que nadie perdió el acceso. Con el respaldo anterior al cambio delante,
-se verificó con `bcrypt.compare` que las 17 contraseñas originales
-validan contra su hash nuevo. 17 de 17.
-
-Una trampa que casi se cuela, por si se repite la comprobación: verificar
-el formato con una expresión regular a través de `ssh ... psql -c "..."`
-no funciona. Los `$` se expanden por el camino, el patrón llega vacío y
-**devuelve 0 coincidencias sin error**, que es justo lo que uno quiere
-ver. Es más seguro agrupar por `left(password_hash, 4)`, que no lleva
-caracteres especiales.
-
-Queda el paso 7, y queda a propósito: `users.password` sigue existiendo y
-`api/_password.js` conserva su rama legacy.
-
-Lo que el backfill **no** limpia son los respaldos ya sacados: cualquier
-`.sql.gz` anterior al 16/09/2026 sigue llevando esas 17 contraseñas en
-claro. En el VPS se borran solos a los 14 días; una copia bajada a un
-portátil, no (ver `docs/guias/DESARROLLO.md#8-probar-contra-los-datos-de-verdad`).
-
-Si se despliega el código sin la 013, registro y login fallan (la
-columna `password_hash` no existe). Si se despliega sin la 014,
-registro y login fallan por la restricción NOT NULL de `password`.
-Por eso el orden importa: migraciones primero, código después.
+El plan entero, y cómo se comprobó que nadie perdió el acceso:
+[la activación](../historia/CONTRASENAS-EN-CLARO.md#plan-de-activación-en-producción).
 
 ## 6. Alcance (qué NO incluyó)
 
