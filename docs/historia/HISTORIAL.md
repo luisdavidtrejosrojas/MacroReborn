@@ -347,3 +347,87 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
   el ranking. [SEO](../referencia/SEO.md#5-imágenes),
   [`e4cfacd`](https://github.com/valenmgg/MacroReborn/commit/e4cfacd) a
   [`7d77ea8`](https://github.com/valenmgg/MacroReborn/commit/7d77ea8) (5 commits).
+
+## Semana del 10 al 16/08/2026
+
+- **16/08, cuentas** (Luis, y la unión de valenmgg): las contraseñas pasan a bcrypt, con migración
+  perezosa. `api/_db.js`, el conector único de la base; `api/_password.js` y las migraciones 013 y 014;
+  la base de práctica, PGlite, con sus pruebas, y el servidor local; el relleno de las que quedaban en
+  claro; la integración continua en GitHub Actions; y la primera documentación, el README y las guías
+  de desarrollo y de seguridad. Entra por los pull requests #2 y #6. [CUENTAS](../referencia/CUENTAS.md),
+  [CONTRASENAS-EN-CLARO](CONTRASENAS-EN-CLARO.md),
+  [`55e81c5`](https://github.com/valenmgg/MacroReborn/commit/55e81c5) a
+  [`911428e`](https://github.com/valenmgg/MacroReborn/commit/911428e) (20 commits).
+- **16/08, juegos** (Luis): Superfighters (el 111, Flash con Ruffle) e I Am Hall Security (el 112,
+  HTML5 por iframe), con la guía para agregar un juego. Pull requests #4 y #7.
+  [JUEGOS](../guias/JUEGOS.md#5-casos-reales),
+  [`460b735`](https://github.com/valenmgg/MacroReborn/commit/460b735) a
+  [`ef5fd90`](https://github.com/valenmgg/MacroReborn/commit/ef5fd90) (11 commits).
+- **16/08, avatares** (SamuMacro): llegan los dibujos de las prendas de todos los personajes, 454
+  archivos nuevos, con retoques de fondos, pieles y de Tora; y ocho subidas que no cambiaron nada.
+  [`efc43f2`](https://github.com/valenmgg/MacroReborn/commit/efc43f2) a
+  [`637509f`](https://github.com/valenmgg/MacroReborn/commit/637509f) (14 commits).
+- **14/08, juegos** (SamuMacro): las portadas de los juegos pasan a JPEG, 110 nuevas, y el catálogo las
+  usa; los scripts de catorce páginas se cargan con `defer`; y dos subidas no cambiaron nada.
+  [`9c04340`](https://github.com/valenmgg/MacroReborn/commit/9c04340) a
+  [`5c32156`](https://github.com/valenmgg/MacroReborn/commit/5c32156) (6 commits).
+- **14/08, tienda** (SamuMacro): la primera tienda de avatares, con monedas: su tabla y sus precios
+  (migración 012) y su API; y una subida sin cambios.
+  [`e0f9dbe`](https://github.com/valenmgg/MacroReborn/commit/e0f9dbe) a
+  [`77a8c3e`](https://github.com/valenmgg/MacroReborn/commit/77a8c3e) (3 commits).
+- **14/08, moderación** (SamuMacro): el panel de administración (`admin.html` y `js/admin.js`) y sus
+  estadísticas (`api/system.js`).
+  [`a09015e`](https://github.com/valenmgg/MacroReborn/commit/a09015e) a
+  [`0de71b2`](https://github.com/valenmgg/MacroReborn/commit/0de71b2) (4 commits).
+- **13 y 14/08, perfiles** (SamuMacro): la actividad de cada persona, con sus reseñas y valoraciones de
+  juegos, en el perfil propio y en el de los demás (`js/motor/actividad.js`).
+  [`4bbe7e9`](https://github.com/valenmgg/MacroReborn/commit/4bbe7e9) a
+  [`f4d9275`](https://github.com/valenmgg/MacroReborn/commit/f4d9275) (12 commits).
+- **13/08, comunidad y rankings** (SamuMacro): Comunidad y el ranking, juntos en
+  `comunidad-ranking.html`; el ranking por tiempo jugado y su historial (migraciones 010 y 011), que el
+  servidor recalcula los lunes con un cron de Vercel (`vercel.json`).
+  [`7350a50`](https://github.com/valenmgg/MacroReborn/commit/7350a50) a
+  [`edf4471`](https://github.com/valenmgg/MacroReborn/commit/edf4471) (11 commits).
+- **13/08, amigos** (SamuMacro): bloquear a otra persona (migración 009), en el perfil de los demás, el
+  chat, las menciones y las notificaciones; y una subida sin cambios.
+  [`d07cab0`](https://github.com/valenmgg/MacroReborn/commit/d07cab0) a
+  [`6b397bb`](https://github.com/valenmgg/MacroReborn/commit/6b397bb) (19 commits).
+- **12 al 14/08, avatares** (SamuMacro): retoques y dibujos nuevos de Cereza y Tora: pieles, pelos,
+  espaldas y remeras. [`92fcc46`](https://github.com/valenmgg/MacroReborn/commit/92fcc46) a
+  [`f35ac27`](https://github.com/valenmgg/MacroReborn/commit/f35ac27) (5 commits).
+- **12/08, perfiles** (SamuMacro): el perfil propio y el de los demás crecen: comentarios y actividad en
+  tiempo real (`js/perfil-realtime.js`), insignias, amigos favoritos (migración 007), favoritos e
+  historial de juegos, y la galería de diseños de avatar guardados, con votos (migración 008); y cinco
+  subidas sin cambios. [`209764c`](https://github.com/valenmgg/MacroReborn/commit/209764c) a
+  [`6c82078`](https://github.com/valenmgg/MacroReborn/commit/6c82078) (47 commits).
+- **12/08, avisos en vivo** (SamuMacro y valenmgg): los avisos en tiempo real, con Pusher (el antiguo
+  `_pusher.js` y `js/realtime.js`), en nueve páginas. [AVISOS-ROTOS](AVISOS-ROTOS.md),
+  [`b1f3347`](https://github.com/valenmgg/MacroReborn/commit/b1f3347) a
+  [`fdabb43`](https://github.com/valenmgg/MacroReborn/commit/fdabb43) (5 commits).
+- **12/08, comunidad y rankings** (SamuMacro): la página del ranking (`ranking.html` y `js/ranking.js`).
+  [`34a98f8`](https://github.com/valenmgg/MacroReborn/commit/34a98f8) a
+  [`9d9a12a`](https://github.com/valenmgg/MacroReborn/commit/9d9a12a) (3 commits).
+- **12/08, juegos** (SamuMacro): el catálogo (`juegos.html`) y la ficha de cada juego (`juego.html`),
+  con sus estilos. [`b7ba752`](https://github.com/valenmgg/MacroReborn/commit/b7ba752) a
+  [`e8c2c7e`](https://github.com/valenmgg/MacroReborn/commit/e8c2c7e) (7 commits).
+- **12/08, descubrir juegos** (valenmgg): dos retoques de la portada.
+  [`225e99e`](https://github.com/valenmgg/MacroReborn/commit/225e99e) y
+  [`ec4bf7a`](https://github.com/valenmgg/MacroReborn/commit/ec4bf7a).
+- **11 al 13/08, juegos** (SamuMacro): el catálogo, reescrito entero (sus 99 entradas), y juegos nuevos:
+  Crazy Zombie 8 y 9, Earn to Die, Sports Head Football y Pokémon Emerald Rogue.
+  [JUEGOS](../guias/JUEGOS.md), [`8f63882`](https://github.com/valenmgg/MacroReborn/commit/8f63882) a
+  [`00b7d31`](https://github.com/valenmgg/MacroReborn/commit/00b7d31) (8 commits).
+- **11 al 16/08, perfiles** (SamuMacro): el aspecto del perfil: el perfil retro, la tarjeta clásica
+  (`js/perfil-tarjeta-clasica.js`) y una hoja de referencia del modo claro.
+  [`70be7d4`](https://github.com/valenmgg/MacroReborn/commit/70be7d4) a
+  [`22f1bda`](https://github.com/valenmgg/MacroReborn/commit/22f1bda) (14 commits).
+- **11 al 15/08, el navegador** (SamuMacro): arreglos para el móvil, el menú en móvil
+  (`js/nav-toggle.js`) y la barra en todas las páginas, y retoques de casi todas las hojas de estilo;
+  una de las subidas no cambió nada.
+  [`bfded78`](https://github.com/valenmgg/MacroReborn/commit/bfded78) a
+  [`6283ff7`](https://github.com/valenmgg/MacroReborn/commit/6283ff7) (20 commits).
+- **11/08, notificaciones y noticias** (SamuMacro y valenmgg): notificaciones más interactivas, con
+  menciones y un botón para responder desde las reseñas y los perfiles; valenmgg retoca las
+  notificaciones y limpia parte de una copia suelta del proyecto, `MacroReborn-fixes/`; y dos subidas
+  sin cambios. [`1eee211`](https://github.com/valenmgg/MacroReborn/commit/1eee211) a
+  [`87a38e9`](https://github.com/valenmgg/MacroReborn/commit/87a38e9) (10 commits).
