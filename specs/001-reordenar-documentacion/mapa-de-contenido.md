@@ -123,7 +123,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | `ECONOMIA.md` (199) | `ref/ECONOMIA.md` | §5 Los saldos rehechos (134-186) a `historia/SALDOS-REHECHOS.md`; en la referencia quedan el resumen y el aviso de que no se repite | 05/10/2026 |
 | `TIENDA.md` (215) | `ref/TIENDA.md` | Nada. Se corrigen `js/tienda.js` y `css/tienda.css`, que no existen | |
 | `MODERACION.md` (175) | `ref/MODERACION.md` | §5 Lo que se hizo al activarlo (142-152) a `historia/ACTIVAR-LA-MODERACION.md` | 05/10/2026 |
-| `SEO.md` (206) | `ref/SEO.md` | Nada. Se corrigen las cifras (15 páginas) | |
+| `SEO.md` (206) | `ref/SEO.md` | Nada. Se corrigen las cifras (15 páginas) | 05/10/2026 |
 | `JUEGOS.md` (253) | `guias/JUEGOS.md` | §6 Convenciones (212-223) se cambia por el enlace a la constitución, después de comprobar que no dice nada más | |
 | `CAMBIOS-DE-OTROS-DEVS.md` (157) | `guias/CAMBIOS-DE-OTROS-DEVS.md` | §1 y §2, los casos del 28/09 y del 03/10 (8-144), a `historia/CASOS-DE-OTROS-DEVS.md`. Queda el método (lo que se repite de los dos casos, más §3) y gana la tabla «ruta vieja → ruta nueva» | |
 | `FRONTEND.md` (151) | `historia/FRONTEND.md` | Entero: es el documento de decisión del 22/09. Resumen en `ref/ARQUITECTURA.md`; las cifras, con su fecha | |
