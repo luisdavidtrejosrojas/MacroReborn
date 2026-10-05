@@ -21,23 +21,10 @@ fuera y hay que copiarlas aparte.
 | **El `.env` del proyecto** | Solo en el servidor, en `~/MacroReborn/.env` | No hace falta copiarlo: se lee desde allí |
 | **Los dibujos originales de las prendas** | `imagenes/<modelo>/` y `imagenes/<modelo>.png`, fuera de git desde el 21/09/2026 | Cuatro copias: la base de datos del servidor (`avatar_archivos`, que es lo que sirve el sitio) con su respaldo diario, esta misma carpeta, la copia de Drive, y el `~/respaldos/arte-originales-imagenes-2026-09-21.tar.gz` del servidor |
 
-### 1.1 La llave SSH se ha perdido dos veces. Léelo antes de formatear
+### 1.1 Si se pierde la llave
 
-**Septiembre de 2026:** se formateó el PC sin nada en local. Se
-reconstruyó desde Drive.
-
-**19 de septiembre de 2026:** se volvió a formatear. Esta vez la copia
-del proyecto sí viajó a Drive y **sobrevivió todo** —código, git,
-memorias, conversaciones—, pero la llave no estaba dentro del proyecto:
-vivía en `G:\Mi unidad\02_Proyectos_Software\Proyectos de código\Oracle
-Cloud - MacroReborn\`, y al reorganizar Drive esa carpeta desapareció.
-Búsqueda exhaustiva de todo Drive y de `C:`, `D:`, `E:` y `F:`: **cero
-archivos `.pem`**.
-
-Las dos veces el fallo fue el mismo, y la lección es una sola: **lo que
-viaja bien es lo que está DENTRO de la carpeta que se copia.** Lo que
-está fuera se pierde aunque esté anotado, porque la anotación envejece
-antes que el olvido.
+Se perdió dos veces en septiembre de 2026, y las dos porque vivía fuera de la carpeta que se copia:
+lo que viaja bien es lo que está dentro. Lo cuenta [LA LLAVE SSH](../historia/LLAVE-SSH.md).
 
 **Cómo recuperar el acceso.** El sitio sigue funcionando solo; lo que se
 pierde es administrarlo y desplegar. Se recupera por Azure:
@@ -53,27 +40,6 @@ pierde es administrarlo y desplegar. Se recupera por Azure:
 **Ojo: Azure AÑADE la clave, no reemplaza.** Después hay que quitar a
 mano la vieja de `~/.ssh/authorized_keys`, o el servidor sigue aceptando
 una llave cuyo paradero se desconoce.
-
-### 1.2 Lo que se hizo el 19/09/2026
-
-Clave activa, la única que entra:
-
-```
-SHA256:NtNfiLpBLPf+zKj2oJbGsM5KbkJsjKNROogkcLG8Lr8   ed25519   macroreborn-vps-2026-09-19
-```
-
-Se quitó la anterior (`SHA256:xUnZ0B9e4opNR0nBIbcGM4uzpfG8ZNKe+9wcVPF4EwU`,
-RSA 3072, comentario `generated-by-azure`) de **dos** sitios, no de uno:
-estaba autorizada para `azureuser` **y también para `root`**, y como
-`PermitRootLogin` está en `without-password`, quien tuviera ese `.pem`
-entraba directamente como root. El `authorized_keys` de root quedó
-vacío, así que ya no hay ninguna vía de acceso como root por SSH
-(`PasswordAuthentication` está en `no`). Se administra con `sudo` desde
-`azureuser`, como siempre.
-
-Quedan copias de los dos archivos originales en el servidor, por si
-acaso: `~/.ssh/authorized_keys.antes-limpieza-2026-09-19` y
-`/root/.ssh/authorized_keys.antes-limpieza-2026-09-19`.
 
 ### 1.3 Dónde vive ahora la llave, y por qué ahí
 

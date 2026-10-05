@@ -51,7 +51,7 @@ const HOST = process.env.MR_VPS_HOST || "azureuser@172.184.203.20";
 // perdio la anterior. El script seguia pidiendo
 // la vieja y fallaba diciendo que no habia llave, cuando la habia al
 // lado con otro nombre. Lo que paso con la llave:
-// docs/guias/RETOMAR.md#11-la-llave-ssh-se-ha-perdido-dos-veces-léelo-antes-de-formatear
+// docs/historia/LLAVE-SSH.md
 //
 // Se prueban las dos y se usa la primera que exista.
 const CARPETA_SSH = path.join(process.env.USERPROFILE || process.env.HOME || "", ".ssh");

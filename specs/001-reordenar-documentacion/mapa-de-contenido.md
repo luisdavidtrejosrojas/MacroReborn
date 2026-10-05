@@ -93,8 +93,8 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 |---|---|---|---|---|
 | Título y entrada | 1-11 | `guias/RETOMAR.md` | | |
 | §1 Lo que NO está en este repositorio | 12-23 | `guias/RETOMAR.md` | | |
-| §1.1 La llave SSH se ha perdido dos veces | 24-56 | `historia/LLAVE-SSH.md` | En la guía queda la advertencia, en dos líneas | |
-| §1.2 Lo que se hizo el 19/09/2026 | 57-77 | `historia/LLAVE-SSH.md` | | |
+| §1.1 La llave SSH se ha perdido dos veces | 24-56 | `historia/LLAVE-SSH.md` y `guias/RETOMAR.md` | El relato de las dos pérdidas y su lección, a historia; cómo recuperar el acceso por Azure es una guía y se queda, con la advertencia en dos líneas (cambiado al leerla) | 05/10/2026 |
+| §1.2 Lo que se hizo el 19/09/2026 | 57-77 | `historia/LLAVE-SSH.md` | | 05/10/2026 |
 | §1.3 Dónde vive ahora la llave, y por qué ahí | 78-124 | `guias/RETOMAR.md` | | |
 | §2 Dónde vive cada cosa | 125-142 | `ref/ARQUITECTURA.md` y `guias/RETOMAR.md` | Lo general a la visión; lo de Luis (Bitwarden, Drive) se queda. Sin la IP | |
 | §3 Levantar el entorno en un PC nuevo | 143-180 | `guias/SUMARSE.md` y `guias/RETOMAR.md` | Lo de todos a la guía para sumarse; lo que solo restaura Luis (llaves, `.env`, `datos-locales/`, memoria) se queda | |

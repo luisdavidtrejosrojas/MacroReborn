@@ -55,6 +55,7 @@ pruebas) y su documentación, que empieza aquí.
 |---|---|---|
 | 22/09/2026 | [FRONTEND](docs/historia/FRONTEND.md) | Por qué el navegador está como está, qué se usaría empezando de cero y por qué no se reescribe |
 | 21/09/2026 | [AVATARES-AL-SERVIDOR](docs/historia/AVATARES-AL-SERVIDOR.md) | El plan de pasar los avatares al servidor: por qué, lo medido sobre el VPS, sus cinco fases, lo aprendido de macrojuegos y cómo se decidió la foto de perfil |
+| 19/09/2026 | [LLAVE-SSH](docs/historia/LLAVE-SSH.md) | Las dos veces que se perdió la llave para entrar al servidor, la lección que dejó y lo que se cambió el 19/09 |
 | 16/09/2026 | [CONTRASENAS-EN-CLARO](docs/historia/CONTRASENAS-EN-CLARO.md) | Cómo se dejó de guardar las contraseñas en texto plano: el relleno de las que quedaban, el plan de activación y su despliegue |
 | 16/09/2026 | [AVISOS-ROTOS](docs/historia/AVISOS-ROTOS.md) | Por qué los avisos en vivo pasaron dos semanas sin funcionar tras la mudanza al VPS, y el adiós a Pusher |
 | 16/09/2026 | [IMAGEN-NO-ENCONTRADA](docs/historia/IMAGEN-NO-ENCONTRADA.md) | La marca de imagen rota que dejaba sobre el avatar una prenda quitada o retirada: de dónde salía y cómo se arregló |
