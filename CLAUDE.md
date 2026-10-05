@@ -12,6 +12,9 @@ con ella, gana la constitución. Aquí solo van las notas prácticas.
 - Todo cambio pasa por Spec Kit (regla XIX). Los pequeños, como «spec corta» de una página.
 - Una rama por especificación (`NNN-nombre`, la crea `/speckit-specify`), que se une a `main` en local,
   sin pull request, cuando está verificada y la integración continua está en verde.
+- Como última tarea de cada especificación, antes de unirla a `main`, se añade su entrada a
+  `docs/historia/HISTORIAL.md` con la fecha de esa unión: el día, el área, quién y el enlace a su
+  `spec.md`. Cómo se escribe, en `docs/guias/SUMARSE.md#3-commits-y-ramas`.
 - Los comandos (`/speckit-specify`, `-clarify`, `-plan`, `-checklist`, `-tasks`, `-analyze`,
   `-implement`, `-constitution`...) viven en `.claude/skills/` y solo se cargan si Claude Code se abrió
   en `D:\Macroreborn`. En una sesión abierta en otra carpeta, se sigue a mano cada

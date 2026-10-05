@@ -8,7 +8,7 @@
 > **Revisado:** 05/10/2026
 
 **Cómo se mantiene.** Cada especificación añade aquí su entrada como última tarea, antes de unirse a
-`main`, con la fecha de esa unión ([SUMARSE](../guias/SUMARSE.md)). Lo de antes se reconstruyó el
+`main`, con la fecha de esa unión ([la regla](../guias/SUMARSE.md#3-commits-y-ramas)). Lo de antes se reconstruyó el
 05/10/2026 a partir de los commits, con su fecha de autor. Las semanas van de lunes a domingo, la más
 reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con una cuenta del equipo.
 

@@ -92,6 +92,9 @@ powershell.exe -NoProfile -Command "[Console]::OutputEncoding=[Text.Encoding]::U
   `git push origin` al terminar cada tarea.
 - **Una rama por especificación** (`NNN-nombre`, la crea `/speckit-specify`). Se une a `main` en local,
   sin pull request, cuando está verificada y la integración continua está en verde.
+- **El historial**: como última tarea de cada especificación, antes de unirla a `main`, se añade su
+  entrada a [HISTORIAL](../historia/HISTORIAL.md), con la fecha de esa unión: el día, el área, quién y
+  el enlace a su `spec.md`. Si la semana todavía no tiene sección, se crea arriba del todo.
 
 Si el trabajo llega de fuera, en un zip o en una rama propia, cómo se funde lo cuenta
 [CAMBIOS-DE-OTROS-DEVS](CAMBIOS-DE-OTROS-DEVS.md), y qué pedirle a quien lo manda,
