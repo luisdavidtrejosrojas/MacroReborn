@@ -83,8 +83,8 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 | `CLAUDE.md` | | | | |
 | `infra/LEEME.md` | | | | |
 | `.gitignore` (sus comentarios) | | | | |
-| `memoria-claude/LEEME.md` (fuera de git) | | | | |
-| La memoria de Claude, la viva y su copia (fuera de git) | | | | |
+| `memoria-claude/LEEME.md` (fuera de git) | 05/10/2026 | La copia y la memoria viva | Decía que el repositorio es público (es privado, comprobado el 05/10/2026); «nueve archivos» de memoria (son dieciséis); la carpeta de Claude para una ruta en `C:` estaba mal calculada; la receta de refresco empezaba con `rm -rf` y se llevaba el propio `LEEME.md` y el zip; citaba la auditoría con su ruta de antes. Todo corregido | |
+| La memoria de Claude, la viva y su copia (fuera de git) | 05/10/2026, solo sus citas a documentos | Las rutas nuevas | 12 citas en seis archivos con las rutas de antes; las dos que citaban por número (1.1 a 1.3 de `RETOMAR.md`, la sección 3 de `ECONOMIA.md`) citan ahora por tema. La copia tenía 13 archivos y ahora tiene los 17 de la viva | |
 | `sugerencias-discord/` (fuera de git; solo guarda la exportación) | | | | |
 
 ## Validación final
