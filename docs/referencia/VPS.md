@@ -119,8 +119,14 @@ Consultar la base de producción es solo en modo lectura (regla XX de la constit
 
 `~/respaldar.sh` corre todas las noches a las 3:30 por crontab, deja un
 `.sql.gz` en `~/respaldos/diarios/` y borra los de más de 14 días. Ahí
-mismo quedan los que se sacan a mano antes de tocar algo, con su hora en
-el nombre, y se borran igual. Copia del script en `infra/scripts/respaldar.sh`.
+mismo quedan los que se lanzan a mano con el script, con su hora en el
+nombre, y se borran igual. Copia del script en `infra/scripts/respaldar.sh`.
+
+Fuera de esa limpieza, en `~/respaldos/`, quedan las copias guardadas a propósito, que no se borran
+nunca solas. Al 05/10/2026: las de antes de una operación delicada (`antes-de-...sql.gz`, la última
+del 04/10/2026), los volcados de Neon de la mudanza, del 01/09/2026, que llevan contraseñas en claro
+([CUENTAS](CUENTAS.md#lo-que-queda)), los originales del arte del 21/09/2026 y dos copias del
+repositorio (`.bundle`) del 15/09/2026, de antes y después de limpiar su historia.
 
 ```bash
 ~/respaldar.sh                      # lanzar uno a mano
