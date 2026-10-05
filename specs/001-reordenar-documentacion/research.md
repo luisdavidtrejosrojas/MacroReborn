@@ -376,6 +376,10 @@ con su fecha, en cuanto Luis lo dé. Mientras tanto la rama no se une a
 **Aprobada**: Luis aprobó los cuatro cambios (las rutas, la regla XIX, la regla XXXII y la regla V) el
 05/10/2026, antes de la primera mudanza (T004).
 
+**El correo**: al cerrarla, el 05/10/2026 (T072), Luis decidió que la regla V nombre su identidad sin
+pegar el correo, que ya está en `.git/config` (regla XXV). Al cerrarla se corrigieron también las rutas de
+las reglas XVII y XXI, que explicaban el despliegue en `VPS.md`: desde T036 lo explica `DESPLEGAR.md`.
+
 **Alternativas descartadas**: subir a v1.1.0 metiendo la regla del historial en el flujo de trabajo
 (sería un cambio MINOR que la spec no pide; Luis puede pedirlo después).
 

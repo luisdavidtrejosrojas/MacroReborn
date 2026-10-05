@@ -138,7 +138,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | `CLAUDE.md` | Rutas nuevas, resúmenes con su enlace (research D9) y la regla del historial (RF-017) | 05/10/2026 |
 | `infra/LEEME.md` | Se revisa entero, como un documento más | 05/10/2026 |
 | `.gitignore` | Rutas nuevas, y deja de decir que el repositorio es público | 05/10/2026 |
-| Constitución y su plantilla propia | Enmienda v1.0.1 (research D12) | |
+| Constitución y su plantilla propia | Enmienda v1.0.1 (research D12) | 05/10/2026 |
 | Memoria de Claude, la viva y su copia | Rutas nuevas (research D11) | |
 | `memoria-claude/LEEME.md` | Repositorio privado, recuento de archivos y una receta de refresco que no borra nada (research D11) | |
 
