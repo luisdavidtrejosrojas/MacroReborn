@@ -2,7 +2,7 @@
 // UNA CUENTA BANEADA, EN EL NAVEGADOR — tests/baneadas-navegador.test.js
 // ==============================
 // La parte del navegador de lo que ven los demás de una cuenta baneada
-// (api/_sanciones.js, docs/MODERACION.md). El servidor manda lo que
+// (api/_sanciones.js, docs/referencia/MODERACION.md). El servidor manda lo que
 // escribió ya tapado, con "autor_baneado", y aquí:
 //
 //   - MRTexto.escrito() (js/core.js) lo pinta en rojo, escapado;

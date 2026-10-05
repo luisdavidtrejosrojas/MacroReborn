@@ -575,7 +575,7 @@ partida; decide el equipo.
 - **Pedida por:** ✿ ꪀﺃ᥅, 14/08: días sin jugar ni comentar, y que afecte al
   ranking.
 - **Hoy:** desde el 28/09 hay advertencias, suspensiones de 1, 3, 7 o 30
-  días (no se puede escribir) y baneos (`docs/MODERACION.md`). No hay
+  días (no se puede escribir) y baneos (`docs/referencia/MODERACION.md`). No hay
   filtro automático de groserías.
 - **Recomendación:** dejarla así. Un filtro automático da muchos falsos
   positivos en español con jerga de cada país.

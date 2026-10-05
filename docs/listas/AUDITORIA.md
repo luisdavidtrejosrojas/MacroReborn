@@ -291,7 +291,7 @@ cobrado. Lo sujeta `tests/misiones-avisos.test.js`. El margen para
 cobrar se decidió ese mismo día: ver la nota al 85.
 
 **Nota al 16 y al 17.** Hechos el 28/09/2026, con las sanciones
-(`docs/MODERACION.md`, migración 026, `api/_sanciones.js`), decididas
+(`docs/referencia/MODERACION.md`, migración 026, `api/_sanciones.js`), decididas
 ese día con el administrador. La advertencia fallaba porque el panel
 mandaba la notificación sin `origenNombre`, el servidor la rechazaba con
 un 403 y el panel, que no miraba la respuesta, decía "enviada". Suspender

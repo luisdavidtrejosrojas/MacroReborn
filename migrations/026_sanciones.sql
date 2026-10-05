@@ -1,7 +1,7 @@
 -- ============================================
 -- MacroReborn — Migración 026: las sanciones
 -- ============================================
--- Decidido el 28/09/2026 (docs/MODERACION.md). Hasta hoy "suspender"
+-- Decidido el 28/09/2026 (docs/referencia/MODERACION.md). Hasta hoy "suspender"
 -- solo ponía users.suspendido = true, y el servidor no lo miraba en
 -- ningún sitio: la única cuenta suspendida siguió entrando y escribiendo.
 -- Las advertencias del panel tampoco llegaban a nadie (puntos 16 y 17 de
