@@ -237,3 +237,113 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
   [VPS](../referencia/VPS.md#caché-del-navegador-immutable-es-una-promesa-que-no-se-retira),
   [`e5d35fd`](https://github.com/valenmgg/MacroReborn/commit/e5d35fd) a
   [`6d0cf88`](https://github.com/valenmgg/MacroReborn/commit/6d0cf88) (8 commits).
+
+## Semana del 31/08 al 06/09/2026
+
+- **02/09, servidor y producción** (Luis): la mudanza de Vercel y Neon a un servidor propio. Un
+  adaptador para hablar con un Postgres normal, `server.js` para servir el sitio sin Vercel y un
+  lanzador en cluster para usar los dos núcleos; la configuración del servidor, guardada en `infra/`, y
+  el despliegue, documentado; los estáticos con su propia zona de ritmo en nginx, y un script para medir
+  la capacidad. Los datos se habían migrado el 01/09. [MUDANZA-AL-VPS](MUDANZA-AL-VPS.md),
+  [VPS](../referencia/VPS.md),
+  [`9158e05`](https://github.com/valenmgg/MacroReborn/commit/9158e05) a
+  [`289c6ef`](https://github.com/valenmgg/MacroReborn/commit/289c6ef) (7 commits).
+- **02/09, servidor y producción** (Luis): el servidor entregaba su `.env` y el código del proyecto por
+  HTTP. Deja de hacerlo, con una lista blanca, y fail2ban gana una cárcel para los escaneos.
+  [FUGA-DEL-ENV](FUGA-DEL-ENV.md),
+  [`39745b1`](https://github.com/valenmgg/MacroReborn/commit/39745b1) a
+  [`60ddcbe`](https://github.com/valenmgg/MacroReborn/commit/60ddcbe) (3 commits).
+- **02/09, avatares** (Luis): el servidor valida las prendas de cada avatar; el editor carga sus
+  imágenes solo cuando se ven, y los avatares PNG se sirven como imagen y no dentro de cada lista.
+  [`50b44ca`](https://github.com/valenmgg/MacroReborn/commit/50b44ca) a
+  [`ca518e6`](https://github.com/valenmgg/MacroReborn/commit/ca518e6) (3 commits).
+
+## Semana del 17 al 23/08/2026
+
+- **21/08, descubrir juegos** (SamuMacro): la portada pasa un rato a ser una página de «En
+  mantenimiento», y vuelve a la de siempre.
+  [`f534d2b`](https://github.com/valenmgg/MacroReborn/commit/f534d2b) y
+  [`4c358c4`](https://github.com/valenmgg/MacroReborn/commit/4c358c4).
+- **20 y 21/08, perfiles** (SamuMacro): la actividad reciente, del perfil y de la comunidad, se guarda
+  en el servidor (`api/content.js` y `js/motor/actividad.js`).
+  [`645fd05`](https://github.com/valenmgg/MacroReborn/commit/645fd05) a
+  [`b0cbb2c`](https://github.com/valenmgg/MacroReborn/commit/b0cbb2c) (3 commits).
+- **20/08, el navegador** (SamuMacro): la barra de navegación, rehecha con el estilo de macrojuegos
+  (`css/navbar-macrojuegos.css`), con su menú en Android, el buscador y los colores de la hoja de
+  inicio, en 24 subidas (una de ellas, sin cambios).
+  [`e16f1d4`](https://github.com/valenmgg/MacroReborn/commit/e16f1d4) a
+  [`3e975d7`](https://github.com/valenmgg/MacroReborn/commit/3e975d7) (24 commits).
+- **20/08, avatares** (SamuMacro): el avatar PNG personalizado, solo para el administrador, que lo
+  guarda desde su panel y que las listas enseñan en lugar del de prendas.
+  [`a41c938`](https://github.com/valenmgg/MacroReborn/commit/a41c938).
+- **20/08, comunidad y rankings** (SamuMacro): el sistema de ranking de los originales y del progreso
+  (`api/originales-ranking.js` y `api/progreso.js`).
+  [`a03db86`](https://github.com/valenmgg/MacroReborn/commit/a03db86).
+- **19 y 20/08, perfiles** (SamuMacro): el perfil clásico en modo claro, con el diseño de macrojuegos
+  (`css/perfil-macrojuegos-light.css` y `js/perfil-tarjeta-clasica.js`).
+  [`de76d01`](https://github.com/valenmgg/MacroReborn/commit/de76d01) a
+  [`bda2ca6`](https://github.com/valenmgg/MacroReborn/commit/bda2ca6) (6 commits).
+- **19 y 20/08, misiones y logros** (SamuMacro): las funciones de Mi día.
+  [`52ac855`](https://github.com/valenmgg/MacroReborn/commit/52ac855) a
+  [`6b42e2f`](https://github.com/valenmgg/MacroReborn/commit/6b42e2f) (3 commits).
+- **19/08, notificaciones y noticias** (SamuMacro): las notificaciones en tiempo real en todas las
+  páginas (`js/notificaciones.js` y `js/realtime.js`), y las que crea el servidor por logros, XP y
+  amigos (`api/_notifications.js`).
+  [`71bf914`](https://github.com/valenmgg/MacroReborn/commit/71bf914) a
+  [`225bb2d`](https://github.com/valenmgg/MacroReborn/commit/225bb2d) (3 commits).
+- **18 y 19/08, el navegador** (SamuMacro): «Morpho», una mezcla que toca casi todas las páginas y
+  scripts; una actualización masiva de estilos; el tema común, `css/theme-canonical.css`, con más
+  contraste; cómo se ven las páginas nuevas; y arreglos en los scripts del perfil.
+  [`a5ff8a7`](https://github.com/valenmgg/MacroReborn/commit/a5ff8a7) a
+  [`2b9e863`](https://github.com/valenmgg/MacroReborn/commit/2b9e863) (14 commits).
+- **18/08, comunidad y rankings** (SamuMacro): Macro Snake, el primer juego original de la casa (el
+  113), con su página de originales, su ranking propio (`api/originales-ranking.js`, migración 017) y
+  la competición; y las Ligas (`liga-global.html`) y la actividad de la comunidad
+  (`actividad-comunidad.html`).
+  [`b659a1c`](https://github.com/valenmgg/MacroReborn/commit/b659a1c) a
+  [`3b23feb`](https://github.com/valenmgg/MacroReborn/commit/3b23feb) (19 commits).
+- **18/08, misiones y logros** (SamuMacro): la página de progreso, con las misiones, la racha y su API
+  (`api/progreso.js`, migración 016), y Mi día.
+  [`d481a3b`](https://github.com/valenmgg/MacroReborn/commit/d481a3b) a
+  [`68a233a`](https://github.com/valenmgg/MacroReborn/commit/68a233a) (11 commits).
+- **18/08, descubrir juegos** (SamuMacro): Explorar; la portada nueva, con su centro de todo y el portal
+  (`js/home-portal.js` y `portal-growth.js`, con copias en la raíz que hoy no carga ninguna página); y
+  retoques del catálogo.
+  [`26ab698`](https://github.com/valenmgg/MacroReborn/commit/26ab698) a
+  [`54a7f71`](https://github.com/valenmgg/MacroReborn/commit/54a7f71) (15 commits).
+- **18/08, perfiles** (SamuMacro): el bloque «Identidad gamer» del perfil, que salió el 28/09, y
+  retoques del perfil.
+  [`85b96e0`](https://github.com/valenmgg/MacroReborn/commit/85b96e0) a
+  [`fc0caf9`](https://github.com/valenmgg/MacroReborn/commit/fc0caf9) (7 commits).
+- **18/08, el servidor** (SamuMacro): una subida grande, «cambios-drasticos», que toca la API entera y
+  muchas páginas, y otras cuatro a `api/_auth.js`, `api/users.js`, `api/content.js` y `js/core.js`;
+  sus asuntos no dicen qué cambian.
+  [`bd37ac1`](https://github.com/valenmgg/MacroReborn/commit/bd37ac1) a
+  [`c57ab68`](https://github.com/valenmgg/MacroReborn/commit/c57ab68) (5 commits).
+- **18/08, el navegador** (SamuMacro): la barra, las hojas de inicio y de Explorar, las categorías y las
+  colecciones, una subida que toca 21 páginas a la vez, y cinco subidas que no cambiaron nada.
+  [`dc90f83`](https://github.com/valenmgg/MacroReborn/commit/dc90f83) a
+  [`1015790`](https://github.com/valenmgg/MacroReborn/commit/1015790) (12 commits).
+- **18/08, monedas** (Luis): las monedas por tiempo jugado: un servicio con su migración (015), los
+  premios en el pulso de XP y el gasto en la tienda, sus pruebas y la prueba de humo, y el orden de
+  despliegue, documentado. Entra por el pull request #10. [ECONOMIA](../referencia/ECONOMIA.md),
+  [`0ec81ba`](https://github.com/valenmgg/MacroReborn/commit/0ec81ba) a
+  [`9166f38`](https://github.com/valenmgg/MacroReborn/commit/9166f38) (7 commits).
+- **18/08, cuentas** (Luis): el navegador recupera una sesión local que el servidor ya no acepta
+  (pull requests #11 y #12).
+  [`657f78f`](https://github.com/valenmgg/MacroReborn/commit/657f78f) a
+  [`997ffbe`](https://github.com/valenmgg/MacroReborn/commit/997ffbe) (4 commits).
+- **18/08, el navegador** (Luis): una limpieza de lo que ya no cargaba ninguna página (el perfil retro,
+  `home.js`, `comunidad.js`, la portada de prueba y tres archivos sueltos), que entra por el pull
+  request #13; y una prueba en el README.
+  [`7bc8596`](https://github.com/valenmgg/MacroReborn/commit/7bc8596) a
+  [`a5bb611`](https://github.com/valenmgg/MacroReborn/commit/a5bb611) (3 commits).
+- **17 y 18/08, avatares** (valenmgg y Luis): dibujos nuevos y retocados de Cereza y Tora (bocas,
+  caras, pieles y guantes), subidos por la web y por dos pull requests (#8 y #9).
+  [`e7f9228`](https://github.com/valenmgg/MacroReborn/commit/e7f9228) a
+  [`a5d51e4`](https://github.com/valenmgg/MacroReborn/commit/a5d51e4) (10 commits).
+- **17/08, el navegador** (SamuMacro): las portadas de los juegos se quedan solo en JPEG (fuera las 109
+  PNG) y los 626 dibujos de las prendas se comprimen; y retoques en doce páginas, la barra, el perfil y
+  el ranking. [SEO](../referencia/SEO.md#5-imágenes),
+  [`e4cfacd`](https://github.com/valenmgg/MacroReborn/commit/e4cfacd) a
+  [`7d77ea8`](https://github.com/valenmgg/MacroReborn/commit/7d77ea8) (5 commits).
