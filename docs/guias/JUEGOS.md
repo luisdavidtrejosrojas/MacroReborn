@@ -1,8 +1,17 @@
-# JUEGOS — cómo agregar un juego al catálogo
+# JUEGOS — cómo se agrega y se quita un juego
+
+> **De qué trata:** cómo está armado el catálogo de juegos, el proceso para agregar uno (el archivo,
+> la portada, la entrada y el sitemap), cómo probarlo en local, dos casos reales y cómo se quita un
+> juego sin romper lo que la gente jugó.
+>
+> **Para quién:** quien añade o quita juegos.
+>
+> **Revisado:** 05/10/2026
 
 Guía para agregar un juego nuevo al catálogo de MacroReborn.
 Documenta el proceso completo, con dos casos reales: Superfighters
-(id 111, Flash) e I Am Hall Security (id 112, HTML5/Unity).
+(id 111, Flash) e I Am Hall Security (id 112, HTML5/Unity). Y cómo
+se quita uno, con el caso del 30.
 
 ---
 
@@ -15,6 +24,7 @@ Documenta el proceso completo, con dos casos reales: Superfighters
   SWF con Ruffle (y por qué el SWF se sirve desde jsdelivr y no desde
   archive.org) y HTML5/Unity embebido por iframe a una URL externa
   (y el tema de los permisos del iframe: fullscreen y pointer-lock).
+- Cómo se quita un juego sin romper lo que la gente jugó.
 
 ## 2. Cómo está armado el catálogo
 
@@ -96,7 +106,9 @@ hasta que se agregue el campo `imagen`.
 ### 3.4 Agregar la entrada en el catálogo
 
 En `js/datos-juegos.js`, agregar un objeto al array `juegos`. El `id`
-debe ser el máximo existente + 1 (hoy: 112). Ejemplo real:
+debe ser el máximo existente + 1 (el 05/10/2026 el máximo es 113, así que el
+siguiente es el 114), y nunca uno quitado ([quitar un juego](#7-quitar-un-juego)).
+Ejemplo real:
 
 ```js
 {
@@ -114,8 +126,9 @@ debe ser el máximo existente + 1 (hoy: 112). Ejemplo real:
 - `categoria` debe ser una de las existentes (Plataformas, RPG,
   Acción, Terror, Simulación, Deportes, Estrategia, Lucha, Aventura,
   Arcade, Puzzles, Casual, Cooperativo).
-- `estado` y `tipo`: hoy todos los juegos usan `estado: "⭐ Nuevo"` y
-  `tipo: "destacado"`.
+- `estado` y `tipo`: el 05/10/2026 todos usan `tipo: "destacado"`, y
+  todos menos uno el `estado` del ejemplo; el otro, Macro Snake, el
+  original de la casa, lleva el de "Original".
 - `iframe` puede ser un archivo local (`./html/juegos/x.html`) o una
   URL externa embebible.
 - Si la portada todavía no existe, se omite el campo `imagen` y el
@@ -124,8 +137,8 @@ debe ser el máximo existente + 1 (hoy: 112). Ejemplo real:
 ### 3.5 Actualizar el sitemap
 
 En `sitemap.xml`, agregar la URL de la ficha con el mismo formato que
-las demás (nota: el sitemap no está al día con los 112 juegos — solo
-llega hasta el id 42 —, se agrega el juego nuevo nada más):
+las demás (el 05/10/2026 tiene las fichas de 111 de los 112 juegos: falta
+la del 113, Macro Snake):
 
 ```xml
 <url>
@@ -159,12 +172,15 @@ npm run db:local   # sitio local en http://localhost:3001
 Notas:
 
 - La consola del servidor local **no** imprime los pulsos de XP ni la
-  actividad: solo imprime el aviso de migración de contraseñas del
-  usuario `demo` (de la rama de contraseñas). Para ver el XP, abrir la
-  pestaña Network del navegador (F12): cada 60 segundos aparece un
-  POST a `/api/users?action=xp` con `gameId: 112`.
-- En modo local solo están activos `/api/auth` y `/api/users`; las
-  secciones que usan `/api/content` se ven vacías (esperado).
+  actividad: solo imprime, la primera vez que entra `demo`, que su
+  contraseña pasó a hash. Para ver el XP, abrir la pestaña Network del
+  navegador (F12): cada 60 segundos aparece un POST a
+  `/api/users?action=xp` con `gameId: 112`, mientras se toque el teclado
+  o el ratón (a los 3 minutos sin nada, el pulso se para).
+- En modo local están `/api/auth`, `/api/users`, `/api/content` y
+  `/api/avisos`; lo demás contesta 404 y sus secciones se ven vacías
+  (esperado; ver
+  [el servidor local](DESARROLLO.md#scriptsservidor-localjs--probar-en-el-navegador)).
 - En un juego embebido por iframe a una URL externa, la página del
   juego es cross-origin: el texto "Cargando juego..." del wrapper
   desaparece cuando carga la *página* (liviana), y después el juego
@@ -211,15 +227,11 @@ Notas:
 
 ## 6. Convenciones del proyecto
 
-- **Idioma**: comentarios y mensajes en español, explicando el "por
-  qué".
-- **Sin emojis**: en código, consola, commits y documentación nueva.
-  Lo preexistente no se toca.
-- **Commits**: un cambio lógico por commit, sin firmas ni pies de
-  autoría automáticos.
-- **Reutilizar**: seguir el patrón de los juegos existentes (Ruffle
-  desde jsdelivr, iframe con permisos, portadas 480x270, entrada en
-  `datos-juegos.js`); no inventar un sistema paralelo.
+Las manda la constitución (`.specify/memory/constitution.md`): español, explicando el porqué; sin
+emojis en lo nuevo; un cambio lógico por commit, y buscar lo que ya existe antes de escribir nada
+(reglas I, XXX, V y XI). Para un juego, eso es seguir el patrón de los que ya están (Ruffle desde
+jsdelivr, iframe con permisos, portadas 480x270, entrada en `js/datos-juegos.js`) y no inventar un
+sistema paralelo.
 
 ## 7. Quitar un juego
 
