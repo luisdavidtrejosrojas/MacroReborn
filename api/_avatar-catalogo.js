@@ -40,7 +40,7 @@
 // "pelo": se dibuja como él, encima de la ropa, y el de delante lo
 // tapa. Con dos capas de pelo se combinan el flequillo de un peinado y
 // las colas de otro, como en macrojuegos
-// (docs/referencia/AVATARES.md#14-el-pelo-de-atrás-dos-capas-de-pelo).
+// (docs/referencia/AVATARES.md#el-pelo-de-atrás-dos-capas-de-pelo).
 //
 // El frontend tenía esta lista copiada en once archivos, y dos de ellos
 // (js/ranking.js y js/comunidad-ranking.js) llevaban "pantalon" antes

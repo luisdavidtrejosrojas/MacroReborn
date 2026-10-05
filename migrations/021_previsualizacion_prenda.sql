@@ -11,8 +11,8 @@
 --
 -- LA IMAGEN NO ENTRA AQUÍ, igual que en la 019: los JPG viven en disco,
 -- en datos-locales/previsualizaciones/. El porqué está en
--- docs/referencia/AVATARES.md#4-por-qué-en-disco-y-no-en-postgres y en
--- docs/referencia/AVATARES.md#12-las-previsualizaciones-automáticas-y-corregibles-una-a-una-más-adelante.
+-- docs/referencia/AVATARES.md#por-qué-en-disco-y-no-en-postgres y en
+-- docs/referencia/AVATARES.md#las-previsualizaciones-automáticas-y-corregibles-una-a-una-más-adelante.
 --
 -- NULL significa "todavía no se ha generado", y es un estado legítimo:
 -- la tienda y el editor caen entonces a lo de siempre. Se rellena con

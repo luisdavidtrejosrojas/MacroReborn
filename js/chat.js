@@ -69,7 +69,7 @@ function obtenerAvatarHTML(nombre){
     // fotoDeAvatar(). La memoria guarda su id y su huella. Hasta el
     // 24/09/2026 se dibujaba prenda por prenda; hasta el 28/09, el cuerpo
     // entero diminuto en el cuadrado. Ver
-    // docs/referencia/AVATARES.md#13-la-foto-de-perfil-la-cara-con-un-cuadro-por-modelo.
+    // docs/referencia/AVATARES.md#la-foto-de-perfil-la-cara-con-un-cuadro-por-modelo.
     const imagen = fotoDeAvatar(obtenerAvatarCacheado(nombre), obtenerPersonaCacheada(nombre)) ||
         SILUETA_AVATAR;
 

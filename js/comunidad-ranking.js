@@ -72,7 +72,7 @@ let _rkUsuarios = [];       // lista completa ya con puntosLogros
 // traia su compuesto: 64 imagenes sueltas de /prendas/ en las listas de
 // moderacion, conectados y actividad, medidas en produccion. Ahora todas
 // las listas pasan la persona, y si alguna llegara sin ella, sale la
-// silueta: nunca una prenda suelta. Ver docs/referencia/AVATARES.md#5-las-piezas.
+// silueta: nunca una prenda suelta. Ver docs/referencia/AVATARES.md#las-piezas.
 //
 // Desde el 28/09/2026, su foto de perfil y no el cuerpo entero: todos los
 // huecos de esta pagina son cuadrados, y el cuerpo entero salia diminuto

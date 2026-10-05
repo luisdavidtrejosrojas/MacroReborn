@@ -343,7 +343,7 @@ test("tienda.html lleva al Bazar, con la misma prenda", () => {
 });
 
 test("el pelo de atrás sale con su nombre, en el filtro y en la tarjeta", async () => {
-  // La capa del 04/10/2026 (docs/referencia/AVATARES.md#14-el-pelo-de-atrás-dos-capas-de-pelo).
+  // La capa del 04/10/2026 (docs/referencia/AVATARES.md#el-pelo-de-atrás-dos-capas-de-pelo).
   const items = [...CATALOGO, { id: 5, categoria: "peloatras", modelo: "tora", valorCapa: "tora_peloatras1",
     nombre: "Colas largas", precio: 500, rareza: "rara", creadoEl: hace(50),
     previsualizacion: "/previsualizaciones/5.jpg?v=dddddddddddd" }];
