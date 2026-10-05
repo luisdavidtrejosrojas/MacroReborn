@@ -1,7 +1,15 @@
-# VPS — despliegue en Azure (sin Vercel ni Neon)
+# VPS — el servidor de producción
 
-Cómo está montado el sitio en el servidor propio, qué se cambió del
-código para lograrlo, y cómo operarlo.
+> **De qué trata:** cómo está montado el sitio en su servidor propio y cómo se opera: la máquina, lo
+> instalado, la configuración y los secretos, los respaldos, el cron, el dominio, la seguridad y el
+> rendimiento.
+>
+> **Para quién:** quien opera el servidor, y el equipo de desarrollo cuando un cambio lo toca.
+>
+> **Revisado:** 05/10/2026
+
+Cómo se llegó aquí desde Vercel y Neon lo cuenta [LA MUDANZA AL VPS](../historia/MUDANZA-AL-VPS.md),
+y cómo se despliega un cambio, [DESPLEGAR](../guias/DESPLEGAR.md).
 
 ---
 
@@ -9,11 +17,11 @@ código para lograrlo, y cómo operarlo.
 
 | | |
 |---|---|
-| IP | 172.184.203.20 |
+| Dirección | `macroreborn.com` (y `www`), que apuntan a la máquina. La IP está en Bitwarden, y `git remote -v` la enseña en el remoto `vps` |
 | Usuario SSH | `azureuser` (con la llave `~/.ssh/macroreborn-vps-key`, ed25519 desde el 19/09/2026) |
 | OS | Ubuntu 24.04.4 LTS |
 | Arquitectura | **ARM64 (aarch64)** |
-| Recursos | 2 vCPU, 950 MB de RAM, 60 GB libres |
+| Recursos | 2 vCPU, 950 MB de RAM, 55 GB libres en disco (05/10/2026) |
 | Ruta del proyecto | `/home/azureuser/MacroReborn` |
 
 La arquitectura ARM importa al instalar cosas nuevas: hay que elegir
@@ -28,13 +36,15 @@ hacer que el kernel mate procesos bajo carga.
 ## 2. Piezas instaladas
 
 ```
-navegador -> nginx (:443 HTTPS) -> node server.js (:3000) -> postgres (:5432, local)
+navegador -> nginx (:443 HTTPS) -> node cluster.js, dos procesos (:3000) -> postgres (:5432, local)
              (:80 redirige a :443)
 ```
 
-- **PostgreSQL 16.15**: base `macroreborn`, rol `macroreborn`. Solo
-  escucha en `127.0.0.1`, no está expuesto a internet.
-- **Node 20.20.2** corriendo `server.js` bajo systemd.
+- **PostgreSQL 16**: base `macroreborn`, rol `macroreborn`. Solo
+  escucha en `127.0.0.1`, no está expuesto a internet. El cliente `psql`
+  es el 18, que se instaló para volcar la base de Neon.
+- **Node 20.20.2** corriendo `cluster.js` bajo systemd (ver
+  [el modo cluster](#modo-cluster)).
 - **nginx** como proxy inverso.
 - **ufw**: solo 22, 80 y 443 abiertos.
 
@@ -55,18 +65,19 @@ del código, y cómo se migraron los datos el 1/09/2026, lo cuenta
 DATABASE_URL=postgresql://macroreborn:<contraseña>@127.0.0.1:5432/macroreborn
 PORT=3000
 SESSION_SECRET=<secreto>
+CRON_SECRET=<secreto>
 ```
 
 La contraseña de Postgres y el `SESSION_SECRET` se generaron **en el
 servidor** con `openssl rand`. Las dos se rotaron el 2 de septiembre de
-2026 porque el archivo estuvo sirviéndose por HTTP (ver §9); las
-actuales nunca han salido de la máquina.
+2026 porque el archivo estuvo sirviéndose por HTTP (lo cuenta
+[LA FUGA DEL .ENV](../historia/FUGA-DEL-ENV.md)); las actuales nunca han
+salido de la máquina. `CRON_SECRET` es la llave con la que el cron
+semanal le pide al sitio que recalcule el ranking (ver
+[el cron semanal](#6-el-cron-semanal)).
 
-Para que las notificaciones en vivo funcionen hay que agregar a este
-archivo las cuatro variables de Pusher (`PUSHER_APP_ID`, `PUSHER_KEY`,
-`PUSHER_SECRET`, `PUSHER_CLUSTER`), sacadas del dashboard de Pusher.
-Sin ellas `getPusher()` devuelve una instancia muda y el sitio funciona
-igual, solo que sin avisos en tiempo real.
+Los avisos en vivo no necesitan nada aquí: van por Server-Sent Events
+desde esta misma máquina ([AVISOS](AVISOS.md)).
 
 ### Cómo se carga el `.env`
 
@@ -101,10 +112,15 @@ psql "$DATABASE_URL"                       # consola
 psql "$DATABASE_URL" -f migrations/0XX.sql # aplicar una migracion
 ```
 
+Consultar la base de producción es solo en modo lectura (regla XX de la constitución), con
+`PGOPTIONS="-c default_transaction_read_only=on"`.
+
 ### Respaldos
 
 `~/respaldar.sh` corre todas las noches a las 3:30 por crontab, deja un
-`.sql.gz` en `~/respaldos/diarios/` y borra los de más de 14 días.
+`.sql.gz` en `~/respaldos/diarios/` y borra los de más de 14 días. Ahí
+mismo quedan los que se sacan a mano antes de tocar algo, con su hora en
+el nombre, y se borran igual. Copia del script en `infra/scripts/respaldar.sh`.
 
 ```bash
 ~/respaldar.sh                      # lanzar uno a mano
@@ -123,27 +139,30 @@ Ahora los datos viven en una sola máquina, sin la red de seguridad que
 daba un servicio administrado, así que estas copias son la única vuelta
 atrás. Conviene bajar una a otro lado de vez en cuando: un respaldo que
 solo existe en el servidor que respalda no protege de perder el servidor.
+`npm run db:traer` baja uno de paso
+([DESARROLLO](../guias/DESARROLLO.md#8-probar-contra-los-datos-de-verdad)).
 
 ## 6. El cron semanal
 
-`vercel.json` definía un cron que recalculaba el ranking los lunes a
-las 8. Eso lo hacía Vercel y aquí no existe, así que se reemplazó por
-una entrada en el crontab de `azureuser`:
+Los lunes a las 8 se recalcula el ranking. Lo hacía un cron de Vercel;
+aquí es una entrada del crontab de `azureuser` que llama a
+`~/recalcular-ranking.sh` (copia en `infra/scripts/recalcular-ranking.sh`).
+El script pide `/api/system?action=recalcular-ranking` al propio sitio,
+con el `CRON_SECRET` del `.env`, y apunta el resultado:
 
 ```
-0 8 * * 1 curl -s -m 120 "http://127.0.0.1:3000/api/system?action=recalcular-ranking" >> /home/azureuser/ranking-cron.log 2>&1
+0 8 * * 1 /home/azureuser/recalcular-ranking.sh >> /home/azureuser/ranking-cron.log 2>&1
 ```
 
-Se puede borrar `vercel.json` cuando se confirme que no queda nada
-apuntando a Vercel.
+El crontab entero, con la línea de los respaldos, está en `infra/scripts/crontab.txt`.
 
-## 8. Dominio y HTTPS
+## 7. Dominio y HTTPS
 
 El sitio vive en **https://macroreborn.com** (y `www`), con el dominio
 comprado en IONOS.
 
-En la zona DNS de IONOS hay dos registros A, `@` y `www`, apuntando a
-`172.184.203.20`. Lo demás que aparece ahí (`MX`, el `TXT` de SPF, los
+En la zona DNS de IONOS hay dos registros A, `@` y `www`, apuntando a la
+IP del VPS. Lo demás que aparece ahí (`MX`, el `TXT` de SPF, los
 `CNAME` de DKIM/DMARC) es del correo y no se toca. No hay registros
 AAAA a propósito: el VPS solo tiene IPv4, y un AAAA suelto mandaría a
 los visitantes con IPv6 a la página aparcada de IONOS — un fallo que se
@@ -151,9 +170,11 @@ manifiesta como "a unos les carga y a otros no".
 
 El certificado es de Let's Encrypt, emitido con certbot para ambos
 nombres, y `certbot.timer` lo renueva solo (comprobado con
-`certbot renew --dry-run`). nginx redirige todo el tráfico HTTP a HTTPS
-con un 301. La configuración anterior al certificado quedó guardada en
-`/etc/nginx/sites-available/macroreborn.antes-de-https`.
+`certbot renew --dry-run`; el 05/10/2026 vencía el 30/11/2026). nginx
+redirige todo el tráfico HTTP a HTTPS con un 301. Las copias de la
+configuración de nginx de antes de cada cambio grande se guardan en
+`/etc/nginx/respaldos/`, nunca dentro de `sites-enabled/`, donde nginx
+las cargaría como un segundo sitio.
 
 Si hay que rehacer el certificado:
 
@@ -162,13 +183,16 @@ sudo certbot --nginx -d macroreborn.com -d www.macroreborn.com
 sudo certbot certificates      # ver los que hay y cuando vencen
 ```
 
-## 9. Seguridad y rendimiento
+## 8. Seguridad y rendimiento
 
 Vercel absorbía parte de esto por su cuenta. En un VPS hay que ponerlo,
 porque el servidor está expuesto directamente a internet. A las pocas
 horas de existir el dominio ya aparecieron escáneres automáticos
 (`l9scan` y varias IPs de centros de datos): rastrean los registros de
 certificados nuevos y llegan solos, sin que nadie comparta el enlace.
+
+La configuración de nginx y de fail2ban tiene su copia en `infra/`, con la IP del administrador
+cambiada por el marcador `TU.IP.AQUI`; el 05/10/2026 coincidía con el servidor directiva a directiva.
 
 ### La lista blanca de estáticos
 
@@ -186,12 +210,22 @@ for R in /.env /.git/config /package.json /server.js; do
 done   # las cuatro deben dar 404
 ```
 
-### fail2ban
+### fail2ban, apagado
 
-Bloquea por IP a quien insiste. Seis cárceles en `/etc/fail2ban/jail.local`:
-`sshd`, `nginx-http-auth`, `nginx-botsearch`, `nginx-bad-request`,
-`nginx-limite` (caza a quien acumula respuestas 429) y **`nginx-hostil`**,
-que es la que de verdad detecta los escaneos.
+**Está parado y deshabilitado desde el 17/09/2026, por decisión de Luis**: estaba baneando a un
+administrador del sitio, porque el propio sitio mandaba ráfagas de peticiones que acababan en 429. El
+18/09 se midieron tres causas; la principal, que el XP y los minutos se contaban por petición, es el
+punto 18 de [la auditoría](../listas/AUDITORIA.md), arreglado el 25/09/2026. Volver a encenderlo lo
+decide Luis:
+
+```bash
+sudo systemctl enable --now fail2ban
+```
+
+Lo que hay que saber si se enciende. Tiene seis cárceles en `/etc/fail2ban/jail.local` (copia en
+`infra/fail2ban/`): `sshd`, `nginx-http-auth`, `nginx-botsearch`, `nginx-bad-request`,
+`nginx-limite` (caza a quien acumula respuestas 429) y **`nginx-hostil`**, que es la que de verdad
+detecta los escaneos.
 
 Dos cosas que hubo que arreglar, y que conviene conocer porque las dos
 fallaban en silencio:
@@ -221,8 +255,8 @@ sudo fail2ban-regex /var/log/nginx/access.log \
 ```
 
 La IP del administrador está en `ignoreip` para no quedarse fuera por
-error. **Si esa IP cambia, hay que actualizarla** o un descuido puede
-dejar sin acceso SSH.
+error. **Si esa IP cambia, hay que actualizarla** antes de encenderlo, o
+un descuido puede dejar sin acceso SSH.
 
 ```bash
 sudo fail2ban-client status              # carceles activas
@@ -232,13 +266,14 @@ sudo fail2ban-client set sshd unbanip X  # desbloquear a alguien
 
 ### Límites de peticiones
 
-En `/etc/nginx/conf.d/macroreborn-limites.conf` y aplicados en el sitio:
+En `/etc/nginx/conf.d/macroreborn-limites.conf` (copia en `infra/nginx/`) y aplicados en el sitio:
 
 | Zona | Límite | Para qué |
 |---|---|---|
-| `general` | 30/s por IP, ráfaga 60 | Navegación normal (una visita son 12-15 peticiones) |
+| `general` | 30/s por IP, ráfaga 60 (20 en `/api/avisos`) | Navegación normal (una visita son 12-15 peticiones) |
 | `login` | 5/min por IP | Fuerza bruta sobre `/api/auth` |
-| `porip` | 40 conexiones | Agotamiento de conexiones |
+| `estaticos` | 200/s por IP, ráfaga 600 | Los `.css`, `.js` e imágenes, que una página pide de golpe |
+| `porip` | 40 conexiones (100 en los estáticos) | Agotamiento de conexiones |
 
 Devuelven `429`, no el `503` por defecto: es lo que un cliente bien
 hecho entiende como "vas demasiado rápido".
@@ -275,26 +310,31 @@ corre es código cacheado, no el que está en el servidor.
    `.css` con `max-age=300, must-revalidate`: fresco cinco minutos, luego se
    pregunta, y la pregunta se contesta con una respuesta vacía. Un despliegue
    llega a todo el mundo en cinco minutos.
-2. Los HTML piden los scripts con `?v=20260914`. Ese número es de un solo uso:
-   existía para escapar de las entradas `immutable` que ya estaban guardadas en
-   los navegadores, que es lo único que una entrada así permite hacer —cambiar
-   la URL—. No hace falta tocarlo en cada despliegue; la capa 1 se encarga.
+2. Los HTML piden scripts y hojas con `?v=<fecha>`. Empezó el 14/09/2026 para
+   escapar de las entradas `immutable` que ya estaban guardadas en los
+   navegadores, que es lo único que una entrada así permite hacer —cambiar la
+   URL—. No hace falta tocarlo en cada despliegue, porque la capa 1 se encarga;
+   se sube cuando un cambio en un archivo no puede convivir esos cinco minutos
+   con la versión vieja de otro, como la barra nueva del 03/10/2026. Por eso
+   hoy conviven varias fechas.
 
 **La regla.** `immutable` solo en URLs que lleven la huella de su contenido,
-como `/prendas/<sha256>.png`: ahí no hay nada que invalidar, porque si el
-contenido cambia la URL cambia sola. Todo lo que se edite en sitio —el código
-del navegador— tiene que revalidar.
+como las de los avatares compuestos con su `?v=<huella>`: ahí no hay nada que
+invalidar, porque si el contenido cambia la URL cambia sola. Todo lo que se
+edite en sitio —el código del navegador— tiene que revalidar.
 
 ### Cabeceras de seguridad
 
 `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y
 `Strict-Transport-Security`, más `server_tokens off` para no anunciar la
-versión de nginx.
+versión de nginx. Un `add_header` dentro de un `location` cancela los del
+`server`, así que los bloques que ponen los suyos repiten las cuatro.
 
 ### Compresión de las respuestas JSON
 
 `gzip` estaba activo pero solo cubría HTML: faltaba `gzip_types`, así que
-cada `/api/users` enviaba 1,38 MB sin comprimir.
+cada `/api/users` enviaba 1,38 MB sin comprimir. Ahora cubre también el JSON,
+el CSS y el JavaScript.
 
 ### Modo cluster
 
@@ -305,42 +345,45 @@ veía al 90% de CPU con el otro ocioso.
 Es seguro porque **la app no guarda estado en memoria entre peticiones**:
 las sesiones están en Postgres y los `Map`/`Set` de los handlers son
 variables locales. Si eso cambia, el cluster deja de ser seguro — cada
-proceso tendría su propia copia.
+proceso tendría su propia copia. Los avisos en vivo son la excepción, y
+la resuelven con `LISTEN`/`NOTIFY` de Postgres ([AVISOS](AVISOS.md)).
 
 Para volver atrás: cambiar `ExecStart` a `server.js` (queda copia en
-`macroreborn.service.antes-cluster`) y `daemon-reload`.
+`/etc/systemd/system/macroreborn.service.antes-cluster`) y `daemon-reload`.
 
 ### Medidas
+
+Del 02/09/2026, con 63 usuarios:
 
 | | 1 proceso | 2 procesos |
 |---|---|---|
 | Portada | 6022 pet/s | **8401 pet/s** |
 | `/api/users` | 52 pet/s | **68 pet/s** |
 
-Por HTTPS y contra la red real, la portada da ~800-1200 pet/s, que son
-varios miles de usuarios simultáneos. El hardware sobra de largo para 63
-usuarios.
+Por HTTPS y contra la red real, la portada daba ~800-1200 pet/s, que son
+varios miles de usuarios simultáneos.
 
-El cuello de botella es `/api/users`: 34 veces más lento que el resto.
-No es la base de datos — esa consulta tarda **0,064 ms**. Es que la
-columna `avatar` ocupa **1340 kB de los 1382 kB** de la respuesta: se
-envían los avatares completos de todos los usuarios en cada llamada, y
-Node se va al 90% de CPU serializando. Comprime mal (solo un 26%) porque
-ya son datos comprimidos.
+El cuello de botella era `/api/users`: 34 veces más lento que el resto.
+No por la base de datos —esa consulta tardaba **0,064 ms**—, sino porque
+la columna `avatar` ocupaba **1340 kB de los 1382 kB** de la respuesta:
+se enviaban los avatares completos de todos los usuarios en cada llamada,
+y Node se iba al 90% de CPU serializando. Eso ya no pasa: el 05/10/2026
+`/api/users` pesaba 169 kB.
 
-Esto **empeora con cada usuario nuevo**: a 300 usuarios serían ~6 MB por
-petición. Merece la pena revisar si quien consume ese endpoint necesita
-de verdad los avatares o le basta con nombre y nivel.
-
-## 10. Lo que falta
+## 9. Lo que falta
 
 1. **Rotar la contraseña de Neon**, que se compartió por chat durante
-   la migración. (La del VPS ya está rotada — ver §9.)
+   la migración. (La del VPS ya está rotada: lo cuenta
+   [LA FUGA DEL .ENV](../historia/FUGA-DEL-ENV.md).)
 
 2. **Dar de baja Neon** cuando el VPS lleve un tiempo estable. Conviene
    conservar el snapshot hasta entonces. Después se puede quitar
    `@neondatabase/serverless` de `package.json` y la rama de Neon de
    `_db.js`.
+
+3. **Decidir si se vuelve a encender fail2ban**, ahora que su causa
+   principal, el punto 18 de la auditoría, está arreglada (ver
+   [fail2ban, apagado](#fail2ban-apagado)).
 
 ### Resuelto
 
@@ -348,10 +391,12 @@ de verdad los avatares o le basta con nombre y nivel.
   tiempo real. No se pusieron, y ya no hacen falta: los avisos dejaron de
   necesitar un tercero. Se sostienen desde esta misma máquina con
   Server-Sent Events, y el paquete `pusher` salió de `package.json`. El
-  porqué entero está en `docs/referencia/AVISOS.md`. **(16/09/2026)**
+  porqué entero está en [AVISOS](AVISOS.md). **(16/09/2026)**
 
 - **Publicar los cambios en git.** El código de la migración estaba en el
   VPS y en el PC, pero sin commit. Ya está publicado. **(16/09/2026)**
+
+- **Borrar `vercel.json`.** Ya no está en el repositorio. **(comprobado el 05/10/2026)**
 
 (Esta lista llegó a estar numerada 1, 4, 5, 6: se habían borrado dos
 puntos sin renumerar el resto, así que no había forma de saber si se

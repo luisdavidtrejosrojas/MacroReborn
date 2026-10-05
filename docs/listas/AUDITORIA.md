@@ -13,7 +13,7 @@ encontrando.
 Nunca se borra la fila ni se cambia su número, aunque quede resuelta.
 Una fila resuelta con su fecha explica por qué el código está como está;
 una fila borrada deja un hueco que nadie sabe interpretar seis meses
-después. (`docs/referencia/VPS.md#10-lo-que-falta` ya contó lo que pasa cuando se borran puntos
+después. (`docs/referencia/VPS.md#9-lo-que-falta` ya contó lo que pasa cuando se borran puntos
 de una lista numerada sin renumerar: no hay forma de saber si se
 hicieron o se perdieron.)
 

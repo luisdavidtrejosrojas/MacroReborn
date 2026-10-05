@@ -34,7 +34,7 @@ Lo que había antes de tocar nada (T001): cuántas pruebas y archivos de prueba,
 | `docs/referencia/MODERACION.md` | | | | |
 | `docs/referencia/SEO.md` | | | | |
 | `docs/referencia/TIENDA.md` | | | | |
-| `docs/referencia/VPS.md` | | | | |
+| `docs/referencia/VPS.md` | 05/10/2026 | El código (`api/_pg.js`, `server.js`, `cluster.js`, `api/auth.js`); `infra/`, cuyas nueve copias coinciden con el servidor directiva a directiva; el servidor, solo con lectura (sistema, versiones, servicios, cortafuegos, crontab, respaldos, certificados y los nombres de las variables del `.env`); el DNS y la API pública | La IP entera (§1 y §8): fuera. fail2ban «con seis cárceles»: apagado y deshabilitado desde el 17/09. El cron con `curl`: ahora es un script con `CRON_SECRET`, que faltaba en el `.env`. El párrafo de Pusher: fuera. La copia de nginx de antes del HTTPS y `vercel.json`: ya no existen. «60 GB libres»: 55 al 05/10. «PostgreSQL 16.15»: 16, con el cliente 18. Faltaba la zona `estaticos`. Los `?v=`: hoy conviven varias fechas. `/api/users`: de 1,38 MB a 169 kB. Secciones renumeradas y citadas por enlace |  |
 
 ## Guías
 

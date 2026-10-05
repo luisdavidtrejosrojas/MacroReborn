@@ -68,24 +68,24 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 
 | Sección de hoy | Líneas | Va a | Nota | Hecho |
 |---|---|---|---|---|
-| Título y entrada | 1-7 | `ref/VPS.md` | El título pierde «sin Vercel ni Neon» | |
-| §1 La máquina | 8-27 | `ref/VPS.md` | Sin la IP (research D8) | |
-| §2 Piezas instaladas | 28-40 | `ref/VPS.md` | | |
+| Título y entrada | 1-7 | `ref/VPS.md` | El título pierde «sin Vercel ni Neon» | 05/10/2026 |
+| §1 La máquina | 8-27 | `ref/VPS.md` | Sin la IP (research D8) | 05/10/2026 |
+| §2 Piezas instaladas | 28-40 | `ref/VPS.md` | | 05/10/2026 |
 | §3.1 y §3.2 `api/_pg.js` y `api/_db.js` | 43-69 | `ref/ARQUITECTURA.md` y `historia/MUDANZA-AL-VPS.md` | Cómo elige conexión hoy, a la visión; qué se cambió, a historia |  |
 | §3.3 `api/social.js` y `api/system.js` | 70-76 | `historia/MUDANZA-AL-VPS.md` | | 05/10/2026 |
 | §3.4 `server.js`: carga del `.env` | 77-83 | `ref/VPS.md`, §Configuración y secretos | Es como funciona hoy | 05/10/2026 |
 | §3.5 `package.json` | 84-88 | `historia/MUDANZA-AL-VPS.md` | Si `@neondatabase/serverless` sigue, «Lo que falta» lo dice | 05/10/2026 |
-| §4 Configuración y secretos | 89-109 | `ref/VPS.md` | | |
-| §5 Operación: estado, base de datos y respaldos | 110-122 y 132-162 | `ref/VPS.md` | | |
+| §4 Configuración y secretos | 89-109 | `ref/VPS.md` | | 05/10/2026 |
+| §5 Operación: estado, base de datos y respaldos | 110-122 y 132-162 | `ref/VPS.md` | | 05/10/2026 |
 | §5 «Desplegar un cambio» | 123-131 | `guias/DESPLEGAR.md` | Dice `git pull`: se corrige | 05/10/2026 |
-| §6 El cron semanal | 163-175 | `ref/VPS.md` | | |
+| §6 El cron semanal | 163-175 | `ref/VPS.md` | | 05/10/2026 |
 | §7 La migración de los datos | 176-210 | `historia/MUDANZA-AL-VPS.md` | | 05/10/2026 |
-| §8 Dominio y HTTPS | 211-235 | `ref/VPS.md` | Sin la IP | |
-| §9 Entrada de seguridad y rendimiento | 236-243 | `ref/VPS.md` | | |
+| §8 Dominio y HTTPS | 211-235 | `ref/VPS.md` | Sin la IP | 05/10/2026 |
+| §9 Entrada de seguridad y rendimiento | 236-243 | `ref/VPS.md` | | 05/10/2026 |
 | §9 La fuga del `.env` | 244-287 | `historia/FUGA-DEL-ENV.md` | IP de fuera tapadas; en `ref/VPS.md` queda el resumen y lo que dejó (la lista blanca) | 05/10/2026 |
-| §9 fail2ban | 288-331 | `ref/VPS.md` | Se corrige con lo que diga el VPS | |
-| §9 Límites, caché, cabeceras, compresión, cluster y medidas | 332-433 | `ref/VPS.md` | Las medidas, con su fecha | |
-| §10 Lo que falta y Resuelto | 434-458 | `ref/VPS.md` | Cada punto, comprobado | |
+| §9 fail2ban | 288-331 | `ref/VPS.md` | Se corrige con lo que diga el VPS | 05/10/2026 |
+| §9 Límites, caché, cabeceras, compresión, cluster y medidas | 332-433 | `ref/VPS.md` | Las medidas, con su fecha | 05/10/2026 |
+| §10 Lo que falta y Resuelto | 434-458 | `ref/VPS.md` | Cada punto, comprobado | 05/10/2026 |
 
 ## `docs/RETOMAR.md` (250 líneas): queda lo que solo hace Luis tras formatear
 
