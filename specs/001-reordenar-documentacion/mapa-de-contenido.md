@@ -106,13 +106,13 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 
 | Sección de hoy | Líneas | Va a | Nota | Hecho |
 |---|---|---|---|---|
-| Título y entrada | 1-8 | `ref/CUENTAS.md` | Título nuevo: las cuentas | |
+| Título y entrada | 1-8 | `ref/CUENTAS.md` | Título nuevo: las cuentas | 05/10/2026 |
 | §1 El problema que se atacó | 9-16 | `historia/CONTRASENAS-EN-CLARO.md` | Una línea en la referencia | 05/10/2026 |
-| §2 La solución | 17-50 | `ref/CUENTAS.md` | | |
+| §2 La solución | 17-50 | `ref/CUENTAS.md` | | 05/10/2026 |
 | §3 Backfill | 51-84 | `historia/CONTRASENAS-EN-CLARO.md` | El script sigue en el repositorio: la referencia dice para qué sirve | 05/10/2026 |
-| §4 Pruebas | 85-100 | `ref/CUENTAS.md` | | |
+| §4 Pruebas | 85-100 | `ref/CUENTAS.md` | | 05/10/2026 |
 | §5 Plan de activación en producción | 101-156 | `historia/CONTRASENAS-EN-CLARO.md` | Ya se ejecutó | 05/10/2026 |
-| §6 Alcance (qué no incluyó) | 157-163 | `ref/CUENTAS.md` | | |
+| §6 Alcance (qué no incluyó) | 157-163 | `ref/CUENTAS.md` | | 05/10/2026 |
 | (nueva) Los nombres de usuario | | `ref/CUENTAS.md` | La regla de `api/_nombre-usuario.js` y el punto 31 de la auditoría (05/10/2026) | |
 
 ## Los que se mudan casi enteros

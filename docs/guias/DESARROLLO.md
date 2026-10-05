@@ -83,7 +83,7 @@ npm test
 Usa `node:test` (incluido en Node). Las pruebas que necesitan base crean la suya, de práctica,
 inyectan la conexión con `usarSqlLocal()` y ejercitan los handlers reales; ninguna toca producción.
 Qué sujeta cada archivo lo dice el documento de su área: por ejemplo, las contraseñas en
-[CUENTAS](../referencia/CUENTAS.md#4-pruebas) y las monedas en
+[CUENTAS](../referencia/CUENTAS.md#pruebas) y las monedas en
 [ECONOMIA](../referencia/ECONOMIA.md#6-las-pruebas).
 
 ### 3.7 `scripts/smoke-local.js` — prueba HTTP de extremo a extremo
