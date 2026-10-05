@@ -3,7 +3,8 @@
 > **De qué trata:** el plan de pasar la composición de los avatares al servidor: por qué se decidió el
 > 21/09/2026, lo que se midió sobre el VPS, el razonamiento de guardarlos en disco, las cinco fases
 > con lo que se validó al cerrar cada una, lo que se aprendió de macrojuegos para la dirección y las
-> previsualizaciones, y cómo se decidió la foto de perfil.
+> previsualizaciones, cómo se decidió la foto de perfil, y lo que la referencia de arte había descartado
+> el 16/09/2026.
 >
 > **Para quién:** quien quiera saber por qué los avatares funcionan como funcionan, o vaya a tocar el
 > compositor, sus direcciones o la puerta de `/prendas/`.
@@ -20,7 +21,7 @@ ropa. Más una previsualización por prenda, para poder verla antes de
 comprarla.
 
 Es lo que hacía macrojuegos durante una década. Está reconstruido en la
-memoria del proyecto y resumido en `docs/referencia/ARTE.md#6-lo-que-se-decidió-no-hacer-y-por-qué`.
+memoria del proyecto y resumido en [lo que ARTE descartó](#lo-que-arte-descartó-el-16092026).
 
 Este archivo es la lista de trabajo. Se marca aquí lo que se va
 haciendo, con la fecha, y no se borran filas: una fila resuelta explica
@@ -30,7 +31,7 @@ por qué el código está como está.
 
 ## Por qué, y por qué ahora
 
-`docs/referencia/ARTE.md#6-lo-que-se-decidió-no-hacer-y-por-qué` descartó esto en septiembre con un argumento que era
+[ARTE](#lo-que-arte-descartó-el-16092026) descartó esto en septiembre con un argumento que era
 correcto entonces: *"media implementación no deja a mitad de camino:
 deja en cero, con el trabajo hecho"*. Componer el avatar y seguir
 sirviendo las prendas sueltas al vestidor no compra nada, porque la
@@ -580,3 +581,35 @@ así que hay que correr el relleno justo después de reiniciar: compone
 el compuesto y la foto de cada cuenta. Mientras tanto, la foto que falte
 se compone al pedirla, dos a la vez, y las demás esperan con la silueta
 un minuto.
+
+---
+
+## Lo que ARTE descartó el 16/09/2026
+
+Así lo contaba la referencia de [ARTE](../referencia/ARTE.md) hasta el 05/10/2026, cuando pasó
+aquí entero:
+
+**Un PNG único por usuario, compuesto en el servidor.** Es lo que hacía
+macrojuegos, y funcionaba — pero funcionaba porque era **completo**: no
+existía ningún archivo transparente de una prenda en ninguna parte (ni
+suelto, ni en las miniaturas de tienda, que iban aplanadas sobre el
+modelo), la salida era JPG con pérdida (lo que ensucia el ataque de
+restar dos composiciones), y no había índice del catálogo en ningún
+sitio.
+
+Son cinco piezas que se sostienen entre sí. El compositor no es la que
+protege: es la que **hace posibles** a las otras cuatro.
+
+Media implementación —componer el avatar mostrado y seguir sirviendo las
+prendas sueltas al vestidor— no deja a mitad de camino: deja en cero, con
+el trabajo hecho. Y la mitad que de verdad protege (cerrar el vestidor
+por propiedad) le hace daño a la tienda, porque el objetivo es que la
+gente vea bien lo que puede comprar.
+
+Además, hoy no se justifica por rendimiento: la carga del VPS es 0.00 y
+nginx ya cachea las prendas. Si algún día se construye, que sea por el
+móvil del visitante y no como candado, y acuñando la URL en el servidor
+—macrojuegos dejó esa URL sin firmar en su versión de 2021, y con la
+receta libre se le podía pedir una prenda sola.
+
+El análisis completo de su sistema está en la memoria del proyecto.

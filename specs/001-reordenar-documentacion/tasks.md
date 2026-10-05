@@ -177,7 +177,7 @@ en la lista de revisión y se le cuenta a Luis, que decide si entra en `docs/lis
 - [X] T038 [US2] Revisar `docs/referencia/VPS.md` contra `infra/` y contra el VPS. Antes, comprobar que `ssh -i ~/.ssh/macroreborn-vps-key azureuser@macroreborn.com true` entra (si no, usar el remoto `vps`). Mirar servicios, fail2ban, cron, respaldos y versiones con las órdenes de research D7. Quitar la IP de §1 y §8. Contar fail2ban según lo que diga el servidor, en una sola versión para toda la documentación. Si `infra/` no coincide con el servidor, corregir la copia (regla XXIV).
 - [X] T039 [US2] Revisar `docs/referencia/AVATARES.md`.
 - [X] T040 [US2] Revisar `docs/referencia/CUENTAS.md`, con su título nuevo (las cuentas).
-- [ ] T041 [US2] Revisar `docs/referencia/ARTE.md`: su §6 dice que el avatar compuesto en el servidor se adoptó el 21/09, con el enlace a `docs/referencia/AVATARES.md`; el buzón del proyecto se nombra sin pegarlo («el que publica `terminos.html`»).
+- [X] T041 [US2] Revisar `docs/referencia/ARTE.md`: su §6 dice que el avatar compuesto en el servidor se adoptó el 21/09, con el enlace a `docs/referencia/AVATARES.md`; el buzón del proyecto se nombra sin pegarlo («el que publica `terminos.html`»).
 - [ ] T042 [US2] Revisar `docs/referencia/ECONOMIA.md`.
 - [ ] T043 [US2] Revisar `docs/referencia/MODERACION.md`.
 - [ ] T044 [US2] Revisar `docs/referencia/SEO.md`; las cifras de páginas, con su fecha.
