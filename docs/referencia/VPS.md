@@ -38,53 +38,14 @@ navegador -> nginx (:443 HTTPS) -> node server.js (:3000) -> postgres (:5432, lo
 - **nginx** como proxy inverso.
 - **ufw**: solo 22, 80 y 443 abiertos.
 
-## 3. Qué se cambió del código
+## 3. Cómo habla el código con la base
 
-### 3.1 `api/_pg.js` — adaptador nuevo
-
-El driver de Neon (`@neondatabase/serverless`) habla SQL sobre HTTPS
-contra la infraestructura de Neon. Un Postgres normal habla el
-protocolo nativo por TCP, así que ese driver no sirve en el VPS.
-
-Lo que sí se conservó es la **interfaz**: los handlers escriben
-`` sql`SELECT ... ${valor}` `` y reciben un array de filas. `_pg.js`
-traduce eso al driver `pg`, incluido el soporte de **fragmentos
-anidados** (`api/users.js` arma `semanaActualSQL` como pedazo suelto y
-lo incrusta en otras consultas; sin ese soporte, todo `GET /api/users`
-falla con un error de sintaxis en `date_trunc`).
-
-Es el gemelo de `scripts/pglite.js`, que ya hacía lo mismo para los
-tests. Misma técnica, distinto motor debajo. **Ningún handler se tocó.**
-
-### 3.2 `api/_db.js` — elige driver según la URL
-
-`obtenerSql()` mira `DATABASE_URL`: si el host contiene `.neon.tech`
-usa el driver de Neon, si no usa `_pg.js`. La decisión se toma desde
-la URL y no desde una variable aparte, para que no exista el caso de
-apuntar a un Postgres normal pero hablarle por HTTP (un error que solo
-se descubriría en producción).
-
-Se conserva la rama de Neon a propósito: sirve para leer la base vieja
-cuando se pueda hacer la migración de datos pendiente.
-
-### 3.3 `api/social.js` y `api/system.js`
-
-Estos dos **se saltaban `_db.js`** y llamaban a `neon()` directo en su
-primera línea (`docs/guias/DESARROLLO.md` lo decía: "no se tocaron"). Contra
-el VPS habrían seguido intentando conectarse a Neon. Ahora los siete
-handlers pasan por `obtenerSql()`.
-
-### 3.4 `server.js` — carga de `.env`
-
-Lee el `.env` del proyecto antes de cualquier otro `require`, porque
-los handlers resuelven su conexión al importarse. Se hace a mano en
-vez de con `dotenv` para no sumar una dependencia por diez líneas. Lo
-que ya venga del entorno tiene prioridad sobre el archivo.
-
-### 3.5 `package.json`
-
-Se agregó `pg`. Se dejó `@neondatabase/serverless` para la migración
-de datos pendiente; cuando esté hecha, se puede quitar.
+`api/_db.js` (`obtenerSql()`) elige el driver por la `DATABASE_URL`: `pg`, a través de `api/_pg.js`,
+para el Postgres del VPS, y el de Neon si la dirección es de Neon, una rama que sigue ahí aunque los
+datos ya se migraron. `api/_pg.js` conserva la forma en que los handlers escriben sus consultas
+(`` sql`...` ``, con fragmentos anidados), así que la mudanza no tocó ningún handler. Qué se cambió
+del código, y cómo se migraron los datos el 1/09/2026, lo cuenta
+[LA MUDANZA AL VPS](../historia/MUDANZA-AL-VPS.md).
 
 ## 4. Configuración y secretos
 
@@ -106,6 +67,13 @@ archivo las cuatro variables de Pusher (`PUSHER_APP_ID`, `PUSHER_KEY`,
 `PUSHER_SECRET`, `PUSHER_CLUSTER`), sacadas del dashboard de Pusher.
 Sin ellas `getPusher()` devuelve una instancia muda y el sitio funciona
 igual, solo que sin avisos en tiempo real.
+
+### Cómo se carga el `.env`
+
+`server.js` lee el `.env` del proyecto antes de cualquier otro `require`, porque
+los handlers resuelven su conexión al importarse. Se hace a mano en
+vez de con `dotenv` para no sumar una dependencia por diez líneas. Lo
+que ya venga del entorno tiene prioridad sobre el archivo.
 
 ## 5. Operación
 
@@ -172,41 +140,6 @@ una entrada en el crontab de `azureuser`:
 
 Se puede borrar `vercel.json` cuando se confirme que no queda nada
 apuntando a Vercel.
-
-## 7. La migración de los datos
-
-Hecha el 1 de septiembre de 2026, una vez que se liberó la cuota de
-Neon. Se volcó con `pg_dump` y se restauró completo (esquema + datos)
-sobre un esquema vacío, no solo los datos sobre las migraciones: así el
-esquema que manda es el que la app venía usando de verdad en Neon, y no
-una reconstrucción a partir de los archivos de migración.
-
-Detalle que costó un rato: **Neon corre PostgreSQL 18.6 y el VPS 16.15**.
-`pg_dump` se niega a volcar un servidor más nuevo que él, así que hubo
-que agregar el repositorio PGDG e instalar `postgresql-client-18`. El
-volcado se hace con `/usr/lib/postgresql/18/bin/pg_dump`.
-
-Al restaurar aparece un único error, y es inofensivo:
-`unrecognized configuration parameter "transaction_timeout"`. Ese
-parámetro existe desde Postgres 17; el 16 no lo conoce. No afecta a los
-datos.
-
-Se verificó comparando el conteo de filas **tabla por tabla contra
-Neon**: las 33 coinciden exactamente. En total 63 usuarios (más de los
-~30-40 que se estimaban), 4131 filas de actividad y 2372 puntajes.
-
-Ojo con `n_live_tup` de `pg_stat_user_tables` si se rehace esta
-comprobación: es una estimación del planificador y muestra diferencias
-de unas pocas filas que no son datos perdidos. Hay que contar con
-`count(*)`.
-
-Sobre las contraseñas: 42 usuarios tienen `password_hash` (bcrypt) y 21
-siguen con `password` en texto plano. Es el estado esperado — las
-migraciones 013/014 convierten cada cuenta a bcrypt en su siguiente
-inicio de sesión, no todas de golpe.
-
-Los volcados originales quedaron en `~/respaldos/` del VPS y en
-`Documentos\Proyectos de código\MacroReborn - respaldos\` del PC.
 
 ## 8. Dominio y HTTPS
 

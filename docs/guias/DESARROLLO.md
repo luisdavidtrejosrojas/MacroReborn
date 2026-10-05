@@ -21,22 +21,15 @@ backfill y tests).
 
 ### 2.1 `api/_db.js` — conector único de base
 
-Antes cada archivo de la API creaba su conexión con
-`neon(process.env.DATABASE_URL)`. Ahora la conexión pasa por acá:
+Todas las conexiones a la base pasan por acá:
 
-- `obtenerSql()` → devuelve la función `sql` lista (Neon en
-  producción).
+- `obtenerSql()` → devuelve la función `sql` lista (el Postgres del VPS
+  en producción).
 - `usarSqlLocal(sqlLocal)` → reemplaza la conexión por una base local
-  (PGlite) en desarrollo/tests.
+  (PGlite) en desarrollo y en las pruebas.
 
-Los handlers de esta rama (`api/auth.js`, `api/users.js` y
-`api/content.js`) usan `obtenerSql()` en vez de crear la conexión a mano.
-
-Cuando se escribió esto, `social.js` y `system.js` no pasaban por acá:
-llamaban a `neon()` directo en su primera línea. La mudanza al VPS lo
-arregló —contra un Postgres normal habrían seguido intentando hablar con
-Neon— y hoy **los siete handlers** pasan por `obtenerSql()`. Ver
-`docs/referencia/VPS.md#33-apisocialjs-y-apisystemjs`.
+Los siete handlers de `api/` usan `obtenerSql()`. Cómo era antes de la
+mudanza al VPS lo cuenta [LA MUDANZA AL VPS](../historia/MUDANZA-AL-VPS.md).
 
 ## 3. Infraestructura local
 
