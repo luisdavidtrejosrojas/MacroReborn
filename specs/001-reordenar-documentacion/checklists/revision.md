@@ -61,7 +61,7 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 
 | Documento | Leído entero | Comparado con | Caducado y corregido | Pendiente de probar |
 |---|---|---|---|---|
-| `docs/historia/HISTORIAL.md` | | | | |
+| `docs/historia/HISTORIAL.md` | 05/10/2026 | Los 914 commits de `git log` del 23/07 al 05/10, con su fecha de autor, su autor y su asunto, y los archivos de los que no decían nada (un script de un solo uso); los grupos de cada semana, cruzados por script con su lista de commits; cada hash citado existe; y los documentos que enlaza | Nada: es nuevo. Lo que contaba §5 de `RETOMAR.md` (la auditoría del 18/09 y lo que quedaba) está ahora en su semana. Las 26 subidas que no cambiaron nada también se cuentan. La entrada de esta spec llega con T074 |  |
 | `docs/historia/FRONTEND.md` | 05/10/2026 | Entero, frente a `js/core.js` (`ORDEN_CAPAS_AVATAR`, `urlAvatarCompuesto`), `api/_avatar-catalogo.js`, `api/_prendas-ruta.js`, los elementos propios del navegador (no hay ninguno), los puntos 18 y 37 de la auditoría, `tests/`, `migrations/` y el despliegue con `updateInstead` | Es historia: no se corrige, lleva notas del 05/10. Lo de las once copias no está contado en `api/_avatar-catalogo.js` sino en `js/core.js` y `api/_prendas-ruta.js`, y las páginas ya no pintan capas desde el 24/09. El punto 18 se arregló el 25/09 y la economía se rehízo el 04/10. Las cifras de su §6, con las de hoy al lado. Faltaba la cabecera. Lo demás sigue valiendo: el punto 37 está abierto y no hay elementos propios todavía |  |
 | `docs/historia/AVATARES-AL-SERVIDOR.md` | 05/10/2026 | Con lo que era `AVATARES-SERVIDOR.md`: su entrada, §1, §2, §4, §5 (menos «Cómo mirarlo con los ojos»), lo de macrojuegos de §8 y §12, y de §13 cómo se decidió y el relleno; todo movido por script | Nada: es historia. Los títulos pierden su número y los de la foto de perfil y las previsualizaciones ganan contexto. En T041 recibió, entero, el antiguo §6 de `ARTE.md` («Lo que ARTE descartó el 16/09/2026») |  |
 | `docs/historia/LIENZO-DEL-CATALOGO.md` | 05/10/2026 | Con §6 de `DESARROLLO.md`, de donde salió entera (149 líneas, movidas por script) | Nada: es historia | |
@@ -108,7 +108,7 @@ Los resultados de los escenarios de [quickstart.md](../quickstart.md), con su fe
 | 4. La visión de conjunto | | |
 | 5. Sumarse en menos de 30 minutos (Claude, sobre una copia limpia) | | |
 | 5. Sumarse en menos de 30 minutos (una persona del equipo) | | |
-| 6. El historial | | |
+| 6. El historial | Cumple CE-009: las diez semanas con commits, de la del 20/07 a la del 05/10, tienen su sección (`semanas.js`), y cada commit está contado en un cambio (comprobado por script, semana a semana). Se encuentran, con su fecha, la economía nueva y el pelo de atrás (04/10), y los nombres sin distinguir mayúsculas y la llegada de Spec Kit (05/10). Falta la última entrada, la de esta spec, que se añade al unirla a `main` (T074) | 05/10/2026 |
 | 7. Nada se pierde | | |
 | 8. Sin emojis ni datos sensibles | | |
 | 9. Fuera del repositorio | | |

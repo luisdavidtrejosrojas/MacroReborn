@@ -268,7 +268,7 @@ semana con commits tiene su sección (quickstart, escenario 6).
 - [X] T065 [US5] Escribir en `docs/historia/HISTORIAL.md` la semana del 10 al 16/08/2026 (221 commits).
 - [X] T066 [US5] Escribir en `docs/historia/HISTORIAL.md` las semanas del 03 al 09/08, del 27/07 al 02/08 y del 20 al 26/07/2026 (la primera subida, el 23/07).
 - [X] T067 [US5] Escribir la regla de RF-017 en `docs/guias/SUMARSE.md` y en `CLAUDE.md`: cada especificación añade su entrada a `docs/historia/HISTORIAL.md` como última tarea, antes de unirse a `main`, con la fecha de esa unión.
-- [ ] T068 [US5] Comprobar CE-009 con `semanas.js`, y la prueba de la historia de uso 5 (la economía nueva, el pelo de atrás, los nombres sin distinguir mayúsculas y la llegada de Spec Kit, cada uno con su fecha); anotarlo en la lista de revisión, como resultado del escenario 6 de `specs/001-reordenar-documentacion/quickstart.md`.
+- [X] T068 [US5] Comprobar CE-009 con `semanas.js`, y la prueba de la historia de uso 5 (la economía nueva, el pelo de atrás, los nombres sin distinguir mayúsculas y la llegada de Spec Kit, cada uno con su fecha); anotarlo en la lista de revisión, como resultado del escenario 6 de `specs/001-reordenar-documentacion/quickstart.md`.
 
 **Punto de control**: la historia de uso 5 funciona sola.
 
