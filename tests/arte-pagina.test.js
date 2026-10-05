@@ -396,7 +396,7 @@ describe("a qué personaje va a parar cada archivo", () => {
 });
 
 describe("la rareza al subir", () => {
-  // Todo lo que se publica se vende en la tienda (docs/TIENDA.md), al
+  // Todo lo que se publica se vende en la tienda (docs/referencia/TIENDA.md), al
   // precio de su rareza (desde el 04/10/2026, docs/referencia/ECONOMIA.md). Se
   // propone común, y la ranura ya no la mueve.
   const fila = doc => doc.querySelector(".arte-fila");

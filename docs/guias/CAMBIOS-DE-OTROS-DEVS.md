@@ -11,7 +11,7 @@ Llegaron cuatro zips de otro dev, hechos entre el 22 y el 23/09:
 
 | Zip | Qué traía | Qué se hizo |
 |---|---|---|
-| `Bazar-cambios-produccion` | Una tienda nueva, el Bazar (`bazar.html`), con su acción en el servidor (`?action=bazar`), su enlace en la barra y `?next=` en el login | Se eligió frente a la tienda del 24/09 (`tienda.html`) viendo las dos en capturas. Se tomó el diseño; ver `docs/TIENDA.md` |
+| `Bazar-cambios-produccion` | Una tienda nueva, el Bazar (`bazar.html`), con su acción en el servidor (`?action=bazar`), su enlace en la barra y `?next=` en el login | Se eligió frente a la tienda del 24/09 (`tienda.html`) viendo las dos en capturas. Se tomó el diseño; ver `docs/referencia/TIENDA.md` |
 | `eliminar-identidad-gamer` | Quitar del perfil el bloque "Identidad gamer" | Hecho, con sus dos archivos y la prueba que los vigilaba |
 | `Online-Corazones` | En la tarjeta del perfil, el nombre al pie y Online/Offline debajo, junto a las insignias | Hecho, en el perfil propio y en el público |
 | `per` | Las carpetas `css/` y `js/` enteras: un rediseño de la tarjeta del perfil, el avatar y una barra de XP en la barra de navegación, y un rediseño de Comunidad | Hecho, solo lo que cambió él (abajo) |

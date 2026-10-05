@@ -158,7 +158,7 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 85 | 2026-09-28 | Función rota | Una misión cumplida se perdía si no se cobraba a tiempo: la diaria a las 00:00, la semanal al acabar la semana. La semana del 21/09 quedaron sin cobrar 12 diarias y 8 semanales, de 13 personas. Arreglado: espera hasta que se cobre (nota al pie) | `api/_misiones.js`, `api/progreso.js` | medio día |
 
 **Nota al 24 y al 78.** Hechos el 24/09/2026 con la tienda nueva
-(`tienda.html`, ver `docs/TIENDA.md`). El catálogo (`avatarShop`) y la
+(`tienda.html`, ver `docs/referencia/TIENDA.md`). El catálogo (`avatarShop`) y la
 compra (`avatarShopBuy`) solo aceptan prendas cuya fila de
 `avatar_prendas` está publicada: las 5 retiradas que seguían a la venta
 ya no salen ni se pueden comprar, y quien las compró (4 compras) las

@@ -321,7 +321,7 @@ async function avatarSubirPrendas(req, res) {
       continue;
     }
 
-    // Todo lo publicado tiene precio (docs/TIENDA.md), y desde el
+    // Todo lo publicado tiene precio (docs/referencia/TIENDA.md), y desde el
     // 04/10/2026 lo da su rareza (api/_precios.js). Sin rareza ni precio,
     // común.
     const rareza = precios.rarezaDelPedido(item) || precios.RAREZA_POR_DEFECTO;
@@ -461,7 +461,7 @@ async function avatarEstadoPrenda(req, res) {
     return res.status(403).json({ success: false, error: "Esa prenda no es tuya" });
   }
 
-  // Todo lo publicado tiene precio (docs/TIENDA.md). Si esta no lo
+  // Todo lo publicado tiene precio (docs/referencia/TIENDA.md). Si esta no lo
   // tenía -un borrador que se subió gratis antes de la tienda, o una del
   // catálogo original que estaba retirada cuando la migración 022 puso
   // los precios-, sale como común (api/_precios.js), en la misma

@@ -5,7 +5,7 @@
 // que mandó el otro dev en su zip del 22/09/2026; el 28/09/2026 se eligió
 // frente a la tienda anterior, y tienda.html redirige aquí.
 //
-// Lo que ya hacía la tienda y el Bazar conserva (docs/TIENDA.md):
+// Lo que ya hacía la tienda y el Bazar conserva (docs/referencia/TIENDA.md):
 //
 //   - Todo sale de GET /api/content?action=avatar-shop: el catálogo (solo
 //     lo publicado, de lo más nuevo a lo más viejo) y, con sesión, el

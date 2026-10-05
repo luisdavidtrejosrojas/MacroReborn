@@ -58,7 +58,7 @@ que digan lo mismo. Se puede aplicar más de una vez.
 `taller.html`) y la puede cambiar después con "Editar"; el precio sale
 solo. La API sigue aceptando un `precio` en vez de una `rareza`, y lo
 convierte con los mismos cortes que la migración. Lo ya pagado no se
-toca: cada compra guarda lo que costó (`precio_pagado`, `docs/TIENDA.md`).
+toca: cada compra guarda lo que costó (`precio_pagado`, `docs/referencia/TIENDA.md`).
 
 **El Bazar** enseña la rareza en cada tarjeta, con su color, y deja
 filtrar por ella.
