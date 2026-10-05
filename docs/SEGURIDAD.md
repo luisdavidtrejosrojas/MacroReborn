@@ -110,7 +110,7 @@ Orden estricto:
    sigue marcada como obligatoria (fue el error que se vio en
    producción).
 3. Desplegar el código nuevo (`api/_db.js`, `api/_password.js`,
-   `api/auth.js`, `api/users.js`, `api/_pusher.js`).
+   `api/auth.js`, `api/users.js` y el antiguo `_pusher.js`).
 4. Verificar: registrar un usuario de prueba y entrar con un usuario
    existente (se migra solo).
 5. Correr el backfill con `--produccion` (cubre a los que no entran).

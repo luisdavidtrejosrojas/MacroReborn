@@ -128,7 +128,7 @@ las 750 de golpe: 300.000 píxeles de alto en el móvil). Y se arregló
 que en el móvil las imágenes se salían de la tarjeta y tapaban el
 nombre.
 
-La primera página (`js/tienda.js`, `css/tienda.css`, del 24/09) se
+La primera página (`tienda.js` y `tienda.css`, del 24/09) se
 borró; está en la historia de Git. Tenía además el orden por precio y
 ventas y el "solo lo que puedo comprar", que el Bazar no trae.
 

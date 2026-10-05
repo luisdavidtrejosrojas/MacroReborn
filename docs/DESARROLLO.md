@@ -59,7 +59,7 @@ completo):
 ### 2.3 `api/_avisos.js` — los avisos en vivo
 
 `avisar(canal, evento, datos)`: el único sitio que sabe empujar algo al
-navegador sin que lo pida. Sustituyó a `api/_pusher.js`, que hablaba con
+navegador sin que lo pida. Sustituyó al antiguo `_pusher.js`, que hablaba con
 un servicio de pago, en septiembre de 2026.
 
 La sección 9 cuenta el porqué entero, incluido cómo estuvo dos semanas
@@ -508,7 +508,8 @@ pone esas capas en `ninguno`. Sin `--limpiar` solo informa.
 
 ### Tests
 
-- `tests/catalogo-en-core.test.js` — las retiradas por su URL con huella,
+- `catalogo-en-core.test.js` (borrado el 24/09/2026, cuando `js/core.js`
+  dejó de dibujar por capas) — las retiradas por su URL con huella,
   el valor colgando sin ruta, y los dos límites (sin catálogo todavía, y
   catálogo que no llega nunca).
 - `tests/capas-rotas.test.js` — las ocho clases de capa, que no toca nada
@@ -636,7 +637,7 @@ La mudanza al VPS quitó esa limitación: hay un proceso de Node encendido
 de forma permanente. Pero nadie lo notó, porque las variables `PUSHER_*`
 **nunca se pusieron** en el `.env` del servidor.
 
-`api/_pusher.js` estaba escrito para no romperse si faltaban: devolvía
+El antiguo `_pusher.js` estaba escrito para no romperse si faltaban: devolvía
 una instancia muda que aceptaba la orden y no hacía nada. Era una buena
 decisión para desarrollo local y resultó ser una trampa en producción.
 El sitio pasó dos semanas emitiendo diez avisos al vacío mientras cada

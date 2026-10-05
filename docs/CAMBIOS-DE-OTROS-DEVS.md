@@ -35,7 +35,7 @@ Lo que se hizo, archivo por archivo:
 
 **Lo que no entró, y por qué:**
 
-- `js/mock-backend.js`: un servidor de mentira que se carga en cuatro
+- `mock-backend.js`: un servidor de mentira que se carga en cuatro
   páginas y suplanta la API cuando el sitio se abre en `localhost`. En
   producción no hacía nada, pero en el servidor local de pruebas
   secuestraba las peticiones.
