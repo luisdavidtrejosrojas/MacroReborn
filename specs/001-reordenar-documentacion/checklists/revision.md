@@ -51,7 +51,7 @@ Lo que había antes de tocar nada (T001): cuántas pruebas y archivos de prueba,
 
 | Documento | Leído entero | Comparado con | Caducado y corregido | Pendiente de probar |
 |---|---|---|---|---|
-| `docs/listas/AUDITORIA.md` | | | | |
+| `docs/listas/AUDITORIA.md` | 05/10/2026 | Los puntos 14 y 75 y sus notas, la cabecera y las notas en prosa frente a los documentos que citan; las filas, comparadas antes y después por script, quedan idénticas (regla XXXI) | Faltaba la cabecera. Los puntos 14 y 75 decían «público»: el repositorio es privado (comprobado el 05/10, sin fecha exacta del cambio), con una nota fechada en cada uno. Las cinco menciones a documentos de las notas, a enlaces; la «fase 3 de AVATARES.md» ahora está en la historia. Las filas no se tocan: el estado de cada punto lo lleva quien lo arregla. La fila del mapa se fecha con T069, que le añade la sección de pendientes |  |
 | `docs/listas/SUGERENCIAS.md` | | | | |
 
 ## Historia

@@ -1,5 +1,13 @@
 # AUDITORÍA — lo que hay por arreglar
 
+> **De qué trata:** la lista viva de lo que hay por arreglar, nacida de la auditoría del 18/09/2026:
+> cada punto con su estado, en bloques por importancia, con las notas de cómo se resolvió cada uno y
+> lo que está bien y conviene no romper.
+>
+> **Para quién:** todo el equipo.
+>
+> **Revisado:** 05/10/2026
+
 Lista viva de todo lo que se encontró en la auditoría del 18 de
 septiembre de 2026. No es un informe cerrado: es la lista de trabajo. Se
 marca aquí lo que se va haciendo y se añade aquí lo que se va
@@ -13,7 +21,7 @@ encontrando.
 Nunca se borra la fila ni se cambia su número, aunque quede resuelta.
 Una fila resuelta con su fecha explica por qué el código está como está;
 una fila borrada deja un hueco que nadie sabe interpretar seis meses
-después. (`docs/referencia/VPS.md#9-lo-que-falta` ya contó lo que pasa cuando se borran puntos
+después. ([VPS](../referencia/VPS.md#9-lo-que-falta) ya contó lo que pasa cuando se borran puntos
 de una lista numerada sin renumerar: no hay forma de saber si se
 hicieron o se perdieron.)
 
@@ -75,11 +83,19 @@ del árbol: el 21/09/2026 salieron 636 archivos (commit `bbe813a`). El sitio
 no los echa en falta, porque desde la migración 018 sirve las prendas desde
 la base. Lo que queda, el historial, es el punto 75.
 
+**Nota al 14, del 05/10/2026.** El repositorio ya es privado: comprobado ese
+día, sin fecha exacta del cambio. Hoy solo lo clona quien tiene acceso.
+
 **Nota al 75.** Descartado el 21/09/2026. Reescribir el historial cambia la
 identidad de todos los commits, obliga a resincronizar el servidor y no
 recupera lo que ya se hubiera clonado, así que se acepta que el arte
 anterior a esa fecha siga en el historial. Lo que protege de verdad ya
 está en pie: la ruta por huella y la autoría dentro de cada PNG.
+
+**Nota al 75, del 05/10/2026.** Con el repositorio ya privado (comprobado
+ese día, sin fecha exacta del cambio), el arte de antes del 21/09 que
+queda en el historial solo lo baja quien tiene acceso. El punto sigue
+descartado.
 
 **Nota al 3.** Hecho el 21/09/2026, pero no pidiendo sesión para abrir la
 línea: `EventSource` no manda cabeceras, y un visitante anónimo mirando un
@@ -89,8 +105,8 @@ minuto de su dueño (`api/_auth.js`, "EL PASE"). La "presencia" del texto es
 el latido de última conexión, y se dejó pública porque el perfil ya la
 enseña a cualquiera: si eso cambia, es el punto 57.
 
-**Nota al 77.** Visto el 24/09/2026, durante la fase 3 de
-`docs/referencia/AVATARES.md`, y arreglado el mismo día. El registro
+**Nota al 77.** Visto el 24/09/2026, durante la fase 3 del
+[avatar compuesto](../historia/AVATARES-AL-SERVIDOR.md#fase-3--las-listas), y arreglado el mismo día. El registro
 (`api/auth.js`) solo comprobaba que el nombre no estuviera vacío: ni
 caracteres ni largo. Y `js/amigos.js` metía el nombre en el HTML sin
 escapar en tres sitios: la tarjeta de cada amigo, la solicitud recibida
@@ -158,7 +174,7 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 85 | 2026-09-28 | Función rota | Una misión cumplida se perdía si no se cobraba a tiempo: la diaria a las 00:00, la semanal al acabar la semana. La semana del 21/09 quedaron sin cobrar 12 diarias y 8 semanales, de 13 personas. Arreglado: espera hasta que se cobre (nota al pie) | `api/_misiones.js`, `api/progreso.js` | medio día |
 
 **Nota al 24 y al 78.** Hechos el 24/09/2026 con la tienda nueva
-(`tienda.html`, ver `docs/referencia/TIENDA.md`). El catálogo (`avatarShop`) y la
+(`tienda.html`, ver [TIENDA](../referencia/TIENDA.md)). El catálogo (`avatarShop`) y la
 compra (`avatarShopBuy`) solo aceptan prendas cuya fila de
 `avatar_prendas` está publicada: las 5 retiradas que seguían a la venta
 ya no salen ni se pueden comprar, y quien las compró (4 compras) las
@@ -291,7 +307,7 @@ cobrado. Lo sujeta `tests/misiones-avisos.test.js`. El margen para
 cobrar se decidió ese mismo día: ver la nota al 85.
 
 **Nota al 16 y al 17.** Hechos el 28/09/2026, con las sanciones
-(`docs/referencia/MODERACION.md`, migración 026, `api/_sanciones.js`), decididas
+([MODERACION](../referencia/MODERACION.md), migración 026, `api/_sanciones.js`), decididas
 ese día con el administrador. La advertencia fallaba porque el panel
 mandaba la notificación sin `origenNombre`, el servidor la rechazaba con
 un 403 y el panel, que no miraba la respuesta, decía "enviada". Suspender
@@ -442,7 +458,7 @@ tocar algo de aquí, conviene saber que ya se pensó:
   propio código y no hay ningún `ORDER BY` construido con entrada del
   usuario.
 - **Las contraseñas están terminadas.** 144 de 144 con bcrypt, cero en
-  texto plano. El backfill de `docs/historia/CONTRASENAS-EN-CLARO.md` acabó.
+  texto plano. El backfill de [CONTRASENAS-EN-CLARO](../historia/CONTRASENAS-EN-CLARO.md) acabó.
 - **`api/_monedas.js` es el modelo a copiar.** Resuelve el otorgamiento en
   una sola sentencia condicionada contra el `now()` de Postgres, no
   contando peticiones. Es la única pieza del sitio que hoy no se puede

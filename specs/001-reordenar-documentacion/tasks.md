@@ -186,7 +186,7 @@ en la lista de revisión y se le cuenta a Luis, que decide si entra en `docs/lis
 - [X] T047 [US2] Revisar `docs/guias/JUEGOS.md`; su §6 se cambia por el enlace a la constitución, después de comprobar que no dice nada más.
 - [X] T048 [US2] Revisar `docs/guias/CAMBIOS-DE-OTROS-DEVS.md`.
 - [X] T049 [US2] Revisar `docs/guias/RETOMAR.md`: sin la IP de §2 y §4 ni el correo de autor (se nombra «el de la regla V de la constitución»); el repositorio es privado; las trampas de §6 van a su documento (fail2ban y la IP de `ignoreip`, a `docs/referencia/VPS.md`) y se quedan las de formatear. Su §5 no se corrige: pasa al historial en T063.
-- [ ] T050 [US2] Revisar `docs/listas/AUDITORIA.md` sin tocar filas ni números (regla XXXI): cabecera, y notas fechadas a los puntos 14 y 75 (el repositorio ya es privado; comprobado el 05/10/2026, sin fecha exacta del cambio).
+- [X] T050 [US2] Revisar `docs/listas/AUDITORIA.md` sin tocar filas ni números (regla XXXI): cabecera, y notas fechadas a los puntos 14 y 75 (el repositorio ya es privado; comprobado el 05/10/2026, sin fecha exacta del cambio).
 - [ ] T051 [US2] Revisar `docs/listas/SUGERENCIAS.md` sin tocar estados, filas ni números: cabecera y fuera sus 12 emojis (research D16); comprobar con `emojis.js` que no queda ninguno. Anotar también la fila de `sugerencias-discord/`: solo guarda la exportación (mensajes y capturas), sin documentación que pueda caducar.
 - [ ] T052 [US2] Revisar `docs/historia/FRONTEND.md`: entero y con su cabecera; como es historia, lo que ya no es así lleva una nota fechada en vez de corregirse.
 - [ ] T053 [US2] Revisar `infra/LEEME.md`.
