@@ -489,6 +489,28 @@ las rutas de documentos, así que estos comentarios se quedaron como estaban. El
 
 ---
 
+## Pendientes que viven en otros documentos
+
+Lo que falta de cada área se cuenta al final de su documento de referencia, con su porqué. No son
+puntos de esta lista, salvo los que se citan por su número:
+
+- [ARTE](../referencia/ARTE.md#7-lo-que-queda): leer el buzón de retiradas, el CSS del lienzo que
+  aún usa 327/505, las imágenes viejas que los navegadores guardan hasta el 16/10/2026 y el historial
+  de GitHub (punto 75, descartado).
+- [AVATARES](../referencia/AVATARES.md#lo-que-queda): un solo orden de capas, vender ranuras y
+  corregir una previsualización sola.
+- [CUENTAS](../referencia/CUENTAS.md#lo-que-queda): borrar `users.password` y la rama del texto
+  plano, y los respaldos de antes del 16/09/2026, con contraseñas en claro (punto 86).
+- [MODERACION](../referencia/MODERACION.md#7-lo-que-queda): las partes 3 y 4, las IP y la marca del
+  navegador.
+- [SEO](../referencia/SEO.md#8-lo-que-queda): las URL limpias, además de los puntos 54, 55 y 56.
+- [TIENDA](../referencia/TIENDA.md#6-lo-que-queda): el probador, y quien lleva una prenda de la
+  tienda sin haberla comprado.
+- [VPS](../referencia/VPS.md#9-lo-que-falta): rotar la contraseña de Neon, darlo de baja y decidir si
+  se enciende fail2ban (punto 89).
+
+---
+
 ## Lo que está bien, y conviene no romper
 
 La auditoría también dejó claro qué piezas están resueltas. Antes de

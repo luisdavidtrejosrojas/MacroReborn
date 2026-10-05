@@ -278,7 +278,7 @@ semana con commits tiene su sección (quickstart, escenario 6).
 
 **Propósito**: lo que toca a varias historias de uso, la validación completa y la unión a `main`.
 
-- [ ] T069 Añadir a `docs/listas/AUDITORIA.md` la sección «Pendientes que viven en otros documentos», con el enlace al «Lo que queda» de cada referencia (research D10), sin tocar filas ni números.
+- [X] T069 Añadir a `docs/listas/AUDITORIA.md` la sección «Pendientes que viven en otros documentos», con el enlace al «Lo que queda» de cada referencia (research D10), sin tocar filas ni números.
 - [ ] T070 Rehacer `CLAUDE.md` con las rutas definitivas y resúmenes cortos que enlazan su documento (RF-009, research D9): probar (`docs/guias/SUMARSE.md` y `docs/guias/DESARROLLO.md`), desplegar (`docs/guias/DESPLEGAR.md`) y la documentación (el índice del `README.md` y las listas). Conserva la regla del historial que escribió T067, y el correo de autor no se pega: se nombra la regla V (research D8). Revisarlo y anotarlo en la lista de revisión.
 - [ ] T071 Completar la tabla «ruta vieja → ruta nueva» de `docs/guias/CAMBIOS-DE-OTROS-DEVS.md` con lo que salió de cada documento a otros sitios, enlazando el mapa.
 - [ ] T072 Cerrar la enmienda v1.0.1 de `.specify/memory/constitution.md` con `/speckit-constitution` (research D12), con el OK que Luis dio en T004. Entran: la regla V (autor y committer para los commits de Luis y de Claude; cada dev firma con su propia identidad); la frase de la regla XIX sobre `docs/` y `specs/`; la regla XXXII, apuntando a `docs/guias/SUMARSE.md`; la versión, la fecha y el informe de sincronización. Antes, preguntar a Luis si su correo sigue escrito en la regla V o se nombra sin pegarlo (regla XXV). Lo mismo en `.specify/templates/overrides/constitution-template.md`.
