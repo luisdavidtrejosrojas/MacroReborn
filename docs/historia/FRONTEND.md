@@ -1,5 +1,15 @@
 # FRONTEND — por qué está así, y qué haríamos si empezáramos de cero
 
+> **De qué trata:** la respuesta razonada, del 22/09/2026, a si conviene migrar el navegador a un
+> framework: el diagnóstico con sus números, qué se usaría empezando de cero, por qué no se reescribe,
+> el camino barato de los elementos propios del navegador y cuándo volver a mirarlo. Es historia: lo
+> que ya no es así lleva una nota con fecha.
+>
+> **Para quién:** quien se pregunte si hay que pasar a un framework, o vaya a tocar el chasis de las
+> páginas.
+>
+> **Revisado:** 05/10/2026
+
 Escrito el 22 de septiembre de 2026, a raíz de una pregunta que va a
 volver: *¿no deberíamos migrar a un framework para que esto sea un
 proyecto serio?*
@@ -40,6 +50,12 @@ dos llevaban `pantalon` antes que `botas`**, así que el mismo avatar se
 dibujaba distinto según la página. Está contado en
 `api/_avatar-catalogo.js`. Eso es lo que pasa cuando algo no existe una
 sola vez.
+
+**Nota del 05/10/2026.** Donde se cuenta lo de las once copias es en `js/core.js`, junto a
+`ORDEN_CAPAS_AVATAR`, y en `api/_prendas-ruta.js`. Desde el 24/09/2026 las páginas ya no pintan
+capas: reciben el avatar compuesto del servidor ([AVATARES](../referencia/AVATARES.md)). Del orden de
+capas quedan tres copias, que coinciden
+([un solo orden de capas](../referencia/AVATARES.md#un-solo-orden-de-capas)).
 
 ---
 
@@ -149,3 +165,8 @@ está, solo que no donde se estaba mirando:
 Lo que no es serio no es la ausencia de framework: son los 63 puntos
 abiertos, las 13 copias del orden de capas, y una economía en la que
 cualquiera fabrica monedas (auditoría, punto 18).
+
+**Nota del 05/10/2026.** El punto 18 se arregló el 25/09/2026, y la economía se rehízo el 04/10/2026
+([ECONOMIA](../referencia/ECONOMIA.md)). Las cifras de este apartado son del 22/09; el 05/10 eran
+unas 1.300 pruebas en 94 archivos, 27 migraciones y una auditoría de 85 puntos, y la documentación
+se repartió por tipos ([el índice](../../README.md)).

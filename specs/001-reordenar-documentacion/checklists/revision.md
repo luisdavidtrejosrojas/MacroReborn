@@ -62,7 +62,7 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 | Documento | Leído entero | Comparado con | Caducado y corregido | Pendiente de probar |
 |---|---|---|---|---|
 | `docs/historia/HISTORIAL.md` | | | | |
-| `docs/historia/FRONTEND.md` | | | | |
+| `docs/historia/FRONTEND.md` | 05/10/2026 | Entero, frente a `js/core.js` (`ORDEN_CAPAS_AVATAR`, `urlAvatarCompuesto`), `api/_avatar-catalogo.js`, `api/_prendas-ruta.js`, los elementos propios del navegador (no hay ninguno), los puntos 18 y 37 de la auditoría, `tests/`, `migrations/` y el despliegue con `updateInstead` | Es historia: no se corrige, lleva notas del 05/10. Lo de las once copias no está contado en `api/_avatar-catalogo.js` sino en `js/core.js` y `api/_prendas-ruta.js`, y las páginas ya no pintan capas desde el 24/09. El punto 18 se arregló el 25/09 y la economía se rehízo el 04/10. Las cifras de su §6, con las de hoy al lado. Faltaba la cabecera. Lo demás sigue valiendo: el punto 37 está abierto y no hay elementos propios todavía |  |
 | `docs/historia/AVATARES-AL-SERVIDOR.md` | 05/10/2026 | Con lo que era `AVATARES-SERVIDOR.md`: su entrada, §1, §2, §4, §5 (menos «Cómo mirarlo con los ojos»), lo de macrojuegos de §8 y §12, y de §13 cómo se decidió y el relleno; todo movido por script | Nada: es historia. Los títulos pierden su número y los de la foto de perfil y las previsualizaciones ganan contexto |  |
 | `docs/historia/LIENZO-DEL-CATALOGO.md` | 05/10/2026 | Con §6 de `DESARROLLO.md`, de donde salió entera (149 líneas, movidas por script) | Nada: es historia | |
 | `docs/historia/IMAGEN-NO-ENCONTRADA.md` | 05/10/2026 | Con §7 de `DESARROLLO.md`, de donde salió entera (115 líneas, movidas por script) | Nada: es historia |  |
