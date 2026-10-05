@@ -192,7 +192,7 @@ en la lista de revisión y se le cuenta a Luis, que decide si entra en `docs/lis
 - [X] T053 [US2] Revisar `infra/LEEME.md`.
 - [X] T054 [US2] Revisar los comentarios del `.gitignore`: dejan de decir que el repositorio es público («privado; comprobado el 05/10/2026, sin fecha exacta del cambio»; lo del 21/09 se cuenta en pasado) y siguen explicando por qué cada carpeta está fuera de git (regla XXV); su fila en la lista de revisión.
 - [X] T055 [US2] Comprobar los once documentos de historia de T024 a T035: completos frente al mapa, con cabecera, con enlaces que funcionan y sin datos sensibles (`sensibles.js`); sus filas, en la lista de revisión.
-- [ ] T056 [US2] Activar la comprobación 6 en `tests/documentacion.test.js`: cada `.md` de `docs/` empieza por un título `# ` y las líneas «> **De qué trata:**», «> **Para quién:**» y «> **Revisado:** DD/MM/AAAA».
+- [X] T056 [US2] Activar la comprobación 6 en `tests/documentacion.test.js`: cada `.md` de `docs/` empieza por un título `# ` y las líneas «> **De qué trata:**», «> **Para quién:**» y «> **Revisado:** DD/MM/AAAA».
 
 **Punto de control**: la historia de uso 2 se cumple con los documentos que hay.
 

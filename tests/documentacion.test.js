@@ -16,6 +16,8 @@
 //   4. Los comandos de npm que cita la documentación existen.
 //   5. Cada documento de docs/ está en el índice del README.md, que es la
 //      entrada: lo que no está ahí no lo encuentra nadie.
+//   6. Cada documento de docs/ empieza por su cabecera: el título, de qué
+//      trata, para quién es y cuándo se revisó.
 //
 // specs/ y docs/historia/ se libran de la 3 y la 4, y specs/ también de las
 // menciones de texto de la 2: cuentan el pasado, y es normal que nombren lo
@@ -226,6 +228,44 @@ function documentosFueraDelIndice() {
     .map((ruta) => `${ruta} no está en el índice del README.md: añadirle una fila con para quién es y qué cuenta.`);
 }
 
+// La cabecera de cada documento de docs/: el título y, debajo, los tres campos
+// en este orden, separados por una línea ">" vacía, que sin ella GitHub junta
+// los tres en un párrafo. Así se sabe de un vistazo de qué trata, para quién
+// es y si está al día.
+const CAMPOS = ["> **De qué trata:**", "> **Para quién:**", "> **Revisado:**"];
+const REVISADO = /^> \*\*Revisado:\*\* (0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/20\d\d$/;
+
+function cabecerasMal() {
+  const fallos = [];
+  for (const documento of DOCUMENTACION.filter((ruta) => ruta.startsWith("docs/"))) {
+    const lineas = leer(documento).split(/\r?\n/);
+    const avisar = (que) => fallos.push(`${documento}: ${que}. La cabecera, en specs/001-reordenar-documentacion/contracts/documento.md.`);
+    if (!/^# \S/.test(lineas[0])) {
+      avisar("no empieza por un título «# »");
+      continue;
+    }
+    let i = 1;
+    while (i < lineas.length && lineas[i].trim() === "") i++;
+    const bloque = [];
+    while (i < lineas.length && lineas[i].startsWith(">")) bloque.push(lineas[i++]);
+    const donde = CAMPOS.map((campo) => bloque.findIndex((linea) => linea.startsWith(campo)));
+    const falta = CAMPOS.filter((_, n) => donde[n] === -1);
+    if (falta.length) {
+      avisar(`le falta, justo debajo del título, ${falta.map((campo) => `«${campo}»`).join(", ")}`);
+      continue;
+    }
+    if (!(donde[0] === 0 && donde[0] < donde[1] && donde[1] < donde[2])) {
+      avisar("sus campos no van en el orden «De qué trata», «Para quién», «Revisado»");
+    } else if (bloque[donde[1] - 1] !== ">" || bloque[donde[2] - 1] !== ">") {
+      avisar("entre sus campos falta la línea «>» vacía");
+    }
+    if (!REVISADO.test(bloque[donde[2]])) {
+      avisar(`su «Revisado» no lleva una fecha DD/MM/AAAA: ${bloque[donde[2]]}`);
+    }
+  }
+  return fallos;
+}
+
 const sinFallos = (fallos) => assert.strictEqual(fallos.length, 0, "\n" + fallos.join("\n"));
 
 describe("la documentación no cita nada que no exista", () => {
@@ -247,5 +287,9 @@ describe("la documentación no cita nada que no exista", () => {
 
   test("cada documento de docs/ está en el índice del README.md", () => {
     sinFallos(documentosFueraDelIndice());
+  });
+
+  test("cada documento de docs/ empieza por su cabecera", () => {
+    sinFallos(cabecerasMal());
   });
 });
