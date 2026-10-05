@@ -18,7 +18,7 @@ existen y cómo probar los cambios localmente.
 | `docs/SEO.md` | Metadatos, sitemap, robots y lo que quedó recomendado para la v1.0 |
 | `docs/listas/AUDITORIA.md` | Lista viva de lo que hay por arreglar, por orden de importancia, con su estado |
 | `docs/listas/SUGERENCIAS.md` | Lo que pidió la comunidad en el canal viejo de sugerencias de Discord, cada idea con su estado y una recomendación |
-| `docs/RETOMAR.md` | Cómo volver a trabajar tras formatear el PC: qué no está en el repo, cómo levantar el entorno y en qué punto está todo |
+| `docs/guias/RETOMAR.md` | Cómo volver a trabajar tras formatear el PC: qué no está en el repo, cómo levantar el entorno y en qué punto está todo |
 
 ---
 

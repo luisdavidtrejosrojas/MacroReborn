@@ -46,7 +46,7 @@ memoria-claude/
 # porque el repositorio es público y con `git clone` se llevaban el
 # catálogo entero. Se conservan en el disco de quien trabaja (son los
 # originales tal como los entregó el equipo de dibujo, antes del horno de
-# autoría) y en la copia de Drive. Ver docs/ARTE.md y docs/RETOMAR.md.
+# autoría) y en la copia de Drive. Ver docs/ARTE.md y docs/guias/RETOMAR.md.
 #
 # Ojo: siguen en el historial de GitHub hasta ese día. Sacarlos de ahí
 # requiere reescribir el historial (docs/listas/AUDITORIA.md, punto 75).
