@@ -255,7 +255,7 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
 
 ### XXXI. Las listas vivas no se borran
 
-- En `docs/listas/AUDITORIA.md`, `docs/SUGERENCIAS.md` y cualquier otra lista numerada, las filas nunca se
+- En `docs/listas/AUDITORIA.md`, `docs/listas/SUGERENCIAS.md` y cualquier otra lista numerada, las filas nunca se
   borran ni sus números se reutilizan. Lo resuelto se marca con su fecha y lo descartado, con su motivo.
 
 ### XXXII. El equipo

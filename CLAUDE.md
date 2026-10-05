@@ -78,7 +78,7 @@ con ella, gana la constitución. Aquí solo van las notas prácticas.
 ## Documentación
 
 - `docs/listas/AUDITORIA.md`: lo que hay por arreglar, con su estado.
-- `docs/SUGERENCIAS.md`: lo que pidió la comunidad, con su estado.
+- `docs/listas/SUGERENCIAS.md`: lo que pidió la comunidad, con su estado.
 - `docs/CAMBIOS-DE-OTROS-DEVS.md`: cómo entra lo que manda otra persona (regla XXVII).
 - `specs/`: una carpeta por cambio, con su especificación, plan y tareas.
 
