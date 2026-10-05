@@ -1,11 +1,17 @@
 # RETOMAR — cómo volver a trabajar tras formatear el PC
 
+> **De qué trata:** lo que no está en el repositorio y dónde se guarda (la llave SSH, la memoria de
+> Claude, el `.env`, los dibujos originales), qué hacer si se pierde la llave, dónde vive cada cosa,
+> cómo levantar el entorno en un PC nuevo y lo que muerde si no se sabe.
+>
+> **Para quién:** Luis, tras formatear el PC o al cambiar de máquina.
+>
+> **Revisado:** 05/10/2026
+
 Esto ya pasó una vez. En septiembre de 2026 se formateó la máquina y se
 perdió todo rastro de cómo entrar al servidor: no había nada en local y
 hubo que reconstruirlo desde Google Drive a ciegas. Este archivo existe
 para que la segunda vez cueste quince minutos.
-
-Última actualización: 21 de septiembre de 2026.
 
 ---
 
@@ -16,7 +22,7 @@ fuera y hay que copiarlas aparte.
 
 | Qué | Dónde está en el PC | ¿Dónde hay copia? |
 |---|---|---|
-| **La llave SSH del servidor** | `~/.ssh/macroreborn-vps-key` | En **Bitwarden**, elemento de tipo Clave SSH. Ver §1.1 |
+| **La llave SSH del servidor** | `~/.ssh/macroreborn-vps-key` | En **Bitwarden**, elemento de tipo Clave SSH. [Ver abajo](#11-si-se-pierde-la-llave) |
 | **La memoria y las conversaciones de Claude Code** | `~/.claude/projects/<carpeta>/` | Sí: copiado entero en `memoria-claude/` de esta misma carpeta (fuera de git a propósito) |
 | **El `.env` del proyecto** | Solo en el servidor, en `~/MacroReborn/.env` | No hace falta copiarlo: se lee desde allí |
 | **Los dibujos originales de las prendas** | `imagenes/<modelo>/` y `imagenes/<modelo>.png`, fuera de git desde el 21/09/2026 | Cuatro copias: la base de datos del servidor (`avatar_archivos`, que es lo que sirve el sitio) con su respaldo diario, esta misma carpeta, la copia de Drive, y el `~/respaldos/arte-originales-imagenes-2026-09-21.tar.gz` del servidor |
@@ -41,7 +47,7 @@ pierde es administrarlo y desplegar. Se recupera por Azure:
 mano la vieja de `~/.ssh/authorized_keys`, o el servidor sigue aceptando
 una llave cuyo paradero se desconoce.
 
-### 1.3 Dónde vive ahora la llave, y por qué ahí
+### 1.2 Dónde vive ahora la llave, y por qué ahí
 
 En **Bitwarden**, como elemento de tipo Clave SSH. No en una carpeta de
 Drive, que es lo que falló las dos veces.
@@ -62,30 +68,35 @@ Lo que **no** hay que volver a hacer es dejarla suelta en una carpeta de
 Drive. Falló dos veces por el mismo motivo: la carpeta se movió y la
 ruta anotada envejeció antes que el olvido.
 
-Ahí dentro hay dos cosas distintas, y las dos viven fuera del proyecto:
+### 1.3 La memoria de Claude Code
 
-- **`memory/`**: nueve archivos con lo aprendido del proyecto (cómo
-  entrar al servidor, por qué `fail2ban` está apagado, qué protege de
-  verdad el plan del arte, cómo firmar los commits). Son 44 kB y es lo
+Vive en `~/.claude/projects/<carpeta>/`, y tiene copia en `memoria-claude/`, en la carpeta del
+proyecto y fuera de git. Ahí dentro hay dos cosas distintas, y las dos viven fuera del proyecto:
+
+- **`memory/`**: lo aprendido del proyecto (cómo entrar al servidor, por
+  qué `fail2ban` está apagado, qué protege de verdad el plan del arte,
+  cómo firmar los commits): 16 memorias y 80 kB el 05/10/2026. Es lo
   más barato de salvar y lo más caro de perder: es lo que hace que una
   sesión nueva sepa de qué va esto sin contárselo todo otra vez.
-- **Las conversaciones**: once sesiones completas en `.jsonl`, 153 MB.
-  Útiles para consultar qué se decidió y por qué, aunque no se cargan
-  solas.
+- **Las conversaciones**: las sesiones completas en `.jsonl` (once y
+  153 MB en la copia del 21/09/2026). Útiles para consultar qué se
+  decidió y por qué, aunque no se cargan solas.
 
 `memoria-claude/LEEME.md` explica cuál es cuál, cómo devolverlas a su
 sitio y cómo refrescar la copia. **No se actualiza sola**, así que
 conviene rehacerla antes de volver a formatear, y con la sesión cerrada
 para que la conversación en curso esté completa.
 
-En la carpeta del proyecto hay además dos cosas que **no** conviene
-subir a Drive tal cual:
+### 1.4 Lo que no conviene subir a Drive
+
+En la carpeta del proyecto hay dos cosas que **no** conviene subir a
+Drive tal cual:
 
 - `datos-locales/` — la copia de la base de producción. Lleva las
-  cuentas, los comentarios y los mensajes de 141 personas reales.
+  cuentas, los comentarios y los mensajes de las personas del sitio.
   Decide a conciencia si eso va a Drive. Se puede volver a bajar en
   cualquier momento con `npm run db:traer`.
-- `node_modules/` — 76 MB regenerables con `npm install`. Copiarlo solo
+- `node_modules/` — 50 MB el 05/10/2026, regenerables con `npm install`. Copiarlo solo
   hace la sincronización más lenta.
 
 ## 2. Dónde vive cada cosa
@@ -93,16 +104,16 @@ subir a Drive tal cual:
 | | |
 |---|---|
 | Sitio en producción | https://macroreborn.com |
-| Servidor | Azure, `172.184.203.20`, Ubuntu 24.04 **ARM64**, 2 vCPU, 950 MB de RAM |
-| Entrar | `ssh -i ~/.ssh/macroreborn-vps-key azureuser@172.184.203.20` |
+| Servidor | Azure, Ubuntu 24.04 **ARM64**, 2 vCPU, 950 MB de RAM. La IP, en Bitwarden y en el remoto `vps` (`git remote -v`) |
+| Entrar | `ssh -i ~/.ssh/macroreborn-vps-key azureuser@macroreborn.com` |
 | Ruta del proyecto en el servidor | `/home/azureuser/MacroReborn` |
-| Ruta del proyecto en el PC | `D:\Macroreborn` (desde el 19/09/2026; antes `C:\Users\luisd\Documents\Macroreborn`) |
+| Ruta del proyecto en el PC | `D:\Macroreborn`, desde el 19/09/2026 |
 | Copia en Drive | `G:\Mi unidad\01_Proyectos_Software\Proyectos de código\Macroreborn\` (desde el 19/09/2026; antes `02_Proyectos_Software\...`) |
-| Repositorio | `github.com/valenmgg/MacroReborn` (**público**; las prendas ya no van en él desde el 21/09/2026, ver `docs/listas/AUDITORIA.md` punto 75) |
+| Repositorio | `github.com/valenmgg/MacroReborn`, **privado** (comprobado el 05/10/2026, sin fecha exacta del cambio). Las prendas ya no van en él desde el 21/09/2026: punto 75 de [AUDITORIA](../listas/AUDITORIA.md) |
 | Base de datos | PostgreSQL 16 en el propio servidor, solo escucha en `127.0.0.1` |
 | Respaldos | `~/respaldos/diarios/` en el servidor, uno cada noche a las 3:30, se guardan 14 días |
 
-La documentación completa de la máquina está en `docs/referencia/VPS.md`. Casi
+La documentación completa de la máquina está en [VPS](../referencia/VPS.md). Casi
 todo lo que se pueda preguntar sobre el servidor está ahí antes que en
 ningún otro sitio.
 
@@ -112,7 +123,7 @@ ningún otro sitio.
 git clone git@github.com:valenmgg/MacroReborn.git
 cd MacroReborn
 npm install
-npm test            # 655 pruebas, ~45 s, no tocan nada real
+npm test            # unas 1.300 pruebas, ~1 min, no tocan nada real
 npm run db:traer    # baja una copia de la base de produccion
 npm run db:local    # sitio local en http://localhost:3001
 ```
@@ -128,8 +139,8 @@ de Drive.
 
 **Ojo con dos cosas al configurar git:**
 
-- La identidad tiene que ser `Luis David Trejos Rojas
-  <luisdavid.trejosrojas@gmail.com>`, autor y committer. El 15/09/2026
+- La identidad tiene que ser la de la regla V de la constitución, autor
+  y committer. El 15/09/2026
   aparecieron 17 commits firmados como `Ubuntu <azureuser@...>` porque
   el servidor no tenía identidad configurada, y el 18/09 otros 8 salieron
   con un correo distinto. Las dos veces hubo que reescribir el historial.
@@ -142,7 +153,8 @@ GIT_SSH_COMMAND='ssh -i "<ruta de la llave>"' git push vps main
 Y para empujar a GitHub por HTTPS: la primera vez salta el inicio de
 sesión en el navegador, y el gestor de credenciales de git guarda el
 token en Windows. Tiene que ser una cuenta con permiso de escritura en
-`valenmgg/MacroReborn`.
+`valenmgg/MacroReborn`; como el repositorio es privado, sin acceso
+tampoco se puede clonar.
 
 ## 4. Desplegar un cambio
 
@@ -180,17 +192,11 @@ están hechas y cuál toca.
 
 ## 6. Lo que muerde si no se sabe
 
-- **`fail2ban` está apagado a propósito** desde el 17/09/2026. No se
-  vuelve a encender hasta arreglar el punto 18 de la auditoría, o el
-  administrador se autobanea al abrir su panel.
-- **La base está en 127 MB y `shared_buffers` en 128 MB.** Ahora mismo
-  el 100 % de las lecturas salen de memoria, y por eso el sitio va
-  rápido. El día que la base pase de 128 MB eso se cae de golpe. De esos
-  127 MB, 90 son dos tablas que no lee nadie (punto 68).
 - **`migrations/` no puede reconstruir el sitio**: ninguna migración crea
-  la tabla `users` (punto 67). Hoy la única forma de rehacer la base es
+  la tabla `users` (punto 67 de [AUDITORIA](../listas/AUDITORIA.md)). Hoy la única forma de rehacer la base es
   un volcado de `pg_dump`.
 - **Los respaldos viven en la misma máquina que protegen.** Conviene
   bajarse uno a otro sitio de vez en cuando.
-- **La IP del administrador está en `ignoreip` de `fail2ban`.** Si cambia
-  y algún día se reactiva, hay que actualizarla o te deja fuera.
+
+Las del servidor, `fail2ban` apagado con la IP del administrador en `ignoreip` y la base que ya no
+cabe en `shared_buffers`, están en [VPS](../referencia/VPS.md#8-seguridad-y-rendimiento).

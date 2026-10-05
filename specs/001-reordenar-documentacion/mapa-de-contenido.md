@@ -91,16 +91,16 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 
 | Sección de hoy | Líneas | Va a | Nota | Hecho |
 |---|---|---|---|---|
-| Título y entrada | 1-11 | `guias/RETOMAR.md` | | |
-| §1 Lo que NO está en este repositorio | 12-23 | `guias/RETOMAR.md` | | |
+| Título y entrada | 1-11 | `guias/RETOMAR.md` | | 05/10/2026 |
+| §1 Lo que NO está en este repositorio | 12-23 | `guias/RETOMAR.md` | | 05/10/2026 |
 | §1.1 La llave SSH se ha perdido dos veces | 24-56 | `historia/LLAVE-SSH.md` y `guias/RETOMAR.md` | El relato de las dos pérdidas y su lección, a historia; cómo recuperar el acceso por Azure es una guía y se queda, con la advertencia en dos líneas (cambiado al leerla) | 05/10/2026 |
 | §1.2 Lo que se hizo el 19/09/2026 | 57-77 | `historia/LLAVE-SSH.md` | | 05/10/2026 |
-| §1.3 Dónde vive ahora la llave, y por qué ahí | 78-124 | `guias/RETOMAR.md` | | |
+| §1.3 Dónde vive ahora la llave, y por qué ahí | 78-124 | `guias/RETOMAR.md` | | 05/10/2026 |
 | §2 Dónde vive cada cosa | 125-142 | `ref/ARQUITECTURA.md` y `guias/RETOMAR.md` | Lo general a la visión; lo de Luis (Bitwarden, Drive) se queda. Sin la IP | |
 | §3 Levantar el entorno en un PC nuevo | 143-180 | `guias/SUMARSE.md` y `guias/RETOMAR.md` | Lo de todos a la guía para sumarse; lo que solo restaura Luis (llaves, `.env`, `datos-locales/`, memoria) se queda | |
 | §4 Desplegar un cambio | 181-206 | `guias/DESPLEGAR.md` | | 05/10/2026 |
 | §5 En qué punto está el trabajo | 207-234 | `historia/HISTORIAL.md` | En la semana del 14 al 20/09; la guía enlaza las listas, `specs/` y el historial | |
-| §6 Lo que muerde si no se sabe | 235-250 | Cada trampa a su documento | fail2ban y la IP de `ignoreip`, a `ref/VPS.md`; las de formatear se quedan | |
+| §6 Lo que muerde si no se sabe | 235-250 | Cada trampa a su documento | fail2ban y la IP de `ignoreip`, a `ref/VPS.md`; las de formatear se quedan | 05/10/2026 |
 
 ## `docs/SEGURIDAD.md` (163 líneas): pasa a `ref/CUENTAS.md`
 
