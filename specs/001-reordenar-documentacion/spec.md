@@ -51,6 +51,8 @@ nada de lo que ya cuenta. No cambia el comportamiento del sitio.
   archivos puente.
 - P: ¿Cuándo se añade al historial cada cambio futuro, y con qué fecha? → R: Como última tarea de cada
   especificación, antes de unirla a `main`, con la fecha de esa unión.
+- P: ¿Con qué identidad firma sus commits un dev nuevo? → R: Con la suya. La regla V (autor y committer,
+  Luis) es para los commits de Luis y de Claude; se aclara en la enmienda v1.0.1.
 
 ## Escenarios de uso y pruebas *(obligatorio)*
 
@@ -72,8 +74,8 @@ una en dos clics como mucho.
    instrucciones en dos clics como mucho.
 2. **Dado** cualquier documento de `docs/`, **cuando** se mira el índice, **entonces** aparece con una
    frase que dice qué contiene y para quién es.
-3. **Dado** un documento cualquiera, **cuando** se abre, **entonces** dice al principio de qué trata, a
-   quién va dirigido y cuándo se revisó por última vez.
+3. **Dado** un documento cualquiera de `docs/`, **cuando** se abre, **entonces** dice al principio de qué
+   trata, a quién va dirigido y cuándo se revisó por última vez.
 
 ---
 
@@ -131,7 +133,7 @@ automáticas.
 
 **Escenarios de aceptación**:
 
-1. **Dado** un equipo nuevo, **cuando** se sigue la guía, **entonces** al final se pueden correr las
+1. **Dado** un PC nuevo, **cuando** se sigue la guía, **entonces** al final se pueden correr las
    pruebas y abrir el sitio en local.
 2. **Dado** un cambio que alguien quiere hacer, **cuando** lee la guía, **entonces** sabe qué pasos de
    Spec Kit seguir, cómo nombrar los commits y que desplegar necesita el OK de Luis.
@@ -192,8 +194,8 @@ fecha.
 - **RF-001**: La documentación DEBE tener una entrada única, el `README.md`, que diga qué es MacroReborn,
   para quién es cada documento y enlace a todos.
 - **RF-002**: Todo documento de `docs/` DEBE aparecer en el índice con una frase sobre su contenido.
-- **RF-003**: Cada documento DEBE decir al principio de qué trata, a quién va dirigido y la fecha de su
-  última revisión.
+- **RF-003**: Cada documento de `docs/` DEBE decir al principio de qué trata, a quién va dirigido y la
+  fecha de su última revisión. Las especificaciones llevan la cabecera de su plantilla de Spec Kit.
 - **RF-004**: La documentación DEBE distinguir cinco tipos y el índice DEBE agruparla así:
   - referencia del sistema: cómo es hoy;
   - guías: cómo hacer algo;
@@ -219,7 +221,9 @@ fecha.
   comandos, scripts, migraciones) DEBE comprobarse así; lo que depende del servidor de producción, en el
   VPS y solo con comandos de lectura.
 - **RF-009**: Cada tema DEBE tener un único documento de referencia; si aparece en otros, esos enlazan al
-  de referencia en lugar de repetirlo.
+  de referencia en lugar de repetirlo (como mucho, lo resumen en una frase). La única excepción es el
+  `CLAUDE.md`: conserva resúmenes cortos (cómo probar, cómo desplegar, las trampas de la terminal),
+  cada uno con su enlace, porque Claude Code solo carga ese archivo al empezar cada sesión.
 - **RF-010**: El contenido histórico o de investigación DEBE conservarse entero en una carpeta de
   historia, un documento por tema. En el documento de referencia DEBE quedar un resumen de dos líneas con
   el enlace.
@@ -241,7 +245,10 @@ fecha.
   en alguno.
 - **RF-016**: DEBE quedar una prueba permanente en las pruebas automáticas (`npm test`), y por tanto en la
   integración continua, que falle si un enlace entre documentos, una mención a un documento desde el
-  código, o una ruta o un comando que cita un documento apunta a algo que no existe.
+  código, o una ruta o un comando que cita un documento apunta a algo que no existe. Quedan fuera las
+  rutas y los comandos citados en `docs/historia/` y en `specs/`, y las menciones de texto dentro de
+  `specs/`, porque cuentan el pasado y es normal que nombren lo que ya no está; y las carpetas de
+  herramientas que empiezan por punto (`.claude/`, `.specify/`...), salvo la constitución.
 - **RF-017**: DEBE quedar escrito, donde se explica cómo se trabaja con Spec Kit, que cada especificación
   añade su entrada al historial de cambios como última tarea, antes de unirse a `main`, con la fecha de
   esa unión. Esta especificación es la primera en hacerlo.
@@ -249,7 +256,8 @@ fecha.
 ### Entidades clave
 
 - **Documento**: un archivo de documentación. Tiene un tipo (referencia, guía, lista viva, historia o
-  especificación), un tema, a quién va dirigido y la fecha de su última revisión.
+  especificación), un tema, a quién va dirigido y la fecha de su última revisión. Los de `docs/` lo
+  dicen en su cabecera (RF-003).
 - **Índice**: la lista de todos los documentos, agrupada por tipo, en la entrada.
 - **Entrada del historial**: qué cambió, cuándo (la fecha de su unión a `main`; en lo reconstruido desde
   git, la de sus commits) y dónde se explica. Las entradas se agrupan por semanas.
@@ -271,7 +279,8 @@ fecha.
   30 minutos.
 - **CE-006**: Ningún contenido se pierde: cada sección de antes se encuentra en algún documento de
   después.
-- **CE-007**: Cero emojis en la documentación nueva o reescrita.
+- **CE-007**: Cero emojis en la documentación nueva y en los pasajes reescritos. Los antiguos de los
+  documentos que solo se revisan se quedan (regla XXX).
 - **CE-008**: Las diez preguntas típicas de la historia 1 se responden desde el índice.
 - **CE-009**: El historial de cambios cubre todas las semanas con commits desde el 23/07/2026.
 
@@ -287,7 +296,9 @@ fecha.
 - Los documentos conservan su nombre de archivo dentro de su nueva subcarpeta, salvo que haya un buen
   motivo; lo que cambia es la ruta.
 - La constitución cita rutas de documentos (por ejemplo `docs/AUDITORIA.md` y `docs/VPS.md`). Se
-  corrigen con una enmienda PATCH (v1.0.1) que Luis aprueba, como pide su sección de gobierno.
+  corrigen con una enmienda PATCH (v1.0.1) que Luis aprueba, como pide su sección de gobierno. La misma
+  enmienda aclara que la regla V (autor y committer) es para los commits de Luis y de Claude: cada dev
+  firma con su propia identidad.
 - La integración continua está en rojo por una causa ajena (la prueba de humo de monedas). No bloquea esta
   especificación, pero esta rama no se une a `main` hasta que esté en verde o Luis decida otra cosa
   (regla XXII).
