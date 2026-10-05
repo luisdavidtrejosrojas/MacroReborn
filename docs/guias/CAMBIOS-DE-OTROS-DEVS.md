@@ -1,7 +1,12 @@
-# CAMBIOS QUE LLEGAN DE OTROS DEVS
+# CAMBIOS-DE-OTROS-DEVS — cómo entra lo que manda otra persona
 
-Cómo se meten en el proyecto los cambios que otra persona manda, en un
-zip o en una rama.
+> **De qué trata:** cómo se meten en el proyecto los cambios que otra persona manda, en un zip o en una
+> rama: el método para fundirlos, qué pedirle para la próxima vez y qué hacer si llega algo con las
+> rutas de antes de la documentación.
+>
+> **Para quién:** quien funde el trabajo de otra persona, y quien lo manda.
+>
+> **Revisado:** 05/10/2026
 
 ---
 
@@ -38,14 +43,15 @@ cambios:
 - **No mandar herramientas de prueba propias** (como `mock-backend.js`)
   dentro de las páginas.
 - **Probar con el servidor local** (`npm run db:local`, ver
-  `docs/guias/JUEGOS.md#4-probar-localmente`) y con `npm test`.
+  [el servidor local](DESARROLLO.md#scriptsservidor-localjs--probar-en-el-navegador))
+  y con `npm test`.
 
 ---
 
 ## 3. Si llega algo con las rutas de antes
 
-El 05/10/2026 la documentación se repartió en carpetas por tipo (la spec
-`specs/001-reordenar-documentacion/`). Lo que alguien haya hecho sobre una
+El 05/10/2026 la documentación se repartió en carpetas por tipo (la
+[spec 001](../../specs/001-reordenar-documentacion/spec.md)). Lo que alguien haya hecho sobre una
 copia anterior cita los documentos por su ruta de antes: al fundirlo, cada
 una se cambia por la de ahora. Si se cuela alguna, la prueba de la
 documentación (`tests/documentacion.test.js`) lo dice con el archivo y la
