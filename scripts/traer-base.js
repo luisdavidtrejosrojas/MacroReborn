@@ -43,7 +43,7 @@ const DESTINO = path.join(RAIZ, "datos-locales");
 const PGDATA = path.join(DESTINO, "pgdata");
 
 // Configurable por si cambia la máquina; los valores por defecto son los
-// que documenta docs/VPS.md.
+// que documenta docs/referencia/VPS.md.
 const HOST = process.env.MR_VPS_HOST || "azureuser@172.184.203.20";
 // La llave, buscada y no adivinada. Estaba escrita a fuego como
 // "macroreborn-vps-key.pem", que era la que daba Azure; la de ahora es
@@ -176,7 +176,7 @@ async function main() {
 main().catch(e => {
   console.error("\nFalló: " + e.message.split("\n")[0]);
   if (/ssh|scp|ENOENT/i.test(e.message)) {
-    console.error("Si es por el acceso al servidor, mirá docs/VPS.md.");
+    console.error("Si es por el acceso al servidor, mirá docs/referencia/VPS.md.");
   }
   process.exit(1);
 });

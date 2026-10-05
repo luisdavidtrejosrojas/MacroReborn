@@ -52,7 +52,7 @@ con ella, gana la constitución. Aquí solo van las notas prácticas.
 
 ## Producción
 
-- La máquina, el acceso, los respaldos y cómo se despliega están en `docs/VPS.md`. La llave SSH es
+- La máquina, el acceso, los respaldos y cómo se despliega están en `docs/referencia/VPS.md`. La llave SSH es
   `~/.ssh/macroreborn-vps-key` y vive en el Bitwarden de Luis.
 - La base de producción solo se consulta en modo lectura (regla XX), con
   `PGOPTIONS="-c default_transaction_read_only=on"`.

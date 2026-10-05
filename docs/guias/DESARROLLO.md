@@ -36,7 +36,7 @@ Cuando se escribió esto, `social.js` y `system.js` no pasaban por acá:
 llamaban a `neon()` directo en su primera línea. La mudanza al VPS lo
 arregló —contra un Postgres normal habrían seguido intentando hablar con
 Neon— y hoy **los siete handlers** pasan por `obtenerSql()`. Ver
-`docs/VPS.md` §3.3.
+`docs/referencia/VPS.md#33-apisocialjs-y-apisystemjs`.
 
 ### 2.2 `api/_password.js` — contraseñas
 
@@ -581,7 +581,7 @@ tablas se crean igual, solo se quedan vacías.
 `--tal-cual` existe para cuando haya que depurar la propia migración de
 contraseñas. Si se usa, que sea a sabiendas.
 
-El acceso al VPS sale de `docs/VPS.md`; se puede apuntar a otra máquina
+El acceso al VPS sale de `docs/referencia/VPS.md`; se puede apuntar a otra máquina
 con `MR_VPS_HOST` y `MR_VPS_KEY`.
 
 ### Por qué hace falta traducir el volcado
@@ -605,7 +605,7 @@ que devolverlo a `public` o un `SELECT ... FROM users` a secas contesta
 
 ### De paso, el respaldo que faltaba
 
-La sección 5 de `docs/VPS.md` dice que conviene bajar una copia a otro
+La parte de respaldos de `docs/referencia/VPS.md#respaldos` dice que conviene bajar una copia a otro
 lado, porque un respaldo que solo existe en el servidor que respalda no
 protege de perder el servidor. `npm run db:traer` deja el `.sql.gz` en
 `datos-locales/`, así que cada vez que se usa para probar, de paso

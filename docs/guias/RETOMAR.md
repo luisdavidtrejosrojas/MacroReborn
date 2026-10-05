@@ -136,7 +136,7 @@ subir a Drive tal cual:
 | Base de datos | PostgreSQL 16 en el propio servidor, solo escucha en `127.0.0.1` |
 | Respaldos | `~/respaldos/diarios/` en el servidor, uno cada noche a las 3:30, se guardan 14 días |
 
-La documentación completa de la máquina está en `docs/VPS.md`. Casi
+La documentación completa de la máquina está en `docs/referencia/VPS.md`. Casi
 todo lo que se pueda preguntar sobre el servidor está ahí antes que en
 ningún otro sitio.
 

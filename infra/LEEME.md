@@ -18,7 +18,7 @@ No se sincroniza solo.
 | `scripts/respaldar.sh` | el home de `azureuser` |
 | `scripts/crontab.txt` | se carga con `crontab -e` |
 
-Las rutas exactas estan en `docs/VPS.md`.
+Las rutas exactas estan en `docs/referencia/VPS.md`.
 
 En `jail.local` hay que sustituir `TU.IP.AQUI` por la IP del
 administrador. Si se deja el marcador, fail2ban puede acabar bloqueando
@@ -26,4 +26,4 @@ el acceso SSH propio tras varios intentos fallidos.
 
 Lo que **no** esta aqui: el `.env` con las contrasenas y los
 certificados de Let's Encrypt. Los certificados los regenera certbot; el
-`.env` hay que rehacerlo a mano (ver `docs/VPS.md`).
+`.env` hay que rehacerlo a mano (ver `docs/referencia/VPS.md`).

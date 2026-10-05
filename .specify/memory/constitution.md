@@ -145,7 +145,7 @@ del disco lo borraría todo.
 - Todo cambio de la base va en una migración numerada de `migrations/` (la siguiente libre), probada en
   local, y se aplica antes que el código que la usa.
 - Antes de cambiar datos reales hay respaldo completo y ensayo con ROLLBACK (regla XX).
-- Un despliegue se deshace volviendo al commit anterior y reiniciando el servicio (`docs/VPS.md`).
+- Un despliegue se deshace volviendo al commit anterior y reiniciando el servicio (`docs/referencia/VPS.md`).
 - Las acciones irreversibles o de riesgo se le preguntan antes a Luis.
 
 ### XVIII. Medir antes de optimizar
@@ -186,7 +186,7 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
 - Se despliega desde `main` verificado, nunca desde una rama.
 - El orden es: migraciones primero, después el código, reiniciar el servicio y comprobar en la web real
   (por ejemplo, con la API pública) que el cambio está y que nada se rompió.
-- Cómo se hace está en `docs/VPS.md` y en `CLAUDE.md`.
+- Cómo se hace está en `docs/referencia/VPS.md` y en `CLAUDE.md`.
 
 ### XXII. Pruebas sin tocar lo real
 

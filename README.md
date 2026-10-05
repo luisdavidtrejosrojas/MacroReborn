@@ -14,7 +14,7 @@ existen y cómo probar los cambios localmente.
 | `docs/referencia/ARTE.md` | Cómo se protege el catálogo de prendas: qué compra cada pieza y qué no |
 | `docs/referencia/AVATARES.md` | Pasar la composicion de avatares al servidor: por que, lo medido sobre el VPS y las cinco fases |
 | `docs/FRONTEND.md` | Por que el navegador esta como esta, que se usaria empezando de cero, y por que no se reescribe |
-| `docs/VPS.md` | El servidor: máquina, nginx, base de datos, respaldos, seguridad y despliegue |
+| `docs/referencia/VPS.md` | El servidor: máquina, nginx, base de datos, respaldos, seguridad y despliegue |
 | `docs/referencia/SEO.md` | Metadatos, sitemap, robots y lo que quedó recomendado para la v1.0 |
 | `docs/listas/AUDITORIA.md` | Lista viva de lo que hay por arreglar, por orden de importancia, con su estado |
 | `docs/listas/SUGERENCIAS.md` | Lo que pidió la comunidad en el canal viejo de sugerencias de Discord, cada idea con su estado y una recomendación |
@@ -35,7 +35,7 @@ jugado, amigos, chat, notificaciones y perfiles de usuario.
   repo y en `js/`.
 - **Backend**: handlers en `api/` servidos por `server.js` sobre Node,
   contra un PostgreSQL en el mismo VPS. Antes era serverless en Vercel
-  contra Neon; la mudanza está contada en `docs/VPS.md`.
+  contra Neon; la mudanza está contada en `docs/referencia/VPS.md`.
 - **Catálogo de juegos**: datos estáticos en `js/datos-juegos.js`; los
   juegos en sí se referencian desde CDNs externos (nada de binarios en
   el repo).
