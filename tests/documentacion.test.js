@@ -14,6 +14,8 @@
 //      texto, igual.
 //   3. Las rutas del repositorio que cita la documentación existen.
 //   4. Los comandos de npm que cita la documentación existen.
+//   5. Cada documento de docs/ está en el índice del README.md, que es la
+//      entrada: lo que no está ahí no lo encuentra nadie.
 //
 // specs/ y docs/historia/ se libran de la 3 y la 4, y specs/ también de las
 // menciones de texto de la 2: cuentan el pasado, y es normal que nombren lo
@@ -211,6 +213,19 @@ function comandosRotos() {
   return fallos;
 }
 
+function documentosFueraDelIndice() {
+  const enlazados = new Set();
+  for (const { linea, enCodigo } of lineasDeMarkdown(leer("README.md"))) {
+    if (enCodigo) continue;
+    for (const [, destino] of linea.replace(/`[^`]*`/g, "").matchAll(ENLACE)) {
+      enlazados.add(path.posix.normalize(decodeURI(destino.split("#")[0])));
+    }
+  }
+  return DOCUMENTACION
+    .filter((ruta) => ruta.startsWith("docs/") && !enlazados.has(ruta))
+    .map((ruta) => `${ruta} no está en el índice del README.md: añadirle una fila con para quién es y qué cuenta.`);
+}
+
 const sinFallos = (fallos) => assert.strictEqual(fallos.length, 0, "\n" + fallos.join("\n"));
 
 describe("la documentación no cita nada que no exista", () => {
@@ -228,5 +243,9 @@ describe("la documentación no cita nada que no exista", () => {
 
   test("los comandos de npm que cita la documentación existen", () => {
     sinFallos(comandosRotos());
+  });
+
+  test("cada documento de docs/ está en el índice del README.md", () => {
+    sinFallos(documentosFueraDelIndice());
   });
 });
