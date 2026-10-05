@@ -447,7 +447,7 @@ de verdad los avatares o le basta con nombre y nivel.
   tiempo real. No se pusieron, y ya no hacen falta: los avisos dejaron de
   necesitar un tercero. Se sostienen desde esta misma máquina con
   Server-Sent Events, y el paquete `pusher` salió de `package.json`. El
-  porqué entero está en `docs/guias/DESARROLLO.md#9-los-avisos-en-vivo`. **(16/09/2026)**
+  porqué entero está en `docs/referencia/AVISOS.md`. **(16/09/2026)**
 
 - **Publicar los cambios en git.** El código de la migración estaba en el
   VPS y en el PC, pero sin commit. Ya está publicado. **(16/09/2026)**

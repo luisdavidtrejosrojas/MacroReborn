@@ -20,7 +20,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | Título y §1 Qué cubre esta guía | 1-19 | `guias/DESARROLLO.md` | Cabecera nueva: queda como la guía del trabajo en local | |
 | §2.1 `api/_db.js` | 22-40 | `ref/ARQUITECTURA.md` y `historia/MUDANZA-AL-VPS.md` | Lo vigente a la visión de conjunto; el «antes, con `neon()`», a historia | |
 | §2.2 `api/_password.js` | 41-58 | `ref/CUENTAS.md` | | |
-| §2.3 `api/_avisos.js` | 59-67 | `ref/AVISOS.md` y `historia/AVISOS-ROTOS.md` | Lo vigente a la referencia; que sustituyó a `_pusher.js`, a historia | |
+| §2.3 `api/_avisos.js` | 59-67 | `ref/AVISOS.md` y `historia/AVISOS-ROTOS.md` | Lo vigente a la referencia; que sustituyó a `_pusher.js`, a historia | 05/10/2026 |
 | §2.4 Cambios en `api/auth.js` y `api/users.js` | 68-77 | `historia/CONTRASENAS-EN-CLARO.md` | Qué acciones pasaron al servicio de contraseñas | |
 | §3.1 `scripts/pglite.js` | 80-92 | `guias/DESARROLLO.md` | | |
 | §3.2 `scripts/servidor-local.js` | 93-120 | `guias/DESARROLLO.md` | | |
@@ -35,8 +35,8 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | §6 El lienzo del catálogo | 253-404 | `historia/LIENZO-DEL-CATALOGO.md` | Resumen en `ref/ARTE.md` §3; sus pendientes, enlazados desde «Lo que sigue abierto» de `ref/ARTE.md` | 05/10/2026 |
 | §7 La marca de «imagen no encontrada» | 405-521 | `historia/IMAGEN-NO-ENCONTRADA.md` | Resumen en `ref/AVATARES.md` | 05/10/2026 |
 | §8 Probar contra los datos de verdad | 522-614 | `guias/DESARROLLO.md` | Sección propia; el código y el `CLAUDE.md` la citan por su ancla | |
-| §9 Los avisos en vivo, salvo lo de abajo | 615-632 y 651-812 | `ref/AVISOS.md` | | |
-| §9 «Por qué llevaba dos semanas roto» | 633-650 | `historia/AVISOS-ROTOS.md` | Resumen en `ref/AVISOS.md` | |
+| §9 Los avisos en vivo, salvo lo de abajo | 615-632 y 651-812 | `ref/AVISOS.md` | | 05/10/2026 |
+| §9 «Por qué llevaba dos semanas roto» | 633-650 | `historia/AVISOS-ROTOS.md` | Resumen en `ref/AVISOS.md` | 05/10/2026 |
 
 ## `docs/AVATARES-SERVIDOR.md` (1.094 líneas): pasa a `ref/AVATARES.md` y a historia
 

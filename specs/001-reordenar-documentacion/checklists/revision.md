@@ -28,7 +28,7 @@ Lo que había antes de tocar nada (T001): cuántas pruebas y archivos de prueba,
 | `docs/referencia/ARQUITECTURA.md` | | | | |
 | `docs/referencia/ARTE.md` | | | | |
 | `docs/referencia/AVATARES.md` | | | | |
-| `docs/referencia/AVISOS.md` | | | | |
+| `docs/referencia/AVISOS.md` | 05/10/2026 | `api/_avisos.js`, `api/_avisos-sse.js`, `js/avisos.js`, `cluster.js`, el pase de `api/_auth.js` y `api/content.js`, y el bloque de `/api/avisos` en `infra/nginx/macroreborn.conf` | «8000 bytes por aviso»: el código corta en 7000, con margen; «nginx corta a los 60 segundos»: ese bloque lo sube a una hora, y el latido queda por la otra razón; «los diez avisos del sitio»: cifra que cambia sola, fuera; «las 22 páginas», con su «entonces» |  |
 | `docs/referencia/CUENTAS.md` | | | | |
 | `docs/referencia/ECONOMIA.md` | | | | |
 | `docs/referencia/MODERACION.md` | | | | |
@@ -66,7 +66,7 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 | `docs/historia/AVATARES-AL-SERVIDOR.md` | | | | |
 | `docs/historia/LIENZO-DEL-CATALOGO.md` | 05/10/2026 | Con §6 de `DESARROLLO.md`, de donde salió entera (149 líneas, movidas por script) | Nada: es historia | |
 | `docs/historia/IMAGEN-NO-ENCONTRADA.md` | 05/10/2026 | Con §7 de `DESARROLLO.md`, de donde salió entera (115 líneas, movidas por script) | Nada: es historia |  |
-| `docs/historia/AVISOS-ROTOS.md` | | | | |
+| `docs/historia/AVISOS-ROTOS.md` | 05/10/2026 | Con §9 de `DESARROLLO.md` («Por qué llevaba dos semanas roto», 17 líneas) y la frase de §2.3 sobre `_pusher.js` | Nada: es historia |  |
 | `docs/historia/MUDANZA-AL-VPS.md` | | | | |
 | `docs/historia/FUGA-DEL-ENV.md` | | | | |
 | `docs/historia/CONTRASENAS-EN-CLARO.md` | | | | |
