@@ -113,7 +113,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | §4 Pruebas | 85-100 | `ref/CUENTAS.md` | | 05/10/2026 |
 | §5 Plan de activación en producción | 101-156 | `historia/CONTRASENAS-EN-CLARO.md` | Ya se ejecutó | 05/10/2026 |
 | §6 Alcance (qué no incluyó) | 157-163 | `ref/CUENTAS.md` | | 05/10/2026 |
-| (nueva) Los nombres de usuario | | `ref/CUENTAS.md` | La regla de `api/_nombre-usuario.js` y el punto 31 de la auditoría (05/10/2026) | |
+| (nueva) Los nombres de usuario | | `ref/CUENTAS.md` | La regla de `api/_nombre-usuario.js` y el punto 31 de la auditoría (05/10/2026) | 05/10/2026 |
 
 ## Los que se mudan casi enteros
 

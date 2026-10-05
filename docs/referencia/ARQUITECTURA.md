@@ -88,7 +88,7 @@ Lo que solo sirve para volver a montar el PC de Luis (la llave, Bitwarden, la co
 
 | Área | Documento | Código principal |
 |---|---|---|
-| Las cuentas y sus contraseñas | [CUENTAS](CUENTAS.md) | `api/auth.js`, `api/_password.js`, `api/_auth.js`, `api/_nombre-usuario.js` |
+| Las cuentas: contraseñas y nombres de usuario | [CUENTAS](CUENTAS.md) | `api/auth.js`, `api/_password.js`, `api/_auth.js`, `api/_nombre-usuario.js`, `api/_utils.js` |
 | Los avatares | [AVATARES](AVATARES.md) | `api/_compositor.js`, `api/_avatar-compuesto.js`, `api/_avatar-catalogo.js`, `api/_previsualizaciones.js`, `js/perfil.js`, `js/core.js` |
 | El arte y su protección | [ARTE](ARTE.md) | `api/_png.js`, `api/_lienzo.js`, `api/_prendas-firma.js`, `api/_rafaga.js`, `js/arte.js`, `scripts/hornear-catalogo.js` |
 | La tienda, el Bazar | [TIENDA](TIENDA.md) | `bazar.html`, `js/bazar.js`, las acciones `avatar-shop` de `api/content.js` |

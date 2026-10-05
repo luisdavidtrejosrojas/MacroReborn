@@ -1,8 +1,9 @@
-# CUENTAS — las contraseñas de las cuentas
+# CUENTAS — las contraseñas y los nombres de usuario
 
-> **De qué trata:** cómo se guardan y se comprueban las contraseñas: el hash con bcrypt, qué hace cada
-> operación, las pruebas que lo sujetan, lo que este sistema no cubre y lo que queda de cuando se
-> guardaban en claro.
+> **De qué trata:** cómo se guardan y se comprueban las contraseñas (el hash con bcrypt, qué hace cada
+> operación y las pruebas que lo sujetan), qué nombre de usuario se acepta y por qué no distingue
+> mayúsculas, lo que este sistema no cubre y lo que queda de cuando las contraseñas se guardaban en
+> claro.
 >
 > **Para quién:** el equipo de desarrollo.
 >
@@ -64,6 +65,29 @@ práctica y ejercita los handlers reales:
 - El borrado de cuenta exige la contraseña correcta y elimina al
   usuario.
 - El registro rechaza nombres de usuario duplicados.
+
+## Los nombres de usuario
+
+**Qué nombre se acepta**, desde el 24/09/2026 (`api/_nombre-usuario.js`): entre 3 y 25 caracteres,
+contados como los ve una persona (una letra decorativa como 𝕊 cuenta uno); sin espacios al principio
+ni al final; sin `` < > " ' ` & / \ ``, que rompen el HTML, un atributo o una ruta; y sin nada
+invisible: controles, marcas de dirección ni espacios de ancho cero, que dejan hacerse pasar por otra
+cuenta. Todo lo demás pasa: letras decorativas, runas, símbolos, la ñ y los espacios por dentro. El
+registro lo comprueba y devuelve el error en palabras que el formulario enseña tal cual. Nació del
+punto 77 de la [auditoría](../listas/AUDITORIA.md), un nombre que llevaba código: el arreglo de verdad
+fue escapar al pintar, y esto es la otra mitad.
+
+**Las mayúsculas no separan cuentas**, desde el 05/10/2026 (punto 31). `cuentaPorNombre()`, en
+`api/_utils.js`, busca primero el nombre exacto; si no lo hay, la única cuenta que coincida sin mirar
+mayúsculas; y si coinciden varias, ninguna, porque no se puede saber de quién es. La usan el perfil
+(`/api/users?username=`), entrar, cambiar la contraseña, borrar la cuenta y `getUserId()`, y el
+registro tampoco las distingue: «Ana» no se crea si ya existe «ana», y el aviso dice que entre con su
+cuenta. Antes se crearon así dos parejas de cuentas, que siguen separadas: juntarlas es cosa de cada
+persona. `api/social.js` y `api/_sanciones.js` buscan por el nombre exacto a propósito, porque reciben
+el guardado, el de las listas y los perfiles.
+
+Lo sujetan `tests/nombres-de-usuario.test.js` (la regla, el registro y la página de amigos con nombres
+maliciosos) y `tests/nombres-mayusculas.test.js`.
 
 ## Lo que no cubre
 

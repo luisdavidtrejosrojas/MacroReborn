@@ -30,7 +30,7 @@ pruebas) y su documentación, que empieza aquí.
 | [ARTE](docs/referencia/ARTE.md) | El equipo de desarrollo | Cómo se protege el arte de las prendas: qué consigue cada medida y qué no |
 | [AVATARES](docs/referencia/AVATARES.md) | El equipo de desarrollo | Cómo se componen, se guardan y se sirven los avatares: sus piezas, sus direcciones, el freno, las previsualizaciones, la foto de perfil y el pelo de atrás |
 | [AVISOS](docs/referencia/AVISOS.md) | El equipo de desarrollo | Lo que aparece sin recargar: los avisos en vivo por Server-Sent Events, sus piezas, los dos procesos, los límites y quién puede oír qué |
-| [CUENTAS](docs/referencia/CUENTAS.md) | El equipo de desarrollo | Las contraseñas: el hash con bcrypt, lo que queda de cuando se guardaban en claro y qué no cubre |
+| [CUENTAS](docs/referencia/CUENTAS.md) | El equipo de desarrollo | Las contraseñas y los nombres de usuario: el hash con bcrypt, qué nombre se acepta, por qué no distingue mayúsculas, qué no cubre y lo que queda de cuando las contraseñas se guardaban en claro |
 | [ECONOMIA](docs/referencia/ECONOMIA.md) | El equipo de desarrollo y quien decida precios | Las monedas: los precios por rareza, cómo se ganan, los límites y el recálculo de saldos del 04/10/2026 |
 | [MODERACION](docs/referencia/MODERACION.md) | El equipo de desarrollo y los administradores | Advertir, suspender y banear: qué hace cada sanción, quién puede ponerla, el panel y lo que ven los demás |
 | [SEO](docs/referencia/SEO.md) | El equipo de desarrollo | Los metadatos, los datos estructurados, el sitemap, robots y las imágenes, y lo que queda para las URL limpias |
