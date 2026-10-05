@@ -112,7 +112,7 @@ del disco lo borraría todo.
 - El servidor deja constancia de lo que falla (`journalctl -u macroreborn`) y la web enseña errores
   claros en español que dicen qué hacer.
 - Ningún error se traga, ni en el servidor ni en el navegador: un `catch` vacío es un error escondido
-  (el punto 32 de `docs/AUDITORIA.md` fue exactamente eso).
+  (el punto 32 de `docs/listas/AUDITORIA.md` fue exactamente eso).
 
 ### XIV. La web no molesta
 
@@ -246,7 +246,7 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
 
 ### XXXI. Las listas vivas no se borran
 
-- En `docs/AUDITORIA.md`, `docs/SUGERENCIAS.md` y cualquier otra lista numerada, las filas nunca se
+- En `docs/listas/AUDITORIA.md`, `docs/SUGERENCIAS.md` y cualquier otra lista numerada, las filas nunca se
   borran ni sus números se reutilizan. Lo resuelto se marca con su fecha y lo descartado, con su motivo.
 
 ### XXXII. El equipo

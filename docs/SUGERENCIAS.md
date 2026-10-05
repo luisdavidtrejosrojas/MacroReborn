@@ -11,7 +11,7 @@ MOBA, bromas, un reporte de broma); aquí está cada idea concreta, una
 por fila, con lo que hay hoy en la web (revisado contra el código el
 05/10/2026) y una recomendación para decidir.
 
-Es una lista de trabajo, como `docs/AUDITORIA.md`: se va decidiendo una
+Es una lista de trabajo, como `docs/listas/AUDITORIA.md`: se va decidiendo una
 por una y se marca aquí.
 
 ---

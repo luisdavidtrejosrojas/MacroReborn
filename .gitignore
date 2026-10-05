@@ -49,7 +49,7 @@ memoria-claude/
 # autoría) y en la copia de Drive. Ver docs/ARTE.md y docs/RETOMAR.md.
 #
 # Ojo: siguen en el historial de GitHub hasta ese día. Sacarlos de ahí
-# requiere reescribir el historial (docs/AUDITORIA.md, punto 75).
+# requiere reescribir el historial (docs/listas/AUDITORIA.md, punto 75).
 imagenes/tora/
 imagenes/cereza/
 imagenes/max/

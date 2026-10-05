@@ -6,7 +6,7 @@ Hasta ese día "suspender" solo ponía una marca en la cuenta
 cuenta suspendida siguió entrando y escribiendo. Y las advertencias del
 panel no llegaban a nadie: el panel mandaba una notificación que el
 servidor rechazaba, no miraba la respuesta y decía "enviada" (puntos 16 y
-17 de `docs/AUDITORIA.md`).
+17 de `docs/listas/AUDITORIA.md`).
 
 Se hace en cuatro partes. **Hechas la 1** (el servidor aplica
 suspensiones y baneos, y las advertencias llegan) **y la 2** (lo escrito

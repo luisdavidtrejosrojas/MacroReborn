@@ -6,7 +6,7 @@
 // pinta en todas partes: en la lista de amigos se metía en el HTML sin
 // escapar, así que un nombre como <img src=x onerror=...> se ejecutaba
 // en el navegador de quien lo tuviera de amigo, o solo con mandarle una
-// solicitud. Punto 77 de docs/AUDITORIA.md.
+// solicitud. Punto 77 de docs/listas/AUDITORIA.md.
 //
 // El arreglo de verdad es escapar al pintar, y se hizo. Esto es la otra
 // mitad: que un nombre así no se pueda ni crear.

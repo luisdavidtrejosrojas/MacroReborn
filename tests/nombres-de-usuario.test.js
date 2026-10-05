@@ -1,7 +1,7 @@
 // ==============================
 // UN NOMBRE DE USUARIO NO ES HTML — tests/nombres-de-usuario.test.js
 // ==============================
-// Punto 77 de docs/AUDITORIA.md. El registro aceptaba cualquier texto
+// Punto 77 de docs/listas/AUDITORIA.md. El registro aceptaba cualquier texto
 // como nombre, y la página de amigos lo metía en el HTML sin escapar.
 // Un nombre como <img src=x onerror=...> se ejecutaba:
 //

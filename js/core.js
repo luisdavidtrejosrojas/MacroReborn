@@ -67,7 +67,7 @@ function pintarMedallaLogros(elemento, puntos){
 // Se llama MRTexto y no escaparHTML a propósito: varios archivos
 // declaran su propia función con ese nombre en el ámbito global, y dos
 // declaraciones iguales se pisan según el orden de carga. Unificar las
-// 19 copias es otra tarea (docs/AUDITORIA.md, punto 73); esto no la
+// 19 copias es otra tarea (docs/listas/AUDITORIA.md, punto 73); esto no la
 // estorba.
 const MRTexto = {
   escapar(valor) {

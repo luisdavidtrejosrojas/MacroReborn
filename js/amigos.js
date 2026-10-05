@@ -127,7 +127,7 @@ htmlAvatarMini(amigo)
 // el 24/09/2026 un nombre con HTML se ejecutaba aquí. Lo mismo en las
 // dos listas de solicitudes de abajo, y la de recibidas era la peor:
 // bastaba con mandar la solicitud, sin que nadie la aceptara. Ver el
-// punto 77 de docs/AUDITORIA.md.
+// punto 77 de docs/listas/AUDITORIA.md.
 card.innerHTML += `
 
 <div class="amigo-info">

@@ -6,7 +6,7 @@ const sql = obtenerSql();
 
 // opciones.userId: la cuenta, cuando quien llama ya la sabe. Sin él se
 // busca por el nombre, sin mayúsculas, y de dos cuentas como jader y
-// Jader (punto 31 de docs/AUDITORIA.md) podía salir la otra.
+// Jader (punto 31 de docs/listas/AUDITORIA.md) podía salir la otra.
 async function crearNotificacionServidor(username, titulo, mensaje, origenNombre, opciones) {
   if (!username || !titulo) return { success: false, error: 'Datos incompletos' };
 

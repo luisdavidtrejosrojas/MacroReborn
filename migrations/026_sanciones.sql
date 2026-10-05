@@ -5,7 +5,7 @@
 -- solo ponía users.suspendido = true, y el servidor no lo miraba en
 -- ningún sitio: la única cuenta suspendida siguió entrando y escribiendo.
 -- Las advertencias del panel tampoco llegaban a nadie (puntos 16 y 17 de
--- docs/AUDITORIA.md).
+-- docs/listas/AUDITORIA.md).
 --
 -- Cada sanción es una fila, con quién la puso, por qué y hasta cuándo:
 --

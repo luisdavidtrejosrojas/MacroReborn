@@ -1656,7 +1656,7 @@ async function gameHistory(req, res) {
 
     // La cuenta la dice la sesión: el handler ya comprobó que username es
     // el suyo. Buscarla por el nombre, sin mayúsculas, podía dar la otra
-    // de una pareja como jader y Jader (punto 31 de docs/AUDITORIA.md).
+    // de una pareja como jader y Jader (punto 31 de docs/listas/AUDITORIA.md).
     const userId = Number(req.auth.sub);
 
     const idTexto = String(gameId);
@@ -2512,7 +2512,7 @@ async function avatarShop(req, res) {
 
   // Solo lo que se puede llevar: una prenda que el equipo de arte
   // retiró (publicada = false) deja de venderse, aunque siga en la
-  // tabla (punto 24 de docs/AUDITORIA.md). Quien ya la compró la
+  // tabla (punto 24 de docs/listas/AUDITORIA.md). Quien ya la compró la
   // conserva.
   //
   // Con la previsualizacion de cada prenda, que es lo que la tienda

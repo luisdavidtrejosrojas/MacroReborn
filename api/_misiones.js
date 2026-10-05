@@ -62,7 +62,7 @@ function pickWeekly(weekText) {
 // zona de la sesión (UTC) y el AT TIME ZONE la devuelve como hora de
 // Argentina: la ventana quedaba de 21:00 a 21:00 UTC, seis horas antes,
 // y lo jugado desde las 18:00 de Argentina -la hora punta- no contaba
-// para la misión de hoy (punto 80 de docs/AUDITORIA.md).
+// para la misión de hoy (punto 80 de docs/listas/AUDITORIA.md).
 async function juegosDeHoy(sql, userId, hoy) {
   const filas = await sql`
     SELECT COUNT(*)::int AS cantidad

@@ -73,7 +73,7 @@ menciones al día.
 5. `node --test tests/documentacion.test.js` y `npm test`, en verde.
 6. Commit `Docs: <NOMBRE> pasa a docs/<carpeta>/` y push.
 
-- [ ] T005 Mover `docs/AUDITORIA.md` a `docs/listas/AUDITORIA.md`; la constitución lo cita en las reglas XIII y XXXI.
+- [X] T005 Mover `docs/AUDITORIA.md` a `docs/listas/AUDITORIA.md`; la constitución lo cita en las reglas XIII y XXXI.
 - [ ] T006 Mover `docs/SUGERENCIAS.md` a `docs/listas/SUGERENCIAS.md`; la constitución lo cita en la regla XXXI.
 - [ ] T007 Mover `docs/DESARROLLO.md` a `docs/guias/DESARROLLO.md`; las menciones «§8» y «§9» (el código, el `README.md` y el `CLAUDE.md`) pasan a `#8-probar-contra-los-datos-de-verdad` y `#9-los-avisos-en-vivo`.
 - [ ] T008 Mover `docs/JUEGOS.md` a `docs/guias/JUEGOS.md`.

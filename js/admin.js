@@ -366,7 +366,7 @@
     // Todo escapado: en los tops de nivel y XP el nombre es el de una
     // cuenta, y en los de logros, insignias y juegos puede ser el id
     // crudo que haya en la base. Y esto se pinta en el navegador de un
-    // administrador. Ver el punto 77 de docs/AUDITORIA.md.
+    // administrador. Ver el punto 77 de docs/listas/AUDITORIA.md.
     function _filaTop(item, unidad){
       const valor = item.valor !== undefined ? item.valor : item.veces;
       return `<li><span class="admin-top-nombre">${MRTexto.escapar(item.nombre)}</span><span class="admin-top-valor">${MRTexto.escapar(String(valor) + (unidad || ""))}</span></li>`;

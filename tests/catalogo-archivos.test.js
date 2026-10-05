@@ -3,7 +3,7 @@
 // ==============================
 // El 27 (Fairy Tail vs One Piece) no cargaba por una letra: el catálogo
 // pedía html/juegos/fairytailvsonepiece.html y el archivo se llama
-// fairytalevsonepiece.html (punto 22 de docs/AUDITORIA.md, arreglado el
+// fairytalevsonepiece.html (punto 22 de docs/listas/AUDITORIA.md, arreglado el
 // 28/09/2026). Aquí: que todo juego del catálogo que se sirve desde el
 // propio sitio tiene su archivo, y toda portada su imagen.
 //

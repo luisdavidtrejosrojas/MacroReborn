@@ -132,7 +132,7 @@ subir a Drive tal cual:
 | Ruta del proyecto en el servidor | `/home/azureuser/MacroReborn` |
 | Ruta del proyecto en el PC | `D:\Macroreborn` (desde el 19/09/2026; antes `C:\Users\luisd\Documents\Macroreborn`) |
 | Copia en Drive | `G:\Mi unidad\01_Proyectos_Software\Proyectos de código\Macroreborn\` (desde el 19/09/2026; antes `02_Proyectos_Software\...`) |
-| Repositorio | `github.com/valenmgg/MacroReborn` (**público**; las prendas ya no van en él desde el 21/09/2026, ver `docs/AUDITORIA.md` punto 75) |
+| Repositorio | `github.com/valenmgg/MacroReborn` (**público**; las prendas ya no van en él desde el 21/09/2026, ver `docs/listas/AUDITORIA.md` punto 75) |
 | Base de datos | PostgreSQL 16 en el propio servidor, solo escucha en `127.0.0.1` |
 | Respaldos | `~/respaldos/diarios/` en el servidor, uno cada noche a las 3:30, se guardan 14 días |
 
@@ -208,7 +208,7 @@ ssh -i "<ruta>" azureuser@172.184.203.20 "cd ~/MacroReborn && git reset --hard <
 
 El 18 de septiembre de 2026 se hizo una auditoría completa del proyecto:
 catorce revisiones en paralelo más una del servidor en vivo. Salieron 74
-cosas por arreglar, y están todas en **`docs/AUDITORIA.md`**, ordenadas
+cosas por arreglar, y están todas en **`docs/listas/AUDITORIA.md`**, ordenadas
 por importancia y con una columna de estado para ir marcándolas.
 
 De las catorce urgentes del bloque 1, **once están hechas** (2, 3, 4, 5,

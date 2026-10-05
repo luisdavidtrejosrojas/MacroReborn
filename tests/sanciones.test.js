@@ -4,7 +4,7 @@
 // Decidido el 28/09/2026 (docs/MODERACION.md, api/_sanciones.js). Hasta
 // ese día "suspender" solo ponía una marca que el servidor no miraba, y
 // la única cuenta suspendida siguió entrando y escribiendo; las
-// advertencias no llegaban a nadie (puntos 16 y 17 de docs/AUDITORIA.md).
+// advertencias no llegaban a nadie (puntos 16 y 17 de docs/listas/AUDITORIA.md).
 //
 // Contra los handlers de verdad y una base PGlite:
 //
