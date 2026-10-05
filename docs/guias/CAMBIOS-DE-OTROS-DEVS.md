@@ -74,3 +74,37 @@ línea.
 | `SUGERENCIAS.md` | [docs/listas/SUGERENCIAS.md](../listas/SUGERENCIAS.md) |
 | `TIENDA.md` | [docs/referencia/TIENDA.md](../referencia/TIENDA.md) |
 | `VPS.md` | [docs/referencia/VPS.md](../referencia/VPS.md) |
+
+Algunas secciones, además, salieron de su documento a otro sitio: la historia a `docs/historia/`, y
+lo que contaban dos documentos a la vez, a uno solo. Lo que alguien cite de antes con su sección se
+busca aquí; el detalle, sección por sección, está en
+[el mapa de contenido](../../specs/001-reordenar-documentacion/mapa-de-contenido.md).
+
+| Antes | Ahora |
+|---|---|
+| `DESARROLLO.md`, §2: los módulos del backend | [ARQUITECTURA](../referencia/ARQUITECTURA.md#cómo-se-conectan); cómo era antes de la mudanza, [MUDANZA-AL-VPS](../historia/MUDANZA-AL-VPS.md); los avisos, [AVISOS](../referencia/AVISOS.md); los cambios del login, [CONTRASENAS-EN-CLARO](../historia/CONTRASENAS-EN-CLARO.md) |
+| `DESARROLLO.md`, §3.3 y §4: el relleno de contraseñas y su despliegue | [CONTRASENAS-EN-CLARO](../historia/CONTRASENAS-EN-CLARO.md) |
+| `DESARROLLO.md`, §3.4 a §3.6: qué sujeta cada prueba | [CUENTAS](../referencia/CUENTAS.md#pruebas) y [ECONOMIA](../referencia/ECONOMIA.md#6-las-pruebas) |
+| `DESARROLLO.md`, §5: las convenciones | La constitución (`.specify/memory/constitution.md`) |
+| `DESARROLLO.md`, §6: el lienzo del catálogo | [LIENZO-DEL-CATALOGO](../historia/LIENZO-DEL-CATALOGO.md) |
+| `DESARROLLO.md`, §7: la marca de imagen no encontrada | [IMAGEN-NO-ENCONTRADA](../historia/IMAGEN-NO-ENCONTRADA.md) |
+| `DESARROLLO.md`, §9: los avisos en vivo | [AVISOS](../referencia/AVISOS.md); por qué estuvieron rotos, [AVISOS-ROTOS](../historia/AVISOS-ROTOS.md) |
+| `AVATARES-SERVIDOR.md`: la entrada, §1, §2, las fases de §5, lo de macrojuegos de §8 y §12, y cómo se decidió la foto de perfil | [AVATARES-AL-SERVIDOR](../historia/AVATARES-AL-SERVIDOR.md) |
+| `AVATARES-SERVIDOR.md`: «Cómo mirarlo con los ojos», §11 y la herramienta de §12 | [DESARROLLO](DESARROLLO.md) |
+| `ARTE.md`, §6: lo que se decidió no hacer | [AVATARES-AL-SERVIDOR](../historia/AVATARES-AL-SERVIDOR.md#lo-que-arte-descartó-el-16092026) |
+| `SEGURIDAD.md`, §1, §3 y §5: el problema, el relleno y el plan de activación | [CONTRASENAS-EN-CLARO](../historia/CONTRASENAS-EN-CLARO.md) |
+| `ECONOMIA.md`, §5: los saldos rehechos | [SALDOS-REHECHOS](../historia/SALDOS-REHECHOS.md) |
+| `MODERACION.md`, §5: lo que se hizo al activarla | [ACTIVAR-LA-MODERACION](../historia/ACTIVAR-LA-MODERACION.md) |
+| `CAMBIOS-DE-OTROS-DEVS.md`: los casos del 28/09 y del 03/10 | [CASOS-DE-OTROS-DEVS](../historia/CASOS-DE-OTROS-DEVS.md) |
+| `VPS.md`, §3: cómo habla el código con la base | [ARQUITECTURA](../referencia/ARQUITECTURA.md#cómo-se-conectan); cómo se hizo, [MUDANZA-AL-VPS](../historia/MUDANZA-AL-VPS.md) |
+| `VPS.md`, §5: «Desplegar un cambio» | [DESPLEGAR](DESPLEGAR.md) |
+| `VPS.md`, §7: la migración de los datos | [MUDANZA-AL-VPS](../historia/MUDANZA-AL-VPS.md) |
+| `VPS.md`, §9: la fuga del `.env` | [FUGA-DEL-ENV](../historia/FUGA-DEL-ENV.md) |
+| `RETOMAR.md`, §1.1 y §1.2: la llave SSH que se perdió | [LLAVE-SSH](../historia/LLAVE-SSH.md) |
+| `RETOMAR.md`, §2: dónde vive cada cosa | [ARQUITECTURA](../referencia/ARQUITECTURA.md#dónde-vive-cada-cosa) |
+| `RETOMAR.md`, §3: levantar el entorno | [SUMARSE](SUMARSE.md#1-preparar-el-entorno) |
+| `RETOMAR.md`, §4: desplegar | [DESPLEGAR](DESPLEGAR.md) |
+| `RETOMAR.md`, §5: en qué punto está el trabajo | [HISTORIAL](../historia/HISTORIAL.md) |
+| `RETOMAR.md`, §6: fail2ban y la memoria de la base | [VPS](../referencia/VPS.md#8-seguridad-y-rendimiento) |
+| `README.md`: «Qué es el proyecto», «Stack» y «Sistemas documentados» | [ARQUITECTURA](../referencia/ARQUITECTURA.md) |
+| `README.md`: «Cómo probar localmente» | [SUMARSE](SUMARSE.md#1-preparar-el-entorno) |
