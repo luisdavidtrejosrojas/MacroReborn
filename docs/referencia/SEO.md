@@ -143,10 +143,11 @@ Ambos archivos van en la raíz del sitio (mismo nivel que
 
 ## 5. Imágenes
 
-- Las portadas de juego (`imagenes/juegos/*.png`) se comprimieron con
-  `pngquant`, antes del 23/07/2026 (mismo formato, mismo nombre, mismas
-  dimensiones — cero cambios de código): pasaron de **17 MB a ~4.8 MB**
-  en total (-72%) sin pérdida visible.
+- Las portadas de juego eran PNG, y antes del 23/07/2026 se comprimieron
+  con `pngquant`: pasaron de **17 MB a ~4.8 MB** en total (-72%) sin
+  pérdida visible. Desde el 17/08/2026 son JPEG de 480x270, y todas juntas
+  pesan 3,4 MB el 05/10/2026. Cómo se agrega una:
+  [JUEGOS](../guias/JUEGOS.md#33-agregar-la-portada).
 - Todas las imágenes tienen `alt` descriptivo (portadas de juego,
   logo, avatares con nombre) o `alt=""` cuando son decorativas y el
   texto de al lado ya las identifica (evita que un lector de pantalla
@@ -162,10 +163,6 @@ Ambos archivos van en la raíz del sitio (mismo nivel que
 - Se creó `imagenes/og-image.png` (1200×630, con los mismos colores e
   identidad visual del sitio) para que compartir un link de
   MacroReborn se vea bien en redes sociales.
-
-Si agregás portadas de juego nuevas, corré `pngquant --quality=65-85
---strip archivo.png` (o `--quality=40-85` si se resiste) antes de
-subirlas al repo.
 
 ---
 
