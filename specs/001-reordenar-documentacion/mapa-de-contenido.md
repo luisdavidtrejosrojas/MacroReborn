@@ -71,7 +71,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | Título y entrada | 1-7 | `ref/VPS.md` | El título pierde «sin Vercel ni Neon» | |
 | §1 La máquina | 8-27 | `ref/VPS.md` | Sin la IP (research D8) | |
 | §2 Piezas instaladas | 28-40 | `ref/VPS.md` | | |
-| §3.1 y §3.2 `api/_pg.js` y `api/_db.js` | 43-69 | `ref/ARQUITECTURA.md` y `historia/MUDANZA-AL-VPS.md` | Cómo elige conexión hoy, a la visión; qué se cambió, a historia | 05/10/2026 |
+| §3.1 y §3.2 `api/_pg.js` y `api/_db.js` | 43-69 | `ref/ARQUITECTURA.md` y `historia/MUDANZA-AL-VPS.md` | Cómo elige conexión hoy, a la visión; qué se cambió, a historia |  |
 | §3.3 `api/social.js` y `api/system.js` | 70-76 | `historia/MUDANZA-AL-VPS.md` | | 05/10/2026 |
 | §3.4 `server.js`: carga del `.env` | 77-83 | `ref/VPS.md`, §Configuración y secretos | Es como funciona hoy | 05/10/2026 |
 | §3.5 `package.json` | 84-88 | `historia/MUDANZA-AL-VPS.md` | Si `@neondatabase/serverless` sigue, «Lo que falta» lo dice | 05/10/2026 |
