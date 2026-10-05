@@ -16,14 +16,14 @@
 
 Cómo se mantiene: una línea con la regla de RF-017 y el enlace a la guía para sumarse.
 
-## Semana del 29/09 al 05/10/2026
+## Semana del 28/09 al 04/10/2026
 
 - **04/10, economía** (Luis): los precios pasan a ir por rareza y los saldos se rehacen con las
   reglas nuevas. [ECONOMIA](../referencia/ECONOMIA.md),
   [`1a2b3c4`](https://github.com/valenmgg/MacroReborn/commit/1a2b3c4).
 - **...**
 
-## Semana del 22 al 28/09/2026
+## Semana del 21 al 27/09/2026
 
 ...
 

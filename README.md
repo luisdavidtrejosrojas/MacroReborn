@@ -61,6 +61,7 @@ pruebas) y su documentación, que empieza aquí.
 
 | Fecha | Documento | Qué cuenta |
 |---|---|---|
+| Desde el 23/07/2026 | [HISTORIAL](docs/historia/HISTORIAL.md) | Todo lo que cambió, semana a semana: cada cambio con su día, su área, quién lo hizo y dónde se explica |
 | 04/10/2026 | [SALDOS-REHECHOS](docs/historia/SALDOS-REHECHOS.md) | El recálculo de una sola vez de todos los saldos con la economía nueva: qué calculó, cómo se corrió, lo que salió y el respaldo de antes |
 | 03/10/2026 | [CASOS-DE-OTROS-DEVS](docs/historia/CASOS-DE-OTROS-DEVS.md) | Los dos primeros zips de otro dev, del 28/09 y del 03/10: qué traían, qué entró y qué no, y qué se arregló al meterlos |
 | 28/09/2026 | [ACTIVAR-LA-MODERACION](docs/historia/ACTIVAR-LA-MODERACION.md) | Lo que se hizo el día que se activaron las sanciones: la cuenta que quedó baneada y las columnas viejas que dejaron de usarse |

@@ -262,7 +262,7 @@ semana con commits tiene su sección (quickstart, escenario 6).
 3. Lo repetido se agrupa. Ningún commit queda sin contar, tampoco los «Add files via upload».
 4. Sin datos sensibles.
 
-- [ ] T062 [US5] Sacar con un script de un solo uso, en la carpeta temporal, la materia prima de cada semana: cada commit con su fecha de autor, su autor y su asunto, más los archivos que tocó cuando el asunto no dice nada (research D6). Con ella, crear `docs/historia/HISTORIAL.md` con su cabecera, la línea de cómo se mantiene y las semanas del 05 al 11/10 y del 28/09 al 04/10/2026; entra en el índice, como primera fila de historia.
+- [X] T062 [US5] Sacar con un script de un solo uso, en la carpeta temporal, la materia prima de cada semana: cada commit con su fecha de autor, su autor y su asunto, más los archivos que tocó cuando el asunto no dice nada (research D6). Con ella, crear `docs/historia/HISTORIAL.md` con su cabecera, la línea de cómo se mantiene y las semanas del 05 al 11/10 y del 28/09 al 04/10/2026; entra en el índice, como primera fila de historia.
 - [ ] T063 [US5] Escribir en `docs/historia/HISTORIAL.md` las semanas del 21 al 27/09 y del 14 al 20/09/2026, con lo que contaba §5 de `docs/guias/RETOMAR.md`, que deja de contarlo y enlaza las listas, `specs/` y el historial; mapa.
 - [ ] T064 [US5] Escribir en `docs/historia/HISTORIAL.md` las semanas del 31/08 al 06/09 y del 17 al 23/08/2026.
 - [ ] T065 [US5] Escribir en `docs/historia/HISTORIAL.md` la semana del 10 al 16/08/2026 (221 commits).
