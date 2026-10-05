@@ -16,7 +16,8 @@ el sitio tenía 15 páginas; lo que llegó después va con su fecha.
 **El dominio.** Las URL absolutas (el `canonical`, Open Graph, `sitemap.xml` y `robots.txt`) usan
 `https://www.macroreborn.com`, que es el dominio real. El sitio contesta igual en `macroreborn.com` y
 en `www`, sin redirigir de uno a otro, y el `canonical` hace que los buscadores se queden con la de
-`www` ([el dominio](VPS.md#7-dominio-y-https)).
+`www` ([el dominio](VPS.md#7-dominio-y-https)). Redirigir uno al otro está en
+[Lo que queda](#8-lo-que-queda).
 
 ---
 
@@ -41,7 +42,7 @@ Las páginas de la pasada de SEO tienen en su `<head>`:
 
 El 05/10/2026 lo llevan entero 14 de las 30 páginas. A las demás les falta algo, casi siempre Open
 Graph y Twitter Card, y entre ellas hay tres que están en el sitemap: `categoria.html`,
-`coleccion.html` y `terminos.html`.
+`coleccion.html` y `terminos.html` ([Lo que queda](#8-lo-que-queda)).
 
 ### Tabla de indexación por página
 
@@ -187,7 +188,13 @@ lo llevan las 28 páginas que cargan fuentes; las otras dos,
 
 ---
 
-## 8. Lo que queda: URLs limpias
+## 8. Lo que queda
+
+En la [auditoría](../listas/AUDITORIA.md), con su estado: el punto 54 (las fichas de juego comparten
+título, descripción y `canonical`), el 55 (`www` y sin `www` contestan los dos, sin redirigir) y el 56
+(las páginas sin etiquetas y la ficha de Macro Snake fuera del sitemap). Y, sin decidir:
+
+### URLs limpias
 
 Páginas como `juego.html?id=7` o `usuario.html?id=nombre` usan query
 strings. Funciona bien y es válido, pero conviene migrar a URLs
