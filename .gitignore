@@ -23,6 +23,13 @@ revision-previsualizaciones/
 # Imagen temporal para un anuncio de Discord. Se hace, se captura y se borra.
 anuncio-*.html
 
+# La exportacion del canal viejo de sugerencias de Discord (29/09/2026) y
+# las capturas que cita docs/SUGERENCIAS.md. Lleva nombres, avatares y
+# mensajes de la comunidad, igual que datos-locales/: viaja a Drive con la
+# carpeta, no a git. Ese canal ya no existe, asi que esta es una de las
+# dos copias que quedan (la otra, en C:\DCE\export).
+sugerencias-discord/
+
 # Copia de la memoria de Claude Code, que vive fuera del proyecto en
 # ~/.claude/projects/.../memory/ y por tanto NO se salva copiando esta
 # carpeta. Se duplica aqui para que viaje a Drive con todo lo demas.
