@@ -25,13 +25,13 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | §3.1 `scripts/pglite.js` | 80-92 | `guias/DESARROLLO.md` | | |
 | §3.2 `scripts/servidor-local.js` | 93-120 | `guias/DESARROLLO.md` | | |
 | §3.3 `scripts/migrar-passwords.js` | 121-130 | `historia/CONTRASENAS-EN-CLARO.md` | Una línea en `ref/CUENTAS.md` | 05/10/2026 |
-| §3.4 `tests/password.test.js` | 131-142 | `guias/DESARROLLO.md` y `ref/CUENTAS.md` | Cómo son las pruebas, a la guía; qué sujeta, a cuentas | |
-| §3.5 `tests/monedas.test.js` | 143-150 | `ref/ECONOMIA.md`, §Las pruebas | Comprobar que su tabla ya lo dice todo | |
-| §3.6 `tests/migrations.test.js` | 151-157 | `ref/ECONOMIA.md`, §Las pruebas | El contrato de la migración 015 | |
+| §3.4 `tests/password.test.js` | 131-142 | `guias/DESARROLLO.md` y `ref/CUENTAS.md` | Cómo son las pruebas, a la guía; qué sujeta, a cuentas | 05/10/2026 |
+| §3.5 `tests/monedas.test.js` | 143-150 | `ref/ECONOMIA.md`, §Las pruebas | Estaba caducada: contaba las reglas de antes del 04/10 (ventana de diez minutos, tope diario). La fila de `ref/ECONOMIA.md` ya dice lo que cubre hoy, comprobado en la prueba | 05/10/2026 |
+| §3.6 `tests/migrations.test.js` | 151-157 | `ref/ECONOMIA.md`, §Las pruebas | El contrato de la migración 015 | 05/10/2026 |
 | §3.7 `scripts/smoke-local.js` | 158-174 | `guias/DESARROLLO.md` | | |
 | §3.8 Verificación manual en navegador | 175-200 | `guias/DESARROLLO.md` | | |
 | §4 Despliegue de estos cambios | 201-231 | `historia/CONTRASENAS-EN-CLARO.md` | Fue el despliegue de bcrypt; lo general está en `guias/DESPLEGAR.md` | 05/10/2026 |
-| §5 Convenciones del proyecto | 232-252 | La constitución | Se quita después de comprobar que cada punto está en la constitución; lo que no, a `guias/SUMARSE.md` | |
+| §5 Convenciones del proyecto | 232-252 | La constitución | Todo estaba en la constitución (reglas I, XIX, XXX, V, XI y XXVI) y en `ref/ARTE.md` (por qué `_png.js` y `_lienzo.js` van a mano): nada pendiente para `guias/SUMARSE.md` | 05/10/2026 |
 | §6 El lienzo del catálogo | 253-404 | `historia/LIENZO-DEL-CATALOGO.md` | Resumen en `ref/ARTE.md` §3; sus pendientes, enlazados desde «Lo que sigue abierto» de `ref/ARTE.md` | 05/10/2026 |
 | §7 La marca de «imagen no encontrada» | 405-521 | `historia/IMAGEN-NO-ENCONTRADA.md` | Resumen en `ref/AVATARES.md` | 05/10/2026 |
 | §8 Probar contra los datos de verdad | 522-614 | `guias/DESARROLLO.md` | Sección propia; el código y el `CLAUDE.md` la citan por su ancla | |

@@ -154,7 +154,7 @@ explica `docs/guias/DESPLEGAR.md`; y la comprobación 6 está en verde.
 ### Un tema, un documento (RF-009)
 
 - [X] T036 [US2] Crear `docs/guias/DESPLEGAR.md`, con su cabecera, como el único sitio que explica el despliegue entero: las migraciones primero; `GIT_SSH_COMMAND='ssh -i ~/.ssh/macroreborn-vps-key' git push vps main` (el servidor se actualiza solo, con `receive.denyCurrentBranch=updateInstead`); `sudo -n systemctl restart macroreborn`; la comprobación en la web real; y cómo deshacer. Junta «Desplegar un cambio» de §5 de `docs/referencia/VPS.md` (que dice `git pull`: se corrige), §4 de `docs/guias/RETOMAR.md` y lo del `CLAUDE.md`; esos tres sitios pasan a enlazarla. Se revisa al escribirla, contra el `CLAUDE.md` y el VPS (solo lectura). Entra en el índice y en «Por dónde empezar»; mapa y lista de revisión.
-- [ ] T037 [US2] Dejar `docs/guias/DESARROLLO.md` como la guía del trabajo en local: §3.5 y §3.6 pasan a «Las pruebas» de `docs/referencia/ECONOMIA.md`; lo que §3.4 dice que sujeta `tests/password.test.js`, a `docs/referencia/CUENTAS.md`; §5 se cambia por el enlace a la constitución, después de comprobar sus puntos uno a uno (lo que no esté en ella se apunta para `docs/guias/SUMARSE.md`, en T060); mapa.
+- [X] T037 [US2] Dejar `docs/guias/DESARROLLO.md` como la guía del trabajo en local: §3.5 y §3.6 pasan a «Las pruebas» de `docs/referencia/ECONOMIA.md`; lo que §3.4 dice que sujeta `tests/password.test.js`, a `docs/referencia/CUENTAS.md`; §5 se cambia por el enlace a la constitución, después de comprobar sus puntos uno a uno (lo que no esté en ella se apunta para `docs/guias/SUMARSE.md`, en T060); mapa.
 
 ### Revisar cada documento (RF-008)
 

@@ -74,32 +74,17 @@ Abre `http://localhost:3001`:
   (esperado).
 - Y para probar contra los datos DE VERDAD, ver la sección 8.
 
-### 3.4 `tests/password.test.js` — tests
+### 3.4 Las pruebas (`npm test`)
 
 ```bash
 npm test
 ```
 
-Usa `node:test` (incluido en Node). Los tests crean su propia base de
-práctica, inyectan la conexión con `usarSqlLocal()` y ejercitan los
-handlers reales. Cubren: registro con hash, login correcto/incorrecto,
-migración legacy, cambio de contraseña, borrado de cuenta y usuario
-duplicado.
-
-### 3.5 `tests/monedas.test.js` — reglas de monedas
-
-Se ejecuta junto con `npm test` y usa una base PGlite nueva por suite. Cubre
-el primer otorgamiento, la ventana de diez minutos, el tope diario, el
-overshoot permitido, el reseteo perezoso UTC, llamadas concurrentes,
-`gastar()`/`consultarSaldo()` y el enganche real de monedas en el handler de
-XP y en la tienda.
-
-### 3.6 `tests/migrations.test.js` — contrato de la migración 015
-
-Comprueba que las tres columnas nuevas existen con tipo, default y nulabilidad
-correctos, que la columna `users.monedas` conserva su saldo y que volver a
-aplicar la migración es seguro. La base es efímera: al terminar el proceso no
-queda ningún archivo ni conexión con Neon.
+Usa `node:test` (incluido en Node). Las pruebas que necesitan base crean la suya, de práctica,
+inyectan la conexión con `usarSqlLocal()` y ejercitan los handlers reales; ninguna toca producción.
+Qué sujeta cada archivo lo dice el documento de su área: por ejemplo, las contraseñas en
+[CUENTAS](../referencia/CUENTAS.md#4-pruebas) y las monedas en
+[ECONOMIA](../referencia/ECONOMIA.md#6-las-pruebas).
 
 ### 3.7 `scripts/smoke-local.js` — prueba HTTP de extremo a extremo
 
@@ -146,22 +131,10 @@ de los de verdad (`npm run db:real`, sección 8).
 
 ## 5. Convenciones del proyecto
 
-- **Idioma**: comentarios y mensajes en español, explicando el "por
-  qué".
-- **Sin emojis**: en código, consola, commits y documentación nueva.
-  Lo preexistente no se toca.
-- **Commits**: un cambio lógico por commit, sin firmas ni pies de
-  autoría automáticos.
-- **Reutilizar**: la lógica compartida va en `api/_*.js`; no duplicar
-  lo que ya existe.
-- **Dependencias**: una librería que se ejecuta **dentro del VPS**
-  está permitida, y se elige por lo que cuesta mantenerla: mejor sin
-  binario nativo que con él, y mejor sin dependencias propias que con
-  ellas. Lo que no se acepta es depender de un **servicio de terceros**
-  que se pueda acabar o cambiar de precio: de ahí salieron Vercel, Neon
-  y Pusher. `api/_png.js` y `api/_lienzo.js` están escritos a mano por
-  la primera regla y no por la segunda, y siguen así porque funcionan y
-  están probados, no porque traer una librería esté prohibido.
+Las manda la constitución (`.specify/memory/constitution.md`): español, sin emojis, un commit por
+cambio, reutilizar lo que ya existe en `api/_*.js` y qué dependencias se aceptan (reglas I, XXX, V,
+XI y XXVI). Por qué `api/_png.js` y `api/_lienzo.js` están escritos a mano lo cuenta
+[ARTE](../referencia/ARTE.md).
 
 ---
 

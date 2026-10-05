@@ -147,6 +147,7 @@ justo antes, en [LOS SALDOS REHECHOS](../historia/SALDOS-REHECHOS.md).
 |---|---|
 | `tests/precios.test.js` | Las rarezas y sus precios, y la migración 027 contra una base |
 | `tests/monedas.test.js` | El premio por jugar, la racha, los niveles, y el enganche en el pulso y en la compra |
+| `tests/migrations.test.js` | El esquema de la base de práctica, y que la migración 015, la de las monedas por tiempo, se pueda aplicar dos veces sin tocar el saldo |
 | `tests/misiones-avisos.test.js`, `tests/rescatar-misiones.test.js` | Los premios nuevos de las misiones |
 | `tests/logros-servidor.test.js` | Que el servidor compruebe cada logro y pague lo que vale |
 | `tests/actividad-jugador.test.js`, `tests/xp-pulso.test.js` | Que sin nadie delante no haya pulso |
