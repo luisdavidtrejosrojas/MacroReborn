@@ -76,7 +76,7 @@ menciones al día.
 - [X] T005 Mover `docs/AUDITORIA.md` a `docs/listas/AUDITORIA.md`; la constitución lo cita en las reglas XIII y XXXI.
 - [X] T006 Mover `docs/SUGERENCIAS.md` a `docs/listas/SUGERENCIAS.md`; la constitución lo cita en la regla XXXI.
 - [X] T007 Mover `docs/DESARROLLO.md` a `docs/guias/DESARROLLO.md`; las menciones «§8» y «§9» (el código, el `README.md` y el `CLAUDE.md`) pasan a `#8-probar-contra-los-datos-de-verdad` y `#9-los-avisos-en-vivo`.
-- [ ] T008 Mover `docs/JUEGOS.md` a `docs/guias/JUEGOS.md`.
+- [X] T008 Mover `docs/JUEGOS.md` a `docs/guias/JUEGOS.md`.
 - [ ] T009 Mover `docs/CAMBIOS-DE-OTROS-DEVS.md` a `docs/guias/CAMBIOS-DE-OTROS-DEVS.md`; la constitución lo cita en la regla XXVII.
 - [ ] T010 Mover `docs/RETOMAR.md` a `docs/guias/RETOMAR.md`.
 - [ ] T011 Mover `docs/ARTE.md` a `docs/referencia/ARTE.md`; la constitución lo cita en la regla XXIX.

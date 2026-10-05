@@ -36,7 +36,7 @@ const juegos = [
 
 // El 30 (The Binding of Isaac: Wrath of the Lamb) se quitó el 28/09/2026
 // porque no cargaba. Su número no se vuelve a usar: el historial, los
-// favoritos y las reseñas de la base siguen apuntando a él (docs/JUEGOS.md).
+// favoritos y las reseñas de la base siguen apuntando a él (docs/guias/JUEGOS.md).
 
 {
     id: 39,

@@ -10,7 +10,7 @@ existen y cómo probar los cambios localmente.
 |---|---|
 | `docs/guias/DESARROLLO.md` | Módulos del backend, infraestructura local (PGlite, servidor local, tests) y despliegue |
 | `docs/SEGURIDAD.md` | Sistema de hash de contraseñas, migración de datos existentes y plan de activación |
-| `docs/JUEGOS.md` | Cómo agregar un juego al catálogo: proceso completo, prueba local y notas de Ruffle/CORS e iframes |
+| `docs/guias/JUEGOS.md` | Cómo agregar un juego al catálogo: proceso completo, prueba local y notas de Ruffle/CORS e iframes |
 | `docs/ARTE.md` | Cómo se protege el catálogo de prendas: qué compra cada pieza y qué no |
 | `docs/AVATARES-SERVIDOR.md` | Pasar la composicion de avatares al servidor: por que, lo medido sobre el VPS y las cinco fases |
 | `docs/FRONTEND.md` | Por que el navegador esta como esta, que se usaria empezando de cero, y por que no se reescribe |
@@ -59,7 +59,7 @@ servidor de producción. Detalles en `docs/guias/DESARROLLO.md`.
 - **Contraseñas**: hash bcrypt, migración perezosa de usuarios
   existentes y backfill protegido — ver `docs/SEGURIDAD.md`.
 - **Juegos**: cómo se agrega un juego nuevo al catálogo (datos,
-  portada, sitemap, prueba local) — ver `docs/JUEGOS.md`.
+  portada, sitemap, prueba local) — ver `docs/guias/JUEGOS.md`.
 - **Avisos en vivo**: cómo aparece una notificación sin recargar, con
   Server-Sent Events servidos por la propia máquina — ver
   `docs/guias/DESARROLLO.md#9-los-avisos-en-vivo`.

@@ -182,7 +182,7 @@ Además del estado, dos campos que cruzan a todos:
 
 **Sobre los juegos en general.** El 15/08 SoyDegurime contestó a la lista
 de Lucass: "Todos esos se pueden añadir. Es conseguir los archivos Flash,
-instalar el emulador y ya". El proceso está en `docs/JUEGOS.md`. Antes
+instalar el emulador y ya". El proceso está en `docs/guias/JUEGOS.md`. Antes
 de cada uno hay que comprobar que exista una versión jugable en la web
 (Flash con Ruffle, HTML5 o emulador).
 
