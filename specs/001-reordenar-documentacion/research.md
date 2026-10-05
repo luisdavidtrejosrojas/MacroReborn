@@ -97,8 +97,8 @@ docs/
     └── CASOS-DE-OTROS-DEVS.md     los casos del 28/09 y del 03/10
 ```
 
-Los nombres siguen la costumbre del proyecto: mayúsculas, guiones, sin tildes ni eñes. Tres cambian
-de nombre, que la spec permite «si hay un buen motivo»:
+Los nombres siguen la costumbre del proyecto: mayúsculas, guiones, sin tildes ni eñes. Dos cambian
+de nombre, que la spec permite «si hay un buen motivo», y otro cambia de papel:
 
 - `AVATARES-SERVIDOR.md` → `AVATARES.md`: ya no es el plan de pasar los avatares al servidor (eso
   está hecho y va a historia), sino la referencia del sistema de avatares.
@@ -194,9 +194,10 @@ que nombren archivos que ya no están. Los enlaces entre documentos (1 y 2) sí 
 partes, salvo las menciones de texto en `specs/`, que son el registro de cómo estaba todo al escribir
 cada especificación (la 001 describe a propósito las rutas de antes).
 
-**Ensayo sobre la documentación de hoy**: de unas 640 rutas citadas, 12 no existen. Cinco son falsos
+**Ensayo sobre la documentación de hoy**: de unas 640 rutas citadas, 11 no existen. Cinco son falsos
 positivos que el diseño de arriba ya resuelve (las plantillas `specs/NNN-nombre/`, las rutas relativas
-de `infra/LEEME.md`, el `?v=` de `js/core.js`). Las otras siete son de verdad:
+de `infra/LEEME.md`, el `?v=` de `js/core.js`). Las otras seis son de verdad, con cinco rutas
+distintas:
 `js/tienda.js` y `css/tienda.css` en `TIENDA.md`, que no existen; `api/_pusher.js` en `DESARROLLO.md`
 y `SEGURIDAD.md`, borrado hace tiempo; `tests/catalogo-en-core.test.js` en `DESARROLLO.md`; y
 `js/mock-backend.js` en `CAMBIOS-DE-OTROS-DEVS.md`, que nunca entró. La prueba es, por tanto, de poco

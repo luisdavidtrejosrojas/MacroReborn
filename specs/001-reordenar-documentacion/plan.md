@@ -147,7 +147,7 @@ Fuera de git: la memoria de Claude (`~/.claude/projects/D--Macroreborn/memory/`)
 `memoria-claude/` y `memoria-claude/LEEME.md`.
 
 **Decisión de estructura**: cuatro carpetas por tipo dentro de `docs/`, con los nombres de siempre
-salvo tres cambios con motivo (research D2). El `README.md` y el `CLAUDE.md` siguen en la raíz: GitHub
+salvo dos cambios de nombre con motivo (research D2). El `README.md` y el `CLAUDE.md` siguen en la raíz: GitHub
 enseña el primero y Claude Code solo lee el segundo ahí.
 
 ## Cómo se hará
@@ -156,7 +156,7 @@ El orden, que `/speckit-tasks` convertirá en tareas de un commit cada una (rese
 
 1. **La prueba primero**: `tests/documentacion.test.js` con las comprobaciones 1 a 4, más los arreglos
    que pide el ensayo (research D5). Desde aquí, cada mudanza está vigilada.
-2. **Las mudanzas**: un `git mv` por documento a su carpeta (y los tres cambios de nombre), con todas
+2. **Las mudanzas**: un `git mv` por documento a su carpeta (y los dos cambios de nombre), con todas
    sus menciones al día, sin tocar el contenido. Al final, la tabla «ruta vieja → ruta nueva» en
    `CAMBIOS-DE-OTROS-DEVS.md`.
 3. **Separar la historia**: documento por documento, siguiendo el mapa de contenido, con su resumen de
