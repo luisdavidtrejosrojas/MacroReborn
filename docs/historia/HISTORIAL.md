@@ -431,3 +431,40 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
   notificaciones y limpia parte de una copia suelta del proyecto, `MacroReborn-fixes/`; y dos subidas
   sin cambios. [`1eee211`](https://github.com/valenmgg/MacroReborn/commit/1eee211) a
   [`87a38e9`](https://github.com/valenmgg/MacroReborn/commit/87a38e9) (10 commits).
+
+## Semana del 03 al 09/08/2026
+
+- **09/08, avatares** (valenmgg): opciones nuevas de avatar para Tora y Cereza.
+  [`95a344b`](https://github.com/valenmgg/MacroReborn/commit/95a344b) y
+  [`cad9c80`](https://github.com/valenmgg/MacroReborn/commit/cad9c80).
+- **08/08, chat** (valenmgg): los mensajes nuevos salen arriba.
+  [`df23e64`](https://github.com/valenmgg/MacroReborn/commit/df23e64) a
+  [`1fe91b0`](https://github.com/valenmgg/MacroReborn/commit/1fe91b0) (4 commits).
+- **07/08, juegos** (valenmgg): la «1.0 final»: cada juego pasa a tener su página en `html/juegos/` y su
+  portada, 63 de cada, con retoques del chat, las noticias y los perfiles; y el avatar del buscador, de
+  su tamaño. [JUEGOS](../guias/JUEGOS.md),
+  [`1f3835d`](https://github.com/valenmgg/MacroReborn/commit/1f3835d) y
+  [`1dd45c1`](https://github.com/valenmgg/MacroReborn/commit/1dd45c1).
+- **05/08, perfiles** (valenmgg): la «Version 1.0», con una copia suelta de algunos archivos en
+  `MacroReborn-fixes/`, y las correcciones finales de Neon y de los avatares: la actividad y los
+  favoritos del perfil de los demás, y el buscador.
+  [`ea5ae7a`](https://github.com/valenmgg/MacroReborn/commit/ea5ae7a) y
+  [`909cc61`](https://github.com/valenmgg/MacroReborn/commit/909cc61).
+- **03 y 04/08, el servidor** (valenmgg): el sitio pasa a tener base de datos, un PostgreSQL en Neon. El
+  registro, el login, la biografía y el avatar se guardan en ella, y la API se reorganiza de 13
+  funciones a 4 (`auth`, `social`, `users` y `system`) para caber en el plan gratuito de Vercel. Cómo
+  se salió de ahí, en [MUDANZA-AL-VPS](MUDANZA-AL-VPS.md).
+  [`573d49c`](https://github.com/valenmgg/MacroReborn/commit/573d49c) a
+  [`a3e8324`](https://github.com/valenmgg/MacroReborn/commit/a3e8324) (22 commits).
+
+## Semana del 27/07 al 02/08/2026
+
+- **30/07, perfiles** (valenmgg): un cambio en `js/perfil.js`.
+  [`7a04329`](https://github.com/valenmgg/MacroReborn/commit/7a04329).
+
+## Semana del 20 al 26/07/2026
+
+- **23/07, todo** (valenmgg): la primera subida del sitio a GitHub: las páginas, sus estilos, sus
+  scripts y las imágenes, en dos tandas que se juntan con una fusión; y dos subidas sin cambios.
+  [`96260a0`](https://github.com/valenmgg/MacroReborn/commit/96260a0) a
+  [`16f053a`](https://github.com/valenmgg/MacroReborn/commit/16f053a) (5 commits).
