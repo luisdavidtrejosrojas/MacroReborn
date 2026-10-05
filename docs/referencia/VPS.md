@@ -348,11 +348,16 @@ el CSS y el JavaScript.
 en vez de `server.js`. Antes un único proceso usaba un solo núcleo y se
 veía al 90% de CPU con el otro ocioso.
 
-Es seguro porque **la app no guarda estado en memoria entre peticiones**:
-las sesiones están en Postgres y los `Map`/`Set` de los handlers son
-variables locales. Si eso cambia, el cluster deja de ser seguro — cada
-proceso tendría su propia copia. Los avisos en vivo son la excepción, y
-la resuelven con `LISTEN`/`NOTIFY` de Postgres ([AVISOS](AVISOS.md)).
+Es seguro porque **lo que la app guarda en memoria entre peticiones se
+sabe repartido entre procesos**: las sesiones son pases firmados, que no
+guardan nada en el servidor; los frenos (las ráfagas de `api/_rafaga.js`,
+las composiciones de avatar y la vista previa) cuentan cada uno en su
+proceso, y con dos el techo real es el doble, a sabiendas; y las
+sanciones en pie se recargan cada 30 segundos y, al cambiar una, se avisa
+a los demás procesos. Los avisos en vivo cruzan los procesos con
+`LISTEN`/`NOTIFY` de Postgres ([AVISOS](AVISOS.md)). Lo nuevo que guarde
+estado en memoria tiene que resolver lo mismo, o cada proceso tendrá su
+propia copia.
 
 Para volver atrás: cambiar `ExecStart` a `server.js` (queda copia en
 `/etc/systemd/system/macroreborn.service.antes-cluster`) y `daemon-reload`.
@@ -375,6 +380,16 @@ la columna `avatar` ocupaba **1340 kB de los 1382 kB** de la respuesta:
 se enviaban los avatares completos de todos los usuarios en cada llamada,
 y Node se iba al 90% de CPU serializando. Eso ya no pasa: el 05/10/2026
 `/api/users` pesaba 169 kB.
+
+### La base y la memoria
+
+La base ocupaba 127 MB el 21/09/2026 y cabía entera en `shared_buffers`
+(128 MB), la memoria que Postgres reserva para leer rápido. El 05/10/2026
+ocupa 179 MB y ya no cabe, aunque el 99,99 % de las lecturas siguen
+saliendo de memoria: 140 de esos 179 MB son las dos tablas que guardan
+mucho más de lo que se lee, `activity_log` (62 MB) y `originales_scores`
+(78 MB), el punto 68 de [la auditoría](../listas/AUDITORIA.md). Si el
+sitio se notara lento al leer, es lo primero que mirar.
 
 ## 9. Lo que falta
 
