@@ -407,8 +407,8 @@ async function asegurar(sql, destino, avatar, huellaGuardada) {
   }
 
   // Freno 2: esta persona ya gasto lo suyo este minuto. Se devuelve
-  // null, que significa "sin compuesto": la pagina la dibuja por capas
-  // como siempre, y el siguiente guardado o el relleno lo arreglan.
+  // null, que significa "sin compuesto": mientras tanto se sirve la
+  // silueta, y se compone al pedirlo cuando vuelva a haber presupuesto.
   if (!hayPresupuesto(destino.usuarioId)) {
     console.warn("avatar compuesto: presupuesto agotado para el usuario " + destino.usuarioId);
     // Lo del disco es la ropa de antes. Fuera, por lo mismo que arriba:
