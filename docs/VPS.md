@@ -70,7 +70,7 @@ cuando se pueda hacer la migración de datos pendiente.
 ### 3.3 `api/social.js` y `api/system.js`
 
 Estos dos **se saltaban `_db.js`** y llamaban a `neon()` directo en su
-primera línea (`docs/DESARROLLO.md` lo decía: "no se tocaron"). Contra
+primera línea (`docs/guias/DESARROLLO.md` lo decía: "no se tocaron"). Contra
 el VPS habrían seguido intentando conectarse a Neon. Ahora los siete
 handlers pasan por `obtenerSql()`.
 
@@ -447,7 +447,7 @@ de verdad los avatares o le basta con nombre y nivel.
   tiempo real. No se pusieron, y ya no hacen falta: los avisos dejaron de
   necesitar un tercero. Se sostienen desde esta misma máquina con
   Server-Sent Events, y el paquete `pusher` salió de `package.json`. El
-  porqué entero está en `docs/DESARROLLO.md` §9. **(16/09/2026)**
+  porqué entero está en `docs/guias/DESARROLLO.md#9-los-avisos-en-vivo`. **(16/09/2026)**
 
 - **Publicar los cambios en git.** El código de la migración estaba en el
   VPS y en el PC, pero sin commit. Ya está publicado. **(16/09/2026)**

@@ -48,7 +48,7 @@ con ella, gana la constitución. Aquí solo van las notas prácticas.
   en el 3001 (`netstat -ano`): dos servidores sobre la misma carpeta PGlite la estropean. Nunca matar un
   proceso sin mirar su línea de comandos.
 - `npm run db:traer` y `npm run db:real`: probar con una copia de los datos reales, que queda en
-  `datos-locales/` (fuera de git). Ver `docs/DESARROLLO.md` §8.
+  `datos-locales/` (fuera de git). Ver `docs/guias/DESARROLLO.md#8-probar-contra-los-datos-de-verdad`.
 
 ## Producción
 

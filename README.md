@@ -8,7 +8,7 @@ existen y cómo probar los cambios localmente.
 
 | Guía | Contenido |
 |---|---|
-| `docs/DESARROLLO.md` | Módulos del backend, infraestructura local (PGlite, servidor local, tests) y despliegue |
+| `docs/guias/DESARROLLO.md` | Módulos del backend, infraestructura local (PGlite, servidor local, tests) y despliegue |
 | `docs/SEGURIDAD.md` | Sistema de hash de contraseñas, migración de datos existentes y plan de activación |
 | `docs/JUEGOS.md` | Cómo agregar un juego al catálogo: proceso completo, prueba local y notas de Ruffle/CORS e iframes |
 | `docs/ARTE.md` | Cómo se protege el catálogo de prendas: qué compra cada pieza y qué no |
@@ -52,7 +52,7 @@ npm run db:local   # sitio local en http://localhost:3001
 ```
 
 Todo corre en la máquina de desarrollo; nada toca la base real ni el
-servidor de producción. Detalles en `docs/DESARROLLO.md`.
+servidor de producción. Detalles en `docs/guias/DESARROLLO.md`.
 
 ## Sistemas documentados
 
@@ -62,7 +62,7 @@ servidor de producción. Detalles en `docs/DESARROLLO.md`.
   portada, sitemap, prueba local) — ver `docs/JUEGOS.md`.
 - **Avisos en vivo**: cómo aparece una notificación sin recargar, con
   Server-Sent Events servidos por la propia máquina — ver
-  `docs/DESARROLLO.md` §9.
+  `docs/guias/DESARROLLO.md#9-los-avisos-en-vivo`.
 
 ## Convenciones del proyecto
 

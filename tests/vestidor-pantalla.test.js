@@ -383,7 +383,7 @@ describe("cambiar de personaje", () => {
     // contain de 326x503 en 327x504: manda el ALTO, no el ancho, porque
     // 504/503 = 1,001988 es menor que 327/326 = 1,003067. Así que el
     // dibujo llega justo arriba y abajo y le sobra un pelo a los lados.
-    // Es el 0,2 % del que habla docs/DESARROLLO.md.
+    // Es el 0,2 % del que habla docs/guias/DESARROLLO.md.
     //
     // Se compara con tolerancia y no con igualdad: 503 * (504/503) da
     // 503,99999999999994 en coma flotante. Da igual para un navegador,
