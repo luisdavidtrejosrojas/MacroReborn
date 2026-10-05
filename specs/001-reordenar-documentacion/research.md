@@ -169,7 +169,9 @@ lo lee); una fecha por sección (demasiado trabajo para mantener).
 
 **Decisión**: `tests/documentacion.test.js`, con el estilo de las demás pruebas (CommonJS,
 `node:test`, `node:assert` y solo módulos de Node). Recorre el repositorio saltando lo que el
-`.gitignore` deja fuera, para no depender de git ni de la red. Comprueba:
+`.gitignore` deja fuera, para no depender de git ni de la red, y las carpetas de herramientas que
+empiezan por punto (`.claude/`, `.specify/`...), cuyas plantillas llevan enlaces de ejemplo; de ellas
+solo mira la constitución. Comprueba:
 
 1. **Enlaces** de Markdown relativos en todo `.md` del repositorio (incluido `specs/`): el destino
    existe y, si lleva ancla, el título también, calculado como lo hace GitHub.
@@ -353,6 +355,13 @@ de sincronización. Cambia:
 
 Es una aclaración: no quita ni añade principios. La regla de RF-017 no entra en la constitución:
 queda en `SUMARSE.md` y en el `CLAUDE.md`, que es donde se explica el día a día con Spec Kit.
+
+**Cuándo**: la constitución cita cinco documentos (`AUDITORIA`, `SUGERENCIAS`, `VPS`,
+`CAMBIOS-DE-OTROS-DEVS` y `ARTE`). Si sus rutas esperaran a la enmienda, la prueba fallaría desde la
+primera mudanza. Por eso el OK de Luis se pide antes de mover nada, sus rutas cambian en el mismo commit
+que mueve cada documento, y la enmienda se cierra al final con `/speckit-constitution`: las dos frases
+(XIX y XXXII), la versión, la fecha y el informe de sincronización. Mientras tanto la rama no se une a
+`main`, así que `main` nunca ve una constitución a medias.
 
 **Alternativas descartadas**: subir a v1.1.0 metiendo la regla del historial en el flujo de trabajo
 (sería un cambio MINOR que la spec no pide; Luis puede pedirlo después).

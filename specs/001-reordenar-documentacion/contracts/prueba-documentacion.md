@@ -9,8 +9,11 @@ la integración continua (Node 20 y 22). Las decisiones que hay detrás están e
 - Estilo de las demás pruebas: CommonJS, `node:test`, `node:assert`, una cabecera de comentario con
   el título, el porqué y «Correr: npm test».
 - Solo módulos de Node (`fs`, `path`). No usa git ni la red.
-- Recorre el repositorio desde la raíz y se salta `.git/`, `node_modules/` y todo lo que el
-  `.gitignore` deja fuera (se leen sus líneas: carpetas, archivos y patrones con `*`).
+- Recorre el repositorio desde la raíz y se salta `node_modules/`, todo lo que el `.gitignore` deja
+  fuera (se leen sus líneas: carpetas, archivos y patrones con `*`) y las carpetas que empiezan por
+  punto (`.git/`, `.claude/`, `.specify/`, `.github/`): son herramientas, y sus plantillas llevan
+  enlaces de ejemplo. De ellas solo mira la constitución (`.specify/memory/constitution.md`). Los
+  archivos de la raíz que empiezan por punto, como el `.gitignore`, sí se miran.
 - **Documentación**: todo `.md`. **Texto**: los `.md`, `.js`, `.json`, `.html`, `.css`, `.sql`,
   `.sh`, `.conf`, `.service`, `.txt`, `.yml`, `.local`, `.ps1` y el `.gitignore`.
 - Tarda menos de un segundo.

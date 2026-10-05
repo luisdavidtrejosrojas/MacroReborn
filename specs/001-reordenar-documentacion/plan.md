@@ -156,9 +156,10 @@ El orden, que `/speckit-tasks` convertirá en tareas de un commit cada una (rese
 
 1. **La prueba primero**: `tests/documentacion.test.js` con las comprobaciones 1 a 4, más los arreglos
    que pide el ensayo (research D5). Desde aquí, cada mudanza está vigilada.
-2. **Las mudanzas**: un `git mv` por documento a su carpeta (y los dos cambios de nombre), con todas
-   sus menciones al día, sin tocar el contenido. Al final, la tabla «ruta vieja → ruta nueva» en
-   `CAMBIOS-DE-OTROS-DEVS.md`.
+2. **Las mudanzas**: antes de la primera, el OK de Luis a la enmienda v1.0.1, porque la constitución
+   cita cinco documentos y sus rutas cambian con ellos (research D12). Después, un `git mv` por
+   documento a su carpeta (y los dos cambios de nombre), con todas sus menciones al día, sin tocar el
+   contenido. Al final, la tabla «ruta vieja → ruta nueva» en `CAMBIOS-DE-OTROS-DEVS.md`.
 3. **Separar la historia**: documento por documento, siguiendo el mapa de contenido, con su resumen de
    dos líneas en la referencia.
 4. **Revisar cada documento** (RF-008): leído entero, comparado con el código y, si toca, con el VPS
@@ -170,7 +171,7 @@ El orden, que `/speckit-tasks` convertirá en tareas de un commit cada una (rese
 7. **La entrada**: el `README.md` nuevo, la sección de pendientes de `AUDITORIA.md`, el `CLAUDE.md`, y
    las comprobaciones 5 y 6 de la prueba activadas.
 8. **Fuera del repositorio y gobierno**: la memoria de Claude y su copia, `memoria-claude/LEEME.md`, y
-   la enmienda v1.0.1 con el OK de Luis.
+   el cierre de la enmienda v1.0.1 con `/speckit-constitution`.
 9. **Validación**: los escenarios de [quickstart.md](quickstart.md).
 10. **Cierre**: la entrada de esta spec en el historial y la unión a `main`, cuando la integración
     continua esté en verde o Luis decida otra cosa.
