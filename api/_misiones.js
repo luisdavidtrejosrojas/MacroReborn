@@ -25,7 +25,7 @@ function semanaActual(d = new Date()) {
 }
 
 // Las monedas de cada misión subieron un 25 % el 04/10/2026, con la
-// economía nueva (docs/ECONOMIA.md): eran 25-60 las diarias y 140-300 las
+// economía nueva (docs/referencia/ECONOMIA.md): eran 25-60 las diarias y 140-300 las
 // semanales. El XP no cambió.
 const MISIONES_DIARIAS = [
   { key: "daily_3_games", title: "Explorador diario", description: "Jugá 3 juegos distintos hoy.", metric: "games_today", target: 3, xp: 40, coins: 44 },

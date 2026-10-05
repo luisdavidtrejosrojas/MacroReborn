@@ -28,7 +28,7 @@
 //               el premio por jugar (api/_monedas.js).
 //   rachaDeHoy  los días de racha, si este fue el minuto que contó el día;
 //               si no, 0. Es lo que paga el premio de la racha, una vez al
-//               día (desde el 04/10/2026, docs/ECONOMIA.md).
+//               día (desde el 04/10/2026, docs/referencia/ECONOMIA.md).
 async function registrarMinutoJugado(sql, userId) {
   const dia = await sql`
     INSERT INTO actividad_diaria (user_id, dia, minutos)

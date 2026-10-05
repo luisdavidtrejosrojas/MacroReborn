@@ -1065,7 +1065,7 @@ Lo que se decidió con ella:
   alguno** (`js/perfil.js`, `filtrarOpcionesPorModelo`). La capa llegó
   sin dibujos; en el panel y el taller se puede subir y probar desde el
   primer día.
-- **Se vende por rareza**, como todo (`docs/ECONOMIA.md`).
+- **Se vende por rareza**, como todo (`docs/referencia/ECONOMIA.md`).
 
 Lo que NO hizo falta:
 

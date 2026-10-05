@@ -11,7 +11,7 @@
 // corre en su propio proceso, no hay contaminación con los tests de
 // contraseñas.
 //
-// Qué se cubre (la regla del 04/10/2026, docs/ECONOMIA.md):
+// Qué se cubre (la regla del 04/10/2026, docs/referencia/ECONOMIA.md):
 //   - El premio por jugar: de 10 a 30, solo en el minuto 10, 20, 30… del
 //     día; entero hasta el 120, a mitad hasta el 240 y después nada.
 //   - La racha (5 por día seguido, hasta 35) y subir de nivel (15 × el

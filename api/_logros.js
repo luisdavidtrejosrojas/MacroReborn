@@ -8,7 +8,7 @@
 // logro solo daba puntos.
 //
 // Desde ese día cada logro da también tantas monedas como puntos
-// (docs/ECONOMIA.md). Así que antes de guardarlo el servidor comprueba,
+// (docs/referencia/ECONOMIA.md). Así que antes de guardarlo el servidor comprueba,
 // con los datos de la base, lo mismo que comprobó el navegador: si no,
 // pedir los 25 de golpe daría miles de monedas. Si no se cumple, no se
 // guarda, y el navegador deshace lo que había pintado.

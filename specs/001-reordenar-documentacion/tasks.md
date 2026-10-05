@@ -82,7 +82,7 @@ menciones al día.
 - [X] T011 Mover `docs/ARTE.md` a `docs/referencia/ARTE.md`; la constitución lo cita en la regla XXIX.
 - [X] T012 Mover y renombrar `docs/AVATARES-SERVIDOR.md` a `docs/referencia/AVATARES.md` (research D2). Tiene 61 menciones: las que citan una sección por número pasan a su ancla, y las que citan una fase («fase 5 de ...») se quedan apuntando al documento hasta T029.
 - [X] T013 Mover y renombrar `docs/SEGURIDAD.md` a `docs/referencia/CUENTAS.md` (research D2); la mención «§5» pasa a su ancla.
-- [ ] T014 Mover `docs/ECONOMIA.md` a `docs/referencia/ECONOMIA.md`.
+- [X] T014 Mover `docs/ECONOMIA.md` a `docs/referencia/ECONOMIA.md`.
 - [ ] T015 Mover `docs/MODERACION.md` a `docs/referencia/MODERACION.md`.
 - [ ] T016 Mover `docs/SEO.md` a `docs/referencia/SEO.md`.
 - [ ] T017 Mover `docs/TIENDA.md` a `docs/referencia/TIENDA.md`.

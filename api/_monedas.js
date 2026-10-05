@@ -17,7 +17,7 @@
 //     handlers de la API (api/users.js, api/content.js, api/social.js).
 //
 // ==============================
-// CÓMO SE GANAN (decidido el 04/10/2026, docs/ECONOMIA.md)
+// CÓMO SE GANAN (decidido el 04/10/2026, docs/referencia/ECONOMIA.md)
 // ==============================
 // Los números salen de una simulación: con ellos, quien juega media
 // hora al día gana unas 200 monedas, y junta una épica (1.400) en una

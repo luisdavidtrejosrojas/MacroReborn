@@ -527,7 +527,7 @@ partida; decide el equipo.
 ### 44. Más monedas
 - **Pedida por:** Lucass, 15/09: en Macro "te llegaban a dar hasta 15k
   o 30k" al subir de nivel.
-- **Hoy:** la economía se rehízo el 04/10 (`docs/ECONOMIA.md`): monedas
+- **Hoy:** la economía se rehízo el 04/10 (`docs/referencia/ECONOMIA.md`): monedas
   por jugar, racha, nivel, misiones y logros, y los precios bajaron.
 - **Recomendación:** dejarla como hecha en parte y revisarla en unas
   semanas con datos reales.

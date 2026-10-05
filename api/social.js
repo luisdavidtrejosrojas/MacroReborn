@@ -437,7 +437,7 @@ async function achievements(req, res) {
       return res.status(200).json({ success: true, nuevo: false });
     }
 
-    // Tantas monedas como puntos (docs/ECONOMIA.md).
+    // Tantas monedas como puntos (docs/referencia/ECONOMIA.md).
     const monedas = logros.monedasDeLogro(achievementId);
     let saldoNuevo = null;
     if (monedas > 0) {

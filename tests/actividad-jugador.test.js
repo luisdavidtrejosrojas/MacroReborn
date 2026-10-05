@@ -3,7 +3,7 @@
 // ==============================
 // Desde el 04/10/2026 un minuto de juego solo cuenta si en los últimos 3
 // minutos alguien tocó el teclado, el ratón o la pantalla
-// (js/motor/actividad-jugador.js, docs/ECONOMIA.md). Se prueba con el
+// (js/motor/actividad-jugador.js, docs/referencia/ECONOMIA.md). Se prueba con el
 // archivo de verdad, un reloj de mentira y un iframe de verdad.
 //
 // Correr:  npm test

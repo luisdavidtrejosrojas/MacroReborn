@@ -611,7 +611,7 @@ describe("mover la prenda sólo se puede en el paso de colocar", () => {
 
 describe("la rareza en el taller", () => {
   // Todo lo que se publica se vende en la tienda (docs/TIENDA.md), al
-  // precio de su rareza (desde el 04/10/2026, docs/ECONOMIA.md). Se
+  // precio de su rareza (desde el 04/10/2026, docs/referencia/ECONOMIA.md). Se
   // propone común, y la ranura ya no la mueve.
   test("se propone común, y cambiar la ranura no la mueve", async () => {
     const { win, doc } = await montar();

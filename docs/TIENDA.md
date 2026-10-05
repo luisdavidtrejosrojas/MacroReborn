@@ -31,7 +31,7 @@ El 24/09/2026, a partir de la auditoría de lo que había:
 
 ## 2. Los precios
 
-Desde el 04/10/2026, por rareza (`docs/ECONOMIA.md`):
+Desde el 04/10/2026, por rareza (`docs/referencia/ECONOMIA.md`):
 
 | Rareza | Precio |
 |---|---|
@@ -68,7 +68,7 @@ lleva su propia copia en SQL, porque no puede leer el módulo;
 **Lo que da de sí el saldo.** Una cuenta nueva empieza con 500 monedas
 y no tiene nada puesto aparte del personaje: le alcanza para una rara,
 o para diez comunes. Cómo se ganan y cuánto se tarda en llegar a cada
-rareza, en `docs/ECONOMIA.md`.
+rareza, en `docs/referencia/ECONOMIA.md`.
 
 ---
 
@@ -155,7 +155,7 @@ arte del equipo y `/prendas/` está cerrado a los demás
 
 Decidido el 24/09/2026, el mismo día de la tienda: todo lo que se
 publica se vende. Desde el 04/10/2026 el equipo elige la rareza, no el
-precio (`docs/ECONOMIA.md`):
+precio (`docs/referencia/ECONOMIA.md`):
 
 - **Al subir** (`arte.html` y `taller.html`), cada prenda llega con la
   rareza que se elija, común si no se elige otra. La API sigue

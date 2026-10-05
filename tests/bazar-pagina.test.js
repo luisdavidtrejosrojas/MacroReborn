@@ -356,7 +356,7 @@ test("el pelo de atrás sale con su nombre, en el filtro y en la tarjeta", async
 
 describe("la rareza", () => {
   // Desde el 04/10/2026 el precio de una prenda lo da su rareza
-  // (api/_precios.js, docs/ECONOMIA.md). El Bazar la enseña en cada
+  // (api/_precios.js, docs/referencia/ECONOMIA.md). El Bazar la enseña en cada
   // prenda y deja filtrar por ella. Una sin rareza es común.
   const CON_RAREZA = CATALOGO.map(item =>
     item.id === 3 ? { ...item, rareza: "legendaria", precio: 6000 } :

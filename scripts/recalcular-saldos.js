@@ -1,7 +1,7 @@
 // ==============================
 // REHACER LOS SALDOS CON LA ECONOMÍA NUEVA — scripts/recalcular-saldos.js
 // ==============================
-// Decidido el 04/10/2026 con el administrador (docs/ECONOMIA.md). Con la
+// Decidido el 04/10/2026 con el administrador (docs/referencia/ECONOMIA.md). Con la
 // economía nueva cada cuenta tiene el saldo que habría juntado si las
 // reglas nuevas hubieran estado siempre, y nadie pierde:
 //

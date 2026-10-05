@@ -2,7 +2,7 @@
 // LOS PRECIOS POR RAREZA — tests/precios.test.js
 // ==============================
 // Desde el 04/10/2026 el precio de una prenda lo da su rareza
-// (api/_precios.js, docs/ECONOMIA.md). La migración 027 puso la rareza a
+// (api/_precios.js, docs/referencia/ECONOMIA.md). La migración 027 puso la rareza a
 // lo que ya estaba a la venta, por el precio que tenía, con su propia
 // copia en SQL de los cortes y de los precios, porque no puede leer el
 // módulo. Si alguien cambia una y no la otra, una prenda subida desde el

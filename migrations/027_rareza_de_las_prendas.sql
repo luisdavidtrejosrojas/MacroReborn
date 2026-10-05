@@ -1,7 +1,7 @@
 -- ============================================
 -- MacroReborn — Migración 027: la rareza de cada prenda
 -- ============================================
--- Decidido el 04/10/2026 (docs/ECONOMIA.md), a raíz de lo que más se
+-- Decidido el 04/10/2026 (docs/referencia/ECONOMIA.md), a raíz de lo que más se
 -- quejaba la gente: "todas las prendas están muy caras". El equipo de
 -- arte ponía el precio a mano, de 1.500 a 50.000, y a quien juega media
 -- hora al día una de esas le costaba de uno a catorce meses.

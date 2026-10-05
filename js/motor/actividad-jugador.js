@@ -1,7 +1,7 @@
 // ==============================
 // ¿HAY ALGUIEN JUGANDO? — js/motor/actividad-jugador.js
 // ==============================
-// Decidido el 04/10/2026 (docs/ECONOMIA.md): un minuto de juego solo
+// Decidido el 04/10/2026 (docs/referencia/ECONOMIA.md): un minuto de juego solo
 // cuenta -para el XP, el ranking, la racha y las monedas- si en los
 // últimos 3 minutos alguien tocó el teclado, el ratón o la pantalla.
 // Hasta ese día bastaba con tener la pestaña a la vista, y en los

@@ -2,7 +2,7 @@
 // LOS LOGROS EN EL SERVIDOR — tests/logros-servidor.test.js
 // ==============================
 // Desde el 04/10/2026 un logro da tantas monedas como puntos
-// (docs/ECONOMIA.md), así que POST /api/social?action=achievements ya no
+// (docs/referencia/ECONOMIA.md), así que POST /api/social?action=achievements ya no
 // guarda el que le pidan: comprueba con la base que se cumple
 // (api/_logros.js). Lo que se prueba:
 //   - que el catálogo del servidor dice lo mismo que el del navegador;
