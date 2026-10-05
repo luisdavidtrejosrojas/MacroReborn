@@ -107,7 +107,7 @@ function mostrarCuentaBaneada(usuario) {
 // compuesto por el servidor o la silueta. Lo decide imagenDeAvatar() en
 // js/core.js, y esta página ya no sabe dibujar prenda por prenda. Hasta
 // el 24/09/2026 lo hacía en el avatar grande, los amigos, los
-// comentarios y la actividad. Ver docs/referencia/AVATARES.md, fase 3.
+// comentarios y la actividad. Ver docs/historia/AVATARES-AL-SERVIDOR.md, fase 3.
 function imagenAvatarPerfil(avatarCrudo, persona, ancho, alto) {
   return imagenDeAvatar(avatarCrudo, persona, ancho, alto) || SILUETA_AVATAR;
 }

@@ -3,7 +3,7 @@
 // ==============================
 // api/_compositor.js apila las prendas en el servidor y devuelve una
 // sola imagen, para que el archivo del artista deje de salir entero por
-// la pestaña de Red. El porqué está en docs/referencia/AVATARES.md.
+// la pestaña de Red. El porqué está en docs/historia/AVATARES-AL-SERVIDOR.md.
 //
 // Lo que hay que sujetar aquí son cuatro cosas, y ninguna es obvia:
 //

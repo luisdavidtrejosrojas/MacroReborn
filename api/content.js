@@ -599,7 +599,7 @@ async function avatarEditarPrenda(req, res) {
 // qué modelos hay, qué prendas se ofrecen, cómo se llama cada una, de
 // qué ranura es, cuánto cuesta y su previsualización.
 //
-// Lo que ya no trae, desde la fase 5 de docs/referencia/AVATARES.md, es
+// Lo que ya no trae, desde la fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md, es
 // dónde está el dibujo suelto de cada prenda: el editor no apila capas
 // (la vista previa la dibuja el servidor, avatar-vista-previa en
 // api/users.js), y esa dirección es justo lo que no tiene que salir del
@@ -653,7 +653,7 @@ async function construirCatalogo(version) {
       nombre: f.nombre,
       // La miniatura del editor: la prenda puesta en su maniqui, un JPG
       // pequeño. null si todavia no se genero, y entonces la caja queda
-      // con su nombre y sin imagen. Fase 4 de docs/referencia/AVATARES.md.
+      // con su nombre y sin imagen. Fase 4 de docs/historia/AVATARES-AL-SERVIDOR.md.
       previsualizacion: f.previsualizacion
         ? previsualizaciones.urlDe(Number(f.id), f.previsualizacion)
         : null,
@@ -685,7 +685,7 @@ async function construirCatalogo(version) {
 // Aquí vivía la acción avatar-catalogo: un mapa, sin sesión, de cada
 // prenda que alguien llevaba puesta a la dirección de su dibujo suelto,
 // para que las páginas apilaran las capas de cada avatar. Desde la fase
-// 5 de docs/referencia/AVATARES.md ninguna página dibuja prenda por
+// 5 de docs/historia/AVATARES-AL-SERVIDOR.md ninguna página dibuja prenda por
 // prenda, y ese mapa era la lista de lo que no tiene que salir del
 // equipo de arte. Se quitó el 24/09/2026.
 
@@ -743,7 +743,7 @@ async function avatarCatalogoCompleto(req, res) {
 // y el navegador se la descarga una sola vez para las dos. Si fuera por
 // id de prenda, se bajaría dos veces el mismo dibujo.
 //
-// SOLO CON FIRMA, desde la fase 5 de docs/referencia/AVATARES.md. Hasta
+// SOLO CON FIRMA, desde la fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md. Hasta
 // entonces era pública, porque las páginas dibujaban los avatares
 // apilando estas prendas. Ya no: cada avatar llega compuesto y cada
 // prenda de la tienda tiene su previsualización, así que el dibujo

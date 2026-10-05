@@ -2,7 +2,7 @@
 // GUARDAR Y SERVIR EL COMPUESTO — tests/avatar-compuesto.test.js
 // ==============================
 // api/_avatar-compuesto.js decide cuándo componer, con qué nombre
-// guardar y dónde. Fase 2 de docs/referencia/AVATARES.md.
+// guardar y dónde. Fase 2 de docs/historia/AVATARES-AL-SERVIDOR.md.
 //
 // Lo que hay que sujetar, y por qué cada cosa:
 //

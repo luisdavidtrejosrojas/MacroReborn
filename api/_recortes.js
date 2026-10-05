@@ -3,7 +3,7 @@
 // ==============================
 // Una previsualizacion es la prenda puesta sobre un maniqui y recortada
 // a un cuadro, como en el inventario de un videojuego. Fase 4 de
-// docs/referencia/AVATARES.md.
+// docs/historia/AVATARES-AL-SERVIDOR.md.
 //
 // EL CUADRO ES AUTOMATICO, UNO POR PRENDA. Decidido el 24/09/2026:
 // automatico para todas, y mas adelante se podran corregir una por una.

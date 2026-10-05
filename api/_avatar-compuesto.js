@@ -3,7 +3,7 @@
 // ==============================
 // api/_compositor.js apila las capas y devuelve bytes. Esto decide
 // cuándo hacerlo, con qué nombre guardarlo y dónde. Fase 2 de
-// docs/referencia/AVATARES.md.
+// docs/historia/AVATARES-AL-SERVIDOR.md.
 //
 // ---------------------------------------------------------------
 // CADA PERSONA TIENE UNA DIRECCION, Y NO CAMBIA NUNCA
@@ -17,7 +17,7 @@
 //
 // Es lo que hacía macrojuegos: /users/<id>/full.jpg, diez años en pie.
 // Leído de su archivo el 21/09/2026, en
-// docs/referencia/AVATARES.md#8-la-forma-de-la-url-resuelto-el-21092026.
+// docs/historia/AVATARES-AL-SERVIDOR.md#lo-que-hacia-macrojuegos-leido-del-archivo-el-21092026.
 //
 // EL IDENTIFICADOR Y NO EL NOMBRE, aunque el nombre sería más legible.
 // Medido sobre las 181 cuentas: 14 llevan caracteres que no caben en

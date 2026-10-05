@@ -805,7 +805,7 @@ const ORDEN_CAPAS_AVATAR = [
 // la dirección de su dibujo suelto, para que rutaCapaAvatar() apilara
 // las capas de cada avatar.
 //
-// Desde la fase 5 de docs/referencia/AVATARES.md ninguna página dibuja
+// Desde la fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md ninguna página dibuja
 // prenda por prenda: cada avatar es una sola imagen, compuesta por el
 // servidor (ver imagenDeAvatar, más abajo), y la vista previa del editor
 // también la dibuja él. Y ese mapa era justo la lista de lo que no tiene
@@ -887,7 +887,7 @@ if(typeof document !== "undefined"){
 // ------------------------------------------------------------------
 // Desde el 21/09/2026 el servidor compone el avatar al guardarlo y lo
 // sirve como UNA imagen. El porque entero esta en
-// docs/referencia/AVATARES.md; lo que importa aqui es el numero: la
+// docs/historia/AVATARES-AL-SERVIDOR.md; lo que importa aqui es el numero: la
 // pagina de comunidad mandaba 5.562 kB de capas sueltas para pintar
 // avatares de 35 pixeles, y con miniaturas compuestas manda 468.
 //
