@@ -114,10 +114,9 @@ Con dos búsquedas de un solo uso, en la carpeta temporal:
 
 - **Emojis**: ninguno en `docs/` fuera de los antiguos de `AUDITORIA.md`, `JUEGOS.md`, `SEO.md` y
   `TIENDA.md`, que se quedan (regla XXX). `SUGERENCIAS.md`, cero.
-- **Datos sensibles**: ninguna IP entera en `docs/`, el `README.md` o el `CLAUDE.md`, y ningún correo
-  salvo el de autor de los commits y el buzón del proyecto (research D8). La búsqueda enseña las IP
-  tapadas, nunca enteras. Las direcciones de SSH (`azureuser@macroreborn.com`) parecen correos y no lo
-  son.
+- **Datos sensibles**: ninguna IP entera ni ningún correo en `docs/`, el `README.md` o el `CLAUDE.md`
+  (research D8). La búsqueda enseña las IP tapadas, nunca enteras. Las direcciones de SSH
+  (`azureuser@macroreborn.com`) parecen correos y no lo son.
 
 ## 9. Fuera del repositorio (RF-011)
 
