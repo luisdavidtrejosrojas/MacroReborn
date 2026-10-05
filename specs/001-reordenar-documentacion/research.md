@@ -289,16 +289,19 @@ revisar solo lo automático (no encuentra contradicciones como la de fail2ban).
   registro A) o el remoto `vps` (`git remote -v` la enseña). Dónde está apuntada la IP se dice sin
   escribirla: en Bitwarden y en la memoria de Claude.
 - **Las IP de fuera** que bajaron el `.env` (`VPS.md` §9) se tapan: `130.x.x.x`.
-- **Se quedan**, porque no son de nadie en particular o la constitución las pide: el correo de autor de
-  los commits (la regla V lo escribe), el buzón del proyecto (`terminos.html` lo publica) y el
-  `server_name` con la IP en `infra/nginx/macroreborn.conf`, que es configuración en uso y `infra/`
-  tiene que reflejarla (regla XXIV).
+- **Los correos** tampoco se pegan: el de autor de los commits (en `RETOMAR.md` y en el `CLAUDE.md`) se
+  nombra como «el de la regla V de la constitución», y el buzón del proyecto (en `ARTE.md`), como «el
+  que publica `terminos.html`». La constitución, que escribe el de autor en su regla V, no se toca aquí
+  (ver D12).
+- **Se queda** el `server_name` con la IP en `infra/nginx/macroreborn.conf`: es configuración en uso, no
+  un documento, y `infra/` tiene que reflejarla (regla XXIV).
 
-**Por qué**: la regla XXV prohíbe pegar IPs enteras en documentos; los dos datos que se quedan son
-públicos o los exige otra regla.
+**Por qué**: la regla XXV prohíbe pegar en documentos IP enteras, correos y datos personales, sin
+excepciones.
 
 **Alternativas descartadas**: tapar también la IP del `server_name` (`infra/` dejaría de reflejar el
-servidor).
+servidor); dejar los dos correos porque son públicos o porque la regla V lo escribe (era una excepción
+que la regla XXV no da; lo encontró `/speckit-analyze`).
 
 ### D9. El CLAUDE.md y el README repiten un poco, a propósito
 
@@ -350,6 +353,10 @@ de sincronización. Cambia:
   «`specs/` es el historial de cada cambio». Con `docs/historia/HISTORIAL.md` se confundirían, así que
   queda así: `docs/` es la documentación del sistema (referencia, guías, listas e historia), y
   `specs/` guarda cada cambio con su especificación;
+- la regla V: «autor y committer» es para los commits de Luis y de Claude; cada dev firma con su propia
+  identidad, y nadie añade líneas de asistentes (lo decidió Luis el 05/10/2026). Al aprobarla, Luis
+  decide también si su correo sigue escrito en esa regla o se nombra sin pegarlo, como pide la regla
+  XXV;
 - la plantilla propia (`.specify/templates/overrides/constitution-template.md`), que repite esas
   rutas.
 
@@ -359,8 +366,9 @@ queda en `SUMARSE.md` y en el `CLAUDE.md`, que es donde se explica el día a dí
 **Cuándo**: la constitución cita cinco documentos (`AUDITORIA`, `SUGERENCIAS`, `VPS`,
 `CAMBIOS-DE-OTROS-DEVS` y `ARTE`). Si sus rutas esperaran a la enmienda, la prueba fallaría desde la
 primera mudanza. Por eso el OK de Luis se pide antes de mover nada, sus rutas cambian en el mismo commit
-que mueve cada documento, y la enmienda se cierra al final con `/speckit-constitution`: las dos frases
-(XIX y XXXII), la versión, la fecha y el informe de sincronización. Mientras tanto la rama no se une a
+que mueve cada documento, y la enmienda se cierra al final con `/speckit-constitution`: las frases de
+las reglas V, XIX y XXXII, la versión, la fecha y el informe de sincronización. El OK se apunta aquí,
+con su fecha, en cuanto Luis lo dé. Mientras tanto la rama no se une a
 `main`, así que `main` nunca ve una constitución a medias.
 
 **Alternativas descartadas**: subir a v1.1.0 metiendo la regla del historial en el flujo de trabajo
@@ -397,6 +405,8 @@ deshacer por piezas); revisar el contenido antes de mover (las rutas cambiarían
   antes del commit.
 - Los scripts de Spec Kit del proyecto son de PowerShell (`--script ps`): en Windows ya está; en macOS
   o Linux hace falta PowerShell 7 (`pwsh`).
+- Cada dev firma sus commits con su propia identidad; la regla V (Luis como autor) es para los commits
+  de Luis y de Claude, como aclara la enmienda v1.0.1 (D12). Nadie añade líneas de asistentes.
 - Lo que no se puede probar en esta máquina (otro asistente, macOS) queda «Pendiente de probar».
 
 ### D15. Cómo se valida la guía en menos de 30 minutos (CE-005)
@@ -412,7 +422,8 @@ la haga.
 **Decisión**: se quitan los 12 de `SUGERENCIAS.md`. El nombre del canal de Discord se escribe sin ellos
 («el canal de sugerencias»); en las citas, el emoji se quita, o se describe entre corchetes si cambia
 el sentido. Los emojis antiguos de `AUDITORIA.md`, `JUEGOS.md`, `SEO.md` y `TIENDA.md` se quedan,
-aunque se revisen esos documentos. La comprobación es a mano, con una búsqueda al final.
+aunque se revisen esos documentos: CE-007 cuenta lo nuevo y los pasajes reescritos, no los documentos
+que solo se revisan. La comprobación es a mano, con una búsqueda al final.
 
 ## Fuera de alcance
 
