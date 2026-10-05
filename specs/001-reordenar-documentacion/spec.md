@@ -17,8 +17,8 @@ MacroReborn tiene mucha documentación y buena: 15 documentos en `docs/` (unas 5
   privado.
 - La documentación de referencia (cómo es el sistema hoy) está mezclada con investigaciones e historias
   (cómo se llegó ahí). `docs/DESARROLLO.md` tiene 812 líneas que combinan las dos cosas.
-- No hay una visión de conjunto del sistema, ni un historial de cambios por versión, ni una guía para que
-  otra persona del equipo se sume. La constitución pide las tres (reglas XIX y XXXII).
+- No hay una visión de conjunto del sistema, ni un historial de cambios, ni una guía para que otra
+  persona del equipo se sume. La constitución pide las tres (reglas XIX y XXXII).
 - `docs/SUGERENCIAS.md`, escrito el 05/10, lleva emojis, y la regla XXX los prohíbe en la documentación
   nueva.
 
@@ -29,12 +29,28 @@ nada de lo que ya cuenta. No cambia el comportamiento del sitio.
 
 ### Sesión 2026-10-05
 
-- P: ¿Desde cuándo se reconstruye el historial de cambios? → R: Desde el inicio del proyecto (agosto de
-  2026), a partir del historial de git y agrupado por semanas.
+- P: ¿Desde cuándo se reconstruye el historial de cambios? → R: Desde el inicio del proyecto (la primera
+  subida al repositorio, el 23/07/2026, y no agosto como se creía), a partir del historial de git y
+  agrupado por semanas.
 - P: ¿Dónde va el contenido histórico o de investigación? → R: En una carpeta de historia, un documento
   por tema. En el documento de referencia queda un resumen de dos líneas con el enlace.
 - P: ¿Los documentos se reparten en subcarpetas por tipo? → R: Sí: referencia, guías, listas vivas e
   historia. Se actualizan todas las menciones que los citan.
+- P: ¿Qué cambios entran en el historial de cambios y para quién se escribe? → R: Todo lo que cambió, en
+  lenguaje técnico y solo para el equipo.
+- P: ¿Hasta dónde se comprueba cada documento contra el sistema real? → R: Cada documento se lee entero y
+  se compara con el código; lo que se puede comprobar de forma automática (rutas, comandos, scripts,
+  migraciones) se comprueba así, y lo que depende del servidor se mira en el VPS, solo con comandos de
+  lectura.
+- P: ¿La comprobación automática de enlaces, menciones y rutas citadas se queda para siempre en las
+  pruebas, o se hace una sola vez? → R: Se queda como prueba permanente en `npm test`, y por tanto en la
+  integración continua.
+- P: ¿Qué se hace con las rutas viejas que quedan fuera del repositorio cuando se muevan los documentos?
+  → R: Se actualiza también la memoria de Claude (la viva y su copia en `memoria-claude/`), y la guía de
+  cambios de otros devs gana una tabla «ruta vieja → ruta nueva» para traducir lo que llegue. Sin
+  archivos puente.
+- P: ¿Cuándo se añade al historial cada cambio futuro, y con qué fecha? → R: Como última tarea de cada
+  especificación, antes de unirla a `main`, con la fecha de esa unión.
 
 ## Escenarios de uso y pruebas *(obligatorio)*
 
@@ -69,8 +85,8 @@ dos documentos que se contradicen y con un solo documento de referencia por tema
 **Por qué esta prioridad**: una documentación que miente es peor que ninguna. Con Spec Kit, cada cambio
 futuro actualizará su documento de referencia, así que hay que partir de un estado limpio.
 
-**Prueba independiente**: una lista de revisión con cada documento marcado como revisado contra el estado
-actual, y ninguna afirmación pendiente de corregir.
+**Prueba independiente**: una lista de revisión con cada documento marcado como leído entero y comparado
+con el código (y con el servidor, si habla de él), y ninguna afirmación pendiente de corregir.
 
 **Escenarios de aceptación**:
 
@@ -78,6 +94,9 @@ actual, y ninguna afirmación pendiente de corregir.
    solo uno lo explica entero y los demás enlazan a él.
 2. **Dado** un dato que cambió (el repositorio pasó a privado), **cuando** se busca en toda la
    documentación, **entonces** ninguna frase dice lo contrario.
+3. **Dado** un dato del servidor que dos documentos cuentan distinto (`docs/VPS.md` describe fail2ban
+   encendido y `docs/RETOMAR.md`, apagado), **cuando** se revisan, **entonces** queda una sola versión, la
+   que coincide con el servidor.
 
 ---
 
@@ -121,18 +140,24 @@ automáticas.
 
 ### Historia 5 - Saber qué cambió y cuándo (Prioridad: P3)
 
-Cualquiera puede ver qué cambió en el sitio y cuándo, sin leer el historial de commits uno a uno.
+Alguien del equipo puede ver qué cambió en el proyecto y cuándo, sin leer el historial de commits uno a
+uno.
 
-**Por qué esta prioridad**: la constitución pide el historial de cambios (regla XIX). Sirve para el
-equipo y para explicar a la comunidad qué cambió.
+**Por qué esta prioridad**: la constitución pide el historial de cambios (regla XIX). Es para el equipo:
+explicarle los cambios a la comunidad queda fuera de esta especificación.
 
-**Prueba independiente**: elegir tres cambios conocidos (la economía nueva, el pelo de atrás, los nombres
-sin mayúsculas) y encontrarlos en el historial con su fecha.
+**Prueba independiente**: elegir tres cambios que notó la comunidad (la economía nueva, el pelo de atrás,
+los nombres sin mayúsculas) y uno interno (la llegada de Spec Kit), y encontrarlos en el historial con su
+fecha.
 
 **Escenarios de aceptación**:
 
-1. **Dado** el historial de cambios, **cuando** se busca un cambio publicado, **entonces** aparece con
-   su fecha y un enlace a donde se explica.
+1. **Dado** el historial de cambios, **cuando** se busca un cambio, visible o interno, **entonces**
+   aparece con su fecha y un enlace a donde se explica.
+2. **Dado** un commit que no dice qué cambia («Add files via upload»), **cuando** se mira su semana en el
+   historial, **entonces** lo que cambió está contado.
+3. **Dada** una especificación que se une a `main`, **cuando** se mira el historial, **entonces** su
+   entrada ya está, con la fecha de esa unión.
 
 ---
 
@@ -151,6 +176,14 @@ sin mayúsculas) y encontrarlos en el historial con su fecha.
   dejan, como dice la regla XXX.
 - **Fuera de git:** `memoria-claude/LEEME.md` y `sugerencias-discord/` no entran en git, pero también se
   revisan si dicen algo caducado.
+- **El servidor:** lo que un documento cuenta del VPS se comprueba en él solo con comandos de lectura; esta
+  especificación no cambia nada en el servidor. Si la copia de `infra/` no coincide con lo que hay allí,
+  se corrige la copia (regla XXIV).
+- **Copias de otros devs:** lo que manden después del cambio llegará con las rutas de antes. Al fundirlo
+  (regla XXVII) se traduce con la tabla «ruta vieja → ruta nueva» de RF-011.
+- **Rutas de fuera del repositorio:** las del servidor (como `/etc/fail2ban/jail.local`) y las de carpetas
+  que no entran en git (como `datos-locales/`) se citan a propósito; la prueba de RF-016 no las da por
+  rotas.
 
 ## Requisitos *(obligatorio)*
 
@@ -175,11 +208,16 @@ sin mayúsculas) y encontrarlos en el historial con su fecha.
   - cómo se nombran los commits y cómo se usan las ramas;
   - cómo se prueba y cómo se despliega;
   - que la constitución manda.
-- **RF-007**: DEBE existir un historial de cambios ordenado por fecha, desde el inicio del proyecto
-  (agosto de 2026), reconstruido a partir del historial de git y agrupado por semanas. Cada entrada dice
-  qué cambió y enlaza a donde se explica.
-- **RF-008**: Cada documento DEBE revisarse contra el estado actual del proyecto, y toda afirmación
-  caducada DEBE corregirse.
+- **RF-007**: DEBE existir un historial de cambios para el equipo, ordenado por fecha, desde el inicio
+  del proyecto (la primera subida, el 23/07/2026), reconstruido a partir del historial de git y agrupado
+  por semanas. Recoge todo lo que cambió, visible o interno (pruebas, servidor, documentación), en
+  lenguaje técnico, también lo que llegó en commits que no dicen qué cambian («Add files via upload»).
+  Cada entrada dice qué cambió y enlaza a donde se explica: un documento, una especificación o, si no hay
+  otro, sus commits.
+- **RF-008**: Cada documento DEBE leerse entero y compararse con el estado actual del proyecto, y toda
+  afirmación caducada DEBE corregirse. Lo que se puede comprobar de forma automática (rutas de archivos,
+  comandos, scripts, migraciones) DEBE comprobarse así; lo que depende del servidor de producción, en el
+  VPS y solo con comandos de lectura.
 - **RF-009**: Cada tema DEBE tener un único documento de referencia; si aparece en otros, esos enlazan al
   de referencia en lugar de repetirlo.
 - **RF-010**: El contenido histórico o de investigación DEBE conservarse entero en una carpeta de
@@ -187,7 +225,9 @@ sin mayúsculas) y encontrarlos en el historial con su fecha.
   el enlace.
 - **RF-011**: Los documentos DEBEN repartirse en subcarpetas por tipo (referencia, guías, listas vivas e
   historia). Después de moverlos DEBEN funcionar todos los enlaces entre documentos y todas las menciones
-  a documentos desde el código y sus comentarios, el `CLAUDE.md`, el `.gitignore` y la constitución.
+  a documentos desde el código y sus comentarios, el `CLAUDE.md`, el `.gitignore`, la constitución y la
+  memoria de Claude (la viva y su copia en `memoria-claude/`). En las rutas viejas no quedan archivos
+  puente: la guía de cambios de otros devs DEBE llevar una tabla «ruta vieja → ruta nueva».
 - **RF-012**: Todo lo nuevo o reescrito DEBE cumplir la constitución:
   - español;
   - sin emojis, quitando los de `docs/SUGERENCIAS.md`;
@@ -199,13 +239,20 @@ sin mayúsculas) y encontrarlos en el historial con su fecha.
   que cada especificación futura sepa cuál actualizar (regla XIX).
 - **RF-015**: Ningún contenido actual DEBE perderse: lo que hoy cuenta un documento DEBE seguir contado
   en alguno.
+- **RF-016**: DEBE quedar una prueba permanente en las pruebas automáticas (`npm test`), y por tanto en la
+  integración continua, que falle si un enlace entre documentos, una mención a un documento desde el
+  código, o una ruta o un comando que cita un documento apunta a algo que no existe.
+- **RF-017**: DEBE quedar escrito, donde se explica cómo se trabaja con Spec Kit, que cada especificación
+  añade su entrada al historial de cambios como última tarea, antes de unirse a `main`, con la fecha de
+  esa unión. Esta especificación es la primera en hacerlo.
 
 ### Entidades clave
 
 - **Documento**: un archivo de documentación. Tiene un tipo (referencia, guía, lista viva, historia o
   especificación), un tema, a quién va dirigido y la fecha de su última revisión.
 - **Índice**: la lista de todos los documentos, agrupada por tipo, en la entrada.
-- **Entrada del historial**: una fecha, qué cambió y dónde se explica.
+- **Entrada del historial**: qué cambió, cuándo (la fecha de su unión a `main`; en lo reconstruido desde
+  git, la de sus commits) y dónde se explica. Las entradas se agrupan por semanas.
 - **Área del sistema**: una parte del sitio (juegos, avatares, tienda, economía, moderación, cuentas,
   servidor...) con su documento de referencia.
 
@@ -215,21 +262,24 @@ sin mayúsculas) y encontrarlos en el historial con su fecha.
 
 - **CE-001**: Desde la entrada, cualquier documento se alcanza en dos clics como mucho.
 - **CE-002**: El 100 % de los documentos de `docs/` está en el índice.
-- **CE-003**: Cero enlaces rotos entre documentos y cero menciones rotas desde el código, comprobado de
-  forma automática.
-- **CE-004**: Cada documento tiene su fecha de revisión, y la lista de revisión no deja ninguna
-  afirmación caducada sin corregir.
+- **CE-003**: Cero enlaces rotos entre documentos y cero menciones rotas desde el código, comprobado por
+  la prueba permanente de RF-016.
+- **CE-004**: Cada documento tiene su fecha de revisión y la lista de revisión lo marca como leído entero.
+  Cero rutas, comandos, scripts o migraciones citados que no existan, comprobado por esa misma prueba, y
+  ninguna afirmación caducada sin corregir.
 - **CE-005**: Una persona nueva prepara su entorno y pasa las pruebas siguiendo solo la guía, en menos de
   30 minutos.
 - **CE-006**: Ningún contenido se pierde: cada sección de antes se encuentra en algún documento de
   después.
 - **CE-007**: Cero emojis en la documentación nueva o reescrita.
 - **CE-008**: Las diez preguntas típicas de la historia 1 se responden desde el índice.
+- **CE-009**: El historial de cambios cubre todas las semanas con commits desde el 23/07/2026.
 
 ## Supuestos
 
-- Solo se toca documentación (el `README.md`, `docs/`, el `CLAUDE.md` y los comentarios del código que
-  citen rutas de documentos si alguna cambia). El comportamiento del sitio no cambia.
+- Solo se toca documentación (el `README.md`, `docs/`, el `CLAUDE.md`, la copia de configuración de
+  `infra/` si no coincide con el servidor y los comentarios del código que citen rutas de documentos si
+  alguna cambia), más la prueba que la vigila (RF-016). El comportamiento del sitio no cambia.
 - No se escriben especificaciones retroactivas de lo que ya existe; así lo decidió Luis el 05/10/2026.
   Lo existente se documenta en `docs/` y lo nuevo entra por Spec Kit.
 - Las listas vivas mantienen su formato y su numeración.
