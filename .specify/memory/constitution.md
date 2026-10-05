@@ -234,7 +234,7 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
 ### XXVII. Los cambios de otros devs se funden, no se copian
 
 - Lo que manda otra persona (un zip, una rama) nunca se copia encima: se busca su base, se saca su diff y
-  se funde a tres bandas, como cuenta `docs/CAMBIOS-DE-OTROS-DEVS.md`.
+  se funde a tres bandas, como cuenta `docs/guias/CAMBIOS-DE-OTROS-DEVS.md`.
 - Entra como su propia especificación (una spec corta si es pequeño), diciendo qué no entró y por qué.
 
 ### XXVIII. Móvil y PC

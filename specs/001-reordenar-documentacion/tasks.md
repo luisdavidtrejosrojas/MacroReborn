@@ -77,7 +77,7 @@ menciones al día.
 - [X] T006 Mover `docs/SUGERENCIAS.md` a `docs/listas/SUGERENCIAS.md`; la constitución lo cita en la regla XXXI.
 - [X] T007 Mover `docs/DESARROLLO.md` a `docs/guias/DESARROLLO.md`; las menciones «§8» y «§9» (el código, el `README.md` y el `CLAUDE.md`) pasan a `#8-probar-contra-los-datos-de-verdad` y `#9-los-avisos-en-vivo`.
 - [X] T008 Mover `docs/JUEGOS.md` a `docs/guias/JUEGOS.md`.
-- [ ] T009 Mover `docs/CAMBIOS-DE-OTROS-DEVS.md` a `docs/guias/CAMBIOS-DE-OTROS-DEVS.md`; la constitución lo cita en la regla XXVII.
+- [X] T009 Mover `docs/CAMBIOS-DE-OTROS-DEVS.md` a `docs/guias/CAMBIOS-DE-OTROS-DEVS.md`; la constitución lo cita en la regla XXVII.
 - [ ] T010 Mover `docs/RETOMAR.md` a `docs/guias/RETOMAR.md`.
 - [ ] T011 Mover `docs/ARTE.md` a `docs/referencia/ARTE.md`; la constitución lo cita en la regla XXIX.
 - [ ] T012 Mover y renombrar `docs/AVATARES-SERVIDOR.md` a `docs/referencia/AVATARES.md` (research D2). Tiene 61 menciones: las que citan una sección por número pasan a su ancla, y las que citan una fase («fase 5 de ...») se quedan apuntando al documento hasta T029.
