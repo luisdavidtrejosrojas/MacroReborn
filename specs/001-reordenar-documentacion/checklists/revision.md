@@ -19,7 +19,7 @@ Lo que había antes de tocar nada (T001): cuántas pruebas y archivos de prueba,
 
 | Fecha | Pruebas | Archivos de prueba | `npm test` tarda | Prueba de humo |
 |---|---|---|---|---|
-| | | | | |
+| 05/10/2026 | 1.331 en 270 suites: 1.330 pasan y 1 se salta | 93 | 81 s, con Node 24.19 en el PC de Luis | Falla solo en la comprobación de monedas (`monedas.monto` entre 10 y 30), la causa de la spec 002 |
 
 ## Referencia
 
