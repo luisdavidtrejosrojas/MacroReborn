@@ -87,7 +87,7 @@ menciones al día.
 - [X] T016 Mover `docs/SEO.md` a `docs/referencia/SEO.md`.
 - [X] T017 Mover `docs/TIENDA.md` a `docs/referencia/TIENDA.md`.
 - [X] T018 Mover `docs/VPS.md` a `docs/referencia/VPS.md`; la constitución lo cita en las reglas XVII y XXI; las menciones «§3» y «§10» pasan a su ancla.
-- [ ] T019 Mover `docs/FRONTEND.md` a `docs/historia/FRONTEND.md`: es el documento de decisión del 22/09 (research D2).
+- [X] T019 Mover `docs/FRONTEND.md` a `docs/historia/FRONTEND.md`: es el documento de decisión del 22/09 (research D2).
 
 ### Lo que sigue a las mudanzas
 

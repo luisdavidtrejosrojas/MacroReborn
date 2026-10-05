@@ -13,7 +13,7 @@ existen y cómo probar los cambios localmente.
 | `docs/guias/JUEGOS.md` | Cómo agregar un juego al catálogo: proceso completo, prueba local y notas de Ruffle/CORS e iframes |
 | `docs/referencia/ARTE.md` | Cómo se protege el catálogo de prendas: qué compra cada pieza y qué no |
 | `docs/referencia/AVATARES.md` | Pasar la composicion de avatares al servidor: por que, lo medido sobre el VPS y las cinco fases |
-| `docs/FRONTEND.md` | Por que el navegador esta como esta, que se usaria empezando de cero, y por que no se reescribe |
+| `docs/historia/FRONTEND.md` | Por que el navegador esta como esta, que se usaria empezando de cero, y por que no se reescribe |
 | `docs/referencia/VPS.md` | El servidor: máquina, nginx, base de datos, respaldos, seguridad y despliegue |
 | `docs/referencia/SEO.md` | Metadatos, sitemap, robots y lo que quedó recomendado para la v1.0 |
 | `docs/listas/AUDITORIA.md` | Lista viva de lo que hay por arreglar, por orden de importancia, con su estado |
