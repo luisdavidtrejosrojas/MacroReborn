@@ -42,26 +42,26 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 
 | Sección de hoy | Líneas | Va a | Nota | Hecho |
 |---|---|---|---|---|
-| Título y entrada («el plan») | 1-17 | `historia/AVATARES-AL-SERVIDOR.md` | `ref/AVATARES.md` estrena cabecera | |
-| §1 Por qué, y por qué ahora | 18-39 | `historia/AVATARES-AL-SERVIDOR.md` | El porqué en dos líneas en la referencia | |
-| §2 Lo medido el 21/09/2026 | 40-108 | `historia/AVATARES-AL-SERVIDOR.md` | | |
+| Título y entrada («el plan») | 1-17 | `historia/AVATARES-AL-SERVIDOR.md` | `ref/AVATARES.md` estrena cabecera | 05/10/2026 |
+| §1 Por qué, y por qué ahora | 18-39 | `historia/AVATARES-AL-SERVIDOR.md` | El porqué en dos líneas en la referencia | 05/10/2026 |
+| §2 Lo medido el 21/09/2026 | 40-108 | `historia/AVATARES-AL-SERVIDOR.md` | | 05/10/2026 |
 | §3 Lo que se decidió | 109-135 | `ref/AVATARES.md` | Las decisiones vigentes, con su porqué | |
-| §4 Por qué en disco y no en Postgres | 136-164 | `ref/AVATARES.md` y `historia/AVATARES-AL-SERVIDOR.md` | El porqué en corto; el razonamiento largo, a historia | |
-| §5 Las fases 1 a 5, con lo validado y medido | 165-455 | `historia/AVATARES-AL-SERVIDOR.md` | Lo que dejan en pie (compositor, guardar y servir, `imagenDeAvatar()`, `/prendas/` con firma) se describe en `ref/AVATARES.md` | |
-| §5 «Cómo mirarlo con los ojos» | 208-227 | `guias/DESARROLLO.md` | `npm run revision:avatares` | |
+| §4 Por qué en disco y no en Postgres | 136-164 | `ref/AVATARES.md` y `historia/AVATARES-AL-SERVIDOR.md` | El porqué en corto; el razonamiento largo, a historia | 05/10/2026 |
+| §5 Las fases 1 a 5, con lo validado y medido | 165-455 | `historia/AVATARES-AL-SERVIDOR.md` | Lo que dejan en pie (compositor, guardar y servir, `imagenDeAvatar()`, `/prendas/` con firma) se describe en `ref/AVATARES.md` | 05/10/2026 |
+| §5 «Cómo mirarlo con los ojos» | 208-227 | `guias/DESARROLLO.md` | `npm run revision:avatares` | 05/10/2026 |
 | §6 Lo que esto NO compra | 456-485 | `ref/AVATARES.md` | | |
 | §7 Lo que muerde si no se sabe | 486-507 | `ref/AVATARES.md` | | |
 | §8 La forma de la URL: el resultado y su porqué | 508-537 | `ref/AVATARES.md` | | |
-| §8 Lo que hacía macrojuegos y la propuesta | 538-590 | `historia/AVATARES-AL-SERVIDOR.md` | | |
+| §8 Lo que hacía macrojuegos y la propuesta | 538-590 | `historia/AVATARES-AL-SERVIDOR.md` | | 05/10/2026 |
 | §9 El freno, y por qué existe | 591-620 | `ref/AVATARES.md` | | |
 | §10 Vender ranuras | 621-666 | `ref/AVATARES.md`, «Lo que queda» | | |
-| §11 Cómo probarlo en tu máquina | 667-705 | `guias/DESARROLLO.md` | | |
+| §11 Cómo probarlo en tu máquina | 667-705 | `guias/DESARROLLO.md` | | 05/10/2026 |
 | §12 Previsualizaciones: el cuadro automático, dónde viven y su dirección | 706-713, 800-840 y 896-934 | `ref/AVATARES.md` | | |
-| §12 Lo que se aprendió de macrojuegos | 714-799 | `historia/AVATARES-AL-SERVIDOR.md` | | |
-| §12 La herramienta y la revisión de todas | 841-895 | `guias/DESARROLLO.md` | `npm run revision:previsualizaciones` | |
+| §12 Lo que se aprendió de macrojuegos | 714-799 | `historia/AVATARES-AL-SERVIDOR.md` | | 05/10/2026 |
+| §12 La herramienta y la revisión de todas | 841-895 | `guias/DESARROLLO.md` | `npm run revision:previsualizaciones` | 05/10/2026 |
 | §12 Más adelante: corregir una prenda sola | 935-955 | `ref/AVATARES.md`, «Lo que queda» | | |
 | §13 La foto de perfil: qué es, el cuadro de cada modelo y dónde se usa | 956-966 y 976-1029 | `ref/AVATARES.md` | | |
-| §13 Cómo se decidió y el relleno al desplegarla | 967-975 y 1030-1039 | `historia/AVATARES-AL-SERVIDOR.md` | | |
+| §13 Cómo se decidió y el relleno al desplegarla | 967-975 y 1030-1039 | `historia/AVATARES-AL-SERVIDOR.md` | | 05/10/2026 |
 | §14 El pelo de atrás | 1040-1094 | `ref/AVATARES.md` | | |
 
 ## `docs/VPS.md` (458 líneas): se queda en `ref/VPS.md`, menos la historia y el despliegue

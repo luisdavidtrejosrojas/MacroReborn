@@ -262,3 +262,124 @@ lado, porque un respaldo que solo existe en el servidor que respalda no
 protege de perder el servidor. `npm run db:traer` deja el `.sql.gz` en
 `datos-locales/`, así que cada vez que se usa para probar, de paso
 cumple eso.
+
+---
+
+## Los avatares compuestos, a ojo
+
+Las pruebas dicen que el orden y el alfa están bien, pero no dicen si el
+avatar se ve como se veía. Eso lo dice el ojo, y para eso está
+`npm run revision:avatares`.
+
+Arma una página donde cada avatar sale dos veces: a la izquierda las
+capas apiladas como las apila hoy el navegador, a la derecha la sola
+imagen del servidor. Si las dos columnas se ven iguales, el cambio no
+altera el producto.
+
+```
+npm run revision:avatares                     doce, de datos-locales
+npm run revision:avatares -- --cuantos 40
+npm run revision:avatares -- --calidad 92
+```
+
+Escribe en `revision-avatares/`, fuera de git porque lleva arte dentro.
+La copia de `datos-locales` envejece rápido: si algo no cuadra, correr
+antes `npm run db:traer`.
+
+---
+
+## Probar los avatares en tu máquina
+
+El sitio entero, con los datos de verdad, en `localhost:3001`. Nada de
+lo que se haga ahí toca producción.
+
+```powershell
+cd D:\Macroreborn
+npm test                  # 756 pruebas, ~1 min, no tocan nada
+npm run db:traer          # baja una copia de la base de produccion
+node scripts/rellenar-avatares.js --aplicar    # compone los 215
+npm run db:real           # el sitio en http://localhost:3001
+```
+
+Ese tercer paso es el que suele olvidarse: `db:traer` baja las recetas
+pero no las imágenes, porque son derivadas y viven en el disco del
+servidor. Sin él, las direcciones de avatar dan 404 en local.
+
+Dentro del sitio local se puede entrar **como cualquier persona del
+sitio**, con la contraseña `local1234` que `db:traer` le pone a todas en
+la copia. Así se reproduce lo que le pasa a alguien concreto.
+
+Qué mirar:
+
+| Dirección | Qué debe pasar |
+|---|---|
+| `/avatares/<id>/327x504.jpg` | La imagen, con un minuto de caché |
+| `/avatares/<id>/327x504.jpg?v=loquesea` | La MISMA imagen, con un año |
+| `/avatares/<id>/ranura1/327x504.jpg` | Su primer diseño guardado |
+| `/avatares/999999/62x96.jpg` | 404 |
+
+Y la prueba que de verdad importa: **cambiarse el avatar y recargar la
+misma dirección.** Tiene que salir la ropa nueva sin que la dirección
+haya cambiado.
+
+Para mirar los compuestos a ojo, uno al lado del otro con lo que hace
+hoy el navegador, está `npm run revision:avatares`.
+
+---
+
+## La herramienta de los recortes de previsualización
+
+Ya no hace falta usarla. Sirve para revisar el automático prenda por
+prenda y, si una capa entera saliera mal, forzarle un cuadro.
+
+Solo existe en el sitio local, y solo responde a peticiones de la
+propia máquina, porque tiene un botón que escribe un archivo del
+repositorio. `server.js` no la conoce, y una prueba lo vigila.
+
+```
+npm run db:real
+```
+
+Y en el navegador, `http://localhost:3001/herramientas/recortes/`.
+
+| | |
+|---|---|
+| Arrastrar el cuadro | lo mueve |
+| Arrastrar una esquina | lo agranda o lo encoge, siempre cuadrado, con la esquina opuesta quieta |
+| Flechas | un píxel; con Mayús, diez |
+| `+` y `-`, o la rueda | el tamaño, sin mover el centro |
+| Usar para toda la capa | fija el cuadro que se ve para todas las prendas de esa capa en ese modelo |
+| Volver al automático | quita lo forzado |
+| Copiar a los demás modelos | pone el mismo cuadro en esa capa de los otros; hay que revisarlos, las poses no son iguales |
+| La más grande, la más pequeña | salta a las prendas extremas, que es donde se ve si el cuadro les sirve a todas |
+
+Lo que sale como **"la de verdad"** lo hace el mismo código que
+generará las 768 (`api/_previsualizacion.js`). Si difiere de la de en
+vivo, manda ella.
+
+**Junto a ella, al mismo tamaño, salen las de macrojuegos** de esa capa,
+para comparar sin tener que bajar. En las capas de las que no quedó
+ninguna sale una de cada tipo, con su nombre, para ver al menos el
+estilo; y en la capa modelo, las cabezas de sus modelos, con la del
+abierto primero. Las lee de `datos-locales/macrojuegos-referencia/`: si
+esa carpeta no está, la herramienta funciona igual y lo dice.
+
+El cuadro automático se ve con borde amarillo discontinuo, cambia con
+cada prenda y **no se guarda**; uno forzado, verde y continuo, vale para
+toda la capa. Lo que no está en el archivo es automático.
+
+---
+
+## Revisar todas las previsualizaciones de una vez
+
+```
+npm run revision:previsualizaciones
+```
+
+Las dibuja todas con el mismo código que las generará para el sitio y
+las pone en `revision-previsualizaciones/index.html`, por capa y por
+modelo. La primera vez, el 24/09/2026: 768 en 10 segundos, 2 MB,
+ninguna fallida. 252 no caben enteras y se ven desde arriba; 236 de
+ellas son fondos, bordes, pieles y modelos, que ocupan el lienzo
+entero. No correrla con el servidor local abierto: las dos abren la
+misma copia de la base.

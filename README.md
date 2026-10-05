@@ -24,7 +24,7 @@ pruebas) y su documentación, que empieza aquí.
 | Documento | Para quién | Qué cuenta |
 |---|---|---|
 | [ARTE](docs/referencia/ARTE.md) | El equipo de desarrollo | Cómo se protege el arte de las prendas: qué consigue cada medida y qué no |
-| [AVATARES](docs/referencia/AVATARES.md) | El equipo de desarrollo | Los avatares compuestos en el servidor: el plan del 21/09/2026, sus fases y cómo funcionan hoy las previsualizaciones, la foto de perfil y el pelo de atrás |
+| [AVATARES](docs/referencia/AVATARES.md) | El equipo de desarrollo | Cómo se componen, se guardan y se sirven los avatares: sus piezas, sus direcciones, el freno, las previsualizaciones, la foto de perfil y el pelo de atrás |
 | [AVISOS](docs/referencia/AVISOS.md) | El equipo de desarrollo | Lo que aparece sin recargar: los avisos en vivo por Server-Sent Events, sus piezas, los dos procesos, los límites y quién puede oír qué |
 | [CUENTAS](docs/referencia/CUENTAS.md) | El equipo de desarrollo | Las contraseñas: el hash con bcrypt, lo que queda de cuando se guardaban en claro y qué no cubre |
 | [ECONOMIA](docs/referencia/ECONOMIA.md) | El equipo de desarrollo y quien decida precios | Las monedas: los precios por rareza, cómo se ganan, los límites y el recálculo de saldos del 04/10/2026 |
@@ -37,7 +37,7 @@ pruebas) y su documentación, que empieza aquí.
 
 | Documento | Para quién | Qué cuenta |
 |---|---|---|
-| [DESARROLLO](docs/guias/DESARROLLO.md) | El equipo de desarrollo | Trabajar en local: la base de práctica, el servidor local, las pruebas y los datos de verdad |
+| [DESARROLLO](docs/guias/DESARROLLO.md) | El equipo de desarrollo | Trabajar en local: la base de práctica, el servidor local, las pruebas, los datos de verdad y cómo mirar a ojo los avatares y las previsualizaciones |
 | [JUEGOS](docs/guias/JUEGOS.md) | Quien añade o quita juegos | Cómo se añade un juego al catálogo y cómo se quita, con casos reales |
 | [CAMBIOS-DE-OTROS-DEVS](docs/guias/CAMBIOS-DE-OTROS-DEVS.md) | Quien funde el trabajo de otra persona | Cómo se funde lo que manda otro dev, los casos del 28/09 y del 03/10/2026, y la tabla de rutas de antes |
 | [RETOMAR](docs/guias/RETOMAR.md) | Luis, tras formatear el PC | Lo que no está en el repositorio y dónde se guarda (la llave SSH, los secretos, las copias), y cómo levantar el entorno |
@@ -54,6 +54,7 @@ pruebas) y su documentación, que empieza aquí.
 | Fecha | Documento | Qué cuenta |
 |---|---|---|
 | 22/09/2026 | [FRONTEND](docs/historia/FRONTEND.md) | Por qué el navegador está como está, qué se usaría empezando de cero y por qué no se reescribe |
+| 21/09/2026 | [AVATARES-AL-SERVIDOR](docs/historia/AVATARES-AL-SERVIDOR.md) | El plan de pasar los avatares al servidor: por qué, lo medido sobre el VPS, sus cinco fases, lo aprendido de macrojuegos y cómo se decidió la foto de perfil |
 | 16/09/2026 | [CONTRASENAS-EN-CLARO](docs/historia/CONTRASENAS-EN-CLARO.md) | Cómo se dejó de guardar las contraseñas en texto plano: el relleno de las que quedaban, el plan de activación y su despliegue |
 | 16/09/2026 | [AVISOS-ROTOS](docs/historia/AVISOS-ROTOS.md) | Por qué los avisos en vivo pasaron dos semanas sin funcionar tras la mudanza al VPS, y el adiós a Pusher |
 | 16/09/2026 | [IMAGEN-NO-ENCONTRADA](docs/historia/IMAGEN-NO-ENCONTRADA.md) | La marca de imagen rota que dejaba sobre el avatar una prenda quitada o retirada: de dónde salía y cómo se arregló |

@@ -63,7 +63,7 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 |---|---|---|---|---|
 | `docs/historia/HISTORIAL.md` | | | | |
 | `docs/historia/FRONTEND.md` | | | | |
-| `docs/historia/AVATARES-AL-SERVIDOR.md` | | | | |
+| `docs/historia/AVATARES-AL-SERVIDOR.md` | 05/10/2026 | Con lo que era `AVATARES-SERVIDOR.md`: su entrada, §1, §2, §4, §5 (menos «Cómo mirarlo con los ojos»), lo de macrojuegos de §8 y §12, y de §13 cómo se decidió y el relleno; todo movido por script | Nada: es historia. Los títulos pierden su número y los de la foto de perfil y las previsualizaciones ganan contexto |  |
 | `docs/historia/LIENZO-DEL-CATALOGO.md` | 05/10/2026 | Con §6 de `DESARROLLO.md`, de donde salió entera (149 líneas, movidas por script) | Nada: es historia | |
 | `docs/historia/IMAGEN-NO-ENCONTRADA.md` | 05/10/2026 | Con §7 de `DESARROLLO.md`, de donde salió entera (115 líneas, movidas por script) | Nada: es historia |  |
 | `docs/historia/AVISOS-ROTOS.md` | 05/10/2026 | Con §9 de `DESARROLLO.md` («Por qué llevaba dos semanas roto», 17 líneas) y la frase de §2.3 sobre `_pusher.js` | Nada: es historia |  |
