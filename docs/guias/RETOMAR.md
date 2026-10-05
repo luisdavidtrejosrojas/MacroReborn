@@ -154,31 +154,9 @@ Lo explica entero [DESPLEGAR](DESPLEGAR.md).
 
 ## 5. En qué punto está el trabajo
 
-El 18 de septiembre de 2026 se hizo una auditoría completa del proyecto:
-catorce revisiones en paralelo más una del servidor en vivo. Salieron 74
-cosas por arreglar, y están todas en **`docs/listas/AUDITORIA.md`**, ordenadas
-por importancia y con una columna de estado para ir marcándolas.
-
-De las catorce urgentes del bloque 1, **once están hechas** (2, 3, 4, 5,
-7, 8, 9, 10, 11, 13 y 14): tres XSS almacenados, tres agujeros de
-autorización, el proceso que se podía tumbar con una URL, la barra de
-más que sacaba el arte, los commits publicados en GitHub, las prendas
-fuera del árbol del repositorio, y el buzón que cualquiera leía en vivo
-por `/api/avisos`.
-
-**Quedan tres, y este es el orden que tenía sentido:**
-
-| # | Qué falta | Notas |
-|---|---|---|
-| 6 | Poner una `Content-Security-Policy` en nginx | Empezar en `Report-Only` para ver qué rompe |
-| 1 | `sandbox` en el iframe de los juegos | Hay que probar juego por juego; algunos perderán su guardado local |
-| 12 | Versión de sesión en el token | Decidido: **hay que cerrar todas las sesiones**. Migración nueva |
-| 75 | Sacar las prendas del historial de GitHub | **Descartado** el 21/09/2026: se acepta que el arte anterior a esa fecha siga en el historial |
-
-**Aparte de la auditoría, hay un trabajo a medias:** que el servidor
-componga los avatares y deje de repartir las prendas sueltas. Está en
-`docs/referencia/AVATARES.md`, y su tabla de fases (punto 5) dice cuáles
-están hechas y cuál toca.
+Lo que queda por hacer está en las listas vivas, [AUDITORIA](../listas/AUDITORIA.md) y
+[SUGERENCIAS](../listas/SUGERENCIAS.md); lo que se está haciendo, en la especificación abierta de
+`specs/`; y lo que cambió cada semana, en el [HISTORIAL](../historia/HISTORIAL.md).
 
 ## 6. Lo que muerde si no se sabe
 

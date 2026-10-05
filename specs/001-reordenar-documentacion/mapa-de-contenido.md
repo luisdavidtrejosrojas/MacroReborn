@@ -99,7 +99,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | §2 Dónde vive cada cosa | 125-142 | `ref/ARQUITECTURA.md` y `guias/RETOMAR.md` | Lo general a la visión; lo de Luis (Bitwarden, Drive) se queda. Sin la IP | 05/10/2026 |
 | §3 Levantar el entorno en un PC nuevo | 143-180 | `guias/SUMARSE.md` y `guias/RETOMAR.md` | Lo de todos a la guía para sumarse; lo que solo restaura Luis (llaves, `.env`, `datos-locales/`, memoria) se queda | 05/10/2026 |
 | §4 Desplegar un cambio | 181-206 | `guias/DESPLEGAR.md` | | 05/10/2026 |
-| §5 En qué punto está el trabajo | 207-234 | `historia/HISTORIAL.md` | En la semana del 14 al 20/09; la guía enlaza las listas, `specs/` y el historial | |
+| §5 En qué punto está el trabajo | 207-234 | `historia/HISTORIAL.md` | En la semana del 14 al 20/09; la guía enlaza las listas, `specs/` y el historial | 05/10/2026 |
 | §6 Lo que muerde si no se sabe | 235-250 | Cada trampa a su documento | fail2ban y la IP de `ignoreip`, a `ref/VPS.md`; las de formatear se quedan | 05/10/2026 |
 
 ## `docs/SEGURIDAD.md` (163 líneas): pasa a `ref/CUENTAS.md`

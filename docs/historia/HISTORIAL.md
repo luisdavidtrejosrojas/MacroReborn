@@ -95,3 +95,145 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
   juego a la cuenta de la sesión. Puntos 84 y 85.
   [`36bb48c`](https://github.com/valenmgg/MacroReborn/commit/36bb48c) a
   [`91ecf9f`](https://github.com/valenmgg/MacroReborn/commit/91ecf9f) (11 commits).
+
+## Semana del 21 al 27/09/2026
+
+- **25/09, cuentas** (Luis): la sesión se renueva mientras se usa, con un tope de 30 días, y el
+  navegador guarda el pase renovado y avisa si ya no vale; antes, a los siete días todo lo que se
+  escribía fallaba en silencio. Tras entrar se vuelve a la página de antes (`?volver=`). Punto 83.
+  [CUENTAS](../referencia/CUENTAS.md#lo-que-no-cubre),
+  [`dc27ef7`](https://github.com/valenmgg/MacroReborn/commit/dc27ef7) a
+  [`463de5d`](https://github.com/valenmgg/MacroReborn/commit/463de5d) (5 commits).
+- **25/09, monedas** (Luis): el pulso cuenta un minuto por minuto, lo decide el servidor y con la
+  pestaña oculta no cuenta; y si el reparto falla, el saldo no se vuelve 0. Puntos 18 y 82.
+  [ECONOMIA](../referencia/ECONOMIA.md#4-solo-con-alguien-delante),
+  [`b7afa63`](https://github.com/valenmgg/MacroReborn/commit/b7afa63) a
+  [`97bfacb`](https://github.com/valenmgg/MacroReborn/commit/97bfacb) (3 commits).
+- **25/09, misiones y logros** (Luis): la racha se cuenta sola al jugar, las misiones se pueden cumplir
+  y se cobran en Mi día, y fuera el «Registrar hoy» de Progreso. Puntos 15, 25, 80 y 81; el 26,
+  aplazado. [`a5c4e4d`](https://github.com/valenmgg/MacroReborn/commit/a5c4e4d) a
+  [`a8a3805`](https://github.com/valenmgg/MacroReborn/commit/a8a3805) (5 commits).
+- **24/09, tienda** (Luis): la tienda, con página propia (`tienda.html`) y todo el catálogo a la venta:
+  toda prenda publicada tiene precio (migración 022), la compra cobra y apunta a la vez
+  (`sql.transaccion`), el saldo es privado (`mis-monedas`), y la barra, el candado del editor y el
+  escaparate de Comunidad llevan a ella. El equipo de arte pone y cambia el precio de sus prendas.
+  Puntos 24, 78 y 79. [TIENDA](../referencia/TIENDA.md),
+  [`09f787f`](https://github.com/valenmgg/MacroReborn/commit/09f787f) a
+  [`a99c388`](https://github.com/valenmgg/MacroReborn/commit/a99c388) (24 commits).
+- **24/09, cuentas** (Luis): un nombre de usuario con código ya no se ejecuta: la página de amigos, el
+  panel de estadísticas, la barra y el aviso de menciones lo escapan, y el registro rechaza los que
+  rompen el HTML o no se ven. Punto 77. [CUENTAS](../referencia/CUENTAS.md#los-nombres-de-usuario),
+  [`31e75ae`](https://github.com/valenmgg/MacroReborn/commit/31e75ae) a
+  [`371ec2a`](https://github.com/valenmgg/MacroReborn/commit/371ec2a) (5 commits).
+- **24/09, avatares** (Luis): las fases 3 y 5 del avatar compuesto. Todas las páginas enseñan una sola
+  imagen por persona, nunca prendas sueltas, y si falta el compuesto se compone al pedirlo; el servidor
+  dibuja la vista previa del editor; fuera el índice público de prendas; y las prendas sueltas solo se
+  sirven con firma, para el equipo de arte, sin caché en nginx.
+  [AVATARES-AL-SERVIDOR](AVATARES-AL-SERVIDOR.md#las-fases),
+  [`c260e14`](https://github.com/valenmgg/MacroReborn/commit/c260e14) a
+  [`bc765d9`](https://github.com/valenmgg/MacroReborn/commit/bc765d9) (38 commits).
+- **23 y 24/09, avatares** (Luis): las previsualizaciones de cada prenda, la fase 4. El 23/09, cómo se
+  dibujan y la herramienta para elegir su cuadro, con las de macrojuegos al lado; el 24/09, automáticas,
+  un cuadro por prenda, guardadas en disco (migración 021), servidas en `/previsualizaciones/` y
+  enseñadas en el editor y en la tienda, que deja de tener cajas vacías (punto 23).
+  [AVATARES](../referencia/AVATARES.md#las-previsualizaciones-automáticas-y-corregibles-una-a-una-más-adelante),
+  [`69342ca`](https://github.com/valenmgg/MacroReborn/commit/69342ca) a
+  [`f58c5db`](https://github.com/valenmgg/MacroReborn/commit/f58c5db) (35 commits).
+- **22/09, el navegador** (Luis): por qué está como está, sin framework, y qué se haría empezando de
+  cero. [FRONTEND](FRONTEND.md), [`fa30a7d`](https://github.com/valenmgg/MacroReborn/commit/fa30a7d).
+- **21/09, avatares** (Luis): se decide que el servidor componga cada avatar, y se hacen las fases 1 y
+  2: el compositor; un solo formato, JPG sobre blanco; el avatar se compone al guardarlo y se guarda en
+  disco (migración 019); cada persona tiene su dirección, que no cambia nunca; el relleno de los que ya
+  había; un freno para no tumbar la máquina; las ranuras pasan a ser de cada persona (migración 020); y
+  Comunidad pide una imagen por avatar y no quince. [AVATARES-AL-SERVIDOR](AVATARES-AL-SERVIDOR.md),
+  [`daf380b`](https://github.com/valenmgg/MacroReborn/commit/daf380b) a
+  [`8d516f2`](https://github.com/valenmgg/MacroReborn/commit/8d516f2) (24 commits).
+- **21/09, avisos en vivo** (Luis): `/api/avisos` pide un pase de un minuto, que no vale como sesión, y
+  el buzón y los bloqueos solo salen por la línea de su dueño. Punto 3.
+  [AVISOS](../referencia/AVISOS.md#quién-puede-oír-qué),
+  [`6d4b382`](https://github.com/valenmgg/MacroReborn/commit/6d4b382) a
+  [`cab05ac`](https://github.com/valenmgg/MacroReborn/commit/cab05ac) (8 commits).
+- **21/09, notificaciones y noticias** (Luis): cada mención en un comentario de perfil llega una sola
+  vez: el navegador deja de crear la suya. Punto 76.
+  [`b932d32`](https://github.com/valenmgg/MacroReborn/commit/b932d32) a
+  [`3422874`](https://github.com/valenmgg/MacroReborn/commit/3422874) (5 commits).
+- **21/09, arte** (Luis): las prendas salen del repositorio, entonces público, porque el sitio ya las
+  servía desde la base; el historial de GitHub se queda como está (punto 75, descartado) y lo que
+  faltaba por publicar ya está en GitHub (punto 13). Y la regla de `api/_png.js` se aclara: no es «sin
+  librerías», es «sin depender de nadie de fuera». [ARTE](../referencia/ARTE.md#7-lo-que-queda),
+  [`bbe813a`](https://github.com/valenmgg/MacroReborn/commit/bbe813a) a
+  [`4154e9d`](https://github.com/valenmgg/MacroReborn/commit/4154e9d) (5 commits).
+- **21/09, trabajo en local** (Luis): `npm run db:traer` estaba roto: ahora busca la llave del VPS en
+  vez de adivinarla. [DESARROLLO](../guias/DESARROLLO.md#probar-contra-los-datos-de-verdad),
+  [`0b77ac6`](https://github.com/valenmgg/MacroReborn/commit/0b77ac6).
+
+## Semana del 14 al 20/09/2026
+
+- **19/09, servidor y producción** (Luis): se recupera el acceso al servidor tras perder la llave SSH
+  por segunda vez, y la guía para retomar se pone al día. [LLAVE-SSH](LLAVE-SSH.md),
+  [`726c2f1`](https://github.com/valenmgg/MacroReborn/commit/726c2f1) y
+  [`9aca97f`](https://github.com/valenmgg/MacroReborn/commit/9aca97f).
+- **18/09, lo que hay por arreglar** (Luis): la auditoría del proyecto, catorce revisiones en paralelo
+  más una del servidor en vivo, deja 74 cosas por arreglar en una lista viva dentro del repositorio. Y
+  la guía para volver a trabajar tras formatear, con la copia de la memoria de Claude y sus
+  conversaciones, fuera de git. [AUDITORIA](../listas/AUDITORIA.md), [RETOMAR](../guias/RETOMAR.md),
+  [`f16515d`](https://github.com/valenmgg/MacroReborn/commit/f16515d) a
+  [`18fe82e`](https://github.com/valenmgg/MacroReborn/commit/18fe82e) (6 commits).
+- **18/09, servidor y navegador** (Luis): los primeros urgentes de la auditoría: la ruta de los
+  archivos estáticos se resuelve una sola vez, así que ya no se tumba el proceso ni se cuela el arte
+  por una barra de más (10 y 11); una sola función de escapado cierra los tres XSS almacenados (2, 4 y
+  5); y quien actúa lo dice la sesión, no el cuerpo de la petición (7, 8 y 9).
+  [AUDITORIA](../listas/AUDITORIA.md),
+  [`270b0de`](https://github.com/valenmgg/MacroReborn/commit/270b0de) a
+  [`d202784`](https://github.com/valenmgg/MacroReborn/commit/d202784) (6 commits).
+- **17/09, forma de trabajar** (Luis): las imágenes de los anuncios de Discord no entran en git.
+  [`f05f5ae`](https://github.com/valenmgg/MacroReborn/commit/f05f5ae) y
+  [`55943e5`](https://github.com/valenmgg/MacroReborn/commit/55943e5).
+- **16 y 17/09, arte** (Luis): proteger el trabajo del equipo de dibujo. El catálogo público solo
+  entrega lo que alguien lleva puesto, la ruta adivinable de las prendas deja de servir arte, la
+  autoría va dentro de cada dibujo, una prenda nueva tiene que venir en el lienzo canónico (y el
+  catálogo se lleva a él), los términos de uso dicen a quién pedir una retirada, y un aviso salta
+  cuando una IP pide muchas prendas distintas seguidas. [ARTE](../referencia/ARTE.md),
+  [`0193c5d`](https://github.com/valenmgg/MacroReborn/commit/0193c5d) a
+  [`a915bfa`](https://github.com/valenmgg/MacroReborn/commit/a915bfa) (18 commits).
+- **16/09, avisos en vivo** (Luis): fuera Pusher. Los avisos salen por una conexión propia,
+  Server-Sent Events servidos por la misma máquina, después de dos semanas sin funcionar sin que nadie
+  lo notara. [AVISOS](../referencia/AVISOS.md), [AVISOS-ROTOS](AVISOS-ROTOS.md),
+  [`6ad28a5`](https://github.com/valenmgg/MacroReborn/commit/6ad28a5) a
+  [`9d429eb`](https://github.com/valenmgg/MacroReborn/commit/9d429eb) (9 commits).
+- **16/09, cuentas** (Luis): se rellenan con bcrypt las contraseñas en claro que quedaban, y los
+  documentos dejan de darlo por pendiente. [CONTRASENAS-EN-CLARO](CONTRASENAS-EN-CLARO.md),
+  [`45ea013`](https://github.com/valenmgg/MacroReborn/commit/45ea013).
+- **16/09, avatares** (Luis): una prenda quitada o retirada deja de pintar la marca de imagen rota, y el
+  atributo `hidden` vuelve a esconder imágenes. [IMAGEN-NO-ENCONTRADA](IMAGEN-NO-ENCONTRADA.md),
+  [`0cd8f16`](https://github.com/valenmgg/MacroReborn/commit/0cd8f16) y
+  [`f445e66`](https://github.com/valenmgg/MacroReborn/commit/f445e66).
+- **16/09, trabajo en local** (Luis): una copia local de la base de producción para probar con datos de
+  verdad, y el panel de arte se puede probar en local.
+  [DESARROLLO](../guias/DESARROLLO.md#probar-contra-los-datos-de-verdad),
+  [`625b72a`](https://github.com/valenmgg/MacroReborn/commit/625b72a) a
+  [`adc3107`](https://github.com/valenmgg/MacroReborn/commit/adc3107) (3 commits).
+- **14 al 16/09, arte** (Luis): el panel del equipo de arte, para subir, publicar y retirar prendas sin
+  repartir un identificador que alguien lleve puesto; y el vestidor y el taller: un maniquí que se viste
+  con el catálogo, mover, escalar y espejar la prenda, publicar horneando el ajuste, y el taller en su
+  propia página, en seis pasos. [`3e27fe9`](https://github.com/valenmgg/MacroReborn/commit/3e27fe9) a
+  [`053443a`](https://github.com/valenmgg/MacroReborn/commit/053443a) (22 commits).
+- **14 al 16/09, el navegador** (Luis): dejar de pedir de más. Los bucles que pedían los «me gusta»
+  548.726 veces al día y refrescaban la sesión del perfil unas 70 veces por segundo; el editor que se
+  descargaba entero al abrir el perfil (357 imágenes, 2,9 MB); las páginas que se bajaban el ranking o
+  un PNG entero para pintar un número o un avatar; y las imágenes, que ahora esperan a verse.
+  [`ddf2773`](https://github.com/valenmgg/MacroReborn/commit/ddf2773) a
+  [`1846f70`](https://github.com/valenmgg/MacroReborn/commit/1846f70) (15 commits).
+- **14 y 15/09, avatares** (Luis): el catálogo de avatares pasa a la base (migración 018), con sus
+  tablas y el script que lo importa. Las prendas se sirven desde la base, también por su ruta de
+  siempre; el editor y todas las páginas se construyen desde el catálogo, que lleva también las
+  retiradas, solo para dibujar; y el orden de las capas y la ruta de las prendas viven en un solo sitio,
+  `js/core.js`. [`fb0ec2b`](https://github.com/valenmgg/MacroReborn/commit/fb0ec2b) a
+  [`8d3b4a7`](https://github.com/valenmgg/MacroReborn/commit/8d3b4a7) (15 commits).
+- **14 y 15/09, servidor y producción** (Luis): las cachés, con ETag en los estáticos, versión en las URL
+  de scripts y estilos, y sin guardar como `immutable` los 404 de imagen, porque `immutable` no se puede
+  retirar; HTTP/2, apagado desde el primer día; el cron del ranking, roto desde la mudanza; y la rama de
+  la mudanza al VPS se une a `main` (pull request #14), con la integración continua sin Node 18.
+  [VPS](../referencia/VPS.md#caché-del-navegador-immutable-es-una-promesa-que-no-se-retira),
+  [`e5d35fd`](https://github.com/valenmgg/MacroReborn/commit/e5d35fd) a
+  [`6d0cf88`](https://github.com/valenmgg/MacroReborn/commit/6d0cf88) (8 commits).
