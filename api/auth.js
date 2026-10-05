@@ -91,12 +91,20 @@ async function register(req, res) {
     return res.status(200).json({ success: false, error: revision.error });
   }
 
-  const existente = await sql`SELECT id FROM users WHERE username = ${username};`;
+  // Sin mirar mayúsculas: "Jader" no se crea si ya existe "jader". Así
+  // nacieron las dos parejas del punto 31 de docs/AUDITORIA.md: no
+  // pudieron entrar con otras mayúsculas y registraron otra cuenta.
+  // Entrar ya no las distingue (api/_password.js), y el aviso lo dice.
+  const existente = await sql`
+    SELECT username FROM users WHERE LOWER(username) = LOWER(${username}) LIMIT 1;
+  `;
 
   if (existente.length > 0) {
     return res.status(200).json({
       success: false,
-      error: "Ese nombre de usuario ya existe"
+      error: existente[0].username === username
+        ? "Ese nombre de usuario ya existe"
+        : "Ese nombre ya existe con otras mayúsculas. Si es tu cuenta, entrá con ella: las mayúsculas ya no importan."
     });
   }
 

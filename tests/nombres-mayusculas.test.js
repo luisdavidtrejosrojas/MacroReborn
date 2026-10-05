@@ -66,6 +66,7 @@ function llamar(handler, metodo, query, body, headers) {
 
 const perfil = (escrito, extra) => llamar(users, "GET", { username: escrito, ...extra });
 const entrar = (escrito, clave) => llamar(auth, "POST", { action: "login" }, { username: escrito, password: clave || CLAVE });
+const registrar = (escrito) => llamar(auth, "POST", { action: "register" }, { username: escrito, password: CLAVE });
 
 test("el nombre exacto, como siempre", async () => {
   assert.equal(await nombreDe("MATEO503"), "MATEO503");
@@ -129,4 +130,23 @@ test("cada mitad de una pareja entra a la suya, y el ambiguo no entra", async ()
   assert.equal((await entrar("jader")).cuerpo.user.username, "jader");
   assert.equal((await entrar("Jader")).cuerpo.user.username, "Jader");
   assert.notEqual((await entrar("JADER")).cuerpo.success, true);
+});
+
+test("no se registra un nombre que ya existe con otras mayúsculas, y el aviso lo dice", async () => {
+  const otra = await registrar("mateo503");
+  assert.equal(otra.cuerpo.success, false);
+  assert.match(otra.cuerpo.error, /mayúsculas/);
+
+  const igual = await registrar("MATEO503");
+  assert.equal(igual.cuerpo.success, false);
+  assert.equal(igual.cuerpo.error, "Ese nombre de usuario ya existe");
+
+  const cuantas = await db.query("SELECT count(*)::int AS n FROM users WHERE LOWER(username) = 'mateo503'");
+  assert.equal(cuantas.rows[0].n, 1);
+});
+
+test("un nombre nuevo se registra como siempre", async () => {
+  const r = await registrar("Nueva_Cuenta");
+  assert.equal(r.cuerpo.success, true, JSON.stringify(r.cuerpo));
+  assert.equal(r.cuerpo.user.username, "Nueva_Cuenta");
 });
