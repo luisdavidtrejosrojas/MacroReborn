@@ -238,7 +238,7 @@ se hace en la validación final (T073), como pide la regla IV.
   - **Que la constitución manda.**
 
   Recoge lo común de §3 de `docs/guias/RETOMAR.md`, el «Cómo probar localmente» del `README.md` y lo que apuntó T037. Entra en el índice y en «Por dónde empezar»; lista de revisión.
-- [ ] T061 [US4] Quitar de §3 de `docs/guias/RETOMAR.md` lo que ya cuenta `docs/guias/SUMARSE.md` (queda lo que solo restaura Luis: llaves, `.env`, `datos-locales/` y la memoria), y del `README.md` el «Cómo probar localmente», dejando sus enlaces; mapa. Con eso el `README.md` queda completo: revisarlo entero y anotar su fila en la lista de revisión.
+- [X] T061 [US4] Quitar de §3 de `docs/guias/RETOMAR.md` lo que ya cuenta `docs/guias/SUMARSE.md` (queda lo que solo restaura Luis: llaves, `.env`, `datos-locales/` y la memoria), y del `README.md` el «Cómo probar localmente», dejando sus enlaces; mapa. Con eso el `README.md` queda completo: revisarlo entero y anotar su fila en la lista de revisión.
 
 **Punto de control**: la historia de uso 4 funciona sola.
 

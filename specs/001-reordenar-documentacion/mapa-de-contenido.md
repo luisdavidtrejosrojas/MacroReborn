@@ -97,7 +97,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | §1.2 Lo que se hizo el 19/09/2026 | 57-77 | `historia/LLAVE-SSH.md` | | 05/10/2026 |
 | §1.3 Dónde vive ahora la llave, y por qué ahí | 78-124 | `guias/RETOMAR.md` | | 05/10/2026 |
 | §2 Dónde vive cada cosa | 125-142 | `ref/ARQUITECTURA.md` y `guias/RETOMAR.md` | Lo general a la visión; lo de Luis (Bitwarden, Drive) se queda. Sin la IP | 05/10/2026 |
-| §3 Levantar el entorno en un PC nuevo | 143-180 | `guias/SUMARSE.md` y `guias/RETOMAR.md` | Lo de todos a la guía para sumarse; lo que solo restaura Luis (llaves, `.env`, `datos-locales/`, memoria) se queda | |
+| §3 Levantar el entorno en un PC nuevo | 143-180 | `guias/SUMARSE.md` y `guias/RETOMAR.md` | Lo de todos a la guía para sumarse; lo que solo restaura Luis (llaves, `.env`, `datos-locales/`, memoria) se queda | 05/10/2026 |
 | §4 Desplegar un cambio | 181-206 | `guias/DESPLEGAR.md` | | 05/10/2026 |
 | §5 En qué punto está el trabajo | 207-234 | `historia/HISTORIAL.md` | En la semana del 14 al 20/09; la guía enlaza las listas, `specs/` y el historial | |
 | §6 Lo que muerde si no se sabe | 235-250 | Cada trampa a su documento | fail2ban y la IP de `ignoreip`, a `ref/VPS.md`; las de formatear se quedan | 05/10/2026 |
@@ -134,7 +134,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 
 | Archivo | Qué pasa | Hecho |
 |---|---|---|
-| `README.md` | Se rehace como entrada e índice. «Stack» y «Sistemas documentados» pasan a `ref/ARQUITECTURA.md`; «Cómo probar localmente», a `guias/SUMARSE.md`; «Convenciones», a la constitución. El `README.md` enlaza los tres | |
+| `README.md` | Se rehace como entrada e índice. «Stack» y «Sistemas documentados» pasan a `ref/ARQUITECTURA.md`; «Cómo probar localmente», a `guias/SUMARSE.md`; «Convenciones», a la constitución. El `README.md` enlaza los tres | 05/10/2026 |
 | `CLAUDE.md` | Rutas nuevas, resúmenes con su enlace (research D9) y la regla del historial (RF-017) | |
 | `infra/LEEME.md` | Se revisa entero, como un documento más | 05/10/2026 |
 | `.gitignore` | Rutas nuevas, y deja de decir que el repositorio es público | 05/10/2026 |

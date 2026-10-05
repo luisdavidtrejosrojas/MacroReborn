@@ -114,28 +114,23 @@ entera, en [VPS](../referencia/VPS.md). Aquí, lo que hace falta para volver a m
 
 ## 3. Levantar el entorno en un PC nuevo
 
-```bash
-git clone git@github.com:valenmgg/MacroReborn.git
-cd MacroReborn
-npm install
-npm test            # unas 1.300 pruebas, ~1 min, no tocan nada real
-npm run db:traer    # baja una copia de la base de produccion
-npm run db:local    # sitio local en http://localhost:3001
-```
+Lo de todos (Node, clonar, `npm ci`, las pruebas y el sitio en local) lo cuenta
+[SUMARSE](SUMARSE.md#1-preparar-el-entorno). Lo que solo hace falta para volver a montar el PC de
+Luis:
 
-Y sacar la llave SSH de Bitwarden a `~/.ssh/macroreborn-vps-key`, que es lo
-que da acceso al servidor.
-
-Un clon de GitHub viene sin las prendas: `imagenes/<modelo>/` y
-`imagenes/<modelo>.png` están fuera de git desde el 21/09/2026. El sitio
-no las echa en falta, porque las sirve desde la base y `npm run db:traer`
-trae esa base entera. Si hacen falta los originales, están en la copia
-de Drive.
+- **La llave SSH**, de Bitwarden a `~/.ssh/macroreborn-vps-key`: es lo que da acceso al servidor
+  ([si se pierde](#11-si-se-pierde-la-llave)).
+- **La copia de la base**: `npm run db:traer`, que con esa llave baja el último respaldo a
+  `datos-locales/` ([los datos de verdad](DESARROLLO.md#probar-contra-los-datos-de-verdad)).
+- **Los dibujos originales de las prendas**, fuera de git desde el 21/09/2026. El sitio no los echa
+  en falta, porque los sirve desde la base; si hacen falta, están en la copia de Drive.
+- **La memoria de Claude**, de `memoria-claude/` a su sitio ([la memoria](#13-la-memoria-de-claude-code)).
+- **El `.env`** no se copia: vive en el servidor.
 
 **Ojo con dos cosas al configurar git:**
 
-- La identidad tiene que ser la de la regla V de la constitución, autor
-  y committer. El 15/09/2026
+- La identidad de Luis es la de la regla V de la constitución, autor y
+  committer: comprobarla con `git var GIT_AUTHOR_IDENT`. El 15/09/2026
   aparecieron 17 commits firmados como `Ubuntu <azureuser@...>` porque
   el servidor no tenía identidad configurada, y el 18/09 otros 8 salieron
   con un correo distinto. Las dos veces hubo que reescribir el historial.

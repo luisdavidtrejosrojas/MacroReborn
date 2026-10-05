@@ -35,7 +35,7 @@ pruebas) y su documentación, que empieza aquí.
 | [CUENTAS](docs/referencia/CUENTAS.md) | El equipo de desarrollo | Las contraseñas y los nombres de usuario: el hash con bcrypt, qué nombre se acepta, por qué no distingue mayúsculas, qué no cubre y lo que queda de cuando las contraseñas se guardaban en claro |
 | [ECONOMIA](docs/referencia/ECONOMIA.md) | El equipo de desarrollo y quien decida precios | Las monedas: los precios por rareza, cómo se ganan, los límites y el recálculo de saldos del 04/10/2026 |
 | [MODERACION](docs/referencia/MODERACION.md) | El equipo de desarrollo y los administradores | Advertir, suspender y banear: qué hace cada sanción, quién puede ponerla, el panel y lo que ven los demás |
-| [SEO](docs/referencia/SEO.md) | El equipo de desarrollo | Los metadatos, los datos estructurados, el sitemap, robots y las imágenes, y lo que queda para las URL limpias |
+| [SEO](docs/referencia/SEO.md) | El equipo de desarrollo | Los metadatos de cada página y cuáles se indexan, los datos estructurados, el sitemap, robots y las imágenes, y lo que queda: sus puntos de la auditoría y las URL limpias |
 | [TIENDA](docs/referencia/TIENDA.md) | El equipo de desarrollo y el de arte | El Bazar: el catálogo entero a la venta, los precios por rareza, la migración 022 y lo que decide el equipo de arte |
 | [VPS](docs/referencia/VPS.md) | Quien opera el servidor | El servidor de producción: la máquina, nginx, la base de datos, los respaldos, el cron, el dominio y la seguridad |
 
@@ -48,7 +48,7 @@ pruebas) y su documentación, que empieza aquí.
 | [DESPLEGAR](docs/guias/DESPLEGAR.md) | Quien despliega, con el OK de Luis | Cómo se pone en producción un cambio: las migraciones, el código, el reinicio, la comprobación y cómo se deshace |
 | [JUEGOS](docs/guias/JUEGOS.md) | Quien añade o quita juegos | Cómo se añade un juego al catálogo y cómo se quita, con casos reales |
 | [CAMBIOS-DE-OTROS-DEVS](docs/guias/CAMBIOS-DE-OTROS-DEVS.md) | Quien funde el trabajo de otra persona | Cómo se funde lo que manda otro dev: el método, qué pedirle y la tabla de rutas de antes |
-| [RETOMAR](docs/guias/RETOMAR.md) | Luis, tras formatear el PC | Lo que no está en el repositorio y dónde se guarda (la llave SSH, los secretos, las copias), y cómo levantar el entorno |
+| [RETOMAR](docs/guias/RETOMAR.md) | Luis, tras formatear el PC | Lo que no está en el repositorio y dónde se guarda (la llave SSH, la memoria de Claude, las copias), qué hacer si se pierde la llave y lo que solo hace falta para volver a montar su PC |
 
 ## Listas vivas: lo pendiente
 
@@ -79,16 +79,3 @@ pruebas) y su documentación, que empieza aquí.
 Cada cambio pasa por Spec Kit y deja su carpeta en [specs/](specs/), con la especificación, el plan y
 las tareas. La primera, [001](specs/001-reordenar-documentacion/spec.md), reordena esta documentación.
 
----
-
-## Cómo probar localmente
-
-```bash
-npm install        # instala las dependencias (solo la primera vez)
-npm test           # tests automáticos (base local, no toca la real)
-npm run test:smoke  # smoke test HTTP: levanta y cierra un servidor local efímero
-npm run db:local   # sitio local en http://localhost:3001
-```
-
-Todo corre en la máquina de desarrollo; nada toca la base real ni el
-servidor de producción. Detalles en `docs/guias/DESARROLLO.md`.
