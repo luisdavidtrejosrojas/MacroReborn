@@ -1,0 +1,93 @@
+# Lista de revisión: cada documento, leído entero y comparado con el sistema
+
+**Para qué**: dejar constancia de que cada documento se leyó entero y se comparó con el código, con
+`infra/` y, si habla del servidor, con el VPS solo con órdenes de lectura (RF-008, CE-004, research
+D7).
+**Creada**: 2026-10-05, vacía. Se rellena en la implementación, una fila por documento.
+**Especificación**: [spec.md](../spec.md)
+
+**Cómo se rellena**: al terminar de revisar un documento se escribe la fecha, con qué se comparó, cada
+afirmación caducada y cómo quedó, y lo que no se pudo comprobar (con su motivo). Una afirmación
+caducada nunca se queda sin corregir: si no se puede arreglar en esta spec, pasa a «Pendiente de
+probar» con su motivo.
+
+## Referencia
+
+| Documento | Leído entero | Comparado con | Caducado y corregido | Pendiente de probar |
+|---|---|---|---|---|
+| `docs/referencia/ARQUITECTURA.md` | | | | |
+| `docs/referencia/ARTE.md` | | | | |
+| `docs/referencia/AVATARES.md` | | | | |
+| `docs/referencia/AVISOS.md` | | | | |
+| `docs/referencia/CUENTAS.md` | | | | |
+| `docs/referencia/ECONOMIA.md` | | | | |
+| `docs/referencia/MODERACION.md` | | | | |
+| `docs/referencia/SEO.md` | | | | |
+| `docs/referencia/TIENDA.md` | | | | |
+| `docs/referencia/VPS.md` | | | | |
+
+## Guías
+
+| Documento | Leído entero | Comparado con | Caducado y corregido | Pendiente de probar |
+|---|---|---|---|---|
+| `docs/guias/SUMARSE.md` | | | | |
+| `docs/guias/DESARROLLO.md` | | | | |
+| `docs/guias/DESPLEGAR.md` | | | | |
+| `docs/guias/JUEGOS.md` | | | | |
+| `docs/guias/CAMBIOS-DE-OTROS-DEVS.md` | | | | |
+| `docs/guias/RETOMAR.md` | | | | |
+
+## Listas vivas
+
+| Documento | Leído entero | Comparado con | Caducado y corregido | Pendiente de probar |
+|---|---|---|---|---|
+| `docs/listas/AUDITORIA.md` | | | | |
+| `docs/listas/SUGERENCIAS.md` | | | | |
+
+## Historia
+
+En la historia no se corrige lo que se contó: se comprueba que se pasó entero, que sus enlaces
+funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se añade una nota con fecha.
+
+| Documento | Leído entero | Comparado con | Caducado y corregido | Pendiente de probar |
+|---|---|---|---|---|
+| `docs/historia/HISTORIAL.md` | | | | |
+| `docs/historia/FRONTEND.md` | | | | |
+| `docs/historia/AVATARES-AL-SERVIDOR.md` | | | | |
+| `docs/historia/LIENZO-DEL-CATALOGO.md` | | | | |
+| `docs/historia/IMAGEN-NO-ENCONTRADA.md` | | | | |
+| `docs/historia/AVISOS-ROTOS.md` | | | | |
+| `docs/historia/MUDANZA-AL-VPS.md` | | | | |
+| `docs/historia/FUGA-DEL-ENV.md` | | | | |
+| `docs/historia/CONTRASENAS-EN-CLARO.md` | | | | |
+| `docs/historia/LLAVE-SSH.md` | | | | |
+| `docs/historia/SALDOS-REHECHOS.md` | | | | |
+| `docs/historia/ACTIVAR-LA-MODERACION.md` | | | | |
+| `docs/historia/CASOS-DE-OTROS-DEVS.md` | | | | |
+
+## Fuera de `docs/`
+
+| Documento | Leído entero | Comparado con | Caducado y corregido | Pendiente de probar |
+|---|---|---|---|---|
+| `README.md` | | | | |
+| `CLAUDE.md` | | | | |
+| `infra/LEEME.md` | | | | |
+| `memoria-claude/LEEME.md` (fuera de git) | | | | |
+
+## Validación final
+
+Los resultados de los escenarios de [quickstart.md](../quickstart.md), con su fecha.
+
+| Escenario | Resultado | Fecha |
+|---|---|---|
+| 1. Las pruebas, en verde | | |
+| 2. Las diez preguntas en dos clics | | |
+| 3. Confiar en lo que dice | | |
+| 4. La visión de conjunto | | |
+| 5. Sumarse en menos de 30 minutos (Claude, sobre una copia limpia) | | |
+| 5. Sumarse en menos de 30 minutos (una persona del equipo) | | |
+| 6. El historial | | |
+| 7. Nada se pierde | | |
+| 8. Sin emojis ni datos sensibles | | |
+| 9. Fuera del repositorio | | |
+| 10. La constitución v1.0.1 | | |
