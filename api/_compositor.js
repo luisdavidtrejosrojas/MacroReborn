@@ -87,7 +87,7 @@ function encimar(base, capa) {
 // camino que dibuja el avatar de alguien.
 //
 // La política no se inventa: es la misma que ya está escrita en
-// api/_lienzo.js y en docs/ARTE.md 3. Pegado 1:1 cuando basta con
+// api/_lienzo.js y en docs/referencia/ARTE.md#3-el-lienzo-canónico-al-subir. Pegado 1:1 cuando basta con
 // recortar o rellenar unas filas, que es un calco y no toca un solo
 // píxel; encaje solo cuando de verdad tiene otra proporción, que sí
 // remuestrea y por eso se reserva para eso.

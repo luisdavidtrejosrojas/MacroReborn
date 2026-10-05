@@ -11,7 +11,7 @@ existen y cómo probar los cambios localmente.
 | `docs/guias/DESARROLLO.md` | Módulos del backend, infraestructura local (PGlite, servidor local, tests) y despliegue |
 | `docs/SEGURIDAD.md` | Sistema de hash de contraseñas, migración de datos existentes y plan de activación |
 | `docs/guias/JUEGOS.md` | Cómo agregar un juego al catálogo: proceso completo, prueba local y notas de Ruffle/CORS e iframes |
-| `docs/ARTE.md` | Cómo se protege el catálogo de prendas: qué compra cada pieza y qué no |
+| `docs/referencia/ARTE.md` | Cómo se protege el catálogo de prendas: qué compra cada pieza y qué no |
 | `docs/AVATARES-SERVIDOR.md` | Pasar la composicion de avatares al servidor: por que, lo medido sobre el VPS y las cinco fases |
 | `docs/FRONTEND.md` | Por que el navegador esta como esta, que se usaria empezando de cero, y por que no se reescribe |
 | `docs/VPS.md` | El servidor: máquina, nginx, base de datos, respaldos, seguridad y despliegue |

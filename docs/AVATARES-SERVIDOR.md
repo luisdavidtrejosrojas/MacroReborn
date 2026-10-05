@@ -7,7 +7,7 @@ ropa. Más una previsualización por prenda, para poder verla antes de
 comprarla.
 
 Es lo que hacía macrojuegos durante una década. Está reconstruido en la
-memoria del proyecto y resumido en `docs/ARTE.md` 6.
+memoria del proyecto y resumido en `docs/referencia/ARTE.md#6-lo-que-se-decidió-no-hacer-y-por-qué`.
 
 Este archivo es la lista de trabajo. Se marca aquí lo que se va
 haciendo, con la fecha, y no se borran filas: una fila resuelta explica
@@ -17,7 +17,7 @@ por qué el código está como está.
 
 ## 1. Por qué, y por qué ahora
 
-`docs/ARTE.md` 6 descartó esto en septiembre con un argumento que era
+`docs/referencia/ARTE.md#6-lo-que-se-decidió-no-hacer-y-por-qué` descartó esto en septiembre con un argumento que era
 correcto entonces: *"media implementación no deja a mitad de camino:
 deja en cero, con el trabajo hecho"*. Componer el avatar y seguir
 sirviendo las prendas sueltas al vestidor no compra nada, porque la
@@ -501,7 +501,7 @@ baja entero con una petición.
   invalidar, pero sigue siendo el modo barato de detectar un rehorneado.
 - **Rehornear la autoría cambia el `sha256` de cada prenda**, y por tanto
   la huella de cada receta que la use. Después de un rehorneado hay que
-  volver a componer. Es el mismo aviso que ya daba `docs/ARTE.md` 2.
+  volver a componer. Es el mismo aviso que ya daba `docs/referencia/ARTE.md#2-la-autoría-va-dentro-de-cada-dibujo`.
 
 ---
 

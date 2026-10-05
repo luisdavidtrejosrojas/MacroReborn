@@ -236,7 +236,7 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
 ### XXIX. El arte no se publica
 
 - Los dibujos de las prendas son del equipo de arte: los originales viven fuera de git y el sitio los
-  sirve desde la base, con firma (`docs/ARTE.md`). Ningún cambio puede volver a dejarlos al alcance de
+  sirve desde la base, con firma (`docs/referencia/ARTE.md`). Ningún cambio puede volver a dejarlos al alcance de
   cualquiera.
 
 ### XXX. Sin emojis
