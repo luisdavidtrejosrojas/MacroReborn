@@ -213,7 +213,7 @@ documento de cada una (quickstart, escenario 4).
   - **Lo vigente que llega de otros documentos**: «Qué es el proyecto», «Stack» y «Sistemas documentados» del `README.md`; §2 de `docs/guias/DESARROLLO.md`; §3.1 y §3.2 de `docs/referencia/VPS.md`; §2 de `docs/guias/RETOMAR.md`; y el resumen de `docs/historia/FRONTEND.md`.
 
   Entra en el índice y en «Por dónde empezar»; lista de revisión.
-- [ ] T058 [US3] Quitar del `README.md`, de `docs/guias/DESARROLLO.md`, de `docs/referencia/VPS.md` y de `docs/guias/RETOMAR.md` lo que ya cuenta `docs/referencia/ARQUITECTURA.md`, dejando el enlace (RF-009); mapa.
+- [X] T058 [US3] Quitar del `README.md`, de `docs/guias/DESARROLLO.md`, de `docs/referencia/VPS.md` y de `docs/guias/RETOMAR.md` lo que ya cuenta `docs/referencia/ARQUITECTURA.md`, dejando el enlace (RF-009); mapa.
 - [ ] T059 [US3] Añadir a `docs/referencia/CUENTAS.md` la sección «Los nombres de usuario», leída del código: la regla de `api/_nombre-usuario.js` y lo que cambió el 05/10/2026 con el punto 31 de `docs/listas/AUDITORIA.md` (los nombres no distinguen mayúsculas); mapa.
 
 **Punto de control**: la historia de uso 3 funciona sola.

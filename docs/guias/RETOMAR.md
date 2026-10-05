@@ -101,21 +101,16 @@ Drive tal cual:
 
 ## 2. Dónde vive cada cosa
 
+Lo general (el sitio, el servidor, la ruta del proyecto en él, el repositorio, la base y los
+respaldos) está en [ARQUITECTURA](../referencia/ARQUITECTURA.md#dónde-vive-cada-cosa), y la máquina
+entera, en [VPS](../referencia/VPS.md). Aquí, lo que hace falta para volver a montar el PC:
+
 | | |
 |---|---|
-| Sitio en producción | https://macroreborn.com |
-| Servidor | Azure, Ubuntu 24.04 **ARM64**, 2 vCPU, 950 MB de RAM. La IP, en Bitwarden y en el remoto `vps` (`git remote -v`) |
+| La IP del servidor | En Bitwarden, y en el remoto `vps` (`git remote -v`) |
 | Entrar | `ssh -i ~/.ssh/macroreborn-vps-key azureuser@macroreborn.com` |
-| Ruta del proyecto en el servidor | `/home/azureuser/MacroReborn` |
 | Ruta del proyecto en el PC | `D:\Macroreborn`, desde el 19/09/2026 |
 | Copia en Drive | `G:\Mi unidad\01_Proyectos_Software\Proyectos de código\Macroreborn\` (desde el 19/09/2026; antes `02_Proyectos_Software\...`) |
-| Repositorio | `github.com/valenmgg/MacroReborn`, **privado** (comprobado el 05/10/2026, sin fecha exacta del cambio). Las prendas ya no van en él desde el 21/09/2026: punto 75 de [AUDITORIA](../listas/AUDITORIA.md) |
-| Base de datos | PostgreSQL 16 en el propio servidor, solo escucha en `127.0.0.1` |
-| Respaldos | `~/respaldos/diarios/` en el servidor, uno cada noche a las 3:30, se guardan 14 días |
-
-La documentación completa de la máquina está en [VPS](../referencia/VPS.md). Casi
-todo lo que se pueda preguntar sobre el servidor está ahí antes que en
-ningún otro sitio.
 
 ## 3. Levantar el entorno en un PC nuevo
 

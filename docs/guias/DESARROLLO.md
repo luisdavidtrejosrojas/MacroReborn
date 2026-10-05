@@ -24,15 +24,10 @@ Cómo es cada parte del sistema lo cuenta su documento de referencia, y cómo se
 
 ## El conector de la base: `api/_db.js`
 
-Todas las conexiones a la base pasan por acá:
-
-- `obtenerSql()` → devuelve la función `sql` lista (el Postgres del VPS
-  en producción).
-- `usarSqlLocal(sqlLocal)` → reemplaza la conexión por una base local
-  (PGlite) en desarrollo y en las pruebas.
-
-Los handlers de `api/` (siete el 05/10/2026) usan `obtenerSql()`. Cómo era antes de la
-mudanza al VPS lo cuenta [LA MUDANZA AL VPS](../historia/MUDANZA-AL-VPS.md).
+Los handlers piden la conexión a `api/_db.js` (`obtenerSql()`), y `usarSqlLocal(sqlLocal)` la cambia
+por una base de práctica: así las pruebas y el servidor local corren los handlers de verdad sin tocar
+producción. Cómo elige la conexión en producción lo cuenta
+[ARQUITECTURA](../referencia/ARQUITECTURA.md#cómo-se-conectan).
 
 ## Infraestructura local
 

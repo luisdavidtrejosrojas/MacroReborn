@@ -50,11 +50,9 @@ navegador -> nginx (:443 HTTPS) -> node cluster.js, dos procesos (:3000) -> post
 
 ## 3. Cómo habla el código con la base
 
-`api/_db.js` (`obtenerSql()`) elige el driver por la `DATABASE_URL`: `pg`, a través de `api/_pg.js`,
-para el Postgres del VPS, y el de Neon si la dirección es de Neon, una rama que sigue ahí aunque los
-datos ya se migraron. `api/_pg.js` conserva la forma en que los handlers escriben sus consultas
-(`` sql`...` ``, con fragmentos anidados), así que la mudanza no tocó ningún handler. Qué se cambió
-del código, y cómo se migraron los datos el 1/09/2026, lo cuenta
+`api/_db.js` elige el driver por la `DATABASE_URL`, y `api/_pg.js` habla con el Postgres de esta
+máquina sin que los handlers cambien su forma de escribir las consultas. Lo cuenta entero
+[ARQUITECTURA](ARQUITECTURA.md#cómo-se-conectan), y cómo era antes de la mudanza,
 [LA MUDANZA AL VPS](../historia/MUDANZA-AL-VPS.md).
 
 ## 4. Configuración y secretos

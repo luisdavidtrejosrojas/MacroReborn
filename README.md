@@ -78,26 +78,6 @@ las tareas. La primera, [001](specs/001-reordenar-documentacion/spec.md), reorde
 
 ---
 
-## Qué es el proyecto
-
-MacroReborn es una comunidad de juegos web: un catálogo de juegos
-gratis online (estáticos, del lado del navegador) con ficha por juego,
-calificaciones, reseñas, favoritos, historial, ranking por tiempo
-jugado, amigos, chat, notificaciones y perfiles de usuario.
-
-## Stack
-
-- **Frontend**: HTML/CSS/JS vanilla (sin frameworks), en la raíz del
-  repo y en `js/`.
-- **Backend**: handlers en `api/` servidos por `server.js` sobre Node,
-  contra un PostgreSQL en el mismo VPS. Antes era serverless en Vercel
-  contra Neon; la mudanza está contada en `docs/historia/MUDANZA-AL-VPS.md`.
-- **Catálogo de juegos**: datos estáticos en `js/datos-juegos.js`; los
-  juegos en sí se referencian desde CDNs externos (nada de binarios en
-  el repo).
-- **Desarrollo local**: base de práctica PGlite (Postgres embebido en
-  WASM) y un servidor local para probar en el navegador.
-
 ## Cómo probar localmente
 
 ```bash
@@ -109,13 +89,3 @@ npm run db:local   # sitio local en http://localhost:3001
 
 Todo corre en la máquina de desarrollo; nada toca la base real ni el
 servidor de producción. Detalles en `docs/guias/DESARROLLO.md`.
-
-## Sistemas documentados
-
-- **Contraseñas**: hash bcrypt, migración perezosa de usuarios
-  existentes y backfill protegido — ver `docs/referencia/CUENTAS.md`.
-- **Juegos**: cómo se agrega un juego nuevo al catálogo (datos,
-  portada, sitemap, prueba local) — ver `docs/guias/JUEGOS.md`.
-- **Avisos en vivo**: cómo aparece una notificación sin recargar, con
-  Server-Sent Events servidos por la propia máquina — ver
-  `docs/referencia/AVISOS.md`.
