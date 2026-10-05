@@ -154,4 +154,4 @@ cambios:
 - **No mandar herramientas de prueba propias** (como `mock-backend.js`)
   dentro de las páginas.
 - **Probar con el servidor local** (`npm run db:local`, ver
-  `docs/guias/JUEGOS.md`, 4) y con `npm test`.
+  `docs/guias/JUEGOS.md#4-probar-localmente`) y con `npm test`.

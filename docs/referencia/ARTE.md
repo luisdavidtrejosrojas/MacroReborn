@@ -100,7 +100,8 @@ reclamar una retirada.
 
 El PNG se lee y se escribe a mano en `api/_png.js`. No es que las
 librerías estén prohibidas: lo que está prohibido es depender de un
-servicio de terceros que se pueda acabar (`docs/guias/DESARROLLO.md` 5). Aquí
+servicio de terceros que se pueda acabar (regla XXVI de la constitución,
+`.specify/memory/constitution.md`). Aquí
 no hacía falta ninguna, y por eso `tests/vestidor-horneado.test.js`
 sustituye el canvas por un falso en vez de traerse node-canvas con sus
 decenas de MB de binario nativo. Probado contra
