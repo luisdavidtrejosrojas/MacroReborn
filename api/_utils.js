@@ -10,10 +10,34 @@ function setCors(res, metodos) {
   res.setHeader("Access-Control-Allow-Methods", (metodos || "GET, POST, OPTIONS"));
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
-async function getUserId(sql, username) {
+// La cuenta de un nombre, aunque llegue con otras mayúsculas: { id,
+// username } con el nombre tal como está guardado, o null.
+//
+// Hasta el 05/10/2026 casi todo comparaba el nombre exacto: quien
+// escribía "Mateo503" no encontraba el perfil de "MATEO503", y quien
+// entraba como "Jader" no podía con la cuenta "jader" y acababa
+// registrando otra (punto 31 de docs/AUDITORIA.md).
+//
+// Primero el exacto, para que las dos parejas que ya existen y solo se
+// distinguen por mayúsculas (jader/Jader, yotter/Yotter) sigan entrando
+// cada una a la suya. Si no hay exacto, la única que coincida sin mirar
+// mayúsculas. Si coinciden varias, ninguna: no se adivina de quién es.
+async function cuentaPorNombre(sql, username) {
   if (!username) return null;
-  const filas = await sql`SELECT id FROM users WHERE LOWER(username) = LOWER(${username});`;
-  return filas.length ? filas[0].id : null;
+  const filas = await sql`
+    SELECT id, username FROM users
+    WHERE LOWER(username) = LOWER(${username})
+    ORDER BY (username = ${username}) DESC
+    LIMIT 2;
+  `;
+  if (filas.length === 0) return null;
+  if (filas[0].username === username || filas.length === 1) return filas[0];
+  return null;
+}
+
+async function getUserId(sql, username) {
+  const cuenta = await cuentaPorNombre(sql, username);
+  return cuenta ? cuenta.id : null;
 }
 
 async function hayBloqueoEntreUsuarios(sql, usernameA, usernameB) {
@@ -55,6 +79,7 @@ async function usuarioBloqueaA(sql, blockerUsername, blockedUsername) {
 
 
 module.exports = {
+  cuentaPorNombre,
   getUserId,
   hayBloqueoEntreUsuarios,
   usuarioBloqueaA, setCors };
