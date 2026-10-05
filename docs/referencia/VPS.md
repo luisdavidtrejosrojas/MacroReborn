@@ -174,41 +174,13 @@ horas de existir el dominio ya aparecieron escáneres automáticos
 (`l9scan` y varias IPs de centros de datos): rastrean los registros de
 certificados nuevos y llegan solos, sin que nadie comparta el enlace.
 
-### La fuga del `.env` (2 de septiembre de 2026)
+### La lista blanca de estáticos
 
-Vale la pena contarlo porque el fallo no estaba en nada de lo que se
-instaló para protegerse, sino en algo anterior que nadie miró.
-
-**Qué pasaba.** La raíz del sitio es la raíz del proyecto, y el servidor
-de estáticos de `server.js` entregaba *cualquier* archivo que hubiera
-ahí. `GET /.env` devolvía **200 con la contraseña de Postgres y el
-`SESSION_SECRET` completos**. También salían `/.git/config`,
-`/package.json` y el propio `server.js`.
-
-**Se descubrió por casualidad**, probando otra cosa: al simular un
-escaneo se vio que `/.env` y `/.git/config` respondían `200` donde el
-resto daba `404`.
-
-**Quién llegó a leerlo.** En el log, tres IPs de fuera bajaron el `.env`
-con un `200`: `130.12.182.254` (dos veces), `64.227.32.66` y
-`165.22.34.189`. Otras cuatro lo pidieron antes de que existiera el
-dominio y solo se llevaron el redirect. Son escáneres automáticos, no
-alguien que fuera a por este sitio — pero lo que se llevaron es real.
-
-**Alcance.** Limitado, por dos cosas que sí estaban bien: Postgres solo
-escucha en `127.0.0.1` y ufw no abre el 5432, así que **con esa
-contraseña no se podía entrar desde internet**. Comprobado: cero
-conexiones a Postgres desde fuera, cero usuarios nuevos, 63 usuarios
-antes y después, y los 275 accesos SSH del día son todos de la IP del
-administrador y todos por clave pública (`passwordauthentication no`).
-
-**Qué se hizo.** Se rotaron las dos credenciales (generadas en el
-servidor, la vieja comprobada como rechazada) y se tapó en las dos
-capas: `esPublico()` en `server.js` y reglas equivalentes en nginx.
-
-La lección: el filtro es **lista blanca por extensión**, no lista negra
-de rutas. Una lista negra se queda corta en cuanto alguien añade un
-archivo nuevo al proyecto — que es exactamente cómo se llegó aquí.
+`server.js` solo entrega lo que pasa `esPublico()`: los tipos de archivo que un navegador necesita,
+por **lista blanca de extensión**, y nunca nada de las carpetas privadas (`api/`, `scripts/`, `docs/`,
+`migrations/`...) ni lo que empieza por punto; nginx repite reglas equivalentes. Una lista negra de
+rutas se queda corta en cuanto alguien añade un archivo nuevo al proyecto, y así se estuvo sirviendo
+el `.env` hasta el 2/09/2026 (lo cuenta [LA FUGA DEL .ENV](../historia/FUGA-DEL-ENV.md)).
 
 Si algún día se cambia esa función, la comprobación rápida es:
 

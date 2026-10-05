@@ -59,6 +59,7 @@ pruebas) y su documentación, que empieza aquí.
 | 16/09/2026 | [AVISOS-ROTOS](docs/historia/AVISOS-ROTOS.md) | Por qué los avisos en vivo pasaron dos semanas sin funcionar tras la mudanza al VPS, y el adiós a Pusher |
 | 16/09/2026 | [IMAGEN-NO-ENCONTRADA](docs/historia/IMAGEN-NO-ENCONTRADA.md) | La marca de imagen rota que dejaba sobre el avatar una prenda quitada o retirada: de dónde salía y cómo se arregló |
 | 16/09/2026 | [LIENZO-DEL-CATALOGO](docs/historia/LIENZO-DEL-CATALOGO.md) | Los dibujos del catálogo que no miden el lienzo de 327x504: cuántos son, qué dice la base y el trabajo que quedó pendiente |
+| 02/09/2026 | [FUGA-DEL-ENV](docs/historia/FUGA-DEL-ENV.md) | El día que el servidor entregaba su `.env`: quién lo leyó, qué alcance tuvo, qué se hizo y la lección de la lista blanca |
 | 01/09/2026 | [MUDANZA-AL-VPS](docs/historia/MUDANZA-AL-VPS.md) | De Vercel y Neon a un servidor propio: lo que cambió del código y cómo se migraron los datos |
 
 ## Especificaciones

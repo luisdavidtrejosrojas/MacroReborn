@@ -82,7 +82,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 | §7 La migración de los datos | 176-210 | `historia/MUDANZA-AL-VPS.md` | | 05/10/2026 |
 | §8 Dominio y HTTPS | 211-235 | `ref/VPS.md` | Sin la IP | |
 | §9 Entrada de seguridad y rendimiento | 236-243 | `ref/VPS.md` | | |
-| §9 La fuga del `.env` | 244-287 | `historia/FUGA-DEL-ENV.md` | IP de fuera tapadas; en `ref/VPS.md` queda el resumen y lo que dejó (la lista blanca) | |
+| §9 La fuga del `.env` | 244-287 | `historia/FUGA-DEL-ENV.md` | IP de fuera tapadas; en `ref/VPS.md` queda el resumen y lo que dejó (la lista blanca) | 05/10/2026 |
 | §9 fail2ban | 288-331 | `ref/VPS.md` | Se corrige con lo que diga el VPS | |
 | §9 Límites, caché, cabeceras, compresión, cluster y medidas | 332-433 | `ref/VPS.md` | Las medidas, con su fecha | |
 | §10 Lo que falta y Resuelto | 434-458 | `ref/VPS.md` | Cada punto, comprobado | |

@@ -68,7 +68,7 @@ funcionan y que no lleva datos sensibles. Si algo que cuenta ya no es así, se a
 | `docs/historia/IMAGEN-NO-ENCONTRADA.md` | 05/10/2026 | Con §7 de `DESARROLLO.md`, de donde salió entera (115 líneas, movidas por script) | Nada: es historia |  |
 | `docs/historia/AVISOS-ROTOS.md` | 05/10/2026 | Con §9 de `DESARROLLO.md` («Por qué llevaba dos semanas roto», 17 líneas) y la frase de §2.3 sobre `_pusher.js` | Nada: es historia |  |
 | `docs/historia/MUDANZA-AL-VPS.md` | 05/10/2026 | Con §3 (menos 3.4) y §7 de `VPS.md` y con §2.1 de `DESARROLLO.md`, de donde salieron enteras | Nada: es historia. Su cita a la §3.3 de `VPS.md`, que ya no existe, pasa a un enlace dentro del propio documento |  |
-| `docs/historia/FUGA-DEL-ENV.md` | | | | |
+| `docs/historia/FUGA-DEL-ENV.md` | 05/10/2026 | Con «La fuga del `.env`» de §9 de `VPS.md`, de donde salió entera | Nada: es historia. Sus tres IP de fuera, tapadas (regla XXV) |  |
 | `docs/historia/CONTRASENAS-EN-CLARO.md` | 05/10/2026 | Con §1, §3 y §5 de `CUENTAS.md` y §2.4, §3.3 y §4 de `DESARROLLO.md`, de donde salieron enteras; §2.2 de `DESARROLLO.md` se fundió en §2 de `CUENTAS.md` | Nada: es historia. Sus tres citas a `CUENTAS.md` pasaron a enlaces dentro del propio documento |  |
 | `docs/historia/LLAVE-SSH.md` | | | | |
 | `docs/historia/SALDOS-REHECHOS.md` | | | | |
