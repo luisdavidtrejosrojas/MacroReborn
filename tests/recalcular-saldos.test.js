@@ -3,7 +3,7 @@
 // ==============================
 // Con la economía nueva (04/10/2026) cada cuenta pasa a tener lo que
 // habría juntado si las reglas nuevas hubieran estado siempre, y a nadie
-// le baja (scripts/recalcular-saldos.js, docs/referencia/ECONOMIA.md). Se prueba la
+// le baja (scripts/recalcular-saldos.js, docs/historia/SALDOS-REHECHOS.md). Se prueba la
 // cuenta regla por regla, y después el script entero contra una base
 // PGlite: lo que lee, lo que escribe y que no pisa lo ganado mientras
 // tanto.
