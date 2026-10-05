@@ -28,6 +28,7 @@
 //     que no queda ningún password en claro.
 
 const bcrypt = require("bcryptjs");
+const { cuentaPorNombre } = require("./_utils");
 
 // Costo de trabajo de bcrypt: 10 es el estándar recomendado hoy.
 // Más alto = más difícil de romper, pero más lento (imperceptible
@@ -60,11 +61,17 @@ async function verificarHash(contrasenaPlana, hash) {
 async function verificarContrasenaYMigrar(sql, username, contrasenaPlana) {
   if (!username || !contrasenaPlana) return null;
 
+  // Con las mayúsculas que sea: "Jader" entra a "jader" si es la única
+  // con ese nombre (cuentaPorNombre() en api/_utils.js). Antes no podía,
+  // y así se crearon las dos parejas del punto 31 de docs/AUDITORIA.md.
+  const cuenta = await cuentaPorNombre(sql, username);
+  if (!cuenta) return null;
+
   const filas = await sql`
     SELECT id, username, level, xp, created_at, bio, avatar, status,
            password, password_hash
     FROM users
-    WHERE username = ${username};
+    WHERE id = ${cuenta.id};
   `;
 
   if (filas.length === 0) return null;
@@ -161,7 +168,7 @@ class PasswordService {
 
     if (!usuario) return { ok: false };
 
-    await this._sql`DELETE FROM likes WHERE username = ${username};`;
+    await this._sql`DELETE FROM likes WHERE username = ${usuario.username};`;
     await this._sql`DELETE FROM users WHERE id = ${usuario.id};`;
 
     return { ok: true };

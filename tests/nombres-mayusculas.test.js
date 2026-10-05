@@ -27,7 +27,7 @@ const { crearBaseLocal, crearSqlPGlite } = require("../scripts/pglite");
 const { usarSqlLocal } = require("../api/_db");
 const { cuentaPorNombre, getUserId } = require("../api/_utils");
 
-let db, sql, users;
+let db, sql, users, auth;
 const CLAVE = "clave-de-prueba";
 const ids = {};
 
@@ -36,6 +36,7 @@ before(async () => {
   sql = crearSqlPGlite(db);
   usarSqlLocal(sql);
   users = require("../api/users");
+  auth = require("../api/auth");
   const hash = bcrypt.hashSync(CLAVE, 4);
   for (const username of ["MATEO503", "jader", "Jader"]) {
     const r = await db.query(
@@ -64,6 +65,7 @@ function llamar(handler, metodo, query, body, headers) {
 }
 
 const perfil = (escrito, extra) => llamar(users, "GET", { username: escrito, ...extra });
+const entrar = (escrito, clave) => llamar(auth, "POST", { action: "login" }, { username: escrito, password: clave || CLAVE });
 
 test("el nombre exacto, como siempre", async () => {
   assert.equal(await nombreDe("MATEO503"), "MATEO503");
@@ -109,4 +111,22 @@ test("el perfil de cada mitad de una pareja es el suyo, y el ambiguo no abre nin
   assert.equal(Number((await perfil("Jader")).cuerpo.user.id), ids.Jader);
   assert.equal((await perfil("JADER")).codigo, 404);
   assert.equal((await perfil("Nadie")).codigo, 404);
+});
+
+test("se entra con otras mayúsculas, y la sesión lleva el nombre guardado", async () => {
+  const r = await entrar("mateo503");
+  assert.equal(r.cuerpo.success, true, JSON.stringify(r.cuerpo));
+  assert.equal(r.cuerpo.user.username, "MATEO503");
+  assert.ok(r.cuerpo.token);
+});
+
+test("la contraseña sigue mandando", async () => {
+  const r = await entrar("mateo503", "otra-clave");
+  assert.notEqual(r.cuerpo.success, true);
+});
+
+test("cada mitad de una pareja entra a la suya, y el ambiguo no entra", async () => {
+  assert.equal((await entrar("jader")).cuerpo.user.username, "jader");
+  assert.equal((await entrar("Jader")).cuerpo.user.username, "Jader");
+  assert.notEqual((await entrar("JADER")).cuerpo.success, true);
 });
