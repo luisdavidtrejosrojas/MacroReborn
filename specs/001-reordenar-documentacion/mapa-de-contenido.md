@@ -121,7 +121,7 @@ Destinos abreviados: `ref/` es `docs/referencia/`, `guias/` es `docs/guias/`, `l
 |---|---|---|---|
 | `ARTE.md` (274) | `ref/ARTE.md` | Nada. §6 se corrige: el avatar compuesto en el servidor se adoptó el 21/09 (enlace a `ref/AVATARES.md`). §3 gana el resumen del lienzo y §7 el enlace a sus pendientes. Al revisarlo, el §6 de entonces pasó entero a `historia/AVATARES-AL-SERVIDOR.md` («Lo que ARTE descartó el 16/09/2026») y en su sitio queda el resumen con los enlaces | 05/10/2026 |
 | `ECONOMIA.md` (199) | `ref/ECONOMIA.md` | §5 Los saldos rehechos (134-186) a `historia/SALDOS-REHECHOS.md`; en la referencia quedan el resumen y el aviso de que no se repite | 05/10/2026 |
-| `TIENDA.md` (215) | `ref/TIENDA.md` | Nada. Se corrigen `js/tienda.js` y `css/tienda.css`, que no existen | |
+| `TIENDA.md` (215) | `ref/TIENDA.md` | Nada. Se corrigen `js/tienda.js` y `css/tienda.css`, que no existen | 05/10/2026 |
 | `MODERACION.md` (175) | `ref/MODERACION.md` | §5 Lo que se hizo al activarlo (142-152) a `historia/ACTIVAR-LA-MODERACION.md` | 05/10/2026 |
 | `SEO.md` (206) | `ref/SEO.md` | Nada. Se corrigen las cifras (15 páginas) | 05/10/2026 |
 | `JUEGOS.md` (253) | `guias/JUEGOS.md` | §6 Convenciones (212-223) se cambia por el enlace a la constitución, después de comprobar que no dice nada más | |

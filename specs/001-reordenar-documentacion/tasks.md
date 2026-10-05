@@ -181,7 +181,7 @@ en la lista de revisión y se le cuenta a Luis, que decide si entra en `docs/lis
 - [X] T042 [US2] Revisar `docs/referencia/ECONOMIA.md`.
 - [X] T043 [US2] Revisar `docs/referencia/MODERACION.md`.
 - [X] T044 [US2] Revisar `docs/referencia/SEO.md`; las cifras de páginas, con su fecha.
-- [ ] T045 [US2] Revisar `docs/referencia/TIENDA.md`.
+- [X] T045 [US2] Revisar `docs/referencia/TIENDA.md`.
 - [ ] T046 [US2] Revisar `docs/guias/DESARROLLO.md`.
 - [ ] T047 [US2] Revisar `docs/guias/JUEGOS.md`; su §6 se cambia por el enlace a la constitución, después de comprobar que no dice nada más.
 - [ ] T048 [US2] Revisar `docs/guias/CAMBIOS-DE-OTROS-DEVS.md`.

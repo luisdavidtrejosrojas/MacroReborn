@@ -1,4 +1,12 @@
-# LA TIENDA DE AVATARES
+# TIENDA — el Bazar, las prendas a la venta
+
+> **De qué trata:** la tienda de prendas, el Bazar: lo que se decidió, los precios, la migración 022
+> que puso a la venta el catálogo entero, sus piezas en el servidor y en la página, los caminos que
+> llevan a ella, lo que decide el equipo de arte, lo que queda y las pruebas.
+>
+> **Para quién:** el equipo de desarrollo y el de arte.
+>
+> **Revisado:** 05/10/2026
 
 Hecha el 24 de septiembre de 2026. Era lo que más pedía la comunidad:
 "¡no hay tienda!". Hasta entonces la tienda eran las doce últimas
@@ -7,11 +15,12 @@ solo clic y sin preguntar, y el editor del perfil mandaba ahí a comprar
 prendas que casi nunca salían en esas doce.
 
 Ahora tiene página propia con todo el catálogo. Desde el 28/09/2026 es
-el **Bazar** (`bazar.html`): el diseño del zip que mandó otro dev el
-22/09, que se eligió frente a la primera página (`tienda.html`) viendo
+el **Bazar** (`bazar.html`): el diseño de un zip de otro dev, hecho el
+22/09 y llegado el 28/09
+([el caso](../historia/CASOS-DE-OTROS-DEVS.md#el-caso-del-28092026)), que se eligió frente a la primera página (`tienda.html`) viendo
 las dos en capturas. `tienda.html` redirige al Bazar con la misma
 dirección, así que `tienda.html?prenda=<valor>` sigue llevando a esa
-prenda. Ver 4.
+prenda. Ver [las piezas](#4-las-piezas).
 
 ---
 
@@ -21,9 +30,9 @@ El 24/09/2026, a partir de la auditoría de lo que había:
 
 | Decisión | Por qué |
 |---|---|
-| Página propia, no un panel más grande | Son unas 750 prendas: hacen falta filtros, orden y una dirección que se pueda enlazar |
+| Página propia, no un panel más grande | Eran unas 750 prendas: hacen falta filtros, orden y una dirección que se pueda enlazar |
 | Sin probador, por ahora | Probarse lo que no se ha comprado es dibujar con el servidor prendas de pago para cualquiera. La vista previa del editor solo dibuja lo que se puede guardar (`api/_vista-previa.js`) |
-| Los precios del equipo de arte no se tocan | Los puso quien hizo la prenda, al subirla. Hasta el 04/10/2026: desde entonces van por rareza (ver 2) |
+| Los precios del equipo de arte no se tocan | Los puso quien hizo la prenda, al subirla. Hasta el 04/10/2026: desde entonces van por rareza ([los precios](#2-los-precios)) |
 | Todo lo publicado tiene precio | Las 594 prendas del catálogo original eran gratis. Se les puso un precio por tipo (abajo) |
 | Lo que alguien ya llevaba, se le regala | Quien llevaba puesta o guardada una de esas 594 la tiene como comprada, a 0. Sin eso la seguiría llevando, pero al quitársela no podría volver a ponérsela sin pagar |
 
@@ -31,7 +40,7 @@ El 24/09/2026, a partir de la auditoría de lo que había:
 
 ## 2. Los precios
 
-Desde el 04/10/2026, por rareza (`docs/referencia/ECONOMIA.md`):
+Desde el 04/10/2026, por rareza ([ECONOMIA](ECONOMIA.md)):
 
 | Rareza | Precio |
 |---|---|
@@ -61,14 +70,15 @@ Los del equipo de arte iban de 1.500 a 50.000 (mediana, 2.900). Los
 personajes base no se venden.
 
 Las rarezas viven en `api/_precios.js`, que es lo que se usa para que
-ninguna prenda quede gratis sin querer (sección 5). La migración 027
+ninguna prenda quede gratis sin querer
+([el equipo de arte y los precios](#5-el-equipo-de-arte-y-los-precios)). La migración 027
 lleva su propia copia en SQL, porque no puede leer el módulo;
 `tests/precios.test.js` vigila que digan lo mismo.
 
 **Lo que da de sí el saldo.** Una cuenta nueva empieza con 500 monedas
 y no tiene nada puesto aparte del personaje: le alcanza para una rara,
 o para diez comunes. Cómo se ganan y cuánto se tarda en llegar a cada
-rareza, en `docs/referencia/ECONOMIA.md`.
+rareza, en [ECONOMIA](ECONOMIA.md#3-cómo-se-ganan).
 
 ---
 
@@ -134,12 +144,12 @@ ventas y el "solo lo que puedo comprar", que el Bazar no trae.
 
 **Los caminos que llevan a ella:**
 
-- La barra de navegación de todas las páginas, detrás de "Juegos"
-  (`js/navbar.js`): "🛍️ Bazar".
+- La barra de navegación de todas las páginas: el enlace "Bazar", detrás de "Juegos", y el "+"
+  junto al saldo (`js/navbar.js`).
 - `bazar.html?prenda=<valor>` enseña esa prenda y pregunta si
   comprarla. Ahí mandan el candado del editor del perfil y el
   escaparate de Comunidad.
-- El portal de la portada ("Abrir Bazar", `portal-growth.js`).
+- Comunidad (`comunidad-ranking.html`): "Ir al Bazar" y "Ver todo el Bazar".
 - Tras comprar, `perfil.html?ponerse=<valor>` abre el editor con la
   prenda puesta. Si es de otro personaje, cambia de personaje y lo
   avisa.
@@ -147,7 +157,7 @@ ventas y el "solo lo que puedo comprar", que el Bazar no trae.
 **Nunca el dibujo suelto.** El Bazar solo enseña previsualizaciones:
 la prenda puesta en un maniquí, 96 px, en JPG. El dibujo suelto es el
 arte del equipo y `/prendas/` está cerrado a los demás
-(`docs/referencia/AVATARES.md`, fase 5).
+([la puerta cerrada](AVATARES.md#las-piezas)).
 
 ---
 
@@ -155,7 +165,7 @@ arte del equipo y `/prendas/` está cerrado a los demás
 
 Decidido el 24/09/2026, el mismo día de la tienda: todo lo que se
 publica se vende. Desde el 04/10/2026 el equipo elige la rareza, no el
-precio (`docs/referencia/ECONOMIA.md`):
+precio ([ECONOMIA](ECONOMIA.md)):
 
 - **Al subir** (`arte.html` y `taller.html`), cada prenda llega con la
   rareza que se elija, común si no se elige otra. La API sigue
