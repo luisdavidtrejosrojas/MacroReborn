@@ -9,7 +9,7 @@ existen y cómo probar los cambios localmente.
 | Guía | Contenido |
 |---|---|
 | `docs/guias/DESARROLLO.md` | Módulos del backend, infraestructura local (PGlite, servidor local, tests) y despliegue |
-| `docs/SEGURIDAD.md` | Sistema de hash de contraseñas, migración de datos existentes y plan de activación |
+| `docs/referencia/CUENTAS.md` | Sistema de hash de contraseñas, migración de datos existentes y plan de activación |
 | `docs/guias/JUEGOS.md` | Cómo agregar un juego al catálogo: proceso completo, prueba local y notas de Ruffle/CORS e iframes |
 | `docs/referencia/ARTE.md` | Cómo se protege el catálogo de prendas: qué compra cada pieza y qué no |
 | `docs/referencia/AVATARES.md` | Pasar la composicion de avatares al servidor: por que, lo medido sobre el VPS y las cinco fases |
@@ -57,7 +57,7 @@ servidor de producción. Detalles en `docs/guias/DESARROLLO.md`.
 ## Sistemas documentados
 
 - **Contraseñas**: hash bcrypt, migración perezosa de usuarios
-  existentes y backfill protegido — ver `docs/SEGURIDAD.md`.
+  existentes y backfill protegido — ver `docs/referencia/CUENTAS.md`.
 - **Juegos**: cómo se agrega un juego nuevo al catálogo (datos,
   portada, sitemap, prueba local) — ver `docs/guias/JUEGOS.md`.
 - **Avisos en vivo**: cómo aparece una notificación sin recargar, con

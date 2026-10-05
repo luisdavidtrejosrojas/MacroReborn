@@ -56,7 +56,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS monedas_ultimo_otorgamiento TIMESTAMP
 --
 -- Cómo funciona el reseteo perezoso (mismo criterio que la migración
 -- perezosa de contraseñas de la 013, ver api/_password.js y
--- docs/SEGURIDAD.md): cuando el código va a otorgar, compara
+-- docs/referencia/CUENTAS.md): cuando el código va a otorgar, compara
 -- monedas_ganadas_fecha contra la fecha UTC de hoy. Si no coinciden
 -- -es de ayer, o es NULL en los usuarios que ya existían antes de esta
 -- migración-, el acumulado guardado se ignora y se cuenta como 0.

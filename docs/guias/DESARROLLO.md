@@ -47,7 +47,7 @@ El único lugar que sabe hashear y verificar contraseñas:
 - Clase `PasswordService(sql)` con `registrar`, `verificar`,
   `cambiarContrasena` y `eliminarCuenta`.
 
-Detalles del flujo (ver `docs/SEGURIDAD.md` para el panorama
+Detalles del flujo (ver `docs/referencia/CUENTAS.md` para el panorama
 completo):
 
 - **Registro**: guarda solo `password_hash`; el texto plano nunca se
@@ -121,7 +121,7 @@ Abre `http://localhost:3001`:
 ### 3.3 `scripts/migrar-passwords.js` — backfill
 
 Pica las contraseñas en texto plano restantes y borra el texto.
-Protecciones (ver `docs/SEGURIDAD.md`):
+Protecciones (ver `docs/referencia/CUENTAS.md`):
 
 - Sin `--local` ni `--produccion` se niega a correr.
 - `--produccion` exige confirmación escrita ("SI").
@@ -206,7 +206,7 @@ Orden estricto (la migración SIEMPRE antes que el código que la usa):
    `users.password_hash`).
 2. Aplicar la migración 014 (quita el NOT NULL de `users.password`;
    sin ella, registro y login fallan con el error de not-null
-   constraint — ver `docs/SEGURIDAD.md`).
+   constraint — ver `docs/referencia/CUENTAS.md`).
 3. Aplicar la migración 015 (agrega la contabilidad de monedas por tiempo;
    no modifica `users.monedas`).
 4. Desplegar el código nuevo (todo el repo).
@@ -221,7 +221,7 @@ Orden estricto (la migración SIEMPRE antes que el código que la usa):
 **Estado (16/09/2026)**: los pasos 1 a 7 están hechos. El backfill se
 corrió contra el VPS y no queda ni una contraseña en texto plano. El
 paso 8 sigue pendiente a propósito; el detalle está en
-`docs/SEGURIDAD.md` §5.
+`docs/referencia/CUENTAS.md#5-plan-de-activación-en-producción`.
 
 Si se despliega el código sin la 013, registro y login fallan (la
 columna `password_hash` no existe). Si se despliega sin la 014,
@@ -550,7 +550,7 @@ picadas con bcrypt en `password_hash`.
 
 Hasta el 16/09/2026 el respaldo traía además `password` **en texto
 plano** para quien no hubiera entrado desde la migración perezosa. El
-backfill cerró ese hueco en la base (`docs/SEGURIDAD.md` §5), pero no en
+backfill cerró ese hueco en la base (`docs/referencia/CUENTAS.md#5-plan-de-activación-en-producción`), pero no en
 los respaldos ya sacados: **un `.sql.gz` anterior a esa fecha sigue
 llevando 17 contraseñas en claro**. Los del VPS se borran solos a los 14
 días; el que esté en `datos-locales/` de un portátil, no. Si hay uno
