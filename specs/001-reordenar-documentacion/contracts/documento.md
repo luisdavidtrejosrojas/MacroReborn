@@ -51,7 +51,9 @@ Las cuatro primeras líneas con texto son el título y tres campos, en este orde
 - **Cifras que cambian solas** (pruebas, cuentas, páginas, prendas): con su fecha («unas 1.300
   pruebas al 05/10/2026») o fuera de la referencia.
 - **Fechas** como en el resto de la documentación: «el 21/09/2026».
-- **Sin emojis** en lo nuevo o reescrito (regla XXX). Los antiguos se quedan.
-- **Sin datos sensibles** (regla XXV): ni IP enteras (se escriben `172.x.x.x` o se nombra el dominio),
-  ni correos, ni datos personales. Las dos excepciones están en [research.md](../research.md), D8.
+- **Sin emojis** en lo nuevo ni en los pasajes reescritos (regla XXX, CE-007). Los antiguos de los
+  documentos que solo se revisan se quedan.
+- **Sin datos sensibles** (regla XXV), sin excepciones: ni IP enteras (se escriben `172.x.x.x` o se
+  nombra el dominio), ni correos (se nombran: «el correo de autor de la regla V», «el buzón que publica
+  `terminos.html`»), ni datos personales ([research.md](../research.md), D8).
 - Español, impersonal o con el registro que ya usa cada documento.
