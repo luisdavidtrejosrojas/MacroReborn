@@ -91,4 +91,4 @@ está en otros sitios:
   los dos volcados de Neon del 01/09/2026, con las 21 que había ese día
   ([MUDANZA-AL-VPS](../historia/MUDANZA-AL-VPS.md)), y su copia del PC. Una base de antes de esa fecha
   bajada para probar tampoco se borra sola
-  ([DESARROLLO](../guias/DESARROLLO.md#8-probar-contra-los-datos-de-verdad)).
+  ([DESARROLLO](../guias/DESARROLLO.md#probar-contra-los-datos-de-verdad)).

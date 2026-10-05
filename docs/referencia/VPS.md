@@ -146,7 +146,7 @@ daba un servicio administrado, así que estas copias son la única vuelta
 atrás. Conviene bajar una a otro lado de vez en cuando: un respaldo que
 solo existe en el servidor que respalda no protege de perder el servidor.
 `npm run db:traer` baja uno de paso
-([DESARROLLO](../guias/DESARROLLO.md#8-probar-contra-los-datos-de-verdad)).
+([DESARROLLO](../guias/DESARROLLO.md#probar-contra-los-datos-de-verdad)).
 
 ## 6. El cron semanal
 
