@@ -383,6 +383,10 @@ perfil si el nombre del enlace coincide con el tuyo sin mirar
 mayúsculas, así que "jader" no puede ver el perfil de "Jader". Lo sujeta
 `tests/nombres-mayusculas.test.js`.
 
+**Nota al 28, del 05/10/2026.** `portal-growth.js` sigue en la raíz, y lo cargan
+`comunidad-ranking.html`, `juego.html` y `perfil.html`. Al lado hay otros tres scripts, `script.js`,
+`home-portal.js` y `juego.js`, que no carga ninguna página: son copias viejas de los de `js/`.
+
 **Nota al 87.** Visto el 05/10/2026 al revisar TIENDA, que lo daba como uno de los caminos al
 Bazar. Es el mismo archivo que el punto 28.
 
