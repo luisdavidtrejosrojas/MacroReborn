@@ -265,7 +265,10 @@ html {
   color: var(--text-main);
   font-family: var(--font-body);
   line-height: 1.5;
-  overflow-x: hidden;
+  /* "clip", no "hidden": recorta el desborde horizontal sin convertir
+     el body en contenedor de scroll, que es lo que rompe el
+     position:sticky de la navbar en toda página que use .mr-root. */
+  overflow-x: clip;
 }
 
 .mr-root a {

@@ -1220,12 +1220,16 @@ html[data-tema="claro"] [data-mr-paleta] {
 
 /* Evita scroll horizontal en mobile (causado por elementos más anchos
    que la viewport, como grids o cards con min-width fijo). */
+/* overflow-x: clip (no "hidden") a propósito: "hidden" convierte a html/body
+   en contenedor de scroll y eso rompe position:sticky en toda la navbar
+   (se deja de quedar fija al hacer scroll) en TODO el sitio. "clip" recorta
+   el desborde horizontal igual, sin crear ese contenedor. */
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Reduce el número de propiedades animadas en la regla global:

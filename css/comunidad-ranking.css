@@ -1113,10 +1113,15 @@ body.mr-root::before {
   background-size: 240px 180px, 310px 240px, 360px 260px, 280px 230px, 330px 260px, 390px 260px, 420px 300px;
 }
 
-body.mr-root > * { position: relative; z-index: 1; }
+body.mr-root > :not(.navbar) { position: relative; z-index: 1; }
 
-/* NAVBAR: sin overrides acá — usa la hoja canónica navbar-macrojuegos.css,
-   igual que en index.html y el resto del sitio. */
+/* NAVBAR: sin overrides de fondo/color acá — usa la hoja canónica
+   navbar-macrojuegos.css, igual que en index.html y el resto del sitio.
+   Eso sí, como hijo directo de body.mr-root necesita quedar por encima
+   del fondo decorativo (::before) sin perder su position:sticky ni su
+   z-index:200 de base (inicio.css) — si no, se scrollea en vez de
+   quedarse fija arriba. */
+body.mr-root > .navbar { z-index: 200; }
 
 /* HERO */
 body.mr-root .rk-hero {
