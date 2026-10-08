@@ -253,7 +253,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
   `css/inicio.css` (RF-003, D1).
 - [X] T003 Los saltos quedan a la vista: `js/navbar.js` (RF-004, D2).
 - [X] T004 El aviso de suspensión no tapa la barra: `css/inicio.css` (RF-005, D3).
-- [ ] T005 Comunidad: la regla del fondo de estrellas, solo para los bloques de la página, en
+- [X] T005 Comunidad: la regla del fondo de estrellas, solo para los bloques de la página, en
   `css/comunidad-ranking.css` (RF-007, D4).
 - [ ] T006 El modal del 24/09 en todas las páginas, la prueba de las versiones y su nota en VPS
   (RF-008, D6).
