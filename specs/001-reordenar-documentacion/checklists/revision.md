@@ -102,14 +102,14 @@ Los resultados de los escenarios de [quickstart.md](../quickstart.md), con su fe
 
 | Escenario | Resultado | Fecha |
 |---|---|---|
-| 1. Las pruebas, en verde | | |
-| 2. Las diez preguntas en dos clics | | |
-| 3. Confiar en lo que dice | | |
-| 4. La visión de conjunto | | |
-| 5. Sumarse en menos de 30 minutos (Claude, sobre una copia limpia) | | |
-| 5. Sumarse en menos de 30 minutos (una persona del equipo) | | |
+| 1. Las pruebas, en verde | Cumple: `npm test` en verde, 1.337 pruebas con las seis comprobaciones de la documentación, también en la copia limpia. Y falla cuando debe: un enlace del README roto y una línea «Revisado» borrada dan tres fallos (el enlace cuenta también como mención), cada uno con su archivo, su línea o su sitio, y qué corregir | 08/10/2026 |
+| 2. Las diez preguntas en dos clics | Cumple: desde el README, DESPLEGAR, TIENDA, AUDITORIA, SUMARSE, JUEGOS, ECONOMIA, MODERACION y HISTORIAL están a un clic; los datos de verdad y los respaldos, a dos (el documento y su sección). La prueba confirma que cada documento de `docs/` está en el índice con su cabecera | 08/10/2026 |
+| 3. Confiar en lo que dice | Cumple: cada documento tiene su fila con fecha y sin nada caducado pendiente (lo que pedía cambiar código o servidor está en la auditoría, puntos 86 a 90). «Público» solo sale en historia y con su fecha. fail2ban: el servidor lo tiene apagado y deshabilitado, como cuenta VPS. El despliegue entero solo lo explica DESPLEGAR; los demás enlazan y el `CLAUDE.md` lo resume | 08/10/2026 |
+| 4. La visión de conjunto | Cumple: leyendo solo `ARQUITECTURA.md` se nombran las partes (páginas, servidor y API, base y migraciones, producción, pruebas e integración continua, herramientas, `infra/` y lo que no está en git) y el documento de cada una; su tabla tiene una fila por área, también las siete sin documento propio | 08/10/2026 |
+| 5. Sumarse en menos de 30 minutos (Claude, sobre una copia limpia) | Cumple, en 82 segundos: clonar, `npm ci`, `npm test` en verde y el sitio en `PORT=3101`, con portada, catálogo y la entrada de `demo`. El 05/10 falló el primer paso, `git clone git@github.com:...`, sin llave SSH en GitHub: la guía clona ahora por HTTPS (commit aparte). La guía dice qué pasos de Spec Kit seguir, cómo nombrar los commits y que desplegar necesita el OK de Luis. La copia se borró al terminar | 08/10/2026 |
+| 5. Sumarse en menos de 30 minutos (una persona del equipo) | Pendiente de probar: hace falta que alguien del equipo siga la guía en su máquina | — |
 | 6. El historial | Cumple CE-009: las diez semanas con commits, de la del 20/07 a la del 05/10, tienen su sección (`semanas.js`), y cada commit está contado en un cambio (comprobado por script, semana a semana). Se encuentran, con su fecha, la economía nueva y el pelo de atrás (04/10), y los nombres sin distinguir mayúsculas y la llegada de Spec Kit (05/10). Falta la última entrada, la de esta spec, que se añade al unirla a `main` (T074) | 05/10/2026 |
-| 7. Nada se pierde | | |
-| 8. Sin emojis ni datos sensibles | | |
-| 9. Fuera del repositorio | | |
-| 10. La constitución v1.0.1 | | |
+| 7. Nada se pierde | Cumple CE-006: todas las filas del mapa tienen fecha en «Hecho»; las cuatro que faltaban (la memoria, su `LEEME.md`, ARQUITECTURA y AVISOS) se hicieron el 05/10 y no se habían apuntado | 08/10/2026 |
+| 8. Sin emojis ni datos sensibles | Cumple: en `docs/` solo quedan dos emojis antiguos, el del ejemplo de JUEGOS y uno de AUDITORIA, que se quedan (regla XXX); SUGERENCIAS, cero. Ni IP enteras ni correos en `docs/`, el README o el `CLAUDE.md`: lo que marca la búsqueda son direcciones de SSH (`azureuser@macroreborn.com`, `git@github.com`) y una cifra con puntos | 08/10/2026 |
+| 9. Fuera del repositorio | Cumple: la memoria, la viva y su copia, no cita rutas viejas; se puso al día con la v1.0.1 y se copió entera sin borrar nada (17 archivos, iguales). La tabla de rutas viejas tiene los 15 documentos de antes, más lo que salió de cada uno. `memoria-claude/LEEME.md` dice que el repositorio es privado y su receta no borra nada | 08/10/2026 |
+| 10. La constitución v1.0.1 | Cumple: versión 1.0.1, con su informe de sincronización y la fecha de la enmienda; Luis la aprobó en T004 y decidió el correo de la regla V al cerrarla. Sus rutas pasan la prueba | 08/10/2026 |
