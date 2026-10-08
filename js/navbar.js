@@ -36,6 +36,20 @@ if (window.MRApp && typeof MRApp.subscribe === "function") {
     window.addEventListener("macro:palette-change", () => aplicarEstado());
 })();
 
+// La barra se queda fija arriba (position: sticky), así que un salto a una
+// parte de la página (scrollIntoView, un enlace a un ancla) dejaría lo que
+// busca debajo de ella. Su altura es el margen de esos saltos. Se mide porque
+// cambia con el ancho, y se vuelve a medir si cambia; con el menú del móvil
+// abierto la barra crece, y esa altura no cuenta.
+(function margenDeLosSaltos(){
+    if (!navbar || typeof ResizeObserver !== "function") return;
+    function medir(){
+        if (navbar.classList.contains("nav-menu-abierto")) return;
+        document.documentElement.style.scrollPaddingTop = navbar.offsetHeight + "px";
+    }
+    new ResizeObserver(medir).observe(navbar);
+})();
+
 const usuarioNav = (window.MRSession && typeof MRSession.get === "function")
     ? MRSession.get()
     : leerJSON(localStorage.getItem("usuarioActivo") || "null");
