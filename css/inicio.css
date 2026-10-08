@@ -267,7 +267,10 @@ html {
   line-height: 1.5;
   /* "clip", no "hidden": recorta el desborde horizontal sin convertir
      el body en contenedor de scroll, que es lo que rompe el
-     position:sticky de la navbar en toda página que use .mr-root. */
+     position:sticky de la navbar en toda página que use .mr-root.
+     El "hidden" de delante es el respaldo para los navegadores que no
+     entienden "clip" (Safari anterior a la 16). */
+  overflow-x: hidden;
   overflow-x: clip;
 }
 
