@@ -16,10 +16,13 @@ con ella, gana ella. Y para saber qué es cada parte del sistema antes de tocarl
 
 ## 1. Preparar el entorno
 
-Hace falta Node 20.19 o más nuevo, y acceso al repositorio, que es privado.
+Hace falta Node 20.19 o más nuevo, y acceso al repositorio, que es privado. Se clona por HTTPS: la
+primera vez, git pide entrar con la cuenta de GitHub, y en Windows el gestor de credenciales lo
+recuerda. Quien tenga una llave SSH en su cuenta de GitHub puede usar también
+`git@github.com:valenmgg/MacroReborn.git`.
 
 ```bash
-git clone git@github.com:valenmgg/MacroReborn.git
+git clone https://github.com/valenmgg/MacroReborn.git
 cd MacroReborn
 npm ci              # las dependencias, tal cual las fija package-lock.json
 npm test            # unas 1.300 pruebas, cerca de un minuto; no tocan nada real
