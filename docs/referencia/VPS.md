@@ -320,7 +320,11 @@ corre es código cacheado, no el que está en el servidor.
    URL—. No hace falta tocarlo en cada despliegue, porque la capa 1 se encarga;
    se sube cuando un cambio en un archivo no puede convivir esos cinco minutos
    con la versión vieja de otro, como la barra nueva del 03/10/2026. Por eso
-   hoy conviven varias fechas.
+   hoy conviven varias fechas, una por archivo: la de cada uno se sube en
+   todas las páginas que lo piden. `tests/versiones.test.js` lo vigila, y así
+   salta también una página que se quedó atrás por una copia vieja, como la
+   de Comunidad del 06/10/2026 (la
+   [spec 002](../../specs/002-fundir-arreglo-barra/spec.md)).
 
 **La regla.** `immutable` solo en URLs que lleven la huella de su contenido,
 como las de los avatares compuestos con su `?v=<huella>`: ahí no hay nada que

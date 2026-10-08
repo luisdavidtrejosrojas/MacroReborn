@@ -255,7 +255,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [X] T004 El aviso de suspensión no tapa la barra: `css/inicio.css` (RF-005, D3).
 - [X] T005 Comunidad: la regla del fondo de estrellas, solo para los bloques de la página, en
   `css/comunidad-ranking.css` (RF-007, D4).
-- [ ] T006 El modal del 24/09 en todas las páginas, la prueba de las versiones y su nota en VPS
+- [X] T006 El modal del 24/09 en todas las páginas, la prueba de las versiones y su nota en VPS
   (RF-008, D6).
 - [ ] T007 Comprobar: `npm test`, las 25 páginas en PC y en móvil, y las capturas (CE-001 a CE-009).
 - [ ] T008 CAMBIOS-DE-OTROS-DEVS: lo que se sube directo a `main`.
