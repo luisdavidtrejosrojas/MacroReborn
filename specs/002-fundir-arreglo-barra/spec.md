@@ -257,6 +257,34 @@ Un commit por tarea, subido a `origin` al cerrarla.
   `css/comunidad-ranking.css` (RF-007, D4).
 - [X] T006 El modal del 24/09 en todas las páginas, la prueba de las versiones y su nota en VPS
   (RF-008, D6).
-- [ ] T007 Comprobar: `npm test`, las 25 páginas en PC y en móvil, y las capturas (CE-001 a CE-009).
+- [X] T007 Comprobar: `npm test`, las 25 páginas en PC y en móvil, y las capturas (CE-001 a CE-009).
 - [ ] T008 CAMBIOS-DE-OTROS-DEVS: lo que se sube directo a `main`.
 - [ ] T009 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-010).
+
+## Comprobación (08/10/2026)
+
+Con el servidor local (`npm run db:local`), Edge sin ventana y la cuenta `demo`, en las 25 páginas con
+barra, en PC (1366×800) y en móvil (390×844):
+
+- **CE-001**: la barra está arriba tras bajar en las 50 medidas. `ranking.html` lleva a Comunidad, y
+  `usuario.html` se midió también con otra cuenta, porque con la propia lleva al perfil.
+- **CE-002**: nada se mueve de lado con la rueda: 0 píxeles en las 50.
+- **CE-003**: Comunidad pide sus siete archivos con las versiones de antes del 06/10, y ningún archivo
+  del sitio se pide ya con dos versiones (antes, 7).
+- **CE-004**: 37 saltos medidos al principio de una sección, con 0 píxeles tapados; en las demás
+  páginas no hay sección que pueda subir hasta arriba. El salto al editor del avatar, en el perfil y en
+  móvil, lo deja a 124 píxeles, justo debajo de la barra.
+- **CE-005**: el aviso de suspensión no pisa la barra en ninguna de las 50 (antes, 42 píxeles en PC y
+  63 en móvil).
+- **CE-006**: en Comunidad, la ventana de `MRModal` cubre la pantalla, en PC y en móvil (antes salía a
+  2.492 píxeles del principio).
+- **CE-007**: `npm test`, 1.338 pruebas en verde y ninguna en rojo; una se salta según el día («hoy la
+  diaria no es de juegos»). La integración continua, como en `main`: `npm test` pasa y solo falla la
+  prueba de humo, en las monedas.
+- **CE-008**: capturas de Inicio y Comunidad en los dos tamaños, de la ventana de Comunidad abierta y
+  del salto al editor, miradas el 08/10. No entran en git.
+- **CE-009**: con la copia vieja de Comunidad puesta, `npm test` falla y nombra cinco de sus siete
+  versiones (las otras dos son de archivos que solo pide esa página); con las versiones igualadas,
+  pasa.
+- **Pendiente de probar**: un Safari anterior a la 16, que no hay aquí. Su respaldo se comprobó
+  leyendo las reglas: `hidden` va antes que `clip` en las tres.
