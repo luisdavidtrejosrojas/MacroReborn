@@ -5,7 +5,7 @@
 >
 > **Para quién:** el equipo de desarrollo.
 >
-> **Revisado:** 05/10/2026
+> **Revisado:** 08/10/2026
 
 **Cómo se mantiene.** Cada especificación añade aquí su entrada como última tarea, antes de unirse a
 `main`, con la fecha de esa unión ([la regla](../guias/SUMARSE.md#3-commits-y-ramas)). Lo de antes se reconstruyó el
@@ -16,6 +16,17 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
 
 ## Semana del 05 al 11/10/2026
 
+- **08/10, documentación** (Luis): la spec 001 reordena la documentación por tipos (referencia,
+  guías, listas vivas e historia), la revisa entera contra el código, el servidor y la web, y la
+  completa: el índice del README, ARQUITECTURA, SUMARSE, DESPLEGAR y este historial, con una prueba que
+  vigila que no cite nada que no exista. Los hallazgos que pedían cambiar código o servidor entraron en
+  la auditoría, y la constitución pasa a la v1.0.1.
+  [Spec 001](../../specs/001-reordenar-documentacion/spec.md).
+- **06/10, el navegador** (SamuMacro): la barra queda fija al bajar por la página (`overflow-x: clip`
+  en vez de `hidden`), en tres subidas directas a `main`. Con ellas, `comunidad-ranking.html` volvió a
+  versiones viejas de sus scripts; eso se arregla en su propia especificación, antes de desplegar.
+  [`84e703a`](https://github.com/valenmgg/MacroReborn/commit/84e703a) a
+  [`eb3b224`](https://github.com/valenmgg/MacroReborn/commit/eb3b224) (3 commits).
 - **05/10, cuentas** (Luis): los nombres de usuario dejan de distinguir mayúsculas. El perfil, entrar
   y el registro buscan con una sola regla: el nombre exacto, o la única cuenta que coincida sin mirar
   mayúsculas; el registro no deja crear uno que ya existe escrito de otra forma. Punto 31 de la
