@@ -67,7 +67,7 @@ function pintarMedallaLogros(elemento, puntos){
 // Se llama MRTexto y no escaparHTML a propósito: varios archivos
 // declaran su propia función con ese nombre en el ámbito global, y dos
 // declaraciones iguales se pisan según el orden de carga. Unificar las
-// 19 copias es otra tarea (docs/AUDITORIA.md, punto 73); esto no la
+// 19 copias es otra tarea (docs/listas/AUDITORIA.md, punto 73); esto no la
 // estorba.
 const MRTexto = {
   escapar(valor) {
@@ -805,7 +805,7 @@ const ORDEN_CAPAS_AVATAR = [
 // la dirección de su dibujo suelto, para que rutaCapaAvatar() apilara
 // las capas de cada avatar.
 //
-// Desde la fase 5 de docs/AVATARES-SERVIDOR.md ninguna página dibuja
+// Desde la fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md ninguna página dibuja
 // prenda por prenda: cada avatar es una sola imagen, compuesta por el
 // servidor (ver imagenDeAvatar, más abajo), y la vista previa del editor
 // también la dibuja él. Y ese mapa era justo la lista de lo que no tiene
@@ -887,7 +887,7 @@ if(typeof document !== "undefined"){
 // ------------------------------------------------------------------
 // Desde el 21/09/2026 el servidor compone el avatar al guardarlo y lo
 // sirve como UNA imagen. El porque entero esta en
-// docs/AVATARES-SERVIDOR.md; lo que importa aqui es el numero: la
+// docs/historia/AVATARES-AL-SERVIDOR.md; lo que importa aqui es el numero: la
 // pagina de comunidad mandaba 5.562 kB de capas sueltas para pintar
 // avatares de 35 pixeles, y con miniaturas compuestas manda 468.
 //

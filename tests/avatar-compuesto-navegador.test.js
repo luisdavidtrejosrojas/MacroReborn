@@ -1,7 +1,7 @@
 // ==============================
 // EL NAVEGADOR PIDE EL COMPUESTO — tests/avatar-compuesto-navegador.test.js
 // ==============================
-// Fase 3 de docs/AVATARES-SERVIDOR.md: las páginas dejan de apilar
+// Fase 3 de docs/historia/AVATARES-AL-SERVIDOR.md: las páginas dejan de apilar
 // quince etiquetas por avatar y piden una sola imagen al servidor.
 //
 // Lo que hay que sujetar:

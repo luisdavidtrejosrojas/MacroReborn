@@ -1,19 +1,27 @@
-# LA ECONOMÍA
+# ECONOMIA — las monedas: cómo se ganan y en qué se gastan
+
+> **De qué trata:** la economía del sitio desde el 04/10/2026: lo que se decidió, los precios por
+> rareza, cómo se ganan las monedas, que el tiempo solo cuenta con alguien delante, el recálculo de los
+> saldos y las pruebas que lo sujetan.
+>
+> **Para quién:** el equipo de desarrollo, y quien decida precios o premios.
+>
+> **Revisado:** 05/10/2026
 
 Rehecha el 4 de octubre de 2026, porque la gente se quejaba de que todo
 estaba muy caro. Y lo estaba: las prendas del equipo de arte iban de
 1.500 a 50.000 monedas, y se ganaban como mucho 500 al día. Los números
 de abajo salen de simular jugadores de distintos tipos, día a día,
 probando 1.152 combinaciones de precios y premios hasta dar con la que
-cumplía lo que se pidió (sección 1).
+cumplía lo que se pidió ([lo que se decidió](#1-lo-que-se-decidió)).
 
 Desde entonces:
 
-- las prendas tienen **rareza**, y la rareza el precio (sección 2);
-- se gana por **jugar, misiones, racha, logros y niveles** (sección 3);
-- el tiempo de juego solo cuenta **con alguien delante** (sección 4);
+- las prendas tienen **rareza**, y la rareza el precio ([los precios](#2-los-precios));
+- se gana por **jugar, misiones, racha, logros y niveles** ([cómo se ganan](#3-cómo-se-ganan));
+- el tiempo de juego solo cuenta **con alguien delante** ([solo con alguien delante](#4-solo-con-alguien-delante));
 - y el saldo de cada cuenta se **rehízo** con las reglas nuevas, sin
-  que nadie perdiera (sección 5).
+  que nadie perdiera ([los saldos rehechos](#5-los-saldos-rehechos)).
 
 ---
 
@@ -42,7 +50,7 @@ Desde entonces:
 | Épica | 1.400 | en 7 a 9 días | de 3.001 a 14.999 (60) |
 | Legendaria | 6.000 | en 29 a 32 días | de 15.000 en adelante (17) |
 
-Todo el catálogo junto costaba 1.049.547 monedas; ahora, 243.500.
+Todo el catálogo junto costaba 1.049.547 monedas; con la bajada del 04/10/2026, 243.500.
 
 Una cuenta nueva empieza con 500: le alcanza para una rara, o para
 vestirse entera de comunes.
@@ -58,7 +66,8 @@ que digan lo mismo. Se puede aplicar más de una vez.
 `taller.html`) y la puede cambiar después con "Editar"; el precio sale
 solo. La API sigue aceptando un `precio` en vez de una `rareza`, y lo
 convierte con los mismos cortes que la migración. Lo ya pagado no se
-toca: cada compra guarda lo que costó (`precio_pagado`, `docs/TIENDA.md`).
+toca: cada compra guarda lo que costó (`precio_pagado`, en
+[la migración 022](TIENDA.md#3-la-migración-022)).
 
 **El Bazar** enseña la rareza en cada tarjeta, con su color, y deja
 filtrar por ella.
@@ -86,7 +95,7 @@ pedirlos todos de golpe daría miles, así que `api/_logros.js` mira en la
 base lo mismo que el navegador: nivel, juegos jugados, avatar,
 comentarios, amigos y puesto del ranking. Si no se cumple, no se guarda.
 
-**Lo que da al día**, según la simulación (400 jugadores de cada tipo,
+**Lo que da al día**, según la simulación del 04/10/2026 (400 jugadores de cada tipo,
 90 días; el día de la épica y la legendaria es la mediana, entre
 paréntesis lo que tarda el 10 % más rápido y el 10 % más lento):
 
@@ -118,7 +127,7 @@ había alguien: había días de 24 horas "jugadas".
 
 `js/motor/actividad-jugador.js` escucha el teclado, el ratón y los
 toques, en la página y **dentro del juego**: 108 de los 112 juegos son
-de la propia web y se puede escuchar dentro. A los **3 minutos** sin
+de la propia web (05/10/2026) y se puede escuchar dentro. A los **3 minutos** sin
 nada, el navegador deja de mandar el pulso (`js/motor/xp.js`): ni
 minuto, ni XP, ni racha, ni monedas, hasta que se vuelva a tocar algo.
 
@@ -133,54 +142,11 @@ engancha al juego cada vez que carga.
 
 ## 5. Los saldos rehechos
 
-`scripts/recalcular-saldos.js`, una vez, después de la migración 027. A
-cada cuenta le calcula lo que habría juntado si las reglas nuevas
-hubieran estado siempre:
-
-- **500** de bienvenida;
-- **60 por cada día que jugó antes del 25/09**, lo que gana el jugador
-  de referencia en un día. Los minutos de antes de esa fecha no valen:
-  contaban cada pestaña (migración 024), y había cuentas con más
-  minutos que la semana;
-- **sus minutos desde el 25/09**, que ya eran uno por minuto, con 120 al
-  día como mucho (no se sabe si había alguien delante: eso llegó el
-  04/10), a 20 cada 10 minutos, la media del premio;
-- la **racha** de esos días seguidos;
-- las **misiones** que cobró, con los premios de ahora;
-- sus **logros**, salvo los de ranking: en agosto, con menos de diez
-  cuentas, cualquiera era Top 3;
-- sus **niveles**, hasta el que da ese tiempo de juego, no el que tiene:
-  el XP de antes del 25/09 está inflado como los minutos;
-- **menos lo que compró**, a los precios nuevos.
-
-Si eso es menos que lo que tiene más lo que pagó de más, se queda con
-eso: a nadie le baja. Las cinco cuentas del equipo se quedan con lo que
-les dé el cálculo, sin restar lo comprado, y con todo el catálogo
-regalado (a 0).
-
-```bash
-node scripts/recalcular-saldos.js --produccion             # simulacro
-node scripts/recalcular-saldos.js --produccion --aplicar   # de verdad
-```
-
-Suma la diferencia al saldo, en vez de escribirlo, y todo en una
-transacción: lo que alguien gane mientras corre no se pierde. Deja lo
-que hizo, cuenta por cuenta, en `datos-locales/recalculo-saldos-produccion.json`,
-y si encuentra ese archivo no vuelve a aplicar (devolvería dos veces lo
-pagado de más).
-
-Calculado sobre la base de producción del 04/10/2026, antes de
-aplicarlo: de 204 jugadores, a 165 les sube y 39 se quedan igual. La
-mediana pasa de 500 a 630, y el 10 % más rico, de 907 a 1.395. 16
-jugadores recuperan lo pagado de más: 11.020 monedas entre todos, 3.570
-el que más. El equipo queda entre 1.020 y 5.723.
-
-Aplicado el 04/10/2026 a las 22:57 (hora del servidor, UTC), con ese
-mismo resultado: las 209 cuentas quedaron con el saldo calculado, y las
-cinco del equipo con las 759 prendas. La base de justo antes, por si
-hubiera que deshacerlo, está en el servidor:
-`~/respaldos/antes-de-la-economia-2026-10-04-2256.sql.gz` (fuera de la
-rotación de 14 días).
+El 04/10/2026, con la economía nueva, `scripts/recalcular-saldos.js` rehízo una vez el saldo de cada
+cuenta como si las reglas nuevas hubieran estado siempre, sin bajárselo a nadie. **Ya se aplicó y no
+se repite**: el script deja lo que hizo en `datos-locales/recalculo-saldos-produccion.json` y, si
+encuentra ese archivo, no vuelve a aplicar. Qué calcula, cómo se corrió, lo que salió y el respaldo de
+justo antes, en [LOS SALDOS REHECHOS](../historia/SALDOS-REHECHOS.md).
 
 ---
 
@@ -190,6 +156,7 @@ rotación de 14 días).
 |---|---|
 | `tests/precios.test.js` | Las rarezas y sus precios, y la migración 027 contra una base |
 | `tests/monedas.test.js` | El premio por jugar, la racha, los niveles, y el enganche en el pulso y en la compra |
+| `tests/migrations.test.js` | El esquema de la base de práctica, y que la migración 015, la de las monedas por tiempo, se pueda aplicar dos veces sin tocar el saldo |
 | `tests/misiones-avisos.test.js`, `tests/rescatar-misiones.test.js` | Los premios nuevos de las misiones |
 | `tests/logros-servidor.test.js` | Que el servidor compruebe cada logro y pague lo que vale |
 | `tests/actividad-jugador.test.js`, `tests/xp-pulso.test.js` | Que sin nadie delante no haya pulso |

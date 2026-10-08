@@ -15,10 +15,13 @@ No se sincroniza solo.
 | `systemd/macroreborn.service` | la carpeta de unidades de systemd |
 | `fail2ban/jail.local` | la carpeta de configuracion de fail2ban |
 | `fail2ban/nginx-limite.conf` | la subcarpeta `filter.d` de fail2ban |
+| `fail2ban/nginx-hostil.conf` | la subcarpeta `filter.d` de fail2ban |
 | `scripts/respaldar.sh` | el home de `azureuser` |
+| `scripts/recalcular-ranking.sh` | el home de `azureuser` (el cron de los lunes) |
 | `scripts/crontab.txt` | se carga con `crontab -e` |
 
-Las rutas exactas estan en `docs/VPS.md`.
+Las rutas exactas estan en [VPS](../docs/referencia/VPS.md). fail2ban esta apagado desde
+el 17/09/2026: antes de encenderlo, lo que hay que saber esta alli.
 
 En `jail.local` hay que sustituir `TU.IP.AQUI` por la IP del
 administrador. Si se deja el marcador, fail2ban puede acabar bloqueando
@@ -26,4 +29,5 @@ el acceso SSH propio tras varios intentos fallidos.
 
 Lo que **no** esta aqui: el `.env` con las contrasenas y los
 certificados de Let's Encrypt. Los certificados los regenera certbot; el
-`.env` hay que rehacerlo a mano (ver `docs/VPS.md`).
+`.env` hay que rehacerlo a mano (ver
+[configuracion y secretos](../docs/referencia/VPS.md#4-configuración-y-secretos)).

@@ -61,7 +61,7 @@ function crearToken(usuario) {
 //
 // Con un tope de 30 días desde "inicio". Sin él, un pase robado se podría
 // mantener vivo para siempre usándolo una vez por semana, y hoy cerrar
-// sesión no lo invalida (punto 12 de docs/AUDITORIA.md). Una vez al mes,
+// sesión no lo invalida (punto 12 de docs/listas/AUDITORIA.md). Una vez al mes,
 // iniciar sesión otra vez; js/core.js avisa cuando toca.
 const RENOVAR_TRAS_MS = 24 * 60 * 60 * 1000;
 const SESION_MAXIMA_MS = 30 * 24 * 60 * 60 * 1000;

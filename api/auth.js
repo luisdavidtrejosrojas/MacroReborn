@@ -92,7 +92,7 @@ async function register(req, res) {
   }
 
   // Sin mirar mayúsculas: "Jader" no se crea si ya existe "jader". Así
-  // nacieron las dos parejas del punto 31 de docs/AUDITORIA.md: no
+  // nacieron las dos parejas del punto 31 de docs/listas/AUDITORIA.md: no
   // pudieron entrar con otras mayúsculas y registraron otra cuenta.
   // Entrar ya no las distingue (api/_password.js), y el aviso lo dice.
   const existente = await sql`

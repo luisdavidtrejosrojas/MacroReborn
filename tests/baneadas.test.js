@@ -2,7 +2,7 @@
 // LO QUE VEN LOS DEMÁS DE UNA CUENTA BANEADA — tests/baneadas.test.js
 // ==============================
 // La segunda parte de la moderación, decidida el 28/09/2026
-// (docs/MODERACION.md, api/_sanciones.js):
+// (docs/referencia/MODERACION.md, api/_sanciones.js):
 //
 //   - lo que escribió se tapa: chat, comentarios, reseñas (también sus
 //     estrellas) y biografía, y su perfil sale sin avatar;

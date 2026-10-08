@@ -1,7 +1,7 @@
 // ==============================
 // LAS SANCIONES — api/_sanciones.js
 // ==============================
-// Advertir, suspender y banear, decidido el 28/09/2026 (docs/MODERACION.md,
+// Advertir, suspender y banear, decidido el 28/09/2026 (docs/referencia/MODERACION.md,
 // migración 026). Hasta ese día "suspender" solo ponía una marca que el
 // servidor no miraba en ningún sitio, y las advertencias no llegaban.
 //

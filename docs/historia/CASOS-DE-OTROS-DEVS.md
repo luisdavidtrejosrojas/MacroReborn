@@ -1,17 +1,24 @@
-# CAMBIOS QUE LLEGAN DE OTROS DEVS
+# CASOS DE OTROS DEVS — los zips del 28/09 y del 03/10/2026
 
-Cómo se meten en el proyecto los cambios que otra persona manda en un
-zip, y los casos del 28/09/2026 y del 03/10/2026.
+> **De qué trata:** los dos primeros cambios que llegaron de otro dev en un zip: qué traían, qué entró
+> y qué no, qué se arregló al meterlos y qué se cambió después.
+>
+> **Para quién:** quien vaya a fundir el trabajo de otra persona y quiera ver cómo se hizo antes.
+>
+> **Revisado:** 05/10/2026
+
+Salieron el 05/10/2026, enteros, de la guía de cambios de otros devs, que se quedó con el método:
+[CAMBIOS-DE-OTROS-DEVS](../guias/CAMBIOS-DE-OTROS-DEVS.md).
 
 ---
 
-## 1. El caso del 28/09/2026
+## El caso del 28/09/2026
 
 Llegaron cuatro zips de otro dev, hechos entre el 22 y el 23/09:
 
 | Zip | Qué traía | Qué se hizo |
 |---|---|---|
-| `Bazar-cambios-produccion` | Una tienda nueva, el Bazar (`bazar.html`), con su acción en el servidor (`?action=bazar`), su enlace en la barra y `?next=` en el login | Se eligió frente a la tienda del 24/09 (`tienda.html`) viendo las dos en capturas. Se tomó el diseño; ver `docs/TIENDA.md` |
+| `Bazar-cambios-produccion` | Una tienda nueva, el Bazar (`bazar.html`), con su acción en el servidor (`?action=bazar`), su enlace en la barra y `?next=` en el login | Se eligió frente a la tienda del 24/09 (`tienda.html`) viendo las dos en capturas. Se tomó el diseño; ver `docs/referencia/TIENDA.md` |
 | `eliminar-identidad-gamer` | Quitar del perfil el bloque "Identidad gamer" | Hecho, con sus dos archivos y la prueba que los vigilaba |
 | `Online-Corazones` | En la tarjeta del perfil, el nombre al pie y Online/Offline debajo, junto a las insignias | Hecho, en el perfil propio y en el público |
 | `per` | Las carpetas `css/` y `js/` enteras: un rediseño de la tarjeta del perfil, el avatar y una barra de XP en la barra de navegación, y un rediseño de Comunidad | Hecho, solo lo que cambió él (abajo) |
@@ -35,7 +42,7 @@ Lo que se hizo, archivo por archivo:
 
 **Lo que no entró, y por qué:**
 
-- `js/mock-backend.js`: un servidor de mentira que se carga en cuatro
+- `mock-backend.js`: un servidor de mentira que se carga en cuatro
   páginas y suplanta la API cuando el sitio se abre en `localhost`. En
   producción no hacía nada, pero en el servidor local de pruebas
   secuestraba las peticiones.
@@ -94,7 +101,7 @@ Lo que se hizo, archivo por archivo:
 
 ---
 
-## 2. El caso del 03/10/2026
+## El caso del 03/10/2026
 
 Llegó `MacroReborn-main.zip`. Esta vez partía del código del día: su
 base era `51cd7aa`, el último commit, así que no hubo que fundir nada a
@@ -139,19 +146,3 @@ que la vieja entre 900 y 1100 px de ancho, donde la vieja se montaba.
   ratón explica que hace falta una cuenta.
 - En modo claro, el nombre de la tarjeta va en una banda rosa. El
   degradado del 28/09 sigue en el oscuro.
-
----
-
-## 3. Para la próxima vez
-
-Lo que ahorraría casi todo lo de arriba, para pedírselo a quien mande
-cambios:
-
-- **Partir del código de hoy**, no de una copia guardada: `git pull`
-  antes de empezar.
-- **Mandar solo lo que se cambió**, mejor como rama o parche de Git
-  (`git diff`, `git format-patch`) que como carpetas enteras.
-- **No mandar herramientas de prueba propias** (como `mock-backend.js`)
-  dentro de las páginas.
-- **Probar con el servidor local** (`npm run db:local`, ver
-  `docs/JUEGOS.md`, 4) y con `npm test`.

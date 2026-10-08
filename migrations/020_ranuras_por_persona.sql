@@ -19,7 +19,8 @@
 -- corria prisa era dejar de tenerlo escrito a fuego.
 --
 -- Lo de VENDER ranuras esta pensado y descartado POR AHORA, y el
--- motivo esta en docs/AVATARES-SERVIDOR.md 9: la economia de monedas
+-- motivo esta en docs/referencia/AVATARES.md#vender-ranuras-pendiente-y-con-motivo:
+-- la economia de monedas
 -- esta rota (cuatro cuentas tienen mas de cien millones y 178 menos de
 -- diez mil), asi que vender consumo de disco a cambio de una moneda
 -- que se fabrica seria dar un boton para llenar el disco. Primero el

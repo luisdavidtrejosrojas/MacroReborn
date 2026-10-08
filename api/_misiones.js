@@ -25,7 +25,7 @@ function semanaActual(d = new Date()) {
 }
 
 // Las monedas de cada misión subieron un 25 % el 04/10/2026, con la
-// economía nueva (docs/ECONOMIA.md): eran 25-60 las diarias y 140-300 las
+// economía nueva (docs/referencia/ECONOMIA.md): eran 25-60 las diarias y 140-300 las
 // semanales. El XP no cambió.
 const MISIONES_DIARIAS = [
   { key: "daily_3_games", title: "Explorador diario", description: "Jugá 3 juegos distintos hoy.", metric: "games_today", target: 3, xp: 40, coins: 44 },
@@ -62,7 +62,7 @@ function pickWeekly(weekText) {
 // zona de la sesión (UTC) y el AT TIME ZONE la devuelve como hora de
 // Argentina: la ventana quedaba de 21:00 a 21:00 UTC, seis horas antes,
 // y lo jugado desde las 18:00 de Argentina -la hora punta- no contaba
-// para la misión de hoy (punto 80 de docs/AUDITORIA.md).
+// para la misión de hoy (punto 80 de docs/listas/AUDITORIA.md).
 async function juegosDeHoy(sql, userId, hoy) {
   const filas = await sql`
     SELECT COUNT(*)::int AS cantidad

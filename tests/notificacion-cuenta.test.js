@@ -3,7 +3,7 @@
 // ==============================
 // crearNotificacionServidor (api/_notifications.js) buscaba la cuenta por
 // el nombre, sin mayúsculas: con dos cuentas como jader y Jader (punto 31
-// de docs/AUDITORIA.md), la notificación de una podía acabar en la otra.
+// de docs/listas/AUDITORIA.md), la notificación de una podía acabar en la otra.
 // Quien ya sabe la cuenta puede pasarla (opciones.userId), y entonces no
 // se busca.
 //

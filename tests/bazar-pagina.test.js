@@ -343,7 +343,7 @@ test("tienda.html lleva al Bazar, con la misma prenda", () => {
 });
 
 test("el pelo de atrás sale con su nombre, en el filtro y en la tarjeta", async () => {
-  // La capa del 04/10/2026 (docs/AVATARES-SERVIDOR.md, sección 14).
+  // La capa del 04/10/2026 (docs/referencia/AVATARES.md#el-pelo-de-atrás-dos-capas-de-pelo).
   const items = [...CATALOGO, { id: 5, categoria: "peloatras", modelo: "tora", valorCapa: "tora_peloatras1",
     nombre: "Colas largas", precio: 500, rareza: "rara", creadoEl: hace(50),
     previsualizacion: "/previsualizaciones/5.jpg?v=dddddddddddd" }];
@@ -356,7 +356,7 @@ test("el pelo de atrás sale con su nombre, en el filtro y en la tarjeta", async
 
 describe("la rareza", () => {
   // Desde el 04/10/2026 el precio de una prenda lo da su rareza
-  // (api/_precios.js, docs/ECONOMIA.md). El Bazar la enseña en cada
+  // (api/_precios.js, docs/referencia/ECONOMIA.md). El Bazar la enseña en cada
   // prenda y deja filtrar por ella. Una sin rareza es común.
   const CON_RAREZA = CATALOGO.map(item =>
     item.id === 3 ? { ...item, rareza: "legendaria", precio: 6000 } :

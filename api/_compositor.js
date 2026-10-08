@@ -8,8 +8,9 @@
 // intacto, sin más esfuerzo que mirar.
 //
 // Aquí se apilan en el servidor y sale UNA imagen. Es lo que hacía
-// macrojuegos durante una década, y el porqué entero, con lo medido y
-// lo que este cambio NO compra, está en docs/AVATARES-SERVIDOR.md.
+// macrojuegos durante una década. El porqué entero y lo medido están en
+// docs/historia/AVATARES-AL-SERVIDOR.md, y lo que este cambio NO compra, en
+// docs/referencia/AVATARES.md#lo-que-esto-no-compra-dicho-antes-de-que-sorprenda.
 //
 // ESTE MÓDULO NO SABE DE HTTP NI DE LA BASE, a propósito: recibe bytes
 // de PNG ya en orden de dibujo y devuelve bytes. Por eso se puede
@@ -87,7 +88,7 @@ function encimar(base, capa) {
 // camino que dibuja el avatar de alguien.
 //
 // La política no se inventa: es la misma que ya está escrita en
-// api/_lienzo.js y en docs/ARTE.md 3. Pegado 1:1 cuando basta con
+// api/_lienzo.js y en docs/referencia/ARTE.md#3-el-lienzo-canónico-al-subir. Pegado 1:1 cuando basta con
 // recortar o rellenar unas filas, que es un calco y no toca un solo
 // píxel; encaje solo cuando de verdad tiene otra proporción, que sí
 // remuestrea y por eso se reserva para eso.

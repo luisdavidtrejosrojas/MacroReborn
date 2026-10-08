@@ -50,7 +50,7 @@ async function cargarDatosAmigos(nombre){
 // Una sola imagen por amigo: su PNG de administrador, su avatar ya
 // compuesto o la silueta, con imagenDeAvatar() de js/core.js. La lista
 // de amigos trae su id y su huella. Hasta el 24/09/2026 se dibujaba
-// prenda por prenda. Ver docs/AVATARES-SERVIDOR.md, fase 3.
+// prenda por prenda. Ver docs/historia/AVATARES-AL-SERVIDOR.md, fase 3.
 
 function htmlAvatarMini(amigo){
 
@@ -127,7 +127,7 @@ htmlAvatarMini(amigo)
 // el 24/09/2026 un nombre con HTML se ejecutaba aquí. Lo mismo en las
 // dos listas de solicitudes de abajo, y la de recibidas era la peor:
 // bastaba con mandar la solicitud, sin que nadie la aceptara. Ver el
-// punto 77 de docs/AUDITORIA.md.
+// punto 77 de docs/listas/AUDITORIA.md.
 card.innerHTML += `
 
 <div class="amigo-info">

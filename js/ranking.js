@@ -19,7 +19,7 @@
 // por prenda. Ese código no se ejecutaba nunca: ranking.html es una
 // redirección y sus contenedores (#podioRanking, #listaRanking) no
 // existen en ningún HTML. Se quitó el 24/09/2026, en la fase 5 de
-// docs/AVATARES-SERVIDOR.md. Lo que queda es lo que usan otras páginas:
+// docs/historia/AVATARES-AL-SERVIDOR.md. Lo que queda es lo que usan otras páginas:
 // obtenerListaRanking(), obtenerPosicionRanking() y los logros del top.
 
 // Usuario con sesión iniciada en este navegador — se usa únicamente

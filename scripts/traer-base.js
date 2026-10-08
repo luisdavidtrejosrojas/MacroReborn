@@ -43,14 +43,15 @@ const DESTINO = path.join(RAIZ, "datos-locales");
 const PGDATA = path.join(DESTINO, "pgdata");
 
 // Configurable por si cambia la máquina; los valores por defecto son los
-// que documenta docs/VPS.md.
+// que documenta docs/referencia/VPS.md.
 const HOST = process.env.MR_VPS_HOST || "azureuser@172.184.203.20";
 // La llave, buscada y no adivinada. Estaba escrita a fuego como
 // "macroreborn-vps-key.pem", que era la que daba Azure; la de ahora es
 // un par ed25519 SIN extension, generado el 19/09/2026 cuando se
-// perdio la anterior (docs/RETOMAR.md 1.1). El script seguia pidiendo
+// perdio la anterior. El script seguia pidiendo
 // la vieja y fallaba diciendo que no habia llave, cuando la habia al
-// lado con otro nombre.
+// lado con otro nombre. Lo que paso con la llave:
+// docs/historia/LLAVE-SSH.md
 //
 // Se prueban las dos y se usa la primera que exista.
 const CARPETA_SSH = path.join(process.env.USERPROFILE || process.env.HOME || "", ".ssh");
@@ -86,7 +87,7 @@ function bajarRespaldo() {
     console.error("");
     console.error("Si esta en otro sitio, en PowerShell:");
     console.error("  $env:MR_VPS_KEY = 'C:\ruta\a\la\llave'");
-    console.error("Si se perdio, se saca de Bitwarden. Ver docs/RETOMAR.md 1.");
+    console.error("Si se perdio, se saca de Bitwarden. Ver docs/guias/RETOMAR.md, al principio.");
     process.exit(1);
   }
 
@@ -175,7 +176,7 @@ async function main() {
 main().catch(e => {
   console.error("\nFalló: " + e.message.split("\n")[0]);
   if (/ssh|scp|ENOENT/i.test(e.message)) {
-    console.error("Si es por el acceso al servidor, mirá docs/VPS.md.");
+    console.error("Si es por el acceso al servidor, mirá docs/referencia/VPS.md.");
   }
   process.exit(1);
 });

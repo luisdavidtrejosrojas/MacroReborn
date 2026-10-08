@@ -1,7 +1,7 @@
 // ==============================
 // LA VISTA PREVIA DEL EDITOR — api/_vista-previa.js
 // ==============================
-// Fase 5 de docs/AVATARES-SERVIDOR.md. El editor de avatar enseñaba la
+// Fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md. El editor de avatar enseñaba la
 // ropa que se va eligiendo apilando las prendas sueltas, una <img> por
 // capa: justo los archivos que no tienen que salir del equipo de arte.
 // Es lo único que quedaba pidiéndolos al acabar la fase 3.

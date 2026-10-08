@@ -1,5 +1,13 @@
 # AUDITORÍA — lo que hay por arreglar
 
+> **De qué trata:** la lista viva de lo que hay por arreglar, nacida de la auditoría del 18/09/2026:
+> cada punto con su estado, en bloques por importancia, con las notas de cómo se resolvió cada uno y
+> lo que está bien y conviene no romper.
+>
+> **Para quién:** todo el equipo.
+>
+> **Revisado:** 05/10/2026
+
 Lista viva de todo lo que se encontró en la auditoría del 18 de
 septiembre de 2026. No es un informe cerrado: es la lista de trabajo. Se
 marca aquí lo que se va haciendo y se añade aquí lo que se va
@@ -13,7 +21,7 @@ encontrando.
 Nunca se borra la fila ni se cambia su número, aunque quede resuelta.
 Una fila resuelta con su fecha explica por qué el código está como está;
 una fila borrada deja un hueco que nadie sabe interpretar seis meses
-después. (`docs/VPS.md` §10 ya contó lo que pasa cuando se borran puntos
+después. ([VPS](../referencia/VPS.md#9-lo-que-falta) ya contó lo que pasa cuando se borran puntos
 de una lista numerada sin renumerar: no hay forma de saber si se
 hicieron o se perdieron.)
 
@@ -66,20 +74,29 @@ que pueden costar una cuenta de usuario o el sitio entero.
 | 11 | 2026-09-18 | Seguridad | La barra de más expone el arte: `/imagenes//tora/pelo3.png` devuelve 200. Mismo arreglo que el 10 | `server.js:249` | incluido en el 10 |
 | 12 | - | Seguridad | El token vive 7 días en `localStorage`, sin revocación. Cerrar sesión no lo invalida | `api/_auth.js:3` | 1 día |
 | 13 | 2026-09-21 | Infraestructura | 75 commits solo existen en el PC y en el VPS. GitHub está en el 15/09 | — | 2 min |
-| 14 | 2026-09-21 | Decisión | El repositorio es público: 630 prendas descargables con `git clone`. Anula todo lo que promete `docs/ARTE.md` | GitHub | decisión |
+| 14 | 2026-09-21 | Decisión | El repositorio es público: 630 prendas descargables con `git clone`. Anula todo lo que promete `docs/referencia/ARTE.md` | GitHub | decisión |
 | 75 | descartado | Decisión | Las prendas siguen en el historial de GitHub desde el 23/07/2026: con `git clone` se bajan igual aunque ya no estén en el árbol. Sacarlas exige reescribir el historial, subir a la fuerza, pedir a GitHub que purgue lo que ya sirvió y resincronizar el servidor | GitHub | 2 h + decisión |
 | 77 | 2026-09-24 | Seguridad | XSS almacenado en el nombre de usuario: el registro acepta cualquier texto y la página de amigos lo pinta sin escapar. Basta con mandar una solicitud de amistad para que se ejecute en quien la recibe, administradores incluidos | `js/amigos.js:212` | 1 h |
+| 86 | - | Seguridad | Dos volcados de Neon del 01/09/2026, de la mudanza, siguen en `~/respaldos/` del servidor con 21 contraseñas en claro: la limpieza de 14 días solo borra `diarios/`. Hay otra copia en el PC | VPS | 10 min + decisión |
 
 **Nota al 14.** Se decidió mantener el repositorio público y sacar las prendas
 del árbol: el 21/09/2026 salieron 636 archivos (commit `bbe813a`). El sitio
 no los echa en falta, porque desde la migración 018 sirve las prendas desde
 la base. Lo que queda, el historial, es el punto 75.
 
+**Nota al 14, del 05/10/2026.** El repositorio ya es privado: comprobado ese
+día, sin fecha exacta del cambio. Hoy solo lo clona quien tiene acceso.
+
 **Nota al 75.** Descartado el 21/09/2026. Reescribir el historial cambia la
 identidad de todos los commits, obliga a resincronizar el servidor y no
 recupera lo que ya se hubiera clonado, así que se acepta que el arte
 anterior a esa fecha siga en el historial. Lo que protege de verdad ya
 está en pie: la ruta por huella y la autoría dentro de cada PNG.
+
+**Nota al 75, del 05/10/2026.** Con el repositorio ya privado (comprobado
+ese día, sin fecha exacta del cambio), el arte de antes del 21/09 que
+queda en el historial solo lo baja quien tiene acceso. El punto sigue
+descartado.
 
 **Nota al 3.** Hecho el 21/09/2026, pero no pidiendo sesión para abrir la
 línea: `EventSource` no manda cabeceras, y un visitante anónimo mirando un
@@ -89,8 +106,8 @@ minuto de su dueño (`api/_auth.js`, "EL PASE"). La "presencia" del texto es
 el latido de última conexión, y se dejó pública porque el perfil ya la
 enseña a cualquiera: si eso cambia, es el punto 57.
 
-**Nota al 77.** Visto el 24/09/2026, durante la fase 3 de
-`docs/AVATARES-SERVIDOR.md`, y arreglado el mismo día. El registro
+**Nota al 77.** Visto el 24/09/2026, durante la fase 3 del
+[avatar compuesto](../historia/AVATARES-AL-SERVIDOR.md#fase-3--las-listas), y arreglado el mismo día. El registro
 (`api/auth.js`) solo comprobaba que el nombre no estuviera vacío: ni
 caracteres ni largo. Y `js/amigos.js` metía el nombre en el HTML sin
 escapar en tres sitios: la tarjeta de cada amigo, la solicitud recibida
@@ -117,6 +134,12 @@ Lo sujeta `tests/nombres-de-usuario.test.js`, que ejecuta
 `js/amigos.js` entero sobre `amigos.html` con nombres maliciosos. La red
 que falta debajo de todo esto sigue siendo el punto 6.
 
+**Nota al 86.** Visto el 05/10/2026 al revisar CUENTAS, que decía que los respaldos de antes del
+16/09/2026, los que llevan contraseñas en claro, se borran solos en el servidor a los 14 días. Los
+diarios sí; estos dos no, porque están fuera de `diarios/`. Borrarlos, o guardarlos solo donde haga
+falta, lo decide Luis. Lo cuentan [CUENTAS](../referencia/CUENTAS.md#lo-que-queda) y
+[VPS](../referencia/VPS.md#respaldos).
+
 ---
 
 ## Bloque 2 — Funciones que existen y no funcionan
@@ -134,7 +157,7 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 20 | - | Función rota | `explorar.html` está vacía para todos: lee `window.juegos` y `datos-juegos.js` declara un `const`, que no cuelga de `window` | `js/explorar.js:14` | 10 min |
 | 21 | - | Contenido | 15 de 113 juegos no cargan. El usuario ve una pantalla negra sin mensaje | `js/datos-juegos.js` | 2 h |
 | 22 | 2026-09-28 | Contenido | Un juego roto por una errata de un carácter: `fairytail` frente a `fairytale`. Arreglado: el catálogo apunta al archivo que existe, y el juego arranca | `js/datos-juegos.js:887` | 1 min |
-| 23 | 2026-09-24 | Función rota | La tienda muestra 12 cajas vacías con precio. 130 de 152 artículos no tienen dibujo en el índice público. Arreglado con las previsualizaciones: 162 de 162 artículos con imagen (docs/AVATARES-SERVIDOR.md 12) | `js/comunidad-ranking.js:617` | 2 h |
+| 23 | 2026-09-24 | Función rota | La tienda muestra 12 cajas vacías con precio. 130 de 152 artículos no tienen dibujo en el índice público. Arreglado con las previsualizaciones: 162 de 162 artículos con imagen (docs/referencia/AVATARES.md#las-previsualizaciones-automáticas-y-corregibles-una-a-una-más-adelante) | `js/comunidad-ranking.js:617` | 2 h |
 | 24 | 2026-09-24 | Función rota | Se puede comprar una prenda retirada y no poder ponérsela nunca. Arreglado con la tienda nueva: el catálogo y la compra solo aceptan prendas publicadas (nota al pie) | `api/content.js`, `avatarShop` y `avatarShopBuy` | 1 h |
 | 25 | 2026-09-25 | Economía | 3 de 7 misiones diarias piden `minutes_today`, métrica que el servidor nunca calcula. 14 días de cada 31 son incompletables. Arreglado con `actividad_diaria` (migración 023; nota al pie) | `api/progreso.js`, `obtenerMetricas` | 3 h |
 | 26 | - | Economía | El reto global anuncia 500 XP y 250 monedas que ningún código reparte. El 25/09/2026 se decidió dejarlo para después (nota al pie) | `api/progreso.js:60` | 2 h |
@@ -156,9 +179,10 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 83 | 2026-09-25 | Función rota | A los 7 días de iniciar sesión, todo lo que escribe fallaba en silencio (el XP de jugar, el chat, los comentarios) mientras la página seguía enseñando a la persona como conectada. El pase no se renovaba nunca y el navegador no se enteraba del 401. De 150 a 330 escrituras rechazadas al día | `api/_auth.js`, `js/core.js` | medio día |
 | 84 | 2026-09-28 | Función rota | De cada tres misiones cumplidas se cobraba una: para cobrar hay que entrar en "Mi día" o "Progreso", casi nadie entra, nada avisaba de que estaba cumplida, y la diaria se pierde a medianoche. Arreglado con un aviso al cumplirla (nota al pie) | `api/_misiones.js` | medio día |
 | 85 | 2026-09-28 | Función rota | Una misión cumplida se perdía si no se cobraba a tiempo: la diaria a las 00:00, la semanal al acabar la semana. La semana del 21/09 quedaron sin cobrar 12 diarias y 8 semanales, de 13 personas. Arreglado: espera hasta que se cobre (nota al pie) | `api/_misiones.js`, `api/progreso.js` | medio día |
+| 87 | - | Función rota | El "Abrir Bazar" con el saldo que pinta `portal-growth.js` no sale nunca: ninguna página tiene su hueco, `#mrEconomiaPerfil` | `portal-growth.js:126` | 15 min |
 
 **Nota al 24 y al 78.** Hechos el 24/09/2026 con la tienda nueva
-(`tienda.html`, ver `docs/TIENDA.md`). El catálogo (`avatarShop`) y la
+(`tienda.html`, ver [TIENDA](../referencia/TIENDA.md)). El catálogo (`avatarShop`) y la
 compra (`avatarShopBuy`) solo aceptan prendas cuya fila de
 `avatar_prendas` está publicada: las 5 retiradas que seguían a la venta
 ya no salen ni se pueden comprar, y quien las compró (4 compras) las
@@ -291,7 +315,7 @@ cobrado. Lo sujeta `tests/misiones-avisos.test.js`. El margen para
 cobrar se decidió ese mismo día: ver la nota al 85.
 
 **Nota al 16 y al 17.** Hechos el 28/09/2026, con las sanciones
-(`docs/MODERACION.md`, migración 026, `api/_sanciones.js`), decididas
+([MODERACION](../referencia/MODERACION.md), migración 026, `api/_sanciones.js`), decididas
 ese día con el administrador. La advertencia fallaba porque el panel
 mandaba la notificación sin `origenNombre`, el servidor la rechazaba con
 un 403 y el panel, que no miraba la respuesta, decía "enviada". Suspender
@@ -359,6 +383,13 @@ perfil si el nombre del enlace coincide con el tuyo sin mirar
 mayúsculas, así que "jader" no puede ver el perfil de "Jader". Lo sujeta
 `tests/nombres-mayusculas.test.js`.
 
+**Nota al 28, del 05/10/2026.** `portal-growth.js` sigue en la raíz, y lo cargan
+`comunidad-ranking.html`, `juego.html` y `perfil.html`. Al lado hay otros tres scripts, `script.js`,
+`home-portal.js` y `juego.js`, que no carga ninguna página: son copias viejas de los de `js/`.
+
+**Nota al 87.** Visto el 05/10/2026 al revisar TIENDA, que lo daba como uno de los caminos al
+Bazar. Es el mismo archivo que el punto 28.
+
 ---
 
 ## Bloque 3 — Que el sitio se sienta terminado
@@ -389,6 +420,9 @@ de ser, y los puntos 38, 40, 41 y 42 caen dentro de esa misma tarea.
 | 52 | - | Contenido | Tuteo y voseo mezclados en la misma pantalla, "1 juegos", textos de 9 px y placeholders cortados a media palabra | varias | 2 h |
 | 53 | - | Rendimiento | El editor de avatares reconstruye el DOM entero en cada `pointermove`, sin `requestAnimationFrame` | `js/arte-vestidor.js:1548` | 3 h |
 
+**Nota al 37, del 05/10/2026.** Hoy son 30 páginas y 16 tienen pie, y dos de esos pies, los de
+`explorar.html` y `mi-dia.html`, no llevan el enlace a los términos.
+
 ---
 
 ## Bloque 4 — Contenido, SEO, privacidad y moderación
@@ -409,11 +443,21 @@ de ser, y los puntos 38, 40, 41 y 42 caen dentro de esa misma tarea.
 | 65 | - | Moderación | El registro de moderación lo escribe el navegador después de la acción y se puede falsear. El filtro por rol nunca encuentra nada por una diferencia de mayúsculas | `api/content.js:2277` | 3 h |
 | 66 | - | Moderación | No se puede silenciar temporalmente, ni borrar contenido sin pasar por un reporte, ni deshacer una acción, ni ver la ficha de una persona | `admin.html` | 1 semana |
 | 79 | 2026-09-24 | Privacidad | `avatar-shop?username=X` enseñaba a cualquiera, sin sesión, el saldo y las compras de cualquiera | `api/content.js`, `avatarShop` | 30 min |
+| 88 | - | Privacidad | `scripts/traer-base.js` lleva la IP entera del servidor como valor por defecto (regla XXV), cuando todo lo demás entra por el dominio | `scripts/traer-base.js:47` | 5 min |
 
 **Nota al 79.** Visto el 24/09/2026 al auditar la tienda, y arreglado el
 mismo día: el saldo y las compras solo se devuelven a quien tiene la
 sesión. El saldo de cualquiera siguió saliendo por `/api/users?username=X`
 hasta el 04/10/2026 (punto 57).
+
+**Nota al 56, del 05/10/2026.** Sigue abierto. Siete páginas se indexan sin `robots` y sin estar en
+el sitemap (`actividad-comunidad.html`, `explorar.html`, `liga-global.html`, `macro-originals.html`,
+`mi-dia.html`, `originales-competicion.html` y `progreso.html`); tres de las que están en él no tienen
+Open Graph (`categoria.html`, `coleccion.html` y `terminos.html`), y Macro Snake sigue fuera. El
+detalle, en [SEO](../referencia/SEO.md#tabla-de-indexación-por-página).
+
+**Nota al 88.** Visto el 05/10/2026 al revisar DESARROLLO. Se puede apuntar a otra máquina con
+`MR_VPS_HOST`, y el dominio ya funciona: es por donde se entra hoy al servidor.
 
 ---
 
@@ -429,6 +473,41 @@ hasta el 04/10/2026 (punto 57).
 | 72 | - | Infraestructura | El despliegue no tiene comprobación de salud ni vuelta atrás, y las 595 pruebas no han visto ninguno de los 75 commits que están en producción | `infra/scripts/` | 1 día |
 | 73 | - | Mantenibilidad | 19 copias de la función de escapar HTML en 3 variantes distintas, y `xpNecesaria` copiada en 7 archivos | `js/` | 1 día |
 | 74 | - | Mantenibilidad | Cero pruebas de autorización, del ranking, de moderación y de todo el sistema social | `tests/` | 2-3 días |
+| 89 | - | Decisión | fail2ban sigue apagado desde el 17/09/2026, aunque su causa principal, el punto 18, se arregló el 25/09. Antes de encenderlo hay que poner al día la IP de `ignoreip` | VPS | decisión |
+| 90 | - | Mantenibilidad | Comentarios caducados en seis archivos: `api/_rafaga.js`, `avatarPrenda` en `api/content.js` y `scripts/hornear-catalogo.js` cuentan una caché de `/prendas/` y un índice público que ya no existen; `scripts/servidor-local.js` habla de Vercel y Neon; `scripts/revision-avatares.js`, de un navegador que apila capas; y `js/perfil.js`, del antiguo `tienda.js` | esos seis archivos | 30 min |
+
+**Nota al 68, del 05/10/2026.** Por estas dos tablas la base ya no cabe en `shared_buffers`: ocupa
+179 MB, contra 128, y 140 de esos MB son ellas. El 99,99 % de las lecturas siguen saliendo de
+memoria: [la base y la memoria](../referencia/VPS.md#la-base-y-la-memoria).
+
+**Nota al 89.** Visto el 05/10/2026 al revisar VPS. Lo que hay que saber antes de encenderlo:
+[fail2ban, apagado](../referencia/VPS.md#fail2ban-apagado).
+
+**Nota al 90.** Visto el 05/10/2026 al revisar la documentación. La spec 001 solo cambia en el código
+las rutas de documentos, así que estos comentarios se quedaron como estaban. El del freno de
+`api/_avatar-compuesto.js` sí se corrigió entonces.
+
+---
+
+## Pendientes que viven en otros documentos
+
+Lo que falta de cada área se cuenta al final de su documento de referencia, con su porqué. No son
+puntos de esta lista, salvo los que se citan por su número:
+
+- [ARTE](../referencia/ARTE.md#7-lo-que-queda): leer el buzón de retiradas, el CSS del lienzo que
+  aún usa 327/505, las imágenes viejas que los navegadores guardan hasta el 16/10/2026 y el historial
+  de GitHub (punto 75, descartado).
+- [AVATARES](../referencia/AVATARES.md#lo-que-queda): un solo orden de capas, vender ranuras y
+  corregir una previsualización sola.
+- [CUENTAS](../referencia/CUENTAS.md#lo-que-queda): borrar `users.password` y la rama del texto
+  plano, y los respaldos de antes del 16/09/2026, con contraseñas en claro (punto 86).
+- [MODERACION](../referencia/MODERACION.md#7-lo-que-queda): las partes 3 y 4, las IP y la marca del
+  navegador.
+- [SEO](../referencia/SEO.md#8-lo-que-queda): las URL limpias, además de los puntos 54, 55 y 56.
+- [TIENDA](../referencia/TIENDA.md#6-lo-que-queda): el probador, y quien lleva una prenda de la
+  tienda sin haberla comprado.
+- [VPS](../referencia/VPS.md#9-lo-que-falta): rotar la contraseña de Neon, darlo de baja y decidir si
+  se enciende fail2ban (punto 89).
 
 ---
 
@@ -442,7 +521,7 @@ tocar algo de aquí, conviene saber que ya se pensó:
   propio código y no hay ningún `ORDER BY` construido con entrada del
   usuario.
 - **Las contraseñas están terminadas.** 144 de 144 con bcrypt, cero en
-  texto plano. El backfill de `docs/SEGURIDAD.md` acabó.
+  texto plano. El backfill de [CONTRASENAS-EN-CLARO](../historia/CONTRASENAS-EN-CLARO.md) acabó.
 - **`api/_monedas.js` es el modelo a copiar.** Resuelve el otorgamiento en
   una sola sentencia condicionada contra el `now()` de Postgres, no
   contando peticiones. Es la única pieza del sitio que hoy no se puede

@@ -3,7 +3,7 @@
 // ==============================
 // Leer y escribir los bloques de un PNG sin instalar nada. No porque las
 // librerias esten prohibidas -lo que esta prohibido es depender de un
-// servicio de terceros, ver docs/DESARROLLO.md 5- sino porque aqui no
+// servicio de terceros, regla XXVI de .specify/memory/constitution.md- sino porque aqui no
 // hacia falta ninguna. Por eso tests/vestidor-horneado.test.js sustituye
 // el canvas por un falso en vez de traerse node-canvas con sus decenas
 // de MB de binario nativo.

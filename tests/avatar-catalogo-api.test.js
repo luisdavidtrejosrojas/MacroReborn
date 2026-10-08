@@ -11,7 +11,7 @@
 // con su URL a quien preguntara. Una petición daba el mapa completo y
 // 630 descargas daban el arte: 6,6 MB. Luego se partió en dos, con un
 // índice público (avatar-catalogo) de lo que alguien lleva puesto para
-// DIBUJAR por capas. Desde la fase 5 de docs/AVATARES-SERVIDOR.md nada
+// DIBUJAR por capas. Desde la fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md nada
 // se dibuja por capas: el índice se fue, y el catálogo ya no lleva la
 // dirección del dibujo suelto de ninguna prenda.
 //

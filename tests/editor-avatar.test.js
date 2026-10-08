@@ -235,7 +235,7 @@ describe("construir las opciones desde el catálogo", () => {
 });
 
 describe("el editor no guarda ni pide prendas sueltas", () => {
-  // Fase 5 de docs/AVATARES-SERVIDOR.md. Aquí vivía rutaDePrenda(), que
+  // Fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md. Aquí vivía rutaDePrenda(), que
   // traducía cada valor a la dirección de su dibujo para apilar las
   // capas. Ya no se apila nada: la vista previa la dibuja el servidor.
   test("ninguna miniatura ni ningún dato apunta a /prendas/", async () => {

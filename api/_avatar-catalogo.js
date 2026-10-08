@@ -39,8 +39,8 @@
 // "peloatras", el pelo de atrás, llegó el 04/10/2026 justo debajo de
 // "pelo": se dibuja como él, encima de la ropa, y el de delante lo
 // tapa. Con dos capas de pelo se combinan el flequillo de un peinado y
-// las colas de otro, como en macrojuegos (docs/AVATARES-SERVIDOR.md,
-// sección 14).
+// las colas de otro, como en macrojuegos
+// (docs/referencia/AVATARES.md#el-pelo-de-atrás-dos-capas-de-pelo).
 //
 // El frontend tenía esta lista copiada en once archivos, y dos de ellos
 // (js/ranking.js y js/comunidad-ranking.js) llevaban "pantalon" antes

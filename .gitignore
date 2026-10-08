@@ -2,7 +2,7 @@ node_modules/
 .env
 
 # La copia local de la base de produccion. Trae cuentas, comentarios y
-# mensajes de 141 personas: no entra en git ni por accidente.
+# mensajes de las personas del sitio: no entra en git ni por accidente.
 datos-locales/
 
 # Pagina temporal para revisar a ojo las prendas que se llevaron al
@@ -17,14 +17,15 @@ revision-lienzo/
 revision-avatares/
 
 # Lo mismo para las previsualizaciones de prenda
-# (npm run revision:previsualizaciones): lleva las 768 dentro.
+# (npm run revision:previsualizaciones): las lleva todas dentro (768 el
+# 24/09/2026).
 revision-previsualizaciones/
 
 # Imagen temporal para un anuncio de Discord. Se hace, se captura y se borra.
 anuncio-*.html
 
 # La exportacion del canal viejo de sugerencias de Discord (29/09/2026) y
-# las capturas que cita docs/SUGERENCIAS.md. Lleva nombres, avatares y
+# las capturas que cita docs/listas/SUGERENCIAS.md. Lleva nombres, avatares y
 # mensajes de la comunidad, igual que datos-locales/: viaja a Drive con la
 # carpeta, no a git. Ese canal ya no existe, asi que esta es una de las
 # dos copias que quedan (la otra, en C:\DCE\export).
@@ -34,22 +35,25 @@ sugerencias-discord/
 # ~/.claude/projects/.../memory/ y por tanto NO se salva copiando esta
 # carpeta. Se duplica aqui para que viaje a Drive con todo lo demas.
 #
-# Fuera de git a proposito: el repositorio es publico y estos archivos
-# llevan preferencias personales y un correo. Si algun dia el repo pasa
-# a privado, se puede reconsiderar.
+# Fuera de git a proposito: llevan preferencias personales y un correo
+# (regla XXV). El repositorio ya es privado (comprobado el 05/10/2026, sin
+# fecha exacta del cambio), y se decidio que siguiera fuera igual.
 memoria-claude/
 
 # Los dibujos de las prendas de avatar: las seis carpetas de modelo y el
 # dibujo base de cada modelo. Desde la migración 018 el sitio los sirve
 # desde la base de datos (avatar_archivos), así que estos PNG son las
 # copias originales, no lo que ve nadie. Salieron de git el 21/09/2026
-# porque el repositorio es público y con `git clone` se llevaban el
-# catálogo entero. Se conservan en el disco de quien trabaja (son los
-# originales tal como los entregó el equipo de dibujo, antes del horno de
-# autoría) y en la copia de Drive. Ver docs/ARTE.md y docs/RETOMAR.md.
+# porque el repositorio era público entonces y con `git clone` se llevaban
+# el catálogo entero. Hoy es privado (comprobado el 05/10/2026, sin fecha
+# exacta del cambio), y siguen fuera: el sitio no los necesita. Se
+# conservan en el disco de quien trabaja (son los originales tal como los
+# entregó el equipo de dibujo, antes del horno de autoría) y en la copia
+# de Drive. Ver docs/referencia/ARTE.md y docs/guias/RETOMAR.md.
 #
 # Ojo: siguen en el historial de GitHub hasta ese día. Sacarlos de ahí
-# requiere reescribir el historial (docs/AUDITORIA.md, punto 75).
+# requiere reescribir el historial, y se descarto el 21/09/2026
+# (docs/listas/AUDITORIA.md, punto 75).
 imagenes/tora/
 imagenes/cereza/
 imagenes/max/

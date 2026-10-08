@@ -2,7 +2,7 @@
 // LA MODERACIÓN EN EL NAVEGADOR — tests/moderacion-navegador.test.js
 // ==============================
 // La parte del navegador de las sanciones del 28/09/2026
-// (api/_sanciones.js, docs/MODERACION.md):
+// (api/_sanciones.js, docs/referencia/MODERACION.md):
 //
 //   - el login de una cuenta baneada dice el motivo y dónde reclamar;
 //   - la franja de una cuenta suspendida dice hasta cuándo y por qué, con

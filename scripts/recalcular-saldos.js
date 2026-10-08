@@ -1,7 +1,7 @@
 // ==============================
 // REHACER LOS SALDOS CON LA ECONOMÍA NUEVA — scripts/recalcular-saldos.js
 // ==============================
-// Decidido el 04/10/2026 con el administrador (docs/ECONOMIA.md). Con la
+// Decidido el 04/10/2026 con el administrador (docs/historia/SALDOS-REHECHOS.md). Con la
 // economía nueva cada cuenta tiene el saldo que habría juntado si las
 // reglas nuevas hubieran estado siempre, y nadie pierde:
 //
@@ -33,7 +33,7 @@
 // Se aplica UNA vez: deja lo que hizo, cuenta por cuenta, en
 // datos-locales/recalculo-saldos-<donde>.json, y si encuentra ese archivo
 // no vuelve a aplicar (--otra-vez para saltárselo a propósito). Antes, la
-// copia de seguridad (~/respaldar.sh, docs/VPS.md).
+// copia de seguridad (~/respaldar.sh, docs/referencia/VPS.md).
 //
 // Cambia el saldo SUMANDO la diferencia, no escribiéndolo: lo que alguien
 // gane mientras corre no se pierde.

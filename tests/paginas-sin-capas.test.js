@@ -1,7 +1,7 @@
 // ==============================
 // LAS PÁGINAS MIGRADAS NO DIBUJAN POR CAPAS — tests/paginas-sin-capas.test.js
 // ==============================
-// Fase 3 de docs/AVATARES-SERVIDOR.md. Cada página que pinta avatares
+// Fase 3 de docs/historia/AVATARES-AL-SERVIDOR.md. Cada página que pinta avatares
 // de otras personas pasa, una por una, a pedir una sola imagen por
 // persona con imagenDeAvatar() de js/core.js: su PNG de administrador,
 // su compuesto o la silueta.

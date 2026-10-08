@@ -12,7 +12,7 @@
 //     los tests daban verde con una maqueta más permisiva mientras el
 //     servidor real devolvía la imagen vacía, porque su end() ignoraba
 //     el argumento.
-//   - SOLO CON FIRMA, desde la fase 5 de docs/AVATARES-SERVIDOR.md: sin
+//   - SOLO CON FIRMA, desde la fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md: sin
 //     ella, caducada, de otra prenda o manipulada, 403. Las firmas las
 //     reparte avatar-panel, que exige el rol de arte. Ver
 //     api/_prendas-firma.js.

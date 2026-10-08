@@ -57,7 +57,7 @@
 // dibujo corregido como prenda NUEVA desde el vestidor, y retirar la
 // vieja desde el catálogo. Quien la lleve puesta la conserva.
 //
-// Ver también docs/DESARROLLO.md, "El lienzo del catálogo", para el otro
+// Ver también docs/historia/LIENZO-DEL-CATALOGO.md para el otro
 // trabajo que esto destapó: 64 dibujos del catálogo no miden 327x504.
 
 

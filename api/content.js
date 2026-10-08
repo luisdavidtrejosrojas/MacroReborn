@@ -321,7 +321,7 @@ async function avatarSubirPrendas(req, res) {
       continue;
     }
 
-    // Todo lo publicado tiene precio (docs/TIENDA.md), y desde el
+    // Todo lo publicado tiene precio (docs/referencia/TIENDA.md), y desde el
     // 04/10/2026 lo da su rareza (api/_precios.js). Sin rareza ni precio,
     // común.
     const rareza = precios.rarezaDelPedido(item) || precios.RAREZA_POR_DEFECTO;
@@ -461,7 +461,7 @@ async function avatarEstadoPrenda(req, res) {
     return res.status(403).json({ success: false, error: "Esa prenda no es tuya" });
   }
 
-  // Todo lo publicado tiene precio (docs/TIENDA.md). Si esta no lo
+  // Todo lo publicado tiene precio (docs/referencia/TIENDA.md). Si esta no lo
   // tenía -un borrador que se subió gratis antes de la tienda, o una del
   // catálogo original que estaba retirada cuando la migración 022 puso
   // los precios-, sale como común (api/_precios.js), en la misma
@@ -599,7 +599,7 @@ async function avatarEditarPrenda(req, res) {
 // qué modelos hay, qué prendas se ofrecen, cómo se llama cada una, de
 // qué ranura es, cuánto cuesta y su previsualización.
 //
-// Lo que ya no trae, desde la fase 5 de docs/AVATARES-SERVIDOR.md, es
+// Lo que ya no trae, desde la fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md, es
 // dónde está el dibujo suelto de cada prenda: el editor no apila capas
 // (la vista previa la dibuja el servidor, avatar-vista-previa en
 // api/users.js), y esa dirección es justo lo que no tiene que salir del
@@ -653,7 +653,7 @@ async function construirCatalogo(version) {
       nombre: f.nombre,
       // La miniatura del editor: la prenda puesta en su maniqui, un JPG
       // pequeño. null si todavia no se genero, y entonces la caja queda
-      // con su nombre y sin imagen. Fase 4 de docs/AVATARES-SERVIDOR.md.
+      // con su nombre y sin imagen. Fase 4 de docs/historia/AVATARES-AL-SERVIDOR.md.
       previsualizacion: f.previsualizacion
         ? previsualizaciones.urlDe(Number(f.id), f.previsualizacion)
         : null,
@@ -685,7 +685,7 @@ async function construirCatalogo(version) {
 // Aquí vivía la acción avatar-catalogo: un mapa, sin sesión, de cada
 // prenda que alguien llevaba puesta a la dirección de su dibujo suelto,
 // para que las páginas apilaran las capas de cada avatar. Desde la fase
-// 5 de docs/AVATARES-SERVIDOR.md ninguna página dibuja prenda por
+// 5 de docs/historia/AVATARES-AL-SERVIDOR.md ninguna página dibuja prenda por
 // prenda, y ese mapa era la lista de lo que no tiene que salir del
 // equipo de arte. Se quitó el 24/09/2026.
 
@@ -743,7 +743,7 @@ async function avatarCatalogoCompleto(req, res) {
 // y el navegador se la descarga una sola vez para las dos. Si fuera por
 // id de prenda, se bajaría dos veces el mismo dibujo.
 //
-// SOLO CON FIRMA, desde la fase 5 de docs/AVATARES-SERVIDOR.md. Hasta
+// SOLO CON FIRMA, desde la fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md. Hasta
 // entonces era pública, porque las páginas dibujaban los avatares
 // apilando estas prendas. Ya no: cada avatar llega compuesto y cada
 // prenda de la tienda tiene su previsualización, así que el dibujo
@@ -1656,7 +1656,7 @@ async function gameHistory(req, res) {
 
     // La cuenta la dice la sesión: el handler ya comprobó que username es
     // el suyo. Buscarla por el nombre, sin mayúsculas, podía dar la otra
-    // de una pareja como jader y Jader (punto 31 de docs/AUDITORIA.md).
+    // de una pareja como jader y Jader (punto 31 de docs/listas/AUDITORIA.md).
     const userId = Number(req.auth.sub);
 
     const idTexto = String(gameId);
@@ -2512,7 +2512,7 @@ async function avatarShop(req, res) {
 
   // Solo lo que se puede llevar: una prenda que el equipo de arte
   // retiró (publicada = false) deja de venderse, aunque siga en la
-  // tabla (punto 24 de docs/AUDITORIA.md). Quien ya la compró la
+  // tabla (punto 24 de docs/listas/AUDITORIA.md). Quien ya la compró la
   // conserva.
   //
   // Con la previsualizacion de cada prenda, que es lo que la tienda

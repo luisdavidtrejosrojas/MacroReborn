@@ -11,8 +11,8 @@
 // viene con Node, y así el servidor local sigue sin dependencias nuevas.
 //
 // Las medidas NO son todas 327x504 a propósito. El catálogo de verdad
-// tiene 64 dibujos fuera de medida (ver docs/DESARROLLO.md, "El lienzo del
-// catálogo"), así que la base local trae los mismos casos raros: si el
+// tiene 64 dibujos fuera de medida (ver docs/historia/LIENZO-DEL-CATALOGO.md),
+// así que la base local trae los mismos casos raros: si el
 // vestidor los pinta mal, se ve en local y no en producción.
 
 const crypto = require("crypto");

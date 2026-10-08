@@ -2,7 +2,7 @@
 // LOS PRECIOS — api/_precios.js
 // ==============================
 // Desde el 04/10/2026, lo que cuesta una prenda lo dice su RAREZA, no un
-// número que pone cada uno (docs/ECONOMIA.md). La gente se quejaba de que
+// número que pone cada uno (docs/referencia/ECONOMIA.md). La gente se quejaba de que
 // todo era muy caro, y lo era: el equipo de arte ponía a mano entre 1.500
 // y 50.000, y a quien juega media hora al día una de esas le costaba de
 // uno a catorce meses.

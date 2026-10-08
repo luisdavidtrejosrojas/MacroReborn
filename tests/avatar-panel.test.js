@@ -13,7 +13,7 @@
 //   - El identificador lo genera el servidor, nunca el artista.
 //   - Dos prendas con el mismo dibujo comparten fichero.
 //   - Toda prenda entra en la tienda con su rareza y el precio de esa
-//     rareza (desde el 04/10/2026, docs/ECONOMIA.md); sin rareza, común.
+//     rareza (desde el 04/10/2026, docs/referencia/ECONOMIA.md); sin rareza, común.
 //   - Retirar no borra, y solo puede el autor o un administrador.
 //   - Publicar una prenda que no tenía precio la pone como común.
 //   - Cada cambio sube la versión del catálogo, que es lo que hace que

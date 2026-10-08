@@ -164,7 +164,7 @@
   //
   // Con la persona entera, que trae su id y su huella: así sale una sola
   // imagen, su compuesto. Solo con el avatar se dibujaba prenda por
-  // prenda. Ver docs/AVATARES-SERVIDOR.md, fase 3.
+  // prenda. Ver docs/historia/AVATARES-AL-SERVIDOR.md, fase 3.
   function avatarUsuarioHTML(u) {
     if (typeof avatarMiniaturaHTML === "function") {
       return avatarMiniaturaHTML(u.avatar, u);

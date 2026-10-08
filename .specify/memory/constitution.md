@@ -1,11 +1,15 @@
 <!--
 Informe de sincronización
-- Versión: (ninguna) -> 1.0.0, primera ratificación (2026-10-05).
-- Principios generales I-XIX: de la constitución base de Luis v1.0.0. Adaptados a MacroReborn: I, V,
-  X, XIII, XIV, XVI, XVII y XIX. Sin cambios: II, III, IV, VI, VII, VIII, IX, XI, XII, XV y XVIII.
-- Reglas del proyecto añadidas: XX-XXXII, sacadas de docs/ y de lo aprendido en producción.
-- Plantillas: plan-template.md, spec-template.md y tasks-template.md sin cambios; su "Constitution
-  Check" se rellena leyendo este documento.
+- Versión: 1.0.0 -> 1.0.1 (PATCH): aclaraciones, sin quitar ni añadir principios (research D12 de
+  specs/001-reordenar-documentacion, aprobada por Luis el 2026-10-05).
+- Reglas cambiadas: V (la identidad de autor es para los commits de Luis y de Claude; cada dev firma
+  con la suya; el correo se nombra sin pegarlo, como pide la XXV), XIX (qué es docs/ y qué es
+  specs/), XXXII (apunta a docs/guias/SUMARSE.md), y XVII y XXI (el despliegue y cómo se deshace,
+  en docs/guias/DESPLEGAR.md). Las rutas de XIII, XXVII, XXIX y XXXI cambiaron con cada mudanza de
+  la spec 001.
+- Secciones añadidas o quitadas: ninguna.
+- Plantillas: la propia, .specify/templates/overrides/constitution-template.md, con los mismos
+  cambios; plan-template.md, spec-template.md y tasks-template.md, sin cambios.
 - Pendiente: nada.
 -->
 # Constitución de MacroReborn
@@ -56,9 +60,11 @@ equipo.
 - Cada cambio lógico mínimo DEBE tener su propio commit. Nunca se mezclan cambios no relacionados.
 - El mensaje sigue el formato del proyecto, `Área: qué cambia`, en español (por ejemplo,
   `Perfiles: se abren con otras mayusculas`), con un cuerpo que explique el porqué cuando haga falta.
-- Autor y committer: `Luis David Trejos Rojas <luisdavid.trejosrojas@gmail.com>`. Sin
-  `Co-Authored-By`, sin `Claude-Session`, sin enlaces a claude.ai ni firmas automáticas, aunque una
-  herramienta las pida. En una máquina nueva se comprueba antes `git var GIT_AUTHOR_IDENT`.
+- Los commits de Luis y de Claude llevan como autor y committer a Luis David Trejos Rojas, con el
+  correo de la configuración de git de su PC (`.git/config`), que no se pega en los documentos (regla
+  XXV). Cada otro dev firma con su propia identidad. Nadie añade `Co-Authored-By`, `Claude-Session`,
+  enlaces a claude.ai ni firmas automáticas, aunque una herramienta las pida. En una máquina nueva se
+  comprueba antes `git var GIT_AUTHOR_IDENT`.
 - Cada especificación se trabaja en su propia rama (la que crea Spec Kit, `NNN-nombre`) y se une a
   `main` en local cuando está verificada. Sin pull requests.
 
@@ -121,7 +127,7 @@ del disco lo borraría todo.
 - El servidor deja constancia de lo que falla (`journalctl -u macroreborn`) y la web enseña errores
   claros en español que dicen qué hacer.
 - Ningún error se traga, ni en el servidor ni en el navegador: un `catch` vacío es un error escondido
-  (el punto 32 de `docs/AUDITORIA.md` fue exactamente eso).
+  (el punto 32 de `docs/listas/AUDITORIA.md` fue exactamente eso).
 
 ### XIV. La web no molesta
 
@@ -145,7 +151,8 @@ del disco lo borraría todo.
 - Todo cambio de la base va en una migración numerada de `migrations/` (la siguiente libre), probada en
   local, y se aplica antes que el código que la usa.
 - Antes de cambiar datos reales hay respaldo completo y ensayo con ROLLBACK (regla XX).
-- Un despliegue se deshace volviendo al commit anterior y reiniciando el servicio (`docs/VPS.md`).
+- Un despliegue se deshace volviendo al commit anterior y reiniciando el servicio
+  (`docs/guias/DESPLEGAR.md`).
 - Las acciones irreversibles o de riesgo se le preguntan antes a Luis.
 
 ### XVIII. Medir antes de optimizar
@@ -163,8 +170,9 @@ del disco lo borraría todo.
   justo después.
 - Si el código cambia, la especificación y la documentación se actualizan en el mismo commit. Si el
   código y la especificación no coinciden, primero se corrige la especificación.
-- `docs/` es la documentación de referencia del sistema: qué hay y por qué. `specs/` es el historial de
-  cada cambio. Lo que una especificación cambia del sistema se lleva a su documento de `docs/`.
+- `docs/` es la documentación del sistema (referencia, guías, listas e historia), y `specs/` guarda
+  cada cambio con su especificación. Lo que una especificación cambia del sistema se lleva a su
+  documento de `docs/`.
 - Todo queda documentado en español: qué es (README), arquitectura, decisiones con su porqué y las
   alternativas descartadas, cómo instalar, cómo probar, cómo desplegar, cómo deshacer y qué cambió.
 - Los comentarios del código explican el porqué, no el qué.
@@ -186,7 +194,7 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
 - Se despliega desde `main` verificado, nunca desde una rama.
 - El orden es: migraciones primero, después el código, reiniciar el servicio y comprobar en la web real
   (por ejemplo, con la API pública) que el cambio está y que nada se rompió.
-- Cómo se hace está en `docs/VPS.md` y en `CLAUDE.md`.
+- Cómo se hace está en `docs/guias/DESPLEGAR.md`, con su resumen en `CLAUDE.md`.
 
 ### XXII. Pruebas sin tocar lo real
 
@@ -234,7 +242,7 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
 ### XXVII. Los cambios de otros devs se funden, no se copian
 
 - Lo que manda otra persona (un zip, una rama) nunca se copia encima: se busca su base, se saca su diff y
-  se funde a tres bandas, como cuenta `docs/CAMBIOS-DE-OTROS-DEVS.md`.
+  se funde a tres bandas, como cuenta `docs/guias/CAMBIOS-DE-OTROS-DEVS.md`.
 - Entra como su propia especificación (una spec corta si es pequeño), diciendo qué no entró y por qué.
 
 ### XXVIII. Móvil y PC
@@ -245,7 +253,7 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
 ### XXIX. El arte no se publica
 
 - Los dibujos de las prendas son del equipo de arte: los originales viven fuera de git y el sitio los
-  sirve desde la base, con firma (`docs/ARTE.md`). Ningún cambio puede volver a dejarlos al alcance de
+  sirve desde la base, con firma (`docs/referencia/ARTE.md`). Ningún cambio puede volver a dejarlos al alcance de
   cualquiera.
 
 ### XXX. Sin emojis
@@ -255,14 +263,14 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
 
 ### XXXI. Las listas vivas no se borran
 
-- En `docs/AUDITORIA.md`, `docs/SUGERENCIAS.md` y cualquier otra lista numerada, las filas nunca se
+- En `docs/listas/AUDITORIA.md`, `docs/listas/SUGERENCIAS.md` y cualquier otra lista numerada, las filas nunca se
   borran ni sus números se reutilizan. Lo resuelto se marca con su fecha y lo descartado, con su motivo.
 
 ### XXXII. El equipo
 
-- Hoy Spec Kit lo usan Luis y Claude. La documentación explica cómo se sumaría otro dev (instalar
-  `specify`, abrir su asistente en la carpeta del proyecto y seguir esta constitución), para que el resto
-  del equipo pueda adoptarlo.
+- Hoy Spec Kit lo usan Luis y Claude. Cómo se sumaría otro dev (instalar `specify`, abrir su asistente
+  en la carpeta del proyecto y seguir esta constitución) lo explica `docs/guias/SUMARSE.md`, para que el
+  resto del equipo pueda adoptarlo.
 - El trabajo de otros que no pase por Spec Kit entra por la regla XXVII.
 
 ## Flujo de trabajo (Spec Kit)
@@ -291,4 +299,4 @@ Cada paso se anuncia antes, se resume después y ninguno se encadena con el sigu
 - Las reglas propias del proyecto se pueden añadir o cambiar en cualquier momento con
   `/speckit-constitution`.
 
-**Versión**: 1.0.0 | **Ratificada**: 2026-10-05 | **Última enmienda**: 2026-10-05
+**Versión**: 1.0.1 | **Ratificada**: 2026-10-05 | **Última enmienda**: 2026-10-05

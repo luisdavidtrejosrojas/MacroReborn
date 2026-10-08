@@ -1,7 +1,7 @@
 // ==============================
 // EL NOMBRE, CON LAS MAYÚSCULAS QUE SEA — tests/nombres-mayusculas.test.js
 // ==============================
-// Punto 31 de docs/AUDITORIA.md. Hasta el 05/10/2026 casi todo comparaba
+// Punto 31 de docs/listas/AUDITORIA.md. Hasta el 05/10/2026 casi todo comparaba
 // el nombre exacto: "Mateo503" no encontraba el perfil de "MATEO503", y
 // dos personas que no pudieron entrar con otras mayúsculas acabaron
 // registrando otra cuenta (jader/Jader, yotter/Yotter).

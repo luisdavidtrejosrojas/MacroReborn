@@ -63,7 +63,7 @@ async function verificarContrasenaYMigrar(sql, username, contrasenaPlana) {
 
   // Con las mayúsculas que sea: "Jader" entra a "jader" si es la única
   // con ese nombre (cuentaPorNombre() en api/_utils.js). Antes no podía,
-  // y así se crearon las dos parejas del punto 31 de docs/AUDITORIA.md.
+  // y así se crearon las dos parejas del punto 31 de docs/listas/AUDITORIA.md.
   const cuenta = await cuentaPorNombre(sql, username);
   if (!cuenta) return null;
 

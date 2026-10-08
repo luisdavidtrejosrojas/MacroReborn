@@ -1,7 +1,7 @@
 // ==============================
 // LA FIRMA DE LAS PRENDAS SUELTAS — tests/prendas-firma.test.js
 // ==============================
-// Fase 5 de docs/AVATARES-SERVIDOR.md: /prendas/<huella>.png solo
+// Fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md: /prendas/<huella>.png solo
 // contesta con una firma que reparte el panel del equipo de arte. Ver
 // api/_prendas-firma.js. La ruta que la exige se prueba en
 // tests/avatar-prenda.test.js; aquí, la firma misma.

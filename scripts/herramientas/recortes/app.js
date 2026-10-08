@@ -5,7 +5,7 @@
 // Enseña, prenda por prenda, el cuadro automatico de su previsualizacion,
 // y deja forzar uno para toda una capa de un modelo. Aqui solo se mira y
 // se decide; las 768 imagenes las genera el servidor. Fase 4 de
-// docs/AVATARES-SERVIDOR.md.
+// docs/historia/AVATARES-AL-SERVIDOR.md.
 //
 // Todas las cuentas del cuadro se hacen en coordenadas del LIENZO, de
 // 327x504, y solo se pasan a pixeles de pantalla al dibujar. Mezclarlas

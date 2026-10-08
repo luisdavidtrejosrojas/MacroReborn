@@ -121,7 +121,7 @@ describe("las demás recompensas (Macro Snake)", () => {
 
   test("no cuentan minutos, ni las frena el de los minutos", async () => {
     // Una partida de Macro Snake paga al acabar, sin juego en el pulso.
-    // Que pague por partida es el punto 19 de docs/AUDITORIA.md.
+    // Que pague por partida es el punto 19 de docs/listas/AUDITORIA.md.
     const p = await persona("serpiente_rapida");
     await minuto(p);
     assert.equal((await recompensa(p, 20)).success, true);

@@ -19,7 +19,7 @@
   // de js/core.js. La fila es una actividad, así que el id de la persona
   // llega como usuario_id. Sin avatar, el emoji de siempre. Hasta el
   // 24/09/2026 se dibujaba prenda por prenda. Ver
-  // docs/AVATARES-SERVIDOR.md, fase 3.
+  // docs/historia/AVATARES-AL-SERVIDOR.md, fase 3.
   function avatarHTML(item) {
     if (typeof fotoDeAvatar !== "function") return '<span>👤</span>';
     const persona = { id: item.usuario_id, avatar_compuesto: item.avatar_compuesto };

@@ -1,7 +1,7 @@
 // ==============================
 // LA VISTA PREVIA DEL EDITOR, EN EL NAVEGADOR — tests/editor-vista-previa.test.js
 // ==============================
-// Fase 5 de docs/AVATARES-SERVIDOR.md: el editor ya no apila prendas
+// Fase 5 de docs/historia/AVATARES-AL-SERVIDOR.md: el editor ya no apila prendas
 // sueltas; pide la vista previa al servidor
 // (POST /api/users?action=avatar-vista-previa). Cada petición es un
 // dibujo allí, así que el navegador tiene que ser prudente:

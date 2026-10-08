@@ -31,7 +31,7 @@
   // Cada diseño guardado tiene su compuesto, en /avatares/<id>/ranura<N>/,
   // que el servidor hace al guardarlo. Se pide el grande: el visor mide
   // 100x154 y el pequeño se vería borroso. Hasta el 24/09/2026 se
-  // dibujaba prenda por prenda. Ver docs/AVATARES-SERVIDOR.md, fase 3.
+  // dibujaba prenda por prenda. Ver docs/historia/AVATARES-AL-SERVIDOR.md, fase 3.
 
   // El id del dueño de la galería: lo manda la API junto a las ranuras.
   let idDelDueno = null;

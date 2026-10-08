@@ -16,7 +16,7 @@ function setCors(res, metodos) {
 // Hasta el 05/10/2026 casi todo comparaba el nombre exacto: quien
 // escribía "Mateo503" no encontraba el perfil de "MATEO503", y quien
 // entraba como "Jader" no podía con la cuenta "jader" y acababa
-// registrando otra (punto 31 de docs/AUDITORIA.md).
+// registrando otra (punto 31 de docs/listas/AUDITORIA.md).
 //
 // Primero el exacto, para que las dos parejas que ya existen y solo se
 // distinguen por mayúsculas (jader/Jader, yotter/Yotter) sigan entrando

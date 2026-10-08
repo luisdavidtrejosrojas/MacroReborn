@@ -4,7 +4,7 @@
 // La prenda puesta sobre un maniqui y recortada a su cuadro, como en el
 // inventario de un videojuego. Los cuadros los decide una persona y
 // viven en api/_recortes.js; esto solo dibuja. Fase 4 de
-// docs/AVATARES-SERVIDOR.md.
+// docs/historia/AVATARES-AL-SERVIDOR.md.
 //
 // NUNCA LA PRENDA SOLA SOBRE TRANSPARENTE. Eso seria regalar el catalogo
 // otra vez: una previsualizacion es un trozo pequeño de la prenda PUESTA,

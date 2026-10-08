@@ -2,7 +2,7 @@
 // EL PELO DE ATRÁS — tests/pelo-de-atras.test.js
 // ==============================
 // Desde el 04/10/2026 el avatar tiene dos capas de pelo: "peloatras",
-// justo debajo, y "pelo", encima (docs/AVATARES-SERVIDOR.md, sección 14).
+// justo debajo, y "pelo", encima (docs/referencia/AVATARES.md#el-pelo-de-atrás-dos-capas-de-pelo).
 // Lo que se sujeta aquí es lo del servidor:
 //
 //   - se dibuja entre la cara y el pelo: tapa la ropa y el pelo lo tapa
