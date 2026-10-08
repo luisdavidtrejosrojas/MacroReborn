@@ -248,7 +248,7 @@ y el historial, al unir.
 
 Un commit por tarea, subido a `origin` al cerrarla.
 
-- [ ] T001 Fundir `comunidad-ranking.html` a tres bandas: vuelven sus siete versiones (RF-006).
+- [X] T001 Fundir `comunidad-ranking.html` a tres bandas: vuelven sus siete versiones (RF-006).
 - [ ] T002 El respaldo para los navegadores sin `clip`, en `css/theme-canonical.css` y
   `css/inicio.css` (RF-003, D1).
 - [ ] T003 Los saltos quedan a la vista: `js/navbar.js` (RF-004, D2).
