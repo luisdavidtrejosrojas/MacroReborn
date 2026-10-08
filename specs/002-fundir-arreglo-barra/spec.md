@@ -2,7 +2,7 @@
 
 **Rama**: `002-fundir-arreglo-barra`
 **Creada**: 2026-10-08
-**Estado**: Borrador
+**Estado**: Aprobada por Luis el 08/10/2026
 **Tipo**: spec corta (regla XIX): especificación, plan y tareas en esta página, aprobados una vez.
 **Pedido**: Luis, 08/10/2026, al unir la spec 001: «Una spec corta que lo funda bien: se queda su
 arreglo de la barra y las versiones de los scripts de Comunidad vuelven a subir. Antes de cualquier
