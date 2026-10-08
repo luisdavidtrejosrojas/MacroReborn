@@ -267,7 +267,10 @@ html {
   line-height: 1.5;
   /* "clip", no "hidden": recorta el desborde horizontal sin convertir
      el body en contenedor de scroll, que es lo que rompe el
-     position:sticky de la navbar en toda página que use .mr-root. */
+     position:sticky de la navbar en toda página que use .mr-root.
+     El "hidden" de delante es el respaldo para los navegadores que no
+     entienden "clip" (Safari anterior a la 16). */
+  overflow-x: hidden;
   overflow-x: clip;
 }
 
@@ -327,11 +330,13 @@ html {
 /* ==========================================================================
    AVISO DE CUENTA SUSPENDIDA
    Se inyecta desde js/motor/permisos.js arriba de todo el contenido.
+   No se pega arriba: la barra ya lo hace, y los dos a la vez se pisan
+   (el aviso le tapaba la parte de arriba) o, uno debajo del otro, ocupan
+   hasta 187 px del móvil. Se ve al entrar en cada página y se va al bajar.
    ========================================================================== */
 
 .aviso-suspension {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 999;
   background: #3a0f14;
   color: #ffb4b4;

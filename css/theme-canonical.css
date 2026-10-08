@@ -1223,12 +1223,17 @@ html[data-tema="claro"] [data-mr-paleta] {
 /* overflow-x: clip (no "hidden") a propósito: "hidden" convierte a html/body
    en contenedor de scroll y eso rompe position:sticky en toda la navbar
    (se deja de quedar fija al hacer scroll) en TODO el sitio. "clip" recorta
-   el desborde horizontal igual, sin crear ese contenedor. */
+   el desborde horizontal igual, sin crear ese contenedor. El "hidden" de
+   delante es el respaldo para los navegadores que no entienden "clip"
+   (Safari anterior a la 16): ahí todo sigue como antes, sin moverse de
+   lado, aunque la barra no se quede fija. */
 html {
+  overflow-x: hidden;
   overflow-x: clip;
 }
 
 body {
+  overflow-x: hidden;
   overflow-x: clip;
 }
 

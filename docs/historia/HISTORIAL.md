@@ -16,6 +16,13 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
 
 ## Semana del 05 al 11/10/2026
 
+- **08/10, el navegador** (Luis): la spec 002 funde lo que SamuMacro subió el 06/10. Se queda su
+  arreglo de la barra fija, con un respaldo para los navegadores que no entienden `clip`, y
+  `comunidad-ranking.html` vuelve a pedir sus siete hojas y scripts con las versiones de antes. Con la
+  barra fija otra vez, los saltos a una parte de la página quedan debajo de ella, no tapados, y el
+  aviso de cuenta suspendida deja de pisarla. En Comunidad, la ventana de `MRModal`, que desde el 28/09
+  salía al final de la página, vuelve a salir encima. Una prueba nueva avisa si una página pide un
+  archivo con otra versión que las demás. [Spec 002](../../specs/002-fundir-arreglo-barra/spec.md).
 - **08/10, documentación** (Luis): la spec 001 reordena la documentación por tipos (referencia,
   guías, listas vivas e historia), la revisa entera contra el código, el servidor y la web, y la
   completa: el índice del README, ARQUITECTURA, SUMARSE, DESPLEGAR y este historial, con una prueba que
@@ -24,7 +31,8 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
   [Spec 001](../../specs/001-reordenar-documentacion/spec.md).
 - **06/10, el navegador** (SamuMacro): la barra queda fija al bajar por la página (`overflow-x: clip`
   en vez de `hidden`), en tres subidas directas a `main`. Con ellas, `comunidad-ranking.html` volvió a
-  versiones viejas de sus scripts; eso se arregla en su propia especificación, antes de desplegar.
+  versiones viejas de sus scripts; eso lo arregla la
+  [spec 002](../../specs/002-fundir-arreglo-barra/spec.md), antes de desplegar.
   [`84e703a`](https://github.com/valenmgg/MacroReborn/commit/84e703a) a
   [`eb3b224`](https://github.com/valenmgg/MacroReborn/commit/eb3b224) (3 commits).
 - **05/10, cuentas** (Luis): los nombres de usuario dejan de distinguir mayúsculas. El perfil, entrar

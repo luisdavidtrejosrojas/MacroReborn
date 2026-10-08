@@ -1113,7 +1113,14 @@ body.mr-root::before {
   background-size: 240px 180px, 310px 240px, 360px 260px, 280px 230px, 330px 260px, 390px 260px, 420px 300px;
 }
 
-body.mr-root > :not(.navbar) { position: relative; z-index: 1; }
+/* El contenido va por encima del fondo de estrellas (::before), pero solo
+   los bloques de la página: sus secciones y el pie. Lo que los scripts
+   cuelgan del body (la ventana de MRModal, el aviso de cuenta suspendida)
+   trae su propia posición, y una regla para todo hijo del body se la
+   quitaba: la ventana salía al final de la página. Si la página gana otro
+   tipo de bloque de contenido, va en esta lista. */
+body.mr-root > section,
+body.mr-root > footer { position: relative; z-index: 1; }
 
 /* NAVBAR: sin overrides de fondo/color acá — usa la hoja canónica
    navbar-macrojuegos.css, igual que en index.html y el resto del sitio.
