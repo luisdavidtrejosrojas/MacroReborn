@@ -49,7 +49,13 @@ de cuenta suspendida no se queda arriba. Solo lo ven las cuentas suspendidas, y 
 
 ## Aclaraciones
 
-Pendientes: las dos preguntas marcadas abajo.
+### Sesión 2026-10-08
+
+- P: ¿Entra aquí el arreglo de la ventana de una suspensión en Comunidad, que es de antes de SamuMacro
+  (28/09), o va a la auditoría para otra spec? → R: Entra aquí: es la misma regla que él tocó y se
+  comprueba con las mismas medidas.
+- P: ¿Se añade una prueba que falle si una página pide un archivo con otra versión que las demás,
+  igualando antes el modal del Bazar? → R: Sí, con su nota en VPS.
 
 ## Escenarios de uso y pruebas *(obligatorio)*
 
@@ -100,9 +106,6 @@ las mismas que el resto de páginas, para que la próxima subida de versión la 
 A una cuenta suspendida, en Comunidad, la ventana que explica la suspensión le sale encima de la
 página, como en el resto del sitio, y no al final.
 
-[NEEDS CLARIFICATION: pregunta 1 - ¿entra aquí este arreglo, que es de antes de SamuMacro, o va a la
-auditoría para otra spec?]
-
 **Por qué esta prioridad**: solo lo ven las cuentas suspendidas, y solo en esa página.
 
 **Prueba independiente**: abrir la ventana en Comunidad y mirar dónde sale.
@@ -118,8 +121,6 @@ auditoría para otra spec?]
 
 Si una página vuelve a pedir un archivo con otra versión que las demás, como con esta copia, las
 pruebas lo dicen, con la página y el archivo, antes de unir o desplegar.
-
-[NEEDS CLARIFICATION: pregunta 2 - ¿se añade esta prueba, igualando antes el modal del Bazar?]
 
 **Por qué esta prioridad**: las copias viejas son el problema que se repite con lo que mandan otros
 devs (los casos del 28/09 y el 03/10, y este).
@@ -158,9 +159,9 @@ devs (los casos del 28/09 y el 03/10, y este).
 - **RF-006**: `comunidad-ranking.html` DEBE pedir sus siete hojas y scripts con las versiones de antes
   del 06/10, que es lo que da fundir su copia a tres bandas.
 - **RF-007**: En Comunidad, la ventana y el aviso de una suspensión DEBEN comportarse como en el resto
-  del sitio. [NEEDS CLARIFICATION: depende de la pregunta 1]
-- **RF-008**: Una prueba DEBE fallar si una página pide un archivo con otra versión que las demás.
-  [NEEDS CLARIFICATION: depende de la pregunta 2]
+  del sitio.
+- **RF-008**: Una prueba DEBE fallar si una página pide un archivo con otra versión que las demás, y
+  decir qué página y qué archivo.
 - **RF-009**: Esta especificación DEBE contar qué no entró y por qué (regla XXVII): las siete
   versiones de la copia y el commit vacío.
 - **RF-010**: Al unirse a `main`, el historial DEBE tener su entrada, con la fecha de la unión y el
@@ -178,11 +179,12 @@ devs (los casos del 28/09 y el 03/10, y este).
 - **CE-004**: Tras un salto al principio de una sección, 0 píxeles de ella quedan debajo de la barra
   (hoy, 124 en móvil).
 - **CE-005**: Con el aviso de suspensión, 0 píxeles de la barra tapados (hoy, 42 en PC y 63 en móvil).
-- **CE-006**: En Comunidad, la ventana de una suspensión sale encima de la página, como en Inicio (si
-  entra la pregunta 1).
+- **CE-006**: En Comunidad, la ventana de una suspensión sale encima de la página, como en Inicio.
 - **CE-007**: `npm test` en verde, y la integración continua como antes de esta rama: solo en rojo la
   prueba de humo, que tiene su propia especificación.
 - **CE-008**: Capturas de Inicio y Comunidad, en PC y en móvil, miradas antes de unir (regla XXVIII).
+- **CE-009**: Con una versión cambiada a mano en una página, las pruebas fallan y nombran la página y
+  el archivo; con las versiones igualadas, pasan. Hoy, 7 archivos se piden con versiones distintas.
 
 ## Supuestos
 
@@ -223,15 +225,15 @@ devs (los casos del 28/09 y el 03/10, y este).
 - **D3. El aviso de suspensión deja de pegarse arriba.** Queda en lo alto de cada página, antes de la
   barra, y se va al bajar; la ventana de la suspensión sigue saliendo al intentar escribir.
   Descartado: pegar la barra debajo del aviso, porque juntos ocuparían hasta 187 píxeles del móvil.
-- **D4. En Comunidad, la regla del fondo de estrellas solo para los bloques de la página** (si
-  entra la pregunta 1). Se aplica a sus `section` y su `footer`, en vez de a todo hijo del `body`
-  menos la barra: lo que cuelguen los scripts queda fuera sin nombrarlo. Descartado: excepciones una
-  a una, que se rompen con la próxima capa nueva.
+- **D4. En Comunidad, la regla del fondo de estrellas solo para los bloques de la página.** Se
+  aplica a sus `section` y su `footer`, en vez de a todo hijo del `body` menos la barra: lo que
+  cuelguen los scripts queda fuera sin nombrarlo. Descartado: excepciones una a una, que se rompen con
+  la próxima capa nueva.
 - **D5. No se sube la versión** de las hojas ni de `js/navbar.js`: cada cambio convive cinco minutos
   con el de antes sin romper nada, que es cuando VPS dice que no hace falta.
-- **D6. La prueba de las versiones** (si entra la pregunta 2). Por cada archivo que las páginas piden
-  con `?v=`, una sola versión en todas. Para que pase hoy, las páginas que piden el modal del 18/09
-  pasan al del 24/09, el del Bazar: el archivo es el mismo, solo cambia su dirección. Se apunta en VPS.
+- **D6. La prueba de las versiones.** Por cada archivo que las páginas piden con `?v=`, una sola
+  versión en todas. Para que pase hoy, las páginas que piden el modal del 18/09 pasan al del 24/09, el
+  del Bazar: el archivo es el mismo, solo cambia su dirección. Se apunta en VPS.
 
 **Cómo se comprueba**: `npm test`, y el servidor local (`npm run db:local`, mirando antes el puerto
 3001) con Edge sin ventana: en las 25 páginas con barra, en PC y en móvil, la barra arriba tras bajar,
@@ -252,9 +254,9 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [ ] T003 Los saltos quedan a la vista: `js/navbar.js` (RF-004, D2).
 - [ ] T004 El aviso de suspensión no tapa la barra: `css/inicio.css` (RF-005, D3).
 - [ ] T005 Comunidad: la regla del fondo de estrellas, solo para los bloques de la página, en
-  `css/comunidad-ranking.css` (RF-007, D4; si entra la pregunta 1).
+  `css/comunidad-ranking.css` (RF-007, D4).
 - [ ] T006 El modal del 24/09 en todas las páginas, la prueba de las versiones y su nota en VPS
-  (RF-008, D6; si entra la pregunta 2).
-- [ ] T007 Comprobar: `npm test`, las 25 páginas en PC y en móvil, y las capturas (CE-001 a CE-008).
+  (RF-008, D6).
+- [ ] T007 Comprobar: `npm test`, las 25 páginas en PC y en móvil, y las capturas (CE-001 a CE-009).
 - [ ] T008 CAMBIOS-DE-OTROS-DEVS: lo que se sube directo a `main`.
 - [ ] T009 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-010).

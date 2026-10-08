@@ -13,7 +13,7 @@
 
 ## Requisitos completos
 
-- [ ] No quedan marcas [NEEDS CLARIFICATION]
+- [x] No quedan marcas [NEEDS CLARIFICATION]
 - [x] Los requisitos se pueden comprobar y no son ambiguos
 - [x] Los criterios de éxito se pueden medir
 - [x] Los criterios de éxito no dependen de una tecnología
@@ -40,3 +40,6 @@
 - **Primera revisión (2026-10-08):** quedan dos marcas [NEEDS CLARIFICATION], las preguntas 1 (la
   ventana de una suspensión en Comunidad, RF-007) y 2 (la prueba de las versiones, RF-008). Todo lo
   demás pasa.
+- **Segunda revisión (2026-10-08):** Luis respondió A, A: el arreglo de la ventana entra en esta spec,
+  y la prueba de las versiones también, igualando antes el modal del Bazar. Las respuestas están en la
+  sección de aclaraciones, el RF-008 tiene su criterio (CE-009) y ya pasa todo.
