@@ -23,11 +23,18 @@ constitución). Así que, archivo por archivo:
    resolver a mano los conflictos. Si su base es el último commit, no hay nada que fundir: su cambio
    entra tal cual.
 4. **Revisarlo**, probarlo (`npm test` y el servidor local) y mirarlo en capturas, en móvil y en PC.
+   `npm test` señala una página que pide un archivo con otra versión que las demás
+   (`tests/versiones.test.js`), que es como suele delatarse una copia vieja.
 5. **Contar qué no entró y por qué**, y qué se arregló al meterlo.
+
+Vale igual para lo que alguien sube directo a `main`: subir archivos desde la web de GitHub guarda los
+que tenga esa persona, viejos o no, y llegan como commits suyos. Su base se busca igual, entre los
+commits de antes de su subida.
 
 Entra como su propia especificación (una spec corta si es pequeño), con un commit por cambio. Los dos
 casos que dieron forma al método, el del 28/09/2026 y el del 03/10/2026, están en
-[CASOS DE OTROS DEVS](../historia/CASOS-DE-OTROS-DEVS.md).
+[CASOS DE OTROS DEVS](../historia/CASOS-DE-OTROS-DEVS.md); el del 06/10/2026, tres commits subidos
+directo a `main` desde la web de GitHub, en la [spec 002](../../specs/002-fundir-arreglo-barra/spec.md).
 
 ---
 
@@ -40,6 +47,8 @@ cambios:
   antes de empezar.
 - **Mandar solo lo que se cambió**, mejor como rama o parche de Git
   (`git diff`, `git format-patch`) que como carpetas enteras.
+- **Subirlo a una rama propia**, con Git: ni directo a `main` ni subiendo
+  archivos en la web de GitHub. Así se ve qué se cambió y desde qué base.
 - **No mandar herramientas de prueba propias** (como `mock-backend.js`)
   dentro de las páginas.
 - **Probar con el servidor local** (`npm run db:local`, ver

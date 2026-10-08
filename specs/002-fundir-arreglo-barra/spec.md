@@ -258,7 +258,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [X] T006 El modal del 24/09 en todas las páginas, la prueba de las versiones y su nota en VPS
   (RF-008, D6).
 - [X] T007 Comprobar: `npm test`, las 25 páginas en PC y en móvil, y las capturas (CE-001 a CE-009).
-- [ ] T008 CAMBIOS-DE-OTROS-DEVS: lo que se sube directo a `main`.
+- [X] T008 CAMBIOS-DE-OTROS-DEVS: lo que se sube directo a `main`.
 - [ ] T009 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-010).
 
 ## Comprobación (08/10/2026)
