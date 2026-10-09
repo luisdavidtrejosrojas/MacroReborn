@@ -537,8 +537,15 @@ async function guardarAvatar(avatar){
 
     if(!respuesta.ok){
       datosUsuario.avatar = avatarAnterior;
-      console.warn("MacroReborn: el servidor no confirmó el cambio de avatar.");
-      return false;
+      // El motivo del servidor viaja de vuelta para que lo vea quien guarda
+      // (el botón Guardar lo enseña); antes solo quedaba en la consola.
+      let motivo = null;
+      try {
+        const datos = await respuesta.json();
+        motivo = (datos && datos.error) || null;
+      } catch (_) { /* sin cuerpo legible: sin motivo */ }
+      console.warn("MacroReborn: el servidor no confirmó el cambio de avatar.", motivo || respuesta.status);
+      return { ok: false, motivo };
     }
 
     // La huella nueva del compuesto va con el avatar. Sin ella, lo que
@@ -560,13 +567,13 @@ async function guardarAvatar(avatar){
       localStorage.setItem("usuarioActivo", JSON.stringify(datosUsuario));
     }
 
-    return true;
+    return { ok: true };
 
   }catch(error){
 
     datosUsuario.avatar = avatarAnterior;
     console.warn("MacroReborn: no se pudo guardar el avatar en el servidor.", error);
-    return false;
+    return { ok: false, motivo: null };
 
   }
 
@@ -716,8 +723,8 @@ function prepararPanelAvatarAdminPng(){
     btnQuitar.disabled = true;
     estado.textContent = "Volviendo al avatar normal…";
     try{
-      const ok = await guardarAvatar(normal);
-      if(!ok) throw new Error("No se pudo guardar el avatar normal.");
+      const guardado = await guardarAvatar(normal);
+      if(!guardado.ok) throw new Error(guardado.motivo || "No se pudo guardar el avatar normal.");
       actualizarAvatarPrincipal();
       input.value = "";
       mostrarPreviewActual();
@@ -1041,8 +1048,30 @@ document.getElementById("cancelarEditor")?.addEventListener("click",()=>{
 
 // ---------- GUARDAR AVATAR ----------
 
-document.getElementById("guardarAvatar")?.addEventListener("click", async ()=>{
-  await guardarAvatar({...editorCapas});
+document.getElementById("guardarAvatar")?.addEventListener("click", async (evento)=>{
+  const boton = evento.currentTarget;
+  if(boton.disabled) return;
+  boton.disabled = true;
+  let guardado;
+  try{
+    guardado = await guardarAvatar({...editorCapas});
+  }finally{
+    boton.disabled = false;
+  }
+
+  // Si el servidor no lo aceptó, el editor sigue abierto y se dice por qué.
+  // Antes se cerraba igual, sin avisar, y hasta daba el logro (punto 32 de
+  // la auditoría). MRModal escapa el texto.
+  if(!guardado.ok){
+    const motivo = guardado.motivo || "No se pudo guardar. Revisá tu conexión y probá de nuevo.";
+    if(window.MRModal && typeof window.MRModal.show === "function"){
+      window.MRModal.show({ title: "No se guardó el avatar", message: motivo, buttonText: "Entendido" });
+    }else{
+      alert(motivo);
+    }
+    return;
+  }
+
   document.getElementById("editorAvatar").style.display="none";
   actualizarAvatarPrincipal();
 
