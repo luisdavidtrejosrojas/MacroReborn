@@ -246,6 +246,30 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [X] T003 La documentación: CLAUDE.md, SUMARSE, DESARROLLO y ARQUITECTURA (RF-009).
 - [X] T004 La CI gasta menos: una subida nueva cancela la ejecución anterior de la misma rama, con su
   documentación (RF-011, D6).
-- [ ] T005 Comprobar: `npm test`, la prueba de humo en local, la regla del minuto apagada a mano, Node
+- [X] T005 Comprobar: `npm test`, la prueba de humo en local, la regla del minuto apagada a mano, Node
   20 y 22 en el PC y la CI de la rama, si arranca (CE-001 a CE-008, D7).
 - [ ] T006 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-010).
+
+## Comprobación (08/10/2026)
+
+En el PC de Luis, con su Node 24.19.0 y con los Node oficiales de nodejs.org de las mismas versiones
+que la CI, 20.20.2 (la del servidor) y 22.23.3, comprobados con sus sumas SHA-256:
+
+- **CE-001 y CE-004, pendientes de GitHub.** Sus trabajos no arrancan desde la tarde del 08/10, por el
+  cupo de minutos. Lo que sí se ve: con la configuración nueva, GitHub crea los dos trabajos, el de
+  Node 20 y el de Node 22, y solo los para por el cupo (la ejecución de `2bc7704`). Si no leyera bien el
+  archivo, diría «Invalid workflow file». Se confirma cuando vuelva, el 01/11 o antes si valenmgg
+  amplía el cupo.
+- **CE-002**: la prueba de humo llega al final con las tres versiones: sus 23 comprobaciones se
+  ejecutan (antes, 8). Paga 5 monedas en el primer pulso, todas de racha, y el segundo no se cuenta.
+- **CE-003**: con la regla del minuto apagada a mano (`SEGUNDOS_ENTRE_MINUTOS` a 0), falla con «un
+  segundo pulso enseguida no debe contarse». Y con la racha quitada del pulso, con «el primer pulso debe
+  pagar lo que dice la regla de las monedas». Los dos cambios se deshicieron con `git checkout`.
+- **CE-005 y CE-007**: `npm test`, 1.338 pruebas en verde y ninguna en rojo con Node 20.20.2, 22.23.3
+  y 24.19.0; una se salta según el día («hoy la diaria no es de juegos»). Y la prueba de humo, en verde
+  con las tres.
+- **CE-006**: la rama solo cambia `scripts/smoke-local.js`, `.github/workflows/ci.yml`, la
+  documentación y esta spec: nada de `api/`, `js/`, `css/` ni de las páginas.
+- **CE-008**: simulado sobre las 121 ejecuciones de octubre, cancelando la anterior de la misma rama,
+  941 minutos en vez de 2.459.
+- **Aviso de GitHub, para más adelante**: `ubuntu-latest` pasa a Ubuntu 26 desde el 19/10/2026.
