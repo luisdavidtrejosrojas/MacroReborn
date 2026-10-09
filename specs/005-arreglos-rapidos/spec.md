@@ -278,7 +278,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
   capturas (CE-001 a CE-008).
 - [X] T008 La auditoría: los puntos cerrados, con sus notas, y el 92 (RF-010).
 - [X] T009 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-012).
-- [ ] T010 Con el OK de Luis, desplegar y comprobar en la web real (RF-011).
+- [X] T010 Con el OK de Luis, desplegar y comprobar en la web real (RF-011).
 
 ## Comprobación (08/10/2026)
 
@@ -305,3 +305,30 @@ esperaba el `true` de antes de `guardarAvatar()` (`1bf3148`). Cada prueba nueva 
   pruebas, y la consulta nueva del top se midió en producción (4,5 ms, 20 personas distintas).
 - **CE-008**: capturas de Explorar, la ficha (los botones y el panel de amigos) y el editor con el
   rechazo, en los dos tamaños, miradas el 08/10. No entran en git.
+
+## Despliegue (09/10/2026)
+
+Con el OK de Luis y los pasos de [DESPLEGAR](../../docs/guias/DESPLEGAR.md), el servidor pasó de
+`06f1983` a `0a5019e`, con su copia limpia antes y después. No hubo migraciones ni `npm install`: de
+`package-lock.json` solo cambió la versión de Node que pide el proyecto, no las dependencias. Hubo un
+solo reinicio, a las 09:25:30 UTC, y los dos procesos respondían a los 2 segundos.
+
+**En la web real**, después del reinicio:
+
+- Las comprobaciones de DESPLEGAR, bien: las páginas, 200; `.env`, `.git/config` y `server.js`, 404;
+  la dirección mal formada, 400; y la API pública de usuarios y la línea de avisos, 200.
+- **CE-003**: el top 20 de Macro Snake tiene 20 personas distintas, del puesto 1 al 20. Justo antes del
+  despliegue tenía 5.
+- **CE-001**: Explorar enseña 16 tarjetas y 12 categorías en PC y en móvil, mirada con Edge y sin
+  sesión. Queda un solo aviso de vacío, el de los amigos, que pide iniciar sesión. Antes había tres.
+- **CE-002**: en la ficha del juego 5, en los dos tamaños, los tres botones llevan al 70, a Estrategia y
+  al 14, y «Siguiente» abre Minecraft Tower Defense. Ninguna de esas páginas da errores de JavaScript.
+- A los cuatro minutos, el servicio no tenía ningún error en su registro ni se había reiniciado, nginx
+  no había dado ninguna respuesta 5xx, y la memoria estaba en 153 MB.
+
+**Lo que no se mira en la web real**:
+
+- El panel de amigos y el editor con un guardado rechazado necesitan una sesión de verdad. Una sesión
+  solo de navegador la cierra el propio sitio. Los sujetan sus pruebas y la comprobación en el navegador
+  en local, arriba.
+- El desempate del ranking se verá el lunes 12/10, con el recálculo de las 08:00 UTC.
