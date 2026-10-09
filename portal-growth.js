@@ -1,6 +1,6 @@
 /* MacroReborn — capa adicional de crecimiento.
- * No reemplaza funciones existentes. Solo añade descubrimiento, ligas,
- * señales sociales y resumen de economía/progresión usando APIs ya existentes.
+ * No reemplaza funciones existentes. Solo añade descubrimiento, ligas y
+ * señales sociales usando APIs ya existentes.
  */
 (function(){
   "use strict";
@@ -118,21 +118,17 @@
       const jugado=comprobaciones.filter(Boolean);
       host.innerHTML=jugado.length
         ? `<div class="mr-social-title">👥 Tus amigos jugaron este juego</div><div class="mr-social-friends">${jugado.map(a=>`<a href="usuario.html?usuario=${encodeURIComponent(a.username)}" class="mr-social-friend"><span class="mr-social-avatar">${String(a.username).slice(0,1).toUpperCase()}</span><span>@${esc(a.username)}</span><small>Nivel ${Number(a.level)||1}</small></a>`).join("")}</div>`
-        : '<p class="mr-social-empty">Ninguno de tus amigos aparece entre los últimos jugadores de este título.</p>';
+        : '<p class="mr-social-empty">Ninguno de tus amigos lo tiene entre sus últimos juegos.</p>';
     }catch(_){ host.innerHTML=""; }
   }
 
-  async function montarEconomiaPerfil(){
-    const host=document.getElementById("mrEconomiaPerfil");
-    if(!host || !activo) return;
-    try{
-      const datos=await json("/api/content?action=avatar-shop&username="+encodeURIComponent(activo.username||activo.nombre));
-      host.innerHTML=`<div class="mr-economy-line"><span>🪙</span><div><b>${Number(datos.monedas||0).toLocaleString("es-AR")}</b><small>Monedas disponibles</small></div><a href="bazar.html">Abrir Bazar</a></div>`;
-    }catch(_){ host.innerHTML=""; }
-  }
+  // Aquí había una línea con el saldo y "Abrir Bazar" para un hueco,
+  // #mrEconomiaPerfil, que no tenía ninguna página: no salía nunca. Se quitó
+  // el 08/10/2026 (punto 87 de la auditoría): la barra ya enseña el saldo
+  // en todas las páginas, con un "+" que lleva al Bazar.
 
   document.addEventListener("DOMContentLoaded",()=>{
-    montarFiltrosCatalogo(); montarLigas(); montarAmigosEnFicha(); montarEconomiaPerfil();
+    montarFiltrosCatalogo(); montarLigas(); montarAmigosEnFicha();
   });
   document.addEventListener("macroreborn:catalogo-listo",()=>montarFiltrosCatalogo());
 })();

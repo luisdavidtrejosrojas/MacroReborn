@@ -200,9 +200,12 @@ async function adminStats(req, res) {
 //    de jugar va cayendo semana a semana (puntuacionSemana = 0 esa
 //    semana) en vez de quedar congelado en su mejor puntuación vieja.
 //
-// 6) Se ordena a todos por esa puntuación final (de mayor a menor) y
-//    se guarda: rank_anterior = la posición que tenían, rank_actual =
-//    la posición nueva, rank_actualizado_at = ahora. Esto es lo mismo
+// 6) Se ordena a todos por esa puntuación final (de mayor a menor); en
+//    empate, por los minutos de la semana, después por el puesto que
+//    tenían (sin puesto, detrás) y al final por la cuenta más antigua,
+//    así que quien empata no cambia de puesto. Y se guarda:
+//    rank_anterior = la posición que tenían, rank_actual = la posición
+//    nueva, rank_actualizado_at = ahora. Esto es lo mismo
 //    que ya usaba comunidad-ranking.html para mostrar "+2 / -1" junto
 //    a cada jugador (js/comunidad-ranking.js -> rkDeltaHTML()).
 //
@@ -263,7 +266,7 @@ async function calcularYAplicarRanking() {
         AND semana >= (${semana}::date - INTERVAL '28 days');
     `,
 
-    sql`SELECT u.id, u.rank_actual, u.ranking_puntuacion, ${sanciones.baneadaSQL(sql)} AS baneada FROM users u;`
+    sql`SELECT u.id, u.rank_actual, u.ranking_puntuacion, ${sanciones.baneadaSQL(sql)} AS baneada FROM users u ORDER BY u.id;`
 
   ]);
 
@@ -328,9 +331,17 @@ async function calcularYAplicarRanking() {
 
   });
 
+  // Desempate: a igual puntuación y minutos, el orden de la semana
+  // anterior (sin puesto, detrás) y, después, la cuenta más antigua. Sin
+  // esto, las cuentas empatadas, casi todas a cero (99 de 219 el
+  // 08/10/2026), cambiaban de puesto al azar cada lunes (punto 36 de la
+  // auditoría).
+  const puestoAnterior = r => (r.rankAnterior == null ? Infinity : Number(r.rankAnterior));
   resultados.sort((a, b) => {
     if (b.puntuacionFinal !== a.puntuacionFinal) return b.puntuacionFinal - a.puntuacionFinal;
-    return b.minutos - a.minutos;
+    if (b.minutos !== a.minutos) return b.minutos - a.minutos;
+    if (puestoAnterior(a) !== puestoAnterior(b)) return puestoAnterior(a) - puestoAnterior(b);
+    return Number(a.id) - Number(b.id);
   });
 
   // Se actualiza de a un usuario por vez (cantidad de jugadores

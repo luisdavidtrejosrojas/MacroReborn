@@ -16,6 +16,13 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
 
 ## Semana del 05 al 11/10/2026
 
+- **08/10, el sitio** (Luis): la spec 005 arregla lo que veía todo el mundo y no funcionaba. Explorar
+  vuelve a enseñar juegos, y los botones «Anterior», «Más de esta categoría» y «Siguiente» de cada juego
+  llevan a su sitio: los dos buscaban el catálogo en `window`, y no estaba. Vuelve a salir el panel «Tus
+  amigos jugaron este juego»; el top 20 de Macro Snake tiene 20 personas (enseñaba 5); el ranking deja
+  de barajar cada lunes a quien empata; y si guardar el avatar falla, el editor lo dice y ya no da el
+  logro. Se quita «Abrir Bazar», que no salía nunca. Son los puntos 20, 28, 32, 33, 36, 87 y 92 de la
+  auditoría, y el 40, que ya estaba arreglado. [Spec 005](../../specs/005-arreglos-rapidos/spec.md).
 - **08/10, el servidor** (Luis): la spec 004 pasa el servidor de Node 20, sin parches de seguridad desde
   el 30/04/2026, a Node 24 (la 24.21.0, con soporte hasta el 30/04/2028), de NodeSource con apt, con la
   vuelta atrás guardada antes y un solo reinicio. Sus parches entran ahora solos con las actualizaciones

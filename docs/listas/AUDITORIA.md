@@ -160,7 +160,7 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 17 | 2026-09-28 | Moderación | Suspender no hace nada: el servidor nunca consulta `suspendido`, ni siquiera al iniciar sesión. Arreglado con las sanciones (nota al pie) | `api/_auth.js:70` | 2 h |
 | 18 | 2026-09-25 | Economía | El XP y los minutos se conceden por número de peticiones, no por tiempo verificado. Los tres primeros del ranking tienen minutos imposibles. Arreglado: un minuto por minuto y por persona, lo cuente quien lo cuente (nota al pie) | `api/users.js`, `sumarXp` | 1 día |
 | 19 | - | Economía | Macro Snake paga XP por muerte. Una cuenta generó 265.605 de las 271.626 partidas | `html/juegos/macro-snake.js:17` | 2 h |
-| 20 | - | Función rota | `explorar.html` está vacía para todos: lee `window.juegos` y `datos-juegos.js` declara un `const`, que no cuelga de `window` | `js/explorar.js:14` | 10 min |
+| 20 | 2026-10-08 | Función rota | `explorar.html` está vacía para todos: lee `window.juegos` y `datos-juegos.js` declara un `const`, que no cuelga de `window` | `js/explorar.js:14` | 10 min |
 | 21 | - | Contenido | 15 de 113 juegos no cargan. El usuario ve una pantalla negra sin mensaje | `js/datos-juegos.js` | 2 h |
 | 22 | 2026-09-28 | Contenido | Un juego roto por una errata de un carácter: `fairytail` frente a `fairytale`. Arreglado: el catálogo apunta al archivo que existe, y el juego arranca | `js/datos-juegos.js:887` | 1 min |
 | 23 | 2026-09-24 | Función rota | La tienda muestra 12 cajas vacías con precio. 130 de 152 artículos no tienen dibujo en el índice público. Arreglado con las previsualizaciones: 162 de 162 artículos con imagen (docs/referencia/AVATARES.md#las-previsualizaciones-automáticas-y-corregibles-una-a-una-más-adelante) | `js/comunidad-ranking.js:617` | 2 h |
@@ -168,15 +168,15 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 25 | 2026-09-25 | Economía | 3 de 7 misiones diarias piden `minutes_today`, métrica que el servidor nunca calcula. 14 días de cada 31 son incompletables. Arreglado con `actividad_diaria` (migración 023; nota al pie) | `api/progreso.js`, `obtenerMetricas` | 3 h |
 | 26 | - | Economía | El reto global anuncia 500 XP y 250 monedas que ningún código reparte. El 25/09/2026 se decidió dejarlo para después (nota al pie) | `api/progreso.js:60` | 2 h |
 | 27 | - | Función rota | No hay botón para rechazar ni cancelar una solicitud de amistad. El backend existe desde la fase 1 | `js/amigos.js:237` | 2 h |
-| 28 | - | Función rota | El panel "Tus amigos jugaron esto" nunca aparece: lee un global que solo define la copia duplicada de la raíz | `portal-growth.js:106` | 15 min |
+| 28 | 2026-10-08 | Función rota | El panel "Tus amigos jugaron esto" nunca aparece: lee un global que solo define la copia duplicada de la raíz | `portal-growth.js:106` | 15 min |
 | 29 | - | Función rota | El chat anunciado "en tiempo real" no se actualiza solo: nadie emite evento de mensaje nuevo | `js/chat.js:411` | 3 h |
 | 30 | - | Función rota | 12 usuarios no son mencionables porque la regex no cubre sus nombres. El botón Responder inserta la arroba igual | `api/_notifications.js:47` | 1 h |
 | 31 | 2026-10-05 | Datos | Dos personas no pudieron entrar y se registraron de nuevo: `jader`/`Jader` y `yotter`/`Yotter`. El registro compara exacto y `getUserId` con `LOWER()`. Arreglado: el perfil, entrar y el registro ya no distinguen mayúsculas, y las dos parejas siguen separadas (nota al pie) | `api/_utils.js:15` | 2 h |
-| 32 | - | Función rota | El guardado del avatar se traga todos los errores del servidor: el editor se cierra igual y no dice nada | `js/perfil.js:1065` | 30 min |
-| 33 | - | Función rota | El "top 20" de Macro Snake muestra dos o tres personas: deduplica por usuario después del `LIMIT` | `api/originales-ranking.js:29` | 30 min |
+| 32 | 2026-10-08 | Función rota | El guardado del avatar se traga todos los errores del servidor: el editor se cierra igual y no dice nada | `js/perfil.js:1065` | 30 min |
+| 33 | 2026-10-08 | Función rota | El "top 20" de Macro Snake muestra dos o tres personas: deduplica por usuario después del `LIMIT` | `api/originales-ranking.js:29` | 30 min |
 | 34 | - | Economía | La puntuación la fija el cliente hasta 1.000.000.000, sin validar que sea múltiplo de 10 ni el tiempo transcurrido | `api/originales-ranking.js:70` | 1 h |
 | 35 | - | Economía | Nivel 1 más 400 XP da nivel 2 por una puerta y nivel 3 por otra. `xp = 0` descarta el excedente | `api/users.js:526` | 1 h |
-| 36 | - | Economía | Más de dos tercios del ranking se baraja al azar cada lunes: el `SELECT` no lleva `ORDER BY` y el desempate no rompe los ceros | `api/system.js:262` | 30 min |
+| 36 | 2026-10-08 | Economía | Más de dos tercios del ranking se baraja al azar cada lunes: el `SELECT` no lleva `ORDER BY` y el desempate no rompe los ceros | `api/system.js:262` | 30 min |
 | 76 | 2026-09-21 | Función rota | Las menciones en comentarios de perfil llegan por duplicado: el navegador (`js/menciones.js`, desde el 11/08) y el servidor (`notificarMencionesServidor`, desde el 19/08) crean la misma notificación, y la del servidor termina en dos puntos porque el contexto ya trae uno. En chat y reseñas solo existe el camino del navegador, que es falsificable | `js/perfil.js:1892`, `api/content.js:995` | 30 min |
 | 78 | 2026-09-24 | Economía | Dos clics a la vez en "Comprar" cobraban la prenda dos veces: mirar si ya la tenía, cobrar y apuntar eran tres pasos sueltos, sin transacción. Y se le cobraba a quien dijera el nombre, buscado sin mayúsculas: con `jader` y `Jader` (punto 31) podía pagar la otra cuenta | `api/content.js`, `avatarShopBuy` | 1 h |
 | 80 | 2026-09-25 | Función rota | Para las misiones de juegos, "hoy" iba de 21:00 a 21:00 UTC en vez de medianoche a medianoche de Argentina: `fecha AT TIME ZONE` convierte la fecha con la zona de la sesión. Lo jugado desde las 18:00 de Argentina, la hora punta, no contaba para la misión de hoy | `api/progreso.js`, `obtenerMetricas` | 15 min |
@@ -185,7 +185,8 @@ cambio visual: son cosas que los usuarios creen que ya tienen.
 | 83 | 2026-09-25 | Función rota | A los 7 días de iniciar sesión, todo lo que escribe fallaba en silencio (el XP de jugar, el chat, los comentarios) mientras la página seguía enseñando a la persona como conectada. El pase no se renovaba nunca y el navegador no se enteraba del 401. De 150 a 330 escrituras rechazadas al día | `api/_auth.js`, `js/core.js` | medio día |
 | 84 | 2026-09-28 | Función rota | De cada tres misiones cumplidas se cobraba una: para cobrar hay que entrar en "Mi día" o "Progreso", casi nadie entra, nada avisaba de que estaba cumplida, y la diaria se pierde a medianoche. Arreglado con un aviso al cumplirla (nota al pie) | `api/_misiones.js` | medio día |
 | 85 | 2026-09-28 | Función rota | Una misión cumplida se perdía si no se cobraba a tiempo: la diaria a las 00:00, la semanal al acabar la semana. La semana del 21/09 quedaron sin cobrar 12 diarias y 8 semanales, de 13 personas. Arreglado: espera hasta que se cobre (nota al pie) | `api/_misiones.js`, `api/progreso.js` | medio día |
-| 87 | - | Función rota | El "Abrir Bazar" con el saldo que pinta `portal-growth.js` no sale nunca: ninguna página tiene su hueco, `#mrEconomiaPerfil` | `portal-growth.js:126` | 15 min |
+| 87 | 2026-10-08 | Función rota | El "Abrir Bazar" con el saldo que pinta `portal-growth.js` no sale nunca: ninguna página tiene su hueco, `#mrEconomiaPerfil` | `portal-growth.js:126` | 15 min |
+| 92 | 2026-10-08 | Función rota | Los botones "Anterior", "Más de esta categoría" y "Siguiente" se ven en la ficha de los 112 juegos y llevan a `#`: `js/juego.js` busca `window.juegos`, como Explorar (punto 20) | `js/juego.js` | 10 min |
 
 **Nota al 24 y al 78.** Hechos el 24/09/2026 con la tienda nueva
 (`tienda.html`, ver [TIENDA](../referencia/TIENDA.md)). El catálogo (`avatarShop`) y la
@@ -396,6 +397,12 @@ mayúsculas, así que "jader" no puede ver el perfil de "Jader". Lo sujeta
 **Nota al 87.** Visto el 05/10/2026 al revisar TIENDA, que lo daba como uno de los caminos al
 Bazar. Es el mismo archivo que el punto 28.
 
+**Nota a los 20, 28, 32, 33, 36, 87 y 92, del 08/10/2026.** Arreglados en la
+[spec 005](../../specs/005-arreglos-rapidos/spec.md), cada uno con su prueba. El 87 se arregló
+quitándolo: la barra ya enseña el saldo en todas las páginas, con un «+» que lleva al Bazar. El 92 se
+encontró al comprobar el 20, con la misma causa. El 33 se mide distinto que en septiembre: el 08/10 el
+top enseñaba 5 personas de 36, sobre 430.062 partidas; y el 36, 99 de 219 cuentas empatadas a cero.
+
 ---
 
 ## Bloque 3 — Que el sitio se sienta terminado
@@ -411,7 +418,7 @@ de ser, y los puntos 38, 40, 41 y 42 caen dentro de esa misma tarea.
 | 37 | - | Visual | No hay chasis de página: el buscador está en 10 de 28 páginas y el pie en 14 de 28 | las 28 `.html` | 1 semana |
 | 38 | - | Visual | 12 páginas no cargan `js/tema.js`: se elige el tema claro, se navega, y vuelve a oscuro sin avisar | 12 `.html` | 1 h |
 | 39 | - | Visual | El modo claro es otra marca: una segunda paleta azul corriendo a la vez que la clara real de `inicio.css` | `css/theme-canonical.css` | 3 h |
-| 40 | - | Visual | El botón de menú móvil es invisible en modo claro: `.nav-toggle-label` no tiene ninguna regla CSS en todo el proyecto | `js/nav-toggle.js:30` | 30 min |
+| 40 | 2026-10-03 | Visual | El botón de menú móvil es invisible en modo claro: `.nav-toggle-label` no tiene ninguna regla CSS en todo el proyecto | `js/nav-toggle.js:30` | 30 min |
 | 41 | - | Visual | En móvil, el modo claro es una trampa sin salida: el conmutador de tema cuelga de un contenedor oculto | `js/tema.js` | 1 h |
 | 42 | - | Accesibilidad | `finalizacion.css` (foco visible, movimiento reducido, 16 px en controles móviles) solo está en 14 de 28 páginas | 14 `.html` | 30 min |
 | 43 | - | Visual | 5 páginas llevan dos barras de navegación apiladas. En móvil eso es el 45 % de la pantalla antes del contenido | 5 `.html` | 3 h |
@@ -428,6 +435,10 @@ de ser, y los puntos 38, 40, 41 y 42 caen dentro de esa misma tarea.
 
 **Nota al 37, del 05/10/2026.** Hoy son 30 páginas y 16 tienen pie, y dos de esos pies, los de
 `explorar.html` y `mi-dia.html`, no llevan el enlace a los términos.
+
+**Nota al 40.** Lo arregló la barra nueva el 03/10/2026 (`7bda14d`): en modo claro es la misma que en el
+oscuro, y el botón de menú se ve. Visto el 08/10/2026 en la web real, al prepararlo en la
+[spec 005](../../specs/005-arreglos-rapidos/spec.md).
 
 ---
 

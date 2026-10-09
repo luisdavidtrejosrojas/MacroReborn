@@ -621,7 +621,6 @@ body.mr-root .rk-delta.rk-neutro { color: var(--text-muted) !important; }
 body:has(.mr-growth-toolbar) .mr-growth-toolbar,
 body:has(.mr-growth-toolbar) .mr-league-card,
 body:has(.mr-growth-toolbar) .mr-my-league,
-body:has(.mr-growth-toolbar) .mr-economy-line,
 body:has(.mr-growth-toolbar) .mr-social-friend,
 body:has(.mr-growth-toolbar) .mr-growth-controls label,
 body:has(.mr-growth-toolbar) .mr-growth-shortcuts a {
@@ -998,7 +997,6 @@ body:has(.login-form) textarea {
 .mr-growth-toolbar,
 .mr-league-card,
 .mr-my-league,
-.mr-economy-line,
 .mr-social-friend { background: var(--bg-panel) !important; border-color: var(--line) !important; color: var(--text-main) !important; }
 .mr-growth-controls label { background: var(--control-bg) !important; border-color: var(--line) !important; color: var(--text-main) !important; }
 .mr-growth-controls input,

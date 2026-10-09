@@ -55,7 +55,7 @@ describe("la huella en la sesión", () => {
     const { fn, sesion, datos } = montar("guardarAvatar",
       { success: true, user: { avatar_compuesto: "huella-de-hoy" } });
 
-    assert.equal(await fn({ modelo: "tora", pelo: "tora_pelo3" }), true);
+    assert.equal((await fn({ modelo: "tora", pelo: "tora_pelo3" })).ok, true);
     assert.equal(sesion.avatar_compuesto, "huella-de-hoy", "la sesión se quedó con la huella de ayer");
     assert.equal(datos.avatar_compuesto, "huella-de-hoy");
     assert.deepStrictEqual(sesion.avatar, { modelo: "tora", pelo: "tora_pelo3" });
