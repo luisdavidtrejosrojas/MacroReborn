@@ -8,13 +8,21 @@
 // registros había días de 24 horas "jugadas" con la página abierta y
 // nadie delante. Es lo mismo que hacía macrojuegos.
 //
-// Se escucha en la página y también DENTRO del juego: 108 de los 112
-// juegos se sirven desde la propia web, así que el iframe es del mismo
-// origen y se le pueden poner oídos (vigilarJuego, que llama
-// js/jugar.js). En los otros cuatro el navegador no deja ver nada de lo
-// que pasa dentro. Ahí cuenta entrar al juego (el foco se va al iframe),
-// y vale diez minutos: para seguir contando hay que volver a entrar, o
-// tocar algo fuera.
+// Se escucha en la página y también DENTRO del juego, de dos formas
+// (vigilarJuego, que llama js/jugar.js):
+//
+//   - Macro Snake, del equipo, se abre desde la propia web: el iframe es
+//     del mismo origen y se le ponen oídos.
+//   - Los 107 de terceros se abren desde su propia dirección
+//     (specs/008-aislar-juegos), donde la página ya no puede escuchar. Avisan
+//     ellos, con el puente que lleva cada uno (html/juegos/_puente.js):
+//     vigilarJuego(iframe, { origen }) solo cree el aviso si viene de esa
+//     dirección y de la ventana de ese marco. Cuenta como un toque.
+//
+// En los cuatro de otras webs el navegador no deja ver nada de lo que pasa
+// dentro. Ahí cuenta entrar al juego (el foco se va al iframe), y vale
+// diez minutos: para seguir contando hay que volver a entrar, o tocar algo
+// fuera.
 //
 // js/motor/xp.js le pregunta antes de mandar cada pulso (hayAlguien).
 // Esto no impide trucos de quien sepa escribir un script: el servidor
@@ -45,7 +53,12 @@
       }
     }
 
+    // Los marcos de los juegos que avisan por el puente. Cuentan como de la
+    // web: a ellos no les toca la regla de los diez minutos.
+    const puenteados = new WeakSet();
+
     function esDeEstaWeb(iframe) {
+      if (puenteados.has(iframe)) return true;
       try {
         return !!(iframe.contentWindow && iframe.contentWindow.document);
       } catch (_) {
@@ -53,10 +66,27 @@
       }
     }
 
+    // Un juego de terceros, en su propia dirección: solo cuentan los avisos
+    // del puente que vienen de esa dirección y de la ventana de ese marco.
+    // La ventana del marco sigue siendo la misma aunque el juego recargue.
+    function escucharPuente(iframe, origen) {
+      puenteados.add(iframe);
+      ventana.addEventListener("message", (evento) => {
+        if (evento.origin === origen && evento.source === iframe.contentWindow &&
+            evento.data && evento.data.tipo === "mr-actividad") {
+          marcar();
+        }
+      });
+    }
+
     // Poner oídos dentro del juego. El iframe estrena ventana cada vez que
     // carga, y con ella se van los oídos: se vuelven a poner en cada load.
-    function vigilarJuego(iframe) {
+    function vigilarJuego(iframe, opciones) {
       if (!iframe) return;
+      if (opciones && opciones.origen) {
+        escucharPuente(iframe, opciones.origen);
+        return;
+      }
       const enganchar = () => {
         try {
           const w = iframe.contentWindow;

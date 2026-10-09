@@ -90,4 +90,7 @@ test("la página del juego carga el vigilante antes del pulso, y el juego lo eng
   assert.ok(vigilante > 0 && pulso > vigilante, "actividad-jugador.js tiene que ir antes de xp.js");
   const jugar = fs.readFileSync(path.join(raiz, "js", "jugar.js"), "utf8");
   assert.match(jugar, /MRActividad\.vigilarJuego\(/);
+  // Los de terceros se abren desde su propia dirección y avisan por el
+  // puente (specs/008-aislar-juegos): se les pasa esa dirección.
+  assert.match(jugar, /\{ origen: aparte\.origen\(\) \}/, "a los juegos de terceros se les engancha el puente");
 });

@@ -126,8 +126,13 @@ Ya contaba un minuto por minuto, con las pestañas que fueran (migración
 había alguien: había días de 24 horas "jugadas".
 
 `js/motor/actividad-jugador.js` escucha el teclado, el ratón y los
-toques, en la página y **dentro del juego**: 108 de los 112 juegos son
-de la propia web (05/10/2026) y se puede escuchar dentro. A los **3 minutos** sin
+toques, en la página y **dentro del juego**. Macro Snake, del equipo, es
+de la propia web, y se escucha dentro. Los 107 de terceros se abren desde
+su propia dirección, `juegos.macroreborn.com` (specs/008-aislar-juegos),
+donde la página ya no puede escuchar: avisan ellos, con el puente que el
+servidor mete en cada uno (`html/juegos/_puente.js`), como mucho cada 5
+segundos. La página solo cree el aviso si viene de esa dirección y de ese
+marco. A los **3 minutos** sin
 nada, el navegador deja de mandar el pulso (`js/motor/xp.js`): ni
 minuto, ni XP, ni racha, ni monedas, hasta que se vuelva a tocar algo.
 

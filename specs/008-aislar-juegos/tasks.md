@@ -213,7 +213,7 @@ minutos, sí; sin ella, no.
   - en `tests/juegos-aparte-servidor.test.js`, cada posición, y que **cada** envoltorio de
     `html/juegos/` sale con el puente (RF-010);
   - en `tests/puente-actividad.test.js`, el puente con jsdom y un reloj de mentira.
-- [ ] T013 [US3] `js/motor/actividad-jugador.js` (research D7):
+- [X] T013 [US3] `js/motor/actividad-jugador.js` (research D7):
   - `vigilarJuego(iframe, { origen })` acepta `mr-actividad` solo si `event.origin` es `origen` y
     `event.source` es la ventana de ese marco, y lo cuenta como un evento;
   - ese marco cuenta como «de la web» en `alPerderElFoco`: la regla de los diez minutos queda para los

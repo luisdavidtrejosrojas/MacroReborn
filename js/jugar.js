@@ -81,8 +81,12 @@ if (juego.iframe) {
     contenedor.replaceChildren(iframe);
 
     // Oídos dentro del juego, para saber si hay alguien jugando
-    // (js/motor/actividad-jugador.js).
-    if (window.MRActividad) window.MRActividad.vigilarJuego(iframe);
+    // (js/motor/actividad-jugador.js). Los de terceros, en su propia
+    // dirección, avisan ellos con el puente: solo se cree a esa dirección.
+    if (window.MRActividad) {
+        const deTerceros = aparte && aparte.tipo(juego) === "terceros";
+        window.MRActividad.vigilarJuego(iframe, deTerceros ? { origen: aparte.origen() } : undefined);
+    }
 
     // ==============================
     // ESTADO DE CARGA (overlay) — puramente visual/aditivo.

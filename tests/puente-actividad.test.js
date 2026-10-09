@@ -16,10 +16,15 @@ const { test } = require("node:test");
 const assert = require("node:assert");
 const fs = require("node:fs");
 const path = require("node:path");
-const { JSDOM } = require("jsdom");
+const vm = require("node:vm");
+const { JSDOM, VirtualConsole } = require("jsdom");
 
 const RAIZ = path.join(__dirname, "..");
-const PUENTE = fs.readFileSync(path.join(RAIZ, "html", "juegos", "_puente.js"), "utf8");
+const leer = (...partes) => fs.readFileSync(path.join(RAIZ, ...partes), "utf8");
+const PUENTE = leer("html", "juegos", "_puente.js");
+const ACTIVIDAD = leer("js", "motor", "actividad-jugador.js");
+const JUEGOS = "https://juegos.macroreborn.com";
+const MINUTO = 60 * 1000;
 const EVENTOS = ["keydown", "pointerdown", "pointermove", "mousedown", "mousemove", "wheel", "touchstart"];
 const esperar = () => new Promise((ok) => setTimeout(ok, 20));
 
@@ -79,6 +84,96 @@ test("como mucho un aviso cada 5 segundos", async () => {
   await esperar();
   assert.equal(recibidos.length, 2, "a los 5 segundos, otro");
   w.close();
+});
+
+// ---------- La página: qué avisos cree ----------
+
+// La página de jugar con el vigilante de verdad, un reloj de mentira y el
+// marco de un juego de terceros enganchado por el puente. jsdom no rellena
+// event.source en postMessage, así que los avisos se arman a mano, como los
+// recibe un navegador.
+function montarPagina() {
+  const dom = new JSDOM("<!doctype html><body></body>", {
+    url: "https://www.macroreborn.com/jugar.html", runScripts: "outside-only"
+  });
+  const w = dom.window;
+  w.eval(ACTIVIDAD);
+  let t = 1000000;
+  const reloj = { ahora: () => t, pasar: (ms) => { t += ms; } };
+  const vigilante = w.MRActividad.crearVigilante(w, reloj.ahora);
+  const iframe = w.document.createElement("iframe");
+  w.document.body.appendChild(iframe);
+  vigilante.vigilarJuego(iframe, { origen: JUEGOS });
+  const aviso = (datos, origen = JUEGOS, ventanaQueManda = iframe.contentWindow) =>
+    w.dispatchEvent(new w.MessageEvent("message", { data: datos, origin: origen, source: ventanaQueManda }));
+  return { w, iframe, vigilante, reloj, aviso };
+}
+
+test("el aviso del puente cuenta como un toque", () => {
+  const { w, vigilante, reloj, aviso } = montarPagina();
+  reloj.pasar(5 * MINUTO);
+  assert.equal(vigilante.hayAlguien(), false);
+  aviso({ tipo: "mr-actividad" });
+  assert.equal(vigilante.hayAlguien(), true);
+  reloj.pasar(3 * MINUTO + 1000);
+  assert.equal(vigilante.hayAlguien(), false, "a los tres minutos sin avisos, deja de contar");
+  w.close();
+});
+
+test("no cuenta un aviso de otra dirección, de otra ventana ni de otro tipo", () => {
+  const { w, vigilante, reloj, aviso } = montarPagina();
+  const otro = w.document.createElement("iframe");
+  w.document.body.appendChild(otro);
+  reloj.pasar(5 * MINUTO);
+  aviso({ tipo: "mr-actividad" }, "https://otra.web");
+  aviso({ tipo: "mr-actividad" }, "https://macroreborn.com");
+  aviso({ tipo: "mr-actividad" }, JUEGOS, otro.contentWindow);
+  aviso({ tipo: "mr-actividad" }, JUEGOS, null);
+  aviso({ tipo: "otra-cosa" });
+  aviso("mr-actividad");
+  assert.equal(vigilante.hayAlguien(), false);
+  w.close();
+});
+
+test("al marco puenteado no se le ponen oídos, ni le toca la regla de los diez minutos", () => {
+  const { w, iframe, vigilante, reloj } = montarPagina();
+  reloj.pasar(5 * MINUTO);
+  // En jsdom el marco es de la misma web y se le podrían poner oídos; en el
+  // navegador es de otra dirección y no. Lo que cuenta es solo el puente.
+  iframe.contentWindow.dispatchEvent(new iframe.contentWindow.Event("keydown"));
+  assert.equal(vigilante.hayAlguien(), false, "el marco puenteado no se escucha por dentro");
+  Object.defineProperty(w.document, "activeElement", { configurable: true, get: () => iframe });
+  vigilante.alPerderElFoco();
+  assert.equal(vigilante.hayAlguien(), false, "entrar en un juego puenteado no da diez minutos");
+  w.close();
+});
+
+test("la página de jugar engancha el puente del juego de terceros que abre", () => {
+  const catalogo = vm.runInNewContext(leer("js", "datos-juegos.js") + "\n;juegos", {});
+  const pvz = catalogo.find((j) => String(j.iframe).endsWith("/pvz.html"));
+  const dom = new JSDOM(leer("jugar.html"), {
+    url: "https://www.macroreborn.com/jugar.html?id=" + pvz.id, runScripts: "outside-only",
+    virtualConsole: new VirtualConsole()
+  });
+  const w = dom.window;
+  let t = 1000000;
+  w.Date.now = () => t;
+  for (const archivo of [["js", "datos-juegos.js"], ["js", "motor", "juegos-aparte.js"],
+    ["js", "motor", "actividad-jugador.js"], ["js", "jugar.js"]]) {
+    w.eval(leer(...archivo));
+  }
+  // jugar.js deja un reloj en marcha: la página se cierra siempre, también
+  // si algo falla, o el proceso de las pruebas no termina nunca.
+  try {
+    const iframe = w.document.querySelector("#contenedorJuego iframe");
+    t += 5 * MINUTO;
+    assert.equal(w.MRActividad.hayAlguien(), false);
+    w.dispatchEvent(new w.MessageEvent("message",
+      { data: { tipo: "mr-actividad" }, origin: JUEGOS, source: iframe.contentWindow }));
+    assert.equal(w.MRActividad.hayAlguien(), true);
+  } finally {
+    w.close();
+  }
 });
 
 test("abierto solo, fuera de la página de jugar, no avisa a nadie", () => {
