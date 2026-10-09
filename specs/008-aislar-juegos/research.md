@@ -287,7 +287,9 @@ sirve envoltorios. Las partidas no se pierden: siguen también en la web.
 
 VPS (la dirección de los juegos, su bloque de nginx, el certificado con tres nombres, el registro del
 DNS), ECONOMIA (cómo se sabe que alguien juega), ARQUITECTURA (las partes), DESARROLLO y CLAUDE.md (el
-segundo puerto en local), el comentario de cabecera de `js/motor/actividad-jugador.js`,
+segundo puerto en local), JUEGOS (probar un juego en local con las dos direcciones, el marco y sus
+permisos, el puente que se pone solo y la revisión de los juegos), el comentario de cabecera de
+`js/motor/actividad-jugador.js`,
 `infra/nginx/macroreborn.conf` e `infra/LEEME.md`, la auditoría (el punto 1, cerrado, con su nota) y el
 historial. Y lo de Neon (RF-013): los puntos 1 y 2 de lo que falta en VPS pasan a resueltos (el 2 deja
 pendiente solo quitar el paquete y la rama de `api/_db.js`, que ya no se usan), y salen las líneas que

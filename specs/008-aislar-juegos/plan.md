@@ -87,7 +87,7 @@ jugaron, y 27 pasaron una hora o más en alguno.
 | XVI. Privado | No entra ningún tercero nuevo. La analítica de los envoltorios es el punto 62, fuera | Sí | Sí |
 | XVII. Todo reversible | Sin migraciones. Se deshace volviendo al commit anterior, y las partidas siguen también en la web | Sí | Sí |
 | XVIII. Medir antes de optimizar | Los 107 juegos medidos antes y después, en el PC y en la web real | Sí | Sí |
-| XIX. Documentación | VPS, ECONOMIA, ARQUITECTURA, DESARROLLO, CLAUDE.md, `infra/`, la auditoría y el historial (research D15) | Sí | Sí |
+| XIX. Documentación | VPS, ECONOMIA, ARQUITECTURA, DESARROLLO, JUEGOS, CLAUDE.md, `infra/`, la auditoría y el historial (research D15) | Sí | Sí |
 | XX. La base es sagrada | Solo recuentos en modo lectura; ningún cambio de datos | Sí | Sí |
 | XXI. Desplegar con el OK de Luis | DNS, certificado, nginx y código, cada uno con su OK en ese momento (research D14) | Sí | Sí |
 | XXII. Pruebas sin tocar lo real | Cada cambio del servidor con su prueba; `npm test` y la prueba de humo con Node 24 y 22, anotados en la spec | Sí | Sí |
@@ -148,7 +148,7 @@ package.json, package-lock.json         CAMBIAN fake-indexeddb, solo para las pr
 
 infra/nginx/macroreborn.conf       CAMBIA  el bloque de juegos.macroreborn.com y el nombre en el puerto 80
 infra/LEEME.md                     CAMBIA
-docs/referencia/VPS.md, ECONOMIA.md, ARQUITECTURA.md, CUENTAS.md; docs/guias/DESARROLLO.md; CLAUDE.md
+docs/referencia/VPS.md, ECONOMIA.md, ARQUITECTURA.md, CUENTAS.md; docs/guias/DESARROLLO.md, JUEGOS.md; CLAUDE.md
 docs/historia/CONTRASENAS-EN-CLARO.md, HISTORIAL.md; docs/listas/AUDITORIA.md; specs/006-.../spec.md
 ```
 

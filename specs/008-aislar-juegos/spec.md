@@ -199,8 +199,8 @@ el sitio aparte, y la auditoría cierra el punto 1.
   si un cambio vuelve a abrir los juegos en la web.
 - **RF-011**: Los cambios en el servidor (una dirección nueva, su certificado y su configuración) DEBEN
   hacerse con el OK de Luis en ese momento (regla XXI). Se despliega después de unir, con su OK.
-- **RF-012**: La documentación DEBE contar el cambio: VPS, ECONOMIA, ARQUITECTURA, la guía de desarrollo
-  y la auditoría, con el punto 1 cerrado.
+- **RF-012**: La documentación DEBE contar el cambio: VPS, ECONOMIA, ARQUITECTURA, las guías de
+  desarrollo y de juegos, y la auditoría, con el punto 1 cerrado.
 - **RF-013**: La documentación DEBE dejar de dar por pendiente nada de Neon: Luis dijo el 09/10 que ya
   no lo tienen ni lo usan. Son los puntos 1 y 2 de lo que falta en VPS y las líneas que la spec 006 le
   añadió en VPS, CUENTAS, CONTRASENAS-EN-CLARO, la nota al 86 y el historial.
