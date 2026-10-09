@@ -180,7 +180,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
 
 - [X] T001 Apagar el flujo «CI» en GitHub con la cuenta de Luis (D1) y poner la nota de `ci.yml` (D2).
   Su subida sirve de prueba de que ya no corre (RF-001, RF-002, CE-001).
-- [ ] T002 Los Node oficiales 24 y 22, a `D:\node-oficial\`, comprobados otra vez con su `SHASUMS256.txt`
+- [X] T002 Los Node oficiales 24 y 22, a `D:\node-oficial\`, comprobados otra vez con su `SHASUMS256.txt`
   (RF-004, D4).
 - [ ] T003 La constitución v1.0.3: la regla XXII y el paso 9, también en su plantilla (RF-003, CE-002).
 - [ ] T004 La documentación: CLAUDE.md, SUMARSE, ARQUITECTURA y la nota de la spec 003 (RF-005, CE-004).
