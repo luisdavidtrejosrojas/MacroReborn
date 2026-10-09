@@ -246,7 +246,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [X] T001 `package.json` pide Node 22 o más, y la CI prueba Node 22 y 24 (RF-005, RF-006, D4, D5).
 - [X] T002 La constitución pasa a la v1.0.2: la regla XXII sin versiones, con su plantilla y su informe
   (RF-007, D6).
-- [ ] T003 La documentación: ARQUITECTURA, SUMARSE, CLAUDE.md y el comentario de
+- [X] T003 La documentación: ARQUITECTURA, SUMARSE, CLAUDE.md y el comentario de
   `api/_ruta-estatica.js` (RF-007).
 - [ ] T004 Comprobar en el PC: `npm test`, la prueba de humo y el arranque de producción con Node 22 y
   24 oficiales (CE-005, D8).

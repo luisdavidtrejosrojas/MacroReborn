@@ -25,8 +25,8 @@
 // El otro motivo por el que existe este módulo es que `decodeURIComponent`
 // lanza. Con secuencias como %C0%80 o %ED%A0%80 —válidas en sintaxis,
 // inválidas en UTF-8— tira un URIError. Dentro del handler `async` de
-// server.js eso es una promesa rechazada, y Node 20 mata el proceso por
-// defecto. `cluster.js` relanzaba al muerto, pero un GET en bucle dejaba
+// server.js eso es una promesa rechazada, y Node (desde la 15) mata el
+// proceso por defecto. `cluster.js` relanzaba al muerto, pero un GET en bucle dejaba
 // los dos procesos reiniciándose sin parar y el sitio caído. nginx no
 // filtra esas secuencias: son sintácticamente correctas y las reenvía
 // tal cual.

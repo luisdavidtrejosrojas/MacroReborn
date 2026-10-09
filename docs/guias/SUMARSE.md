@@ -16,7 +16,8 @@ con ella, gana ella. Y para saber qué es cada parte del sistema antes de tocarl
 
 ## 1. Preparar el entorno
 
-Hace falta Node 20.19 o más nuevo, y acceso al repositorio, que es privado. Se clona por HTTPS: la
+Hace falta Node 24, el del servidor (vale desde la 22.13), y acceso al repositorio, que es privado. Se
+clona por HTTPS: la
 primera vez, git pide entrar con la cuenta de GitHub, y en Windows el gestor de credenciales lo
 recuerda. Quien tenga una llave SSH en su cuenta de GitHub puede usar también
 `git@github.com:valenmgg/MacroReborn.git`.
@@ -111,11 +112,12 @@ Si el trabajo llega de fuera, en un zip o en una rama propia, cómo se funde lo 
   producción. Una tarea no está terminada hasta que pasan (regla XII).
 - **`npm run test:smoke`**: levanta un servidor efímero en un puerto libre y lo recorre por HTTP, de
   punta a punta: entrar, el pulso de un minuto de juego con sus monedas y los avisos en vivo.
-- **La integración continua** (`.github/workflows/ci.yml`) corre las dos en cada push, con Node 20 y 22,
-  y cada versión termina aunque la otra falle. Para unir una rama a `main` tiene que salir en verde
-  (regla XXII). El repositorio es privado y GitHub da un cupo de minutos al mes: cada subida gasta unos
-  19, y una subida nueva a la misma rama cancela la ejecución anterior. Si los trabajos no llegan a
-  arrancar («The job was not started because…»), es el cupo, no el código.
+- **La integración continua** (`.github/workflows/ci.yml`) corre las dos en cada push, con Node 24 (la
+  del servidor) y 22 (la mínima que se admite), y cada versión termina aunque la otra falle. Para unir
+  una rama a `main` tiene que salir en verde (regla XXII). El repositorio es privado y GitHub da un cupo
+  de minutos al mes: cada subida gasta unos 19, y una subida nueva a la misma rama cancela la ejecución
+  anterior. Si los trabajos no llegan a arrancar («The job was not started because…»), es el cupo, no
+  el código.
 - Lo que una prueba automática no ve, como cómo queda una página o un avatar, se mira a mano en el sitio
   local: [DESARROLLO](DESARROLLO.md).
 
