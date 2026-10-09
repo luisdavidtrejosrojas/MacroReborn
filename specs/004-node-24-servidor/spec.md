@@ -248,7 +248,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
   (RF-007, D6).
 - [X] T003 La documentación: ARQUITECTURA, SUMARSE, CLAUDE.md y el comentario de
   `api/_ruta-estatica.js` (RF-007).
-- [ ] T004 Comprobar en el PC: `npm test`, la prueba de humo y el arranque de producción con Node 22 y
+- [X] T004 Comprobar en el PC: `npm test`, la prueba de humo y el arranque de producción con Node 22 y
   24 oficiales (CE-005, D8).
 - [ ] T005 Con el OK de Luis, el servidor: la vuelta atrás guardada y comprobada, Node 24 instalado,
   NodeSource en las actualizaciones automáticas, el servicio reiniciado y las comprobaciones de antes y
@@ -256,3 +256,14 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [ ] T006 Lo que cuenta el cambio: VPS, las copias en `infra/` y el punto 91 de la auditoría, cerrado
   (RF-008, RF-010, D9).
 - [ ] T007 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-012).
+
+## Comprobación (08/10/2026)
+
+**En el PC**, con los Node oficiales de nodejs.org, comprobados con sus sumas SHA-256 (CE-005):
+
+- Node 24.21.0, la que instala NodeSource: `npm test`, 1.339 pruebas en verde, ninguna en rojo ni
+  saltada; la prueba de humo, en verde; ningún aviso de funciones obsoletas.
+- Node 22.23.3, la mínima que se admite: lo mismo.
+- El arranque de producción (`cluster.js` con `server.js`, contra una base que no existe) da lo mismo
+  con las dos que con Node 20.20.2: dos procesos, 200 en las páginas, 404 en `/.env`, `/.git/config` y
+  `/server.js`, 400 en la URI mal formada, y 500 en la API sin tumbar el proceso.
