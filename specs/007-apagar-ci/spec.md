@@ -2,7 +2,7 @@
 
 **Rama**: `007-apagar-ci`
 **Creada**: 2026-10-09
-**Estado**: Borrador, para aprobar por Luis
+**Estado**: Aprobada por Luis el 09/10/2026
 **Tipo**: spec corta (regla XIX): especificación, plan y tareas en esta página, aprobados una vez.
 **Pedido**: Luis, 09/10/2026: «Desactivemos GitHub Actions por ahora, ¿sí? No queremos gastar dinero en
 esto, la verdad», y el «Sí, ahora» para preparar esta spec.
