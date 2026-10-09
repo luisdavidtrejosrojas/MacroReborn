@@ -263,7 +263,7 @@ nada del sitio y sin pisar nada.
   `js/session.js` y `js/tema.js`, cada uno con lo que vale su clave. En el mismo commit (regla XIX), en
   «Convenciones del proyecto» de `docs/guias/DESARROLLO.md`: una clave nueva del sitio en el
   `localStorage` va en esta lista (y en la de `html/juegos/_mudanza.js`), y la prueba avisa si falta.
-- [ ] T016 [P] [US4] Añadir `fake-indexeddb` 6.2.5, exacta y solo para las pruebas (`npm install
+- [X] T016 [P] [US4] Añadir `fake-indexeddb` 6.2.5, exacta y solo para las pruebas (`npm install
   --save-dev --save-exact fake-indexeddb@6.2.5`), en `package.json` y `package-lock.json` (research
   D11). Comprobar que no trae dependencias, `npm audit` y `npm test` en verde.
 - [ ] T017 [US4] Crear `html/juegos/_mudanza.html` y `html/juegos/_mudanza.js` (research D8;
