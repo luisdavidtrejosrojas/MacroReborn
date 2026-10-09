@@ -183,6 +183,17 @@ test("cada envoltorio de terceros sale en la dirección de los juegos y redirige
   }
 });
 
+test("la mudanza sale en la dirección de los juegos, sin puente; en la web, no", async () => {
+  for (const nombre of ["_mudanza.html", "_mudanza.js"]) {
+    const r = await pedir("/html/juegos/" + nombre, DE_JUEGOS);
+    assert.equal(r.codigo, 200, nombre);
+    assert.ok(r.cuerpo.equals(fs.readFileSync(path.join(JUEGOS, nombre))), nombre + " tiene que salir tal cual, sin puente");
+    assert.equal(r.cabeceras["x-robots-tag"], "noindex");
+    assert.equal((await pedir("/html/juegos/" + nombre, WEB)).codigo, 404, nombre + " en la web");
+  }
+  assert.equal((await pedir("/html/juegos/_mudanza.js", DE_JUEGOS)).cabeceras["content-type"], "text/javascript; charset=utf-8");
+});
+
 test("server.js lo usa antes que todo lo demás, también antes de la API", () => {
   const codigo = fs.readFileSync(path.join(RAIZ, "server.js"), "utf8");
   assert.match(codigo, /require\("\.\/api\/_juegos-aparte"\)/);

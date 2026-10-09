@@ -266,7 +266,7 @@ nada del sitio y sin pisar nada.
 - [X] T016 [P] [US4] Añadir `fake-indexeddb` 6.2.5, exacta y solo para las pruebas (`npm install
   --save-dev --save-exact fake-indexeddb@6.2.5`), en `package.json` y `package-lock.json` (research
   D11). Comprobar que no trae dependencias, `npm audit` y `npm test` en verde.
-- [ ] T017 [US4] Crear `html/juegos/_mudanza.html` y `html/juegos/_mudanza.js` (research D8;
+- [X] T017 [US4] Crear `html/juegos/_mudanza.html` y `html/juegos/_mudanza.js` (research D8;
   contracts/mensajes.md «Mudanza»; data-model «Paquete de la mudanza»): código del equipo, sin nada de
   terceros.
   - Al cargar, avisa `mr-mudanza-lista`.
