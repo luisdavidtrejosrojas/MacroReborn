@@ -175,7 +175,7 @@ página y cambiar su dirección.
   `tests/explorar-y-ficha.test.js`: el marco de un juego de terceros, el de uno de otra web y el de Macro
   Snake, y el orden de los scripts. En el mismo commit, la fila de los juegos de «Las partes» en
   `docs/referencia/ARQUITECTURA.md`.
-- [ ] T010 [US1] Una prueba en `tests/juegos-aparte-navegador.test.js` de que Macro Snake no carga nada
+- [X] T010 [US1] Una prueba en `tests/juegos-aparte-navegador.test.js` de que Macro Snake no carga nada
   de otras webs: ningún `src`, `href` ni `fetch` con `http://`, `https://` o `//` en
   `html/juegos/macro-snake.html`, `.js` y `.css` (research D2).
 - [ ] T011 [US1] Comprobar en el PC (quickstart 3 y 4):

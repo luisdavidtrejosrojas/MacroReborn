@@ -129,6 +129,17 @@ test("la página de jugar abre Macro Snake en la web, sin sandbox, y los de otra
   }
 });
 
+test("Macro Snake no carga nada de otras webs: se queda en la web, con la sesión", () => {
+  // Si cargara código de fuera, ese código correría en la web, que es
+  // justo lo que esta spec saca de allí (research D2).
+  const DE_FUERA = /(?:\b(?:src|href|action)\s*=\s*["']?|url\(\s*["']?|\b(?:fetch|import|importScripts)\s*\(\s*["'`]|\bfrom\s+["'])(?:https?:)?\/\//i;
+  for (const archivo of ["macro-snake.html", "macro-snake.js", "macro-snake.css"]) {
+    const texto = leer("html", "juegos", archivo);
+    assert.ok(!DE_FUERA.test(texto), archivo + " carga algo de otra web");
+    assert.ok(!/https?:\/\//i.test(texto), archivo + " nombra una dirección de otra web");
+  }
+});
+
 test("jugar.html carga el módulo después del catálogo y antes de jugar.js", () => {
   const html = leer("jugar.html");
   const catalogo = html.indexOf("js/datos-juegos.js");
