@@ -2,7 +2,7 @@
 
 **Rama**: `006-volcados-en-claro`
 **Creada**: 2026-10-09
-**Estado**: Aclarada por Luis el 09/10/2026, pendiente de su aprobación
+**Estado**: Aprobada por Luis el 09/10/2026
 **Tipo**: spec corta (regla XIX): especificación, plan y tareas en esta página, aprobados una vez.
 **Pedido**: Luis, 09/10/2026: el «A» para el punto 86 de la auditoría, después de desplegar la 005.
 
