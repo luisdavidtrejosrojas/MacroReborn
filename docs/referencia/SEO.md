@@ -60,6 +60,7 @@ Graph y Twitter Card, y entre ellas hay tres que están en el sitemap: `categori
 | `amigos.html` | `noindex, follow` | Utilitaria, privada |
 | `login.html` / `registro.html` | `noindex, follow` | Páginas de utilidad, sin valor de búsqueda propio |
 | `jugar.html` | `noindex, follow` | Pantalla del iframe del juego — poco contenido propio, duplica intención con `juego.html`. El canonical dinámico apunta a la ficha del juego correspondiente. |
+| Los juegos de terceros, en `juegos.macroreborn.com` | `noindex`, por la cabecera `X-Robots-Tag` | Son las páginas de los juegos que se abren dentro de `jugar.html`, desde su propia dirección (specs/008-aislar-juegos): código de terceros, sin nada propio que buscar. Va en la cabecera, que pone `api/_juegos-aparte.js`, porque los archivos son de terceros. No hay `robots.txt` que los bloquee: el buscador tiene que poder entrar para ver el `noindex` |
 | `notificaciones.html` | `noindex, follow` | Privada, sin contenido público |
 | `chat.html` | `noindex, nofollow` | Contenido en tiempo real generado por usuarios; `nofollow` extra porque el chat puede tener links pegados por usuarios |
 | `admin.html`, `arte.html`, `taller.html` | `noindex, nofollow` | Los paneles de la administración y del equipo de arte |

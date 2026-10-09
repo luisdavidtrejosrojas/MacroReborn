@@ -92,7 +92,7 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
 
 ## Fase 2: Base (bloquea todas las historias)
 
-- [ ] T004 Crear `api/_juegos-aparte.js` (research D3, contracts/rutas-http.md), con el comentario del
+- [X] T004 Crear `api/_juegos-aparte.js` (research D3, contracts/rutas-http.md), con el comentario del
   porqué, como `api/_prendas-ruta.js`.
   - **La configuración de producción**: `hostJuegos` `juegos.macroreborn.com`, `origenJuegos`
     `https://juegos.macroreborn.com` y `origenesDeLaWeb` `https://macroreborn.com` y
