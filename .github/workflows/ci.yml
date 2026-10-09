@@ -1,4 +1,15 @@
 # CI — MacroReborn
+#
+# APAGADA EN GITHUB desde el 09/10/2026 (specs/007-apagar-ci/spec.md).
+# El repositorio es privado, y los minutos de Actions que pasan del cupo
+# gratis se cobran a la cuenta valenmgg, su dueña. Se apagó en GitHub y
+# no aquí: así no corre en ninguna rama, tampoco en las viejas que
+# tienen este archivo. Mientras tanto, antes de unir a main, las pruebas
+# y la prueba de humo se corren en el PC con Node 24 y 22 (regla XXII de
+# la constitución). Para volver a encenderla, hablarlo antes con el
+# equipo y después:
+#   gh workflow enable CI -R valenmgg/MacroReborn
+#
 # Corre los tests automáticos en cada push y en cada pull request,
 # sobre las versiones de Node que soporta el proyecto: la 24, la del
 # servidor, y la 22, la mínima que se admite (jsdom pide la 22.13 o más).

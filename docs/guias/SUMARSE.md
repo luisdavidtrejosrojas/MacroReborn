@@ -95,7 +95,7 @@ powershell.exe -NoProfile -Command "[Console]::OutputEncoding=[Text.Encoding]::U
 - **Un commit por cada cambio lógico mínimo**, sin mezclar cosas que no tienen que ver (regla V), y
   `git push origin` al terminar cada tarea.
 - **Una rama por especificación** (`NNN-nombre`, la crea `/speckit-specify`). Se une a `main` en local,
-  sin pull request, cuando está verificada y la integración continua está en verde.
+  sin pull request, cuando está verificada y las pruebas están en verde (regla XXII).
 - **El historial**: como última tarea de cada especificación, antes de unirla a `main`, se añade su
   entrada a [HISTORIAL](../historia/HISTORIAL.md), con la fecha de esa unión: el día, el área, quién y
   el enlace a su `spec.md`. Si la semana todavía no tiene sección, se crea arriba del todo.
@@ -112,12 +112,16 @@ Si el trabajo llega de fuera, en un zip o en una rama propia, cómo se funde lo 
   producción. Una tarea no está terminada hasta que pasan (regla XII).
 - **`npm run test:smoke`**: levanta un servidor efímero en un puerto libre y lo recorre por HTTP, de
   punta a punta: entrar, el pulso de un minuto de juego con sus monedas y los avisos en vivo.
-- **La integración continua** (`.github/workflows/ci.yml`) corre las dos en cada push, con Node 24 (la
-  del servidor) y 22 (la mínima que se admite), y cada versión termina aunque la otra falle. Para unir
-  una rama a `main` tiene que salir en verde (regla XXII). El repositorio es privado y GitHub da un cupo
-  de minutos al mes: cada subida gasta unos 19, y una subida nueva a la misma rama cancela la ejecución
-  anterior. Si los trabajos no llegan a arrancar («The job was not started because…»), es el cupo, no
-  el código.
+- **La integración continua** (`.github/workflows/ci.yml`) está apagada en GitHub desde el 09/10/2026
+  ([spec 007](../../specs/007-apagar-ci/spec.md)). El repositorio es privado, y los minutos de Actions
+  que pasan del cupo gratis se cobran a la cuenta dueña: cada subida gastaba unos 19. No se vuelve a
+  encender (`gh workflow enable CI`) sin hablarlo con el equipo.
+- **Antes de unir una rama a `main`**, `npm test` y la prueba de humo tienen que pasar con Node 24 (la del
+  servidor) y con la 22 (la mínima que se admite), y la spec lo anota en su comprobación (regla XXII).
+  Una puede ser la que tengas instalada. La otra se baja en zip de
+  [nodejs.org/dist](https://nodejs.org/dist/), se comprueba con su `SHASUMS256.txt` y se usa sin
+  instalar: desde la raíz del proyecto, `node.exe --test` es `npm test`, y
+  `node.exe scripts/smoke-local.js`, la prueba de humo.
 - Lo que una prueba automática no ve, como cómo queda una página o un avatar, se mira a mano en el sitio
   local: [DESARROLLO](DESARROLLO.md).
 
