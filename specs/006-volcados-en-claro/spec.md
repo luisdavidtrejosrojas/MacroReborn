@@ -167,7 +167,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
   `neon-*` fuera (D1 y D2) y el inventario otra vez (RF-001 a RF-004, CE-001, CE-002).
 - [X] T002 La documentación: VPS, CUENTAS, MUDANZA-AL-VPS y CONTRASENAS-EN-CLARO (RF-005).
 - [X] T003 La auditoría: el punto 86, cerrado con su nota (RF-005).
-- [ ] T004 La entrada del historial y la unión a `main`, con `npm test` en verde con Node 22 y 24
+- [X] T004 La entrada del historial y la unión a `main`, con `npm test` en verde con Node 22 y 24
   (RF-006, CE-003).
 
 ## Comprobación (09/10/2026)
@@ -182,3 +182,12 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - **CE-002**: fuera de `diarios/` quedan ocho archivos, los mismos de la lista de antes, con su tamaño y
   su fecha. Son los tres respaldos de «antes de» y la lista de uno de ellos, el registro, el arte del
   21/09 y las dos copias del repositorio.
+- **CE-003**: VPS, CUENTAS, MUDANZA-AL-VPS, CONTRASENAS-EN-CLARO y la auditoría cuentan lo que se hizo, y
+  la prueba de la documentación pasa. `npm test` pasa las 1.358 pruebas sin ninguna en rojo y la prueba
+  de humo sale en verde, con los Node oficiales 24.21.0 y 22.23.3 de `D:\node-oficial\`, como pide la
+  regla XXII desde la v1.0.3.
+
+**Lo que se vio por el camino**: la base de Neon, si el proyecto sigue vivo, está como el 01/09, con
+las mismas 21 contraseñas en claro. El paso a bcrypt del 16/09 solo cambió la base del VPS, y la
+contraseña de Neon se compartió por chat en la mudanza. Mirarlo y darlo de baja solo se puede hacer
+desde la consola de Neon. Queda apuntado en VPS (lo que falta), CUENTAS y la nota del punto 86.
