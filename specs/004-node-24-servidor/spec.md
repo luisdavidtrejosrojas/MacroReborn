@@ -253,7 +253,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [X] T005 Con el OK de Luis, el servidor: la vuelta atrás guardada y comprobada, Node 24 instalado,
   NodeSource en las actualizaciones automáticas, el servicio reiniciado y las comprobaciones de antes y
   después (RF-001 a RF-004, RF-009, D1 a D3, D7).
-- [ ] T006 Lo que cuenta el cambio: VPS, las copias en `infra/` y el punto 91 de la auditoría, cerrado
+- [X] T006 Lo que cuenta el cambio: VPS, las copias en `infra/` y el punto 91 de la auditoría, cerrado
   (RF-008, RF-010, D9).
 - [ ] T007 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-012).
 

@@ -19,6 +19,8 @@ No se sincroniza solo.
 | `scripts/respaldar.sh` | el home de `azureuser` |
 | `scripts/recalcular-ranking.sh` | el home de `azureuser` (el cron de los lunes) |
 | `scripts/crontab.txt` | se carga con `crontab -e` |
+| `apt/nodesource.sources` | la carpeta `sources.list.d` de apt: de donde sale Node (NodeSource, rama 24) |
+| `apt/51macroreborn-nodesource` | la carpeta `apt.conf.d` de apt: los parches de Node entran con las actualizaciones automaticas |
 
 Las rutas exactas estan en [VPS](../docs/referencia/VPS.md). fail2ban esta apagado desde
 el 17/09/2026: antes de encenderlo, lo que hay que saber esta alli.

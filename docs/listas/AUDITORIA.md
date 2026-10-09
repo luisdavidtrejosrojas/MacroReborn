@@ -78,6 +78,7 @@ que pueden costar una cuenta de usuario o el sitio entero.
 | 75 | descartado | Decisión | Las prendas siguen en el historial de GitHub desde el 23/07/2026: con `git clone` se bajan igual aunque ya no estén en el árbol. Sacarlas exige reescribir el historial, subir a la fuerza, pedir a GitHub que purgue lo que ya sirvió y resincronizar el servidor | GitHub | 2 h + decisión |
 | 77 | 2026-09-24 | Seguridad | XSS almacenado en el nombre de usuario: el registro acepta cualquier texto y la página de amigos lo pinta sin escapar. Basta con mandar una solicitud de amistad para que se ejecute en quien la recibe, administradores incluidos | `js/amigos.js:212` | 1 h |
 | 86 | - | Seguridad | Dos volcados de Neon del 01/09/2026, de la mudanza, siguen en `~/respaldos/` del servidor con 21 contraseñas en claro: la limpieza de 14 días solo borra `diarios/`. Hay otra copia en el PC | VPS | 10 min + decisión |
+| 91 | 2026-10-08 | Seguridad | El servidor corría Node 20, sin parches de seguridad desde el 30/04/2026, cuando se acabó esa rama. Nadie lo vio: las actualizaciones automáticas no cubrían el repositorio de NodeSource | el servidor | medio día |
 
 **Nota al 14.** Se decidió mantener el repositorio público y sacar las prendas
 del árbol: el 21/09/2026 salieron 636 archivos (commit `bbe813a`). El sitio
@@ -139,6 +140,11 @@ que falta debajo de todo esto sigue siendo el punto 6.
 diarios sí; estos dos no, porque están fuera de `diarios/`. Borrarlos, o guardarlos solo donde haga
 falta, lo decide Luis. Lo cuentan [CUENTAS](../referencia/CUENTAS.md#lo-que-queda) y
 [VPS](../referencia/VPS.md#respaldos).
+
+**Nota al 91.** Visto y arreglado el 08/10/2026 en la
+[spec 004](../../specs/004-node-24-servidor/spec.md): el servidor pasó a Node 24 (la 24.21.0), con
+parches hasta el 30/04/2028, que ahora entran solos con las actualizaciones automáticas; la CI prueba la
+24 y la 22. La fecha en que se acaba la 24 está en [VPS](../referencia/VPS.md#9-lo-que-falta).
 
 ---
 
