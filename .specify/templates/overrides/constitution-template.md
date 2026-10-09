@@ -189,9 +189,9 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
   de `datos-locales/`.
 - Todo cambio del servidor lleva su prueba. Las pruebas que cargan la API aíslan antes sus carpetas de
   datos con `tests/_aislar-datos.js`.
-- Para unir una rama a `main`, la integración continua (`.github/workflows/ci.yml`: pruebas en Node 20 y
-  22 y la prueba HTTP de humo) DEBE estar en verde. Si ya estaba en rojo por otra causa, se dice y esa
-  causa tiene su propia especificación.
+- Para unir una rama a `main`, la integración continua (`.github/workflows/ci.yml`: las pruebas y la
+  prueba HTTP de humo, con la versión de Node del servidor y la mínima que se admite) DEBE estar en
+  verde. Si ya estaba en rojo por otra causa, se dice y esa causa tiene su propia especificación.
 
 ### XXIII. El servidor decide
 
