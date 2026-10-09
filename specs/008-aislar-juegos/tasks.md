@@ -131,7 +131,7 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
   `docs/guias/SUMARSE.md`, lo de abrir el sitio en local y el puerto ocupado; y en `CLAUDE.md`, la línea
   de `npm run db:local`. Los juegos van en el puerto siguiente (3002), y con `PORT`, en `PORT + 1`, que
   también tiene que estar libre.
-- [ ] T007 `scripts/smoke-local.js`: buscar dos puertos libres seguidos para el servidor efímero, y
+- [X] T007 `scripts/smoke-local.js`: buscar dos puertos libres seguidos para el servidor efímero, y
   comprobar el contrato de rutas en las dos direcciones:
   - en la web, un envoltorio de terceros da 302, con `Location` en el puerto siguiente;
   - en la dirección de los juegos, el mismo da 200, con `frame-ancestors` y `X-Robots-Tag: noindex`, y

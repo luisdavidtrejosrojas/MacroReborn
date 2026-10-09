@@ -28,6 +28,25 @@ function buscarPuertoLibre() {
   });
 }
 
+function estaLibre(puerto) {
+  return new Promise(resolve => {
+    const sonda = net.createServer();
+    sonda.unref();
+    sonda.once("error", () => resolve(false));
+    sonda.listen(puerto, "127.0.0.1", () => sonda.close(() => resolve(true)));
+  });
+}
+
+// El servidor local abre dos: el del sitio y el siguiente, que hace de
+// dirección de los juegos (api/_juegos-aparte.js, specs/008-aislar-juegos).
+async function buscarDosPuertosSeguidos() {
+  for (let intento = 0; intento < 20; intento++) {
+    const puerto = await buscarPuertoLibre();
+    if (puerto < 65535 && await estaLibre(puerto + 1)) return puerto;
+  }
+  throw new Error("No se encontraron dos puertos libres seguidos para el servidor local");
+}
+
 // Abre una conexion de avisos en vivo y recoge lo que llegue por ella.
 // No es pedir() porque esa respuesta NO TERMINA: pedir() espera al "end"
 // y aqui no llega nunca.
@@ -89,7 +108,7 @@ function pedir(puerto, ruta, opciones = {}) {
           }
         }
 
-        resolve({ codigo: res.statusCode, texto, json });
+        resolve({ codigo: res.statusCode, texto, json, headers: res.headers });
       });
     });
 
@@ -179,7 +198,7 @@ function acumularLog(actual, trozo) {
 }
 
 async function main() {
-  const puerto = await buscarPuertoLibre();
+  const puerto = await buscarDosPuertosSeguidos();
   let salida = "";
   let errores = "";
   const servidor = spawn(process.execPath, ["scripts/servidor-local.js"], {
@@ -278,9 +297,28 @@ async function main() {
     assert.equal(sobre.canal, "notificaciones-demo", "el aviso debe decir por que canal vino");
     assert.ok(sobre.datos?.last_login, "el latido debe traer la ultima conexion");
 
+    // ----- Los juegos, en su propia direccion -----
+    // El puerto siguiente hace de juegos.macroreborn.com: alli solo salen
+    // los juegos de terceros, y en la web la direccion vieja de uno
+    // redirige alli (specs/008-aislar-juegos/contracts/rutas-http.md).
+    const viejo = await pedir(puerto, "/html/juegos/pvz.html");
+    assert.equal(viejo.codigo, 302, "en la web, un juego de terceros debe redirigir");
+    assert.equal(viejo.headers.location, `http://127.0.0.1:${puerto + 1}/html/juegos/pvz.html`);
+    const aparte = await pedir(puerto + 1, "/html/juegos/pvz.html");
+    assert.equal(aparte.codigo, 200, "la direccion de los juegos debe servir el juego");
+    assert.equal(aparte.headers["content-security-policy"],
+      `frame-ancestors http://localhost:${puerto} http://127.0.0.1:${puerto}`);
+    assert.equal(aparte.headers["x-robots-tag"], "noindex");
+    assert.equal(aparte.headers["x-frame-options"], undefined, "sin X-Frame-Options, o no se puede meter en la pagina");
+    const sinApi = await pedir(puerto + 1, "/api/users?ligero=1&username=demo");
+    assert.equal(sinApi.codigo, 404, "la direccion de los juegos no tiene API");
+    const snake = await pedir(puerto, "/html/juegos/macro-snake.html");
+    assert.equal(snake.codigo, 200, "Macro Snake sigue en la web");
+
     console.log(`Smoke local OK en puerto efimero ${puerto}`);
     console.log(`Login, XP y monedas verificados (primer pulso: ${monedas.monto}; el segundo, sin contar)`);
     console.log("Avisos en vivo verificados: la linea abre y el latido llega por ella");
+    console.log(`Juegos aparte verificados: la web redirige al ${puerto + 1}, que solo sirve juegos`);
   } catch (error) {
     const detalle = [salida.trim(), errores.trim()].filter(Boolean).join("\n");
     if (detalle) error.message += `\n\nSalida del servidor:\n${detalle}`;

@@ -97,8 +97,9 @@ Qué sujeta cada archivo lo dice el documento de su área: por ejemplo, las cont
 npm run test:smoke
 ```
 
-El script busca un puerto libre, arranca `scripts/servidor-local.js` con una
-PGlite efímera, comprueba que el sitio responde y hace login con `demo` /
+El script busca dos puertos libres seguidos, el del sitio y el de los juegos,
+arranca `scripts/servidor-local.js` con una PGlite efímera, comprueba que el
+sitio responde y hace login con `demo` /
 `demo1234`. Después manda dos pulsos de XP seguidos. El primero se cuenta y
 paga lo que dice la regla de las monedas: la racha del primer día, nada por
 jugar en el primer minuto y el premio del nivel solo si se sube. La prueba lo
@@ -108,8 +109,11 @@ exactamente. El segundo no se cuenta, porque un minuto solo cuenta si pasaron
 55 segundos desde el anterior, y el saldo no cambia. Después abre una
 conexión de avisos en vivo, dispara un latido y comprueba que el aviso llega
 por esa línea ([AVISOS](../referencia/AVISOS.md)): es lo único que ejercita la cadena entera, porque
-las suites de `tests/` prueban cada pieza por separado. Siempre termina el
-proceso hijo, también cuando falla una aserción. No necesita una base externa;
+las suites de `tests/` prueban cada pieza por separado. Por último, las dos
+direcciones de los juegos: en la web, un juego de terceros redirige al puerto
+de los juegos, que lo sirve con su `frame-ancestors`, sin `X-Frame-Options` y
+sin API; y Macro Snake sigue en la web (specs/008-aislar-juegos). Siempre
+termina el proceso hijo, también cuando falla una aserción. No necesita una base externa;
 el servidor local usa un secreto efímero por defecto solo cuando no se
 proporciona `SESSION_SECRET` en el entorno.
 
