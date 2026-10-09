@@ -5,7 +5,7 @@
 >
 > **Para quién:** el equipo de desarrollo.
 >
-> **Revisado:** 08/10/2026
+> **Revisado:** 09/10/2026
 
 **Cómo se mantiene.** Cada especificación añade aquí su entrada como última tarea, antes de unirse a
 `main`, con la fecha de esa unión ([la regla](../guias/SUMARSE.md#3-commits-y-ramas)). Lo de antes se reconstruyó el
@@ -16,6 +16,13 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
 
 ## Semana del 05 al 11/10/2026
 
+- **09/10, forma de trabajar** (Luis): la spec 007 apaga en GitHub la integración continua, para no
+  gastar dinero. El repositorio es privado, los minutos de Actions que pasan del cupo gratis se cobran a
+  la cuenta dueña, y desde el 08/10 GitHub ni siquiera arrancaba los trabajos, por el pago. El archivo
+  se queda, y se vuelve a encender con una orden. La constitución pasa a la v1.0.3: para unir a `main`,
+  la regla XXII pide `npm test` y la prueba de humo en verde con Node 24 y 22. Las corre la CI si está
+  encendida y, si no, el PC, y la spec lo anota. Los dos Node oficiales quedan en el PC de Luis.
+  [Spec 007](../../specs/007-apagar-ci/spec.md).
 - **08/10, el sitio** (Luis): la spec 005 arregla lo que veía todo el mundo y no funcionaba. Explorar
   vuelve a enseñar juegos, y los botones «Anterior», «Más de esta categoría» y «Siguiente» de cada juego
   llevan a su sitio: los dos buscaban el catálogo en `window`, y no estaba. Vuelve a salir el panel «Tus

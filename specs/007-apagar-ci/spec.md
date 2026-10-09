@@ -184,5 +184,18 @@ Un commit por tarea, subido a `origin` al cerrarla.
   (RF-004, D4).
 - [X] T003 La constitución v1.0.3: la regla XXII y el paso 9, también en su plantilla (RF-003, CE-002).
 - [X] T004 La documentación: CLAUDE.md, SUMARSE, ARQUITECTURA y la nota de la spec 003 (RF-005, CE-004).
-- [ ] T005 La entrada del historial y la unión a `main`, con `npm test` y la prueba de humo en verde en el
+- [X] T005 La entrada del historial y la unión a `main`, con `npm test` y la prueba de humo en verde en el
   PC con Node 24 y 22 (RF-006, CE-003).
+
+## Comprobación (09/10/2026)
+
+- **CE-001**: el flujo «CI» está apagado en GitHub (`disabled_manually`) desde las 10:01:34 UTC. Las
+  cuatro subidas de después, de la T001 a la T004, no crearon ninguna ejecución. La última que hay es
+  de las 10:01:29, de una subida de antes de apagarlo, y falló sin arrancar, como las 38 anteriores.
+- **CE-002**: la constitución está en la v1.0.3, con la regla XXII y el paso 9 nuevos. Su plantilla
+  tiene el mismo cambio, y las dos siguen diferenciándose solo en la cabecera y la línea de la versión.
+- **CE-003**: con los Node oficiales de `D:\node-oficial\`, 24.21.0 y 22.23.3, `npm test` pasa las
+  1.358 pruebas sin ninguna en rojo, y la prueba de humo sale en verde, con las dos versiones. Antes de
+  usarlos se comprobaron otra vez con el `SHASUMS256.txt` de nodejs.org, igual al del 08/10.
+- **CE-004**: en CLAUDE.md, el README y `docs/` ya nada dice que la CI corre en cada subida. El
+  historial y las specs ya unidas cuentan lo que pasó, y la 003 lleva su nota.
