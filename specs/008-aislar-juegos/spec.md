@@ -2,7 +2,7 @@
 
 **Rama**: `008-aislar-juegos`
 **Creada**: 2026-10-09
-**Estado**: Borrador, con una pregunta para Luis (las partidas guardadas)
+**Estado**: Aclarada por Luis el 09/10/2026; lista para el plan
 **Tipo**: spec completa: después vienen el plan y las tareas, cada paso con el OK de Luis.
 **Pedido**: Luis, 09/10/2026: «Proteger la sesión», el siguiente paso que eligió después de la 007. Es el
 punto 1 de la auditoría, en el bloque de lo urgente desde el 18/09.
@@ -41,11 +41,20 @@ Comprobado el 09/10 en el código de hoy, solo leyendo:
   | Unity | 41 | 11 | 269 |
   | Otros de HTML5 | 34 | 10 | 477 |
 
+  Quien juega a varios motores sale en varias filas. En total son 84 personas distintas, y 27 de ellas
+  pasaron una hora o más en algún juego.
+
   El sitio, por su parte, guarda sus cosas en `localStorage` y no usa IndexedDB.
 
 ## Aclaraciones
 
-Pendiente de Luis: qué pasa con las partidas guardadas en el navegador (RF-008).
+### Sesión 2026-10-09
+
+- P: Lo que cada juego guarda en el navegador no se verá desde el sitio aparte. ¿Se pasa solo, o se
+  pierde avisando antes? → R: Se pasa solo, la primera vez que se abre cada juego después del cambio,
+  nunca con la sesión ni con lo que guarda el sitio (Historia 4, RF-008).
+- P: Si hace falta una dirección nueva, ¿puede Luis entrar en IONOS, donde está el dominio? → R: Sí. La
+  añade él, con la guía de Claude (Dependencias).
 
 ## Escenarios de uso y pruebas *(obligatorio)*
 
@@ -113,18 +122,25 @@ entrar cada diez minutos.
 
 ---
 
-### Historia 4 - Las partidas guardadas (Prioridad: P2)
+### Historia 4 - Las partidas guardadas pasan solas (Prioridad: P2)
 
-Lo que cada juego guardó en el navegador de quien juega [NEEDS CLARIFICATION: pasa solo al sitio nuevo
-la primera vez que se abre cada juego, nunca con la sesión ni con lo que guarda el sitio (recomendado), o
-se pierde una vez, avisando antes con tiempo para exportarlo desde los emuladores].
+Lo que cada juego guardó en el navegador de quien juega, como sus partidas o sus ajustes, pasa solo al
+sitio aparte la primera vez que se abre ese juego después del cambio. Quien juega no tiene que hacer
+nada. Lo que guarda el sitio, sesión incluida, no pasa nunca.
 
 **Por qué esta prioridad**: no afecta a la seguridad, pero sí a quien más juega: 868 horas de emuladores
 en cuatro semanas.
 
 **Prueba independiente**: guardar partida en un juego de cada motor antes del cambio, y abrirla después.
 
-**Escenarios de aceptación**: según la respuesta de Luis.
+**Escenarios de aceptación**:
+
+1. **Dado** alguien con una partida guardada en un juego antes del cambio, **cuando** abre ese juego
+   después, **entonces** la partida sigue ahí.
+2. **Dado** lo que guarda el sitio en el navegador (la sesión, el usuario y lo demás), **cuando** pasan
+   las partidas, **entonces** nada de eso llega al sitio de los juegos.
+3. **Dado** alguien que ya jugó en el sitio aparte, **cuando** vuelve a abrir el juego, **entonces** lo
+   nuevo no se pisa con lo de antes del cambio.
 
 ---
 
@@ -175,8 +191,9 @@ el sitio aparte, y la auditoría cierra el punto 1.
   página, nunca de otra web.
 - **RF-006**: Macro Snake DEBE seguir en la web y guardando los récords como hoy.
 - **RF-007**: Los cuatro juegos de otras webs DEBEN seguir como hoy.
-- **RF-008**: Lo que cada juego guardó en el navegador [NEEDS CLARIFICATION: DEBE pasar solo al sitio
-  nuevo, nunca con la sesión ni con lo del sitio; o se pierde, y se DEBE avisar antes].
+- **RF-008**: Lo que cada juego guardó en el navegador DEBE pasar solo al sitio aparte la primera vez que
+  se abre ese juego después del cambio, sin pisar lo que ya haya allí. La sesión y lo demás que guarda el
+  sitio NO DEBEN pasar nunca, y una prueba DEBE vigilarlo.
 - **RF-009**: Los juegos DEBEN poder probarse en local, separados de la sesión como en la web.
 - **RF-010**: Las pruebas DEBEN avisar si un juego de `html/juegos/` no cumple lo que piden los demás, y
   si un cambio vuelve a abrir los juegos en la web.
@@ -209,7 +226,9 @@ el sitio aparte, y la auditoría cierra el punto 1.
 - **CE-005**: En los juegos de terceros, un minuto con actividad cuenta, y tres minutos sin nada dejan de
   contar, igual que antes del cambio.
 - **CE-006**: Macro Snake guarda una partida y sale en el top, como antes.
-- **CE-007**: Las partidas guardadas: según la respuesta de Luis.
+- **CE-007**: En un juego de cada motor que guarda (un emulador, uno de Flash, uno de Unity y uno de
+  HTML5), una partida guardada antes del cambio sigue después. En el sitio de los juegos no aparece nada
+  de lo que guarda el sitio: 0 claves.
 - **CE-008**: `npm test` y la prueba de humo en verde con Node 24 y 22. La página de jugar, mirada en PC y
   en móvil.
 
@@ -223,8 +242,8 @@ el sitio aparte, y la auditoría cierra el punto 1.
 
 ## Dependencias
 
-- Si hace falta una dirección nueva, alguien con acceso a la zona DNS del dominio, en IONOS, tiene que
-  añadir una entrada. Lo hace Luis, o quien tenga ese acceso, con la guía de Claude.
+- Si hace falta una dirección nueva, hay que añadir una entrada en la zona DNS del dominio, en IONOS. La
+  añade Luis, que tiene acceso (lo confirmó el 09/10), con la guía de Claude.
 - El servidor necesita un certificado para esa dirección, con el OK de Luis (RF-011).
 
 ## Fuera de alcance

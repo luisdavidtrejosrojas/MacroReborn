@@ -13,7 +13,7 @@
 
 ## Requisitos completos
 
-- [ ] No quedan marcas [NEEDS CLARIFICATION]
+- [x] No quedan marcas [NEEDS CLARIFICATION]
 - [x] Los requisitos se pueden comprobar y no son ambiguos
 - [x] Los criterios de éxito se pueden medir
 - [x] Los criterios de éxito no dependen de una tecnología
@@ -40,3 +40,6 @@
   (Historia 4, RF-008 y CE-007), qué pasa con las partidas que los juegos guardan en el navegador. Es una
   decisión de Luis, y afecta a quien más juega. Las cifras salen de recuentos en producción, solo de
   lectura y sin nombres.
+- **Segunda revisión (2026-10-09):** Luis respondió que las partidas pasan solas al sitio aparte, nunca
+  con la sesión ni con lo del sitio, y que él puede entrar en IONOS. Sin marcas, pasa todo. Se añadió el
+  total de personas distintas (84), porque la suma por motor contaba dos veces a quien jugó a varios.
