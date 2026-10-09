@@ -16,6 +16,14 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
 
 ## Semana del 05 al 11/10/2026
 
+- **08/10, pruebas** (Luis): la spec 003 pone al día la prueba de humo, en rojo desde el 25/09. Esperaba
+  un primer pulso de 10 a 30 monedas y que un segundo pulso seguido saliera bien, de antes de la regla
+  del minuto (25/09) y de la economía del 04/10; ahora comprueba las reglas de hoy con los números del
+  módulo de monedas, y el saldo. En la CI, cada versión de Node termina aunque la otra falle (con Node
+  20, la del servidor, las pruebas no terminaban desde el 06/10), la prueba de humo corre con las dos y
+  una subida nueva cancela la ejecución anterior de la misma rama. Esa tarde GitHub dejó de arrancar los
+  trabajos, porque se había pasado el cupo de minutos de la cuenta dueña del repositorio: se unió con la
+  comprobación en el PC, con Node 20, 22 y 24. [Spec 003](../../specs/003-integracion-continua/spec.md).
 - **08/10, el navegador** (Luis): la spec 002 funde lo que SamuMacro subió el 06/10. Se queda su
   arreglo de la barra fija, con un respaldo para los navegadores que no entienden `clip`, y
   `comunidad-ranking.html` vuelve a pedir sus siete hojas y scripts con las versiones de antes. Con la

@@ -248,7 +248,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
   documentación (RF-011, D6).
 - [X] T005 Comprobar: `npm test`, la prueba de humo en local, la regla del minuto apagada a mano, Node
   20 y 22 en el PC y la CI de la rama, si arranca (CE-001 a CE-008, D7).
-- [ ] T006 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-010).
+- [X] T006 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-010).
 
 ## Comprobación (08/10/2026)
 
