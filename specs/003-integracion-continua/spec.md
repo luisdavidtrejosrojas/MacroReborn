@@ -2,7 +2,7 @@
 
 **Rama**: `003-integracion-continua`
 **Creada**: 2026-10-08
-**Estado**: Borrador
+**Estado**: Aprobada por Luis el 08/10/2026
 **Tipo**: spec corta (regla XIX): especificación, plan y tareas en esta página, aprobados una vez.
 **Pedido**: Luis, 08/10/2026, al elegir cómo seguir: «la spec 003 ahora, y después la 004 y la 005».
 
