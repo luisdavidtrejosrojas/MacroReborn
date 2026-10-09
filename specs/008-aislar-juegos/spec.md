@@ -2,7 +2,8 @@
 
 **Rama**: `008-aislar-juegos`
 **Creada**: 2026-10-09
-**Estado**: Aclarada por Luis el 09/10/2026; lista para el plan
+**Estado**: Spec y plan aprobados por Luis el 09/10/2026; las tareas, pendientes de su OK para
+implementar
 **Tipo**: spec completa: después vienen el plan y las tareas, cada paso con el OK de Luis.
 **Pedido**: Luis, 09/10/2026: «Proteger la sesión», el siguiente paso que eligió después de la 007. Es el
 punto 1 de la auditoría, en el bloque de lo urgente desde el 18/09.
@@ -50,9 +51,9 @@ Comprobado el 09/10 en el código de hoy, solo leyendo:
 
 ### Sesión 2026-10-09
 
-- P: Lo que cada juego guarda en el navegador no se verá desde el sitio aparte. ¿Se pasa solo, o se
-  pierde avisando antes? → R: Se pasa solo, la primera vez que se abre cada juego después del cambio,
-  nunca con la sesión ni con lo que guarda el sitio (Historia 4, RF-008).
+- P: Lo que cada juego guarda en el navegador no se verá desde la dirección de los juegos. ¿Se pasa
+  solo, o se pierde avisando antes? → R: Se pasa solo, la primera vez que se abre cada juego después del
+  cambio, nunca con la sesión ni con lo que guarda el sitio (Historia 4, RF-008).
 - P: Si hace falta una dirección nueva, ¿puede Luis entrar en IONOS, donde está el dominio? → R: Sí. La
   añade él, con la guía de Claude (Dependencias).
 
@@ -77,7 +78,7 @@ tocar la página y cambiar su dirección.
 2. **Dado** un juego de terceros abierto, **cuando** su código intenta leer o cambiar la página que lo
    contiene, o llevarla a otra dirección, **entonces** el navegador no lo deja.
 3. **Dado** un enlace a la dirección vieja de un juego de terceros en la web, **cuando** alguien lo abre,
-   **entonces** el juego no se ejecuta en la web: se abre desde su sitio aparte.
+   **entonces** el juego no se ejecuta en la web: se abre desde la dirección de los juegos.
 
 ---
 
@@ -124,9 +125,9 @@ entrar cada diez minutos.
 
 ### Historia 4 - Las partidas guardadas pasan solas (Prioridad: P2)
 
-Lo que cada juego guardó en el navegador de quien juega, como sus partidas o sus ajustes, pasa solo al
-sitio aparte la primera vez que se abre ese juego después del cambio. Quien juega no tiene que hacer
-nada. Lo que guarda el sitio, sesión incluida, no pasa nunca.
+Lo que cada juego guardó en el navegador de quien juega, como sus partidas o sus ajustes, pasa solo a la
+dirección de los juegos la primera vez que se abre ese juego después del cambio. Quien juega no tiene
+que hacer nada. Lo que guarda el sitio, sesión incluida, no pasa nunca.
 
 **Por qué esta prioridad**: no afecta a la seguridad, pero sí a quien más juega: 868 horas de emuladores
 en cuatro semanas.
@@ -138,9 +139,9 @@ en cuatro semanas.
 1. **Dado** alguien con una partida guardada en un juego antes del cambio, **cuando** abre ese juego
    después, **entonces** la partida sigue ahí.
 2. **Dado** lo que guarda el sitio en el navegador (la sesión, el usuario y lo demás), **cuando** pasan
-   las partidas, **entonces** nada de eso llega al sitio de los juegos.
-3. **Dado** alguien que ya jugó en el sitio aparte, **cuando** vuelve a abrir el juego, **entonces** lo
-   nuevo no se pisa con lo de antes del cambio.
+   las partidas, **entonces** nada de eso llega a la dirección de los juegos.
+3. **Dado** alguien que ya jugó en la dirección de los juegos, **cuando** vuelve a abrir el juego,
+   **entonces** lo nuevo no se pisa con lo de antes del cambio.
 
 ---
 
@@ -148,7 +149,7 @@ en cuatro semanas.
 
 Quien trabaja en el sitio puede abrir los juegos en su PC con `npm run db:local`, también separados de la
 sesión. La documentación cuenta dónde están los juegos, cómo se sabe que alguien juega y cómo se sirve
-el sitio aparte, y la auditoría cierra el punto 1.
+la dirección de los juegos, y la auditoría cierra el punto 1 cuando está en la web real.
 
 **Por qué esta prioridad**: para que el arreglo se mantenga cuando alguien añada un juego nuevo.
 
@@ -166,7 +167,8 @@ el sitio aparte, y la auditoría cierra el punto 1.
 ### Casos límite
 
 - **Macro Snake** se queda en la web: es código del equipo, no carga nada de fuera y necesita la sesión.
-- **Los cuatro juegos de otras webs** no cambian. Ya están separados, con la regla de los diez minutos.
+- **Los cuatro juegos de otras webs** siguen en su web, ya separados, con la regla de los diez minutos.
+  Solo ganan el marco protegido de los demás: tampoco pueden llevarse la página a otra dirección.
 - **Los juegos que hoy no cargan** (15 según el punto 21) siguen sin cargar: arreglarlos es otra cosa.
 - **Los enlaces viejos**, de buscadores o compartidos, a `html/juegos/...`, siguen llevando al juego.
 - **Un juego que escucha a la página que lo contiene o le manda mensajes**, como hacen 28 envoltorios
@@ -184,23 +186,28 @@ el sitio aparte, y la auditoría cierra el punto 1.
 - **RF-002**: El código de un juego de terceros NO DEBE poder leer ni cambiar la página que lo contiene,
   ni llevarla a otra dirección.
 - **RF-003**: La web principal NO DEBE ejecutar el código de un juego de terceros en ninguna de sus
-  direcciones. Las direcciones viejas de los juegos DEBEN seguir llevando al juego, en su sitio aparte.
+  direcciones. Las direcciones viejas de los juegos DEBEN seguir llevando al juego, en la dirección de
+  los juegos.
 - **RF-004**: Cada juego que cargue antes del cambio DEBE seguir cargando después, en PC y en móvil.
 - **RF-005**: El minuto de juego DEBE contar como hoy: con actividad dentro del juego en los últimos tres
   minutos, sí, y sin ella, no. Los avisos de actividad DEBEN aceptarse solo del juego abierto en la
   página, nunca de otra web.
 - **RF-006**: Macro Snake DEBE seguir en la web y guardando los récords como hoy.
-- **RF-007**: Los cuatro juegos de otras webs DEBEN seguir como hoy.
-- **RF-008**: Lo que cada juego guardó en el navegador DEBE pasar solo al sitio aparte la primera vez que
-  se abre ese juego después del cambio, sin pisar lo que ya haya allí. La sesión y lo demás que guarda el
-  sitio NO DEBEN pasar nunca, y una prueba DEBE vigilarlo.
+- **RF-007**: Los cuatro juegos de otras webs DEBEN seguir en su web y con la regla de los diez minutos,
+  y DEBEN llevar el mismo marco protegido que los de terceros: no pueden llevarse la página a otra
+  dirección.
+- **RF-008**: Lo que cada juego guardó en el navegador DEBE pasar solo a la dirección de los juegos la
+  primera vez que se abre ese juego después del cambio, sin pisar lo que ya haya allí. La sesión y lo
+  demás que guarda el sitio NO DEBEN pasar nunca, y una prueba DEBE vigilarlo.
 - **RF-009**: Los juegos DEBEN poder probarse en local, separados de la sesión como en la web.
 - **RF-010**: Las pruebas DEBEN avisar si un juego de `html/juegos/` no cumple lo que piden los demás, y
   si un cambio vuelve a abrir los juegos en la web.
 - **RF-011**: Los cambios en el servidor (una dirección nueva, su certificado y su configuración) DEBEN
   hacerse con el OK de Luis en ese momento (regla XXI). Se despliega después de unir, con su OK.
-- **RF-012**: La documentación DEBE contar el cambio: VPS, ECONOMIA, ARQUITECTURA, las guías de
-  desarrollo y de juegos, y la auditoría, con el punto 1 cerrado.
+- **RF-012**: La documentación DEBE contar el cambio en cada documento que lo toca (research D15): la
+  dirección de los juegos, cómo se sabe que alguien juega, la mudanza y la regla de las claves del sitio,
+  cómo se prueba en local y cómo se despliega. La dirección de los juegos NO DEBE salir en los buscadores.
+  La auditoría DEBE cerrar el punto 1 cuando esté en la web real.
 - **RF-013**: La documentación DEBE dejar de dar por pendiente nada de Neon: Luis dijo el 09/10 que ya
   no lo tienen ni lo usan. Son los puntos 1 y 2 de lo que falta en VPS y las líneas que la spec 006 le
   añadió en VPS, CUENTAS, CONTRASENAS-EN-CLARO, la nota al 86 y el historial.

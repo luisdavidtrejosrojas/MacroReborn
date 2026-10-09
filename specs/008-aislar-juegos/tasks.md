@@ -78,10 +78,11 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
   - **Sin parar ni callar** (regla XIII): si falla un juego, se apunta el fallo y sigue con el siguiente.
     Al terminar cierra Edge. No la corre `npm test`.
 - [ ] T003 El «antes» en el PC (quickstart 2), con el código todavía como `main`: `npm run db:local`
-  (antes, mirar el 3001 con `netstat -ano`; si está ocupado, `PORT=3101`) y `node
-  scripts/revision-juegos.js --sonda --salida <scratchpad>/revision-008/antes`. Anotar en la
-  «Comprobación» de `specs/008-aislar-juegos/spec.md` cuántos de los 112 cargan, y lo de la sonda: hoy,
-  en los 107 de terceros, se lee la clave de la web y se llega a la página. El informe y las capturas se
+  (antes, mirar el 3001 con `netstat -ano`; si está ocupado, `PORT=3101`), y dos revisiones, en PC y en
+  móvil (RF-004): `node scripts/revision-juegos.js --sonda --salida <scratchpad>/revision-008/antes` y lo
+  mismo con `--movil --salida <scratchpad>/revision-008/antes-movil`. Anotar en la «Comprobación» de
+  `specs/008-aislar-juegos/spec.md` cuántos de los 112 cargan en cada una, y lo de la sonda: hoy, en los
+  107 de terceros, se lee la clave de la web y se llega a la página. Los informes y las capturas se
   quedan fuera de git.
 
 ---
@@ -101,8 +102,8 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
     - tiene que ser un archivo directamente en `html/juegos/`: un `<nombre>.html` que no sea propio ni
       empiece por `_`, o `_mudanza.html` o `_mudanza.js`. Si no, o si no existe, 404;
     - la respuesta lleva `Content-Type` con `charset=utf-8`, `Content-Security-Policy: frame-ancestors`
-      con `origenesDeLaWeb`, `Cache-Control: no-cache` y `ETag` del tamaño y la fecha del archivo, con
-      304 si `If-None-Match` es igual. Nunca `X-Frame-Options`;
+      con `origenesDeLaWeb`, `Cache-Control: no-cache`, `X-Robots-Tag: noindex` y `ETag` del tamaño y
+      la fecha del archivo, con 304 si `If-None-Match` es igual. Nunca `X-Frame-Options`;
     - si no puede leer el archivo, lo dice con `console.error` y da 500.
   - **En la web**: un envoltorio de terceros da 302 a `origenJuegos`, con la misma ruta y la misma
     consulta. `_mudanza.html`, `_mudanza.js` y `_puente.js` dan 404. Lo demás no lo atiende.
@@ -110,6 +111,8 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
     libre, con `http.request` y la cabecera `Host` de cada dirección. Cubre cada fila del contrato, las
     rutas con `..` (también `%2e%2e` y `..%2f`), y que **cada** envoltorio de terceros de `html/juegos/`
     sale en la dirección de los juegos y redirige en la web (RF-010).
+  - **En el mismo commit** (regla XIX), una fila en la tabla de `docs/referencia/SEO.md`: la dirección
+    de los juegos, con `noindex` por la cabecera, y por qué (research D3).
 - [ ] T005 `server.js`: llamar a `atender` de `api/_juegos-aparte.js` justo después de crear `url` y
   antes de todo lo demás (prendas, avatares, avisos, API y estáticos), con `esPeticionDeJuegos(req)` y
   la configuración de producción. Con una prueba en `tests/juegos-aparte-servidor.test.js` que mira en
@@ -121,20 +124,22 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
   - en el de siempre, `atender` como web, antes de lo demás;
   - al arrancar, dice las dos direcciones.
 
-  En el mismo commit (regla XIX), en `docs/guias/DESARROLLO.md` la sección del servidor local, y en
-  `CLAUDE.md` la línea de `npm run db:local`: los juegos van en el puerto siguiente (3002), y con
-  `PORT`, en `PORT + 1`.
+  En el mismo commit (regla XIX): en `docs/guias/DESARROLLO.md`, la sección del servidor local; en
+  `docs/guias/SUMARSE.md`, lo de abrir el sitio en local y el puerto ocupado; y en `CLAUDE.md`, la línea
+  de `npm run db:local`. Los juegos van en el puerto siguiente (3002), y con `PORT`, en `PORT + 1`, que
+  también tiene que estar libre.
 - [ ] T007 `scripts/smoke-local.js`: buscar dos puertos libres seguidos para el servidor efímero, y
   comprobar el contrato de rutas en las dos direcciones:
   - en la web, un envoltorio de terceros da 302, con `Location` en el puerto siguiente;
-  - en la dirección de los juegos, el mismo da 200, con `frame-ancestors` y sin `X-Frame-Options`;
+  - en la dirección de los juegos, el mismo da 200, con `frame-ancestors` y `X-Robots-Tag: noindex`, y
+    sin `X-Frame-Options`;
   - allí, `/api/users` da 404;
   - en la web, `html/juegos/macro-snake.html` da 200.
 
   Con su sección de `docs/guias/DESARROLLO.md` al día.
-- [ ] T008 [P] Crear `js/motor/juegos-aparte.js` (research D1, D2, D6 y D10; data-model «Juego»,
-  «Dirección de los juegos» y «Marco del juego»; contracts/marco-del-juego.md). Deja `window.MRJuegosAparte`
-  con:
+- [ ] T008 Crear `js/motor/juegos-aparte.js` (research D1, D2, D6 y D10; data-model «Juego», «Dirección
+  de los juegos» y «Marco del juego»; contracts/marco-del-juego.md). Va después de la T004, porque su
+  prueba compara la lista de propios con la del servidor. Deja `window.MRJuegosAparte` con:
   - `origen(location)`: «en `macroreborn.com` o `www.macroreborn.com`, los juegos están en
     `https://juegos.macroreborn.com`; en `localhost` o `127.0.0.1`, en el mismo nombre con el puerto
     siguiente»;
@@ -252,7 +257,9 @@ nada del sitio y sin pisar nada.
   `html/juegos/`) buscando `localStorage.getItem`, `setItem` y `removeItem`. Falla si una clave escrita
   tal cual no la cubre la lista, o si aparece una clave calculada en un archivo que la prueba no conoce.
   Hoy son `js/chat.js`, `js/core.js`, `js/motor/estadisticas.js`, `js/retos-diarios.js`,
-  `js/session.js` y `js/tema.js`, cada uno con lo que vale su clave.
+  `js/session.js` y `js/tema.js`, cada uno con lo que vale su clave. En el mismo commit (regla XIX), en
+  «Convenciones del proyecto» de `docs/guias/DESARROLLO.md`: una clave nueva del sitio en el
+  `localStorage` va en esta lista (y en la de `html/juegos/_mudanza.js`), y la prueba avisa si falta.
 - [ ] T016 [P] [US4] Añadir `fake-indexeddb` 6.2.5, exacta y solo para las pruebas (`npm install
   --save-dev --save-exact fake-indexeddb@6.2.5`), en `package.json` y `package-lock.json` (research
   D11). Comprobar que no trae dependencias, `npm audit` y `npm test` en verde.
@@ -260,9 +267,9 @@ nada del sitio y sin pisar nada.
   contracts/mensajes.md «Mudanza»; data-model «Paquete de la mudanza»): código del equipo, sin nada de
   terceros.
   - Al cargar, avisa `mr-mudanza-lista`.
-  - Acepta `mr-mudanza` solo de las direcciones de la web: en `juegos.macroreborn.com`,
-    `https://macroreborn.com` y `https://www.macroreborn.com`; en local, el mismo nombre con el puerto
-    anterior, para `localhost` y `127.0.0.1`.
+  - Acepta `mr-mudanza` solo de las direcciones de la web, como en data-model «Dirección de los juegos»:
+    en `juegos.macroreborn.com`, de `https://macroreborn.com` y `https://www.macroreborn.com`; en local,
+    de `http://localhost:<p>` y de `http://127.0.0.1:<p>`, siendo `<p>` el puerto anterior al suyo.
   - Tira cualquier clave del sitio, con la misma lista de la T015 (una prueba vigila que sea la misma).
   - Guarda sin pisar nada: «Una clave que ya está en la dirección de los juegos no cambia. Una base que
     no existe se crea con la misma versión, almacenes e índices. En una que ya existe solo entran los
@@ -286,8 +293,8 @@ nada del sitio y sin pisar nada.
     - con la marca `mrPartidasMudadas`, no hace nada; sin nada que pasar, pone la marca;
     - si hay algo, abre un marco invisible a `_mudanza.html` y manda el paquete solo a la dirección de
       los juegos;
-    - la marca, `{ version: 1, fecha, claves, registros, saltadas }`, solo se pone con
-      `mr-mudanza-hecha`;
+    - la marca, `{ version: 1, fecha, claves, registros, saltadas }`, con las claves y los registros
+      puestos (data-model «Marca de mudanza hecha»), solo se pone con `mr-mudanza-hecha`;
     - con `mr-mudanza-fallo`, o a los «60 segundos» sin respuesta, no pone la marca y lo dice en la
       consola;
     - siempre quita el marco.
@@ -328,11 +335,13 @@ Snake sigue igual.
 
 **Prueba independiente**: abrir cada juego antes y después, y comparar.
 
-- [ ] T022 [US2] La revisión de «después» (quickstart 4 y 5), con el servidor local nuevo: `node
-  scripts/revision-juegos.js --sonda --comparar <scratchpad>/revision-008/antes/informe.json --salida
-  <scratchpad>/revision-008/despues`. Tiene que salir: 0 de 107 leen la clave de la web, 0 llegan a la
-  página, y 0 juegos que cargaban y ya no. Mirar la página de capturas entera, y anotar en la
-  «Comprobación» de `specs/008-aislar-juegos/spec.md` los que se rompan.
+- [ ] T022 [US2] La revisión de «después» (quickstart 4 y 5), con el servidor local nuevo, en PC y en
+  móvil: `node scripts/revision-juegos.js --sonda --comparar
+  <scratchpad>/revision-008/antes/informe.json --salida <scratchpad>/revision-008/despues`, y lo mismo
+  con `--movil`, comparando con `antes-movil` y saliendo en `despues-movil`. Tiene que salir, en las dos:
+  0 de 107 leen la clave de la web, 0 llegan a la página, y 0 juegos que cargaban y ya no. Los 4 de
+  otras webs, con su marco nuevo, también tienen que cargar (RF-007). Mirar las páginas de capturas
+  enteras, y anotar en la «Comprobación» de `specs/008-aislar-juegos/spec.md` los que se rompan.
 - [ ] T023 [US2] Por cada juego que se rompa al estar aparte, arreglar su envoltorio en
   `html/juegos/<nombre>.html`, con un commit por juego y el porqué en el commit, y volver a revisarlo con
   `--ids`. Si no se rompe ninguno, se anota en la «Comprobación».
@@ -366,7 +375,9 @@ Snake sigue igual.
   - `infra/LEEME.md`;
   - en `docs/referencia/VPS.md`, el apartado «7. Dominio y HTTPS» (los tres nombres, el registro
     `juegos` y la orden de certbot), y uno nuevo sobre la dirección de los juegos: qué sirve, por qué va
-    sin `X-Frame-Options` y quién pone `frame-ancestors`.
+    sin `X-Frame-Options` y quién pone `frame-ancestors`;
+  - en «4. Comprobar en la web real» de `docs/guias/DESPLEGAR.md`, dos comprobaciones más para cada
+    despliegue: un juego en la dirección de los juegos da 200, y su dirección vieja en la web da 302.
 
   No toca el servidor.
 
@@ -374,9 +385,10 @@ Snake sigue igual.
 
 ## Fase 9: Historia de uso 5, la documentación (P3)
 
-**Objetivo**: la documentación cuenta dónde están los juegos, cómo se sabe que alguien juega y cómo se
-sirve el sitio aparte; lo de Neon deja de estar pendiente; la auditoría cierra el punto 1. Lo de probar
-en local ya entró con las T006 y T007.
+**Objetivo**: la documentación cuenta dónde están los juegos, cómo se sabe que alguien juega, cómo se
+sirve la dirección de los juegos y qué hace la mudanza; lo de Neon deja de estar pendiente; la
+auditoría lleva la nota del punto 1, que se cierra al desplegar (T038). Lo de probar en local, el
+`noindex` y la regla de las claves del sitio ya entraron con las T004, T006, T007 y T015.
 
 **Prueba independiente**: leer la documentación, y que la pase `tests/documentacion.test.js`.
 
@@ -385,6 +397,8 @@ en local ya entró con las T006 y T007.
   - el marco de la página de jugar y sus permisos (`sandbox` y `allow`), y lo que eso significa para el
     marco de dentro de un envoltorio;
   - el puente, que se pone solo;
+  - la mudanza: qué pasa la primera vez que se abre un juego (qué se copia y qué no) y la marca
+    `mrPartidasMudadas`;
   - los archivos con `_` de `html/juegos/`;
   - Macro Snake, que se queda en la web;
   - `scripts/revision-juegos.js`, para mirar un juego nuevo.
@@ -396,9 +410,9 @@ en local ya entró con las T006 y T007.
     `docs/historia/CONTRASENAS-EN-CLARO.md`, la nota al 86 de `docs/listas/AUDITORIA.md` y su entrada de
     `docs/historia/HISTORIAL.md`;
   - una nota en `specs/006-volcados-en-claro/spec.md`.
-- [ ] T029 [US5] `docs/listas/AUDITORIA.md`: el punto 1, cerrado con la fecha de la unión a `main`, con
-  su «Nota al 1». Cuenta qué se hizo, con las cifras (75 juegos y 18 cuentas; 107 aparte), lo que queda
-  (los puntos 6 y 12) y que se despliega con el OK de Luis.
+- [ ] T029 [US5] `docs/listas/AUDITORIA.md`: la «Nota al 1». Cuenta qué se hizo, con las cifras (75
+  juegos y 18 cuentas; 107 aparte), y lo que queda (los puntos 6 y 12). El punto **sigue abierto**: hasta
+  el despliegue, la web real sigue igual. Lo cierra la T038, con la fecha del despliegue.
 
 ---
 
@@ -444,9 +458,10 @@ en local ya entró con las T006 y T007.
 - [ ] T037 (Luis) Con su cuenta: unos minutos en un juego de terceros, y el XP sube; una partida de Macro
   Snake, y su récord sale en el top. Si no da tiempo, «Pendiente de probar». Anotar en el «Despliegue» de
   `specs/008-aislar-juegos/spec.md`.
-- [ ] T038 La sección «Despliegue» de `specs/008-aislar-juegos/spec.md`, completa, con su commit en `main`
-  y `git push origin main`. La memoria de Claude (`spec-kit-adoptado.md`) al día, con su copia en
-  `memoria-claude/`.
+- [ ] T038 La sección «Despliegue» de `specs/008-aislar-juegos/spec.md`, completa, y en
+  `docs/listas/AUDITORIA.md` el punto 1 cerrado con la fecha del despliegue (regla XXXI), con su commit
+  en `main` y `git push origin main`. La memoria de Claude (`spec-kit-adoptado.md`) al día, con su copia
+  en `memoria-claude/`.
 
 ---
 
@@ -485,8 +500,8 @@ en local ya entró con las T006 y T007.
 
 ### En paralelo
 
-Marcadas [P]: la T001 (Luis) con la T002; la T008 con las T004 a T007; la T016 con la T015; y la T027
-con la T028. Aun así, Claude las hace una tras otra (regla VIII).
+Marcadas [P]: la T001 (Luis) con la T002; la T016 con la T015; y la T027 con la T028. Aun así, Claude
+las hace una tras otra (regla VIII).
 
 ## Estrategia
 

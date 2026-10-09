@@ -34,6 +34,7 @@ En local, la web es `http://localhost:<p>` y los juegos, `http://localhost:<p+1>
 | `Content-Security-Policy` | `frame-ancestors https://macroreborn.com https://www.macroreborn.com` | Node |
 | `Cache-Control` | `no-cache` | Node |
 | `ETag` | del archivo y de la versión del puente; con `If-None-Match` igual, **304** | Node |
+| `X-Robots-Tag` | `noindex`: la dirección de los juegos no sale en los buscadores | Node |
 | `X-Content-Type-Options`, `Referrer-Policy`, `Strict-Transport-Security` | las de la web | nginx |
 | `X-Frame-Options` | **no va**: impediría meter el juego en la página | — |
 

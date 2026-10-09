@@ -17,8 +17,8 @@ Una entrada del catálogo (`js/datos-juegos.js`). Según su `iframe`, es de uno 
 
 **Reglas**: la lista de propios (`macro-snake`) está en el navegador (`js/motor/juegos-aparte.js`) y en
 el servidor (`api/_juegos-aparte.js`), y una prueba vigila que sean la misma. Un propio no carga nada de
-otras webs. Los archivos de `html/juegos/` que empiezan por `_` son del sitio aparte (la mudanza y el
-puente), no juegos.
+otras webs. Los archivos de `html/juegos/` que empiezan por `_` son de la dirección de los juegos (la
+mudanza y el puente), no juegos.
 
 ## Dirección de los juegos
 
@@ -98,7 +98,9 @@ registros que falten; un almacén que no tenga se salta y se cuenta.
 ## Marca de mudanza hecha
 
 `mrPartidasMudadas`, en el `localStorage` de la web: `{ version: 1, fecha, claves, registros, saltadas
-}`.
+}`. `claves` y `registros` son los que se pusieron (`claves.puestas` y `registros.puestos` de la
+respuesta); `saltadas`, las bases que no se pasaron, con su motivo. Si no había nada que pasar, van a 0 y
+vacías.
 
 **Estados**: sin marca, hay que mudar. Con la marca puesta ya no se muda más en ese navegador y esa
 dirección de la web. La marca solo se pone con la respuesta `mr-mudanza-hecha`, o si no había nada que

@@ -34,10 +34,12 @@ navegador:
 
 ```bash
 node scripts/revision-juegos.js --base http://localhost:3001 --sonda --salida <carpeta>/antes
+node scripts/revision-juegos.js --base http://localhost:3001 --sonda --movil --salida <carpeta>/antes-movil
 ```
 
-Sale un informe con cuántos juegos cargan, sus capturas y, con la sonda, lo que hoy es el problema: desde
-dentro de los 107 de terceros se lee la clave de prueba de la web y se llega a la página.
+Salen dos informes, en PC y en móvil (RF-004), con cuántos juegos cargan, sus capturas y, con la sonda,
+lo que hoy es el problema: desde dentro de los 107 de terceros se lee la clave de prueba de la web y se
+llega a la página.
 
 ## 3. Las dos direcciones, en el PC (RF-003, RF-009, contrato de rutas)
 
@@ -46,7 +48,7 @@ Con el servidor local nuevo, que escucha en el 3001 y en el 3002:
 | Orden | Tiene que salir |
 |---|---|
 | `curl -sI http://localhost:3001/html/juegos/pvz.html` | `302` y `Location: http://localhost:3002/html/juegos/pvz.html` |
-| `curl -sI http://localhost:3002/html/juegos/pvz.html` | `200`, `Content-Security-Policy: frame-ancestors http://localhost:3001 http://127.0.0.1:3001`, sin `X-Frame-Options` |
+| `curl -sI http://localhost:3002/html/juegos/pvz.html` | `200`, `Content-Security-Policy: frame-ancestors http://localhost:3001 http://127.0.0.1:3001` y `X-Robots-Tag: noindex`, sin `X-Frame-Options` |
 | `curl -s http://localhost:3002/html/juegos/pvz.html` | el puente, justo después de `<head>` |
 | `curl -sI http://localhost:3002/api/users` | `404` |
 | `curl -sI http://localhost:3001/html/juegos/macro-snake.html` | `200` |
@@ -55,7 +57,8 @@ Con el servidor local nuevo, que escucha en el 3001 y en el 3002:
 ## 4. Jugar sin arriesgar la cuenta (historia 1, CE-001, CE-002, CE-003)
 
 ```bash
-node scripts/revision-juegos.js --base http://localhost:3001 --sonda --salida <carpeta>/despues
+node scripts/revision-juegos.js --base http://localhost:3001 --sonda --comparar <carpeta>/antes/informe.json --salida <carpeta>/despues
+node scripts/revision-juegos.js --base http://localhost:3001 --sonda --movil --comparar <carpeta>/antes-movil/informe.json --salida <carpeta>/despues-movil
 ```
 
 - Desde dentro de los 107 de terceros, la clave de prueba de la web **no** se lee (0 de 107), y la
@@ -67,9 +70,8 @@ node scripts/revision-juegos.js --base http://localhost:3001 --sonda --salida <c
 
 ## 5. Los juegos funcionan igual (historia 2, CE-004, CE-006)
 
-- `--comparar <carpeta>/antes/informe.json` sobre el informe de después: **0 juegos que cargaban y ya
-  no**. La página de capturas, lado a lado, se mira entera. Los que ya no cargaban antes (punto 21) salen
-  igual en las dos.
+- Las dos comparaciones, en PC y en móvil: **0 juegos que cargaban y ya no**. Las páginas de capturas,
+  lado a lado, se miran enteras. Los que ya no cargaban antes (punto 21) salen igual en las dos.
 - Si alguno se rompe por estar aparte, se arregla su envoltorio y se vuelve a revisar ese juego.
 - La pantalla completa: la del botón de la página y la de un juego que la tenga dentro (un emulador).
 - Macro Snake: se abre desde la web (`localhost:3001`), sin `sandbox`, y se juega. Su récord lo guarda

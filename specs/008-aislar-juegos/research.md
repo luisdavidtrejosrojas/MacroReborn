@@ -95,8 +95,10 @@ la API y de los archivos estáticos:
 - **En la dirección de los juegos** atiende todas las peticiones: solo sirve los envoltorios de
   terceros (con el puente de D7 dentro) y los dos archivos de la mudanza (D8); todo lo demás, también
   `/api/`, da 404. Pone `Content-Security-Policy: frame-ancestors` con las dos direcciones de la web
-  (solo ellas pueden meter un juego en un marco), `Content-Type` con `charset=utf-8` y `Cache-Control:
-  no-cache` con su ETag.
+  (solo ellas pueden meter un juego en un marco), `Content-Type` con `charset=utf-8`, `Cache-Control:
+  no-cache` con su ETag, y `X-Robots-Tag: noindex`: son páginas de terceros, sin nada propio, que no
+  deben salir en los buscadores, como `jugar.html`. Se deja rastrear (no hay `robots.txt` que lo
+  impida) para que el buscador vea el `noindex`, como explica `robots.txt` para las páginas privadas.
 - **En la web**, un envoltorio de terceros responde con una redirección 302 a la dirección de los
   juegos, con su consulta. Así un enlace viejo sigue llevando al juego (RF-003) y la web no lo ejecuta
   nunca. Los archivos de Macro Snake se sirven como hoy. Los dos de la mudanza y el puente dan 404.
@@ -116,8 +118,9 @@ Descartado: que lo haga nginx solo. No se puede probar en `npm test`, y en local
   meter los juegos en la página; en su lugar, el `frame-ancestors` de D3.
 - **El bloque del puerto 80** suma el nombre nuevo, con su redirección a HTTPS.
 - **El certificado se amplía** al nombre nuevo con `certbot certonly --nginx --cert-name
-  macroreborn.com`, con los tres nombres, primero con `--dry-run`. `certonly` no toca la configuración de
-  nginx: el bloque nuevo apunta al mismo certificado. La renovación automática sigue igual.
+  macroreborn.com`, con los tres nombres, primero con `--dry-run`. `certonly` no deja cambiada la
+  configuración de nginx (con `--nginx` la toca solo mientras dura el desafío, y la devuelve como
+  estaba): el bloque nuevo apunta al mismo certificado. La renovación automática sigue igual.
 - **La copia de `infra/`** se prepara en la rama y es la que se sube al servidor, con la copia de antes
   en `/etc/nginx/respaldos/` y `nginx -t` antes de recargar. Al subirla quedan iguales también los cinco
   comentarios.
@@ -255,7 +258,8 @@ Una herramienta nueva, `scripts/revision-juegos.js`, como `scripts/revision-avat
   con ninguna cuenta.
 
 Deja un informe y una página con las capturas lado a lado. Se corre en local antes de cambiar nada y
-después, con los dos puertos, y en la web real después de desplegar. Cuenta como roto lo que cargaba
+después, con los dos puertos, en PC y en móvil (`--movil`, porque RF-004 pide los dos), y en la web real
+antes y después de desplegar. Cuenta como roto lo que cargaba
 antes y después no. Los que ya no cargaban (punto 21) se ven igual en los dos. Si alguno se rompe por
 estar aparte (por ejemplo, `grindcraft.html`, que lee la dirección de la página), se arregla su
 envoltorio dentro de esta spec.
@@ -285,13 +289,24 @@ sirve envoltorios. Las partidas no se pierden: siguen también en la web.
 
 ### D15. La documentación
 
-VPS (la dirección de los juegos, su bloque de nginx, el certificado con tres nombres, el registro del
-DNS), ECONOMIA (cómo se sabe que alguien juega), ARQUITECTURA (las partes), DESARROLLO y CLAUDE.md (el
-segundo puerto en local), JUEGOS (probar un juego en local con las dos direcciones, el marco y sus
-permisos, el puente que se pone solo y la revisión de los juegos), el comentario de cabecera de
-`js/motor/actividad-jugador.js`,
-`infra/nginx/macroreborn.conf` e `infra/LEEME.md`, la auditoría (el punto 1, cerrado, con su nota) y el
-historial. Y lo de Neon (RF-013): los puntos 1 y 2 de lo que falta en VPS pasan a resueltos (el 2 deja
+Cada cosa, en el documento que la cuenta, y en el mismo commit que el código que la cambia cuando lo hay
+(regla XIX):
+
+| Documento | Qué se cuenta |
+|---|---|
+| VPS | la dirección de los juegos, su bloque de nginx, el certificado con tres nombres y el registro del DNS |
+| DESPLEGAR | las comprobaciones de cada despliegue, también en la dirección de los juegos |
+| SEO | la dirección de los juegos, con `noindex` |
+| ECONOMIA | cómo se sabe que alguien juega |
+| ARQUITECTURA | las partes |
+| DESARROLLO, SUMARSE y CLAUDE.md | el segundo puerto en local; y, en las convenciones de DESARROLLO, que una clave nueva del sitio en el `localStorage` va en la lista de D9 |
+| JUEGOS | probar un juego en local con las dos direcciones, el marco y sus permisos, el puente que se pone solo, la mudanza (qué pasa y qué no, y la marca) y la revisión de los juegos |
+| El código | el comentario de cabecera de `js/motor/actividad-jugador.js` |
+| `infra/` | `infra/nginx/macroreborn.conf` e `infra/LEEME.md` |
+| AUDITORIA | la nota del punto 1, antes de unir; el punto se cierra con la fecha del despliegue, porque hasta entonces la web real sigue igual |
+| HISTORIAL | su entrada, al unir |
+
+Y lo de Neon (RF-013): los puntos 1 y 2 de lo que falta en VPS pasan a resueltos (el 2 deja
 pendiente solo quitar el paquete y la rama de `api/_db.js`, que ya no se usan), y salen las líneas que
 la spec 006 añadió sobre la base de Neon en VPS, CUENTAS, CONTRASENAS-EN-CLARO, la nota al 86 y el
 historial; en la spec 006 queda una nota.

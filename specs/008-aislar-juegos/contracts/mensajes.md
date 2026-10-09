@@ -21,7 +21,8 @@ datos](../data-model.md#dirección-de-los-juegos).
 El orden, la primera vez que se abre un juego de terceros sin la marca `mrPartidasMudadas` y con algo
 que pasar (research D8):
 
-1. **La página** abre, en un marco invisible y sin `sandbox`, `<dirección de los juegos>/html/juegos/_mudanza.html`.
+1. **La página** abre, en un marco invisible y sin `sandbox`,
+   `<dirección de los juegos>/html/juegos/_mudanza.html`.
 2. **La mudanza**, al cargar, avisa a `window.parent` con destino `"*"`:
    `{ "tipo": "mr-mudanza-lista", "version": 1 }`.
 3. **La página** lo acepta si `event.origin` es la dirección de los juegos y `event.source` es la ventana
@@ -59,9 +60,10 @@ que pasar (research D8):
    - si fue bien: `{ "tipo": "mr-mudanza-hecha", "version": 1, "claves": { "puestas": n, "yaEstaban": n },
      "registros": { "puestos": n, "yaEstaban": n }, "almacenesSaltados": n }`;
    - si no: `{ "tipo": "mr-mudanza-fallo", "version": 1, "motivo": "<texto>" }`, y lo dice en la consola.
-5. **La página**, con `mr-mudanza-hecha`, pone la marca con esas cuentas, quita el marco invisible y abre
-   el juego. Con `mr-mudanza-fallo`, o si a los 60 segundos no ha llegado nada, quita el marco, abre el
-   juego, lo dice en la consola y no pone la marca.
+5. **La página**, con `mr-mudanza-hecha`, pone la marca con las claves y los registros puestos (data-model
+   «Marca de mudanza hecha»), quita el marco invisible y abre el juego. Con `mr-mudanza-fallo`, o si a
+   los 60 segundos no ha llegado nada, quita el marco, abre el juego, lo dice en la consola y no pone la
+   marca.
 
 ## Lo que no viaja nunca
 
