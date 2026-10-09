@@ -261,3 +261,13 @@ la dirección de los juegos, y la auditoría cierra el punto 1 cuando está en l
   contiene.
 - **Copiar a otro sitio el código de los juegos que hoy viene de GitHub**, para no depender de esas
   cuentas. Con los juegos aparte, deja de ser un riesgo para las cuentas.
+
+## Comprobación
+
+### El DNS (T001, 09/10/2026)
+
+Luis añadió en IONOS (Domains & SSL, macroreborn.com, DNS, Add record) un registro A con nombre de host
+`juegos`, la IP del servidor y un TTL de una hora, sin AAAA. Comprobado desde el servidor el mismo día,
+solo leyendo: el servidor de nombres de IONOS y dos resolutores públicos devuelven para
+`juegos.macroreborn.com` la misma IP que para la web, que es la del propio servidor, y ningún AAAA. Nada
+usa todavía esa dirección.

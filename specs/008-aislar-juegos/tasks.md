@@ -46,7 +46,7 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
 
 ## Fase 1: Preparación
 
-- [ ] T001 [P] (Luis) El DNS (research D5). Con Luis, una sola acción cada vez y con el texto exacto de
+- [X] T001 [P] (Luis) El DNS (research D5). Con Luis, una sola acción cada vez y con el texto exacto de
   los botones de IONOS (regla VI): en la zona DNS de `macroreborn.com`, un registro **A** con nombre de
   host `juegos` y la misma IP que el registro `@` (la del servidor), y **ningún AAAA**. Comprobar desde el
   servidor, solo leyendo: `dig +short A juegos.macroreborn.com` da la IP del servidor, y `dig +short AAAA
