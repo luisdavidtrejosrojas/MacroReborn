@@ -252,6 +252,12 @@ Una herramienta nueva, `scripts/revision-juegos.js`, como `scripts/revision-avat
 - si el juego **carga**: el elemento más grande que pinta (un `canvas`, el reproductor de Flash, un
   vídeo...) y los errores de JavaScript del marco;
 - una **captura**;
+- con `--pulsar`, lo que haría una persona: pulsa el botón de empezar del juego («Play», «Start Game»,
+  «Jugar»), con un clic de ratón de verdad y hasta dos veces. Hace falta para medir algo: los 46
+  emuladores esconden su pantalla (`#game`, `display: none`) hasta que se pulsa su «PLAY», y sin pulsar
+  ninguno «carga», ni antes ni después. Para lo mismo, el sonido puede arrancar sin esperar un toque,
+  o el Flash se queda esperando uno. Probado el 09/10 con seis juegos de motores distintos: Pokémon
+  Emerald pasa de no cargar a jugarse;
 - con `--sonda`, si el juego **puede ver la web**: antes de abrirlo deja una clave de prueba en el
   `localStorage` de la web y mira desde dentro del juego si la lee y si llega a la página que lo
   contiene. Una clave de prueba, y no la sesión, para poder hacerlo también en la web real sin entrar

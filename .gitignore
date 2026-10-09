@@ -21,6 +21,10 @@ revision-avatares/
 # 24/09/2026).
 revision-previsualizaciones/
 
+# Y para los juegos (npm run revision:juegos): una captura de cada uno y
+# su informe, por cada revision. Se miran, se comparan y se borran.
+revision-juegos/
+
 # Imagen temporal para un anuncio de Discord. Se hace, se captura y se borra.
 anuncio-*.html
 

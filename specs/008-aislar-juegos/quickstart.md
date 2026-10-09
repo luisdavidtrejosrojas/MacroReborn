@@ -33,8 +33,8 @@ Con el servidor local de siempre (`npm run db:local`), y antes de los cambios de
 navegador:
 
 ```bash
-node scripts/revision-juegos.js --base http://localhost:3001 --sonda --salida <carpeta>/antes
-node scripts/revision-juegos.js --base http://localhost:3001 --sonda --movil --salida <carpeta>/antes-movil
+node scripts/revision-juegos.js --base http://localhost:3001 --sonda --pulsar --salida <carpeta>/antes
+node scripts/revision-juegos.js --base http://localhost:3001 --sonda --pulsar --movil --salida <carpeta>/antes-movil
 ```
 
 Salen dos informes, en PC y en móvil (RF-004), con cuántos juegos cargan, sus capturas y, con la sonda,
@@ -57,8 +57,8 @@ Con el servidor local nuevo, que escucha en el 3001 y en el 3002:
 ## 4. Jugar sin arriesgar la cuenta (historia 1, CE-001, CE-002, CE-003)
 
 ```bash
-node scripts/revision-juegos.js --base http://localhost:3001 --sonda --comparar <carpeta>/antes/informe.json --salida <carpeta>/despues
-node scripts/revision-juegos.js --base http://localhost:3001 --sonda --movil --comparar <carpeta>/antes-movil/informe.json --salida <carpeta>/despues-movil
+node scripts/revision-juegos.js --base http://localhost:3001 --sonda --pulsar --comparar <carpeta>/antes/informe.json --salida <carpeta>/despues
+node scripts/revision-juegos.js --base http://localhost:3001 --sonda --pulsar --movil --comparar <carpeta>/antes-movil/informe.json --salida <carpeta>/despues-movil
 ```
 
 - Desde dentro de los 107 de terceros, la clave de prueba de la web **no** se lee (0 de 107), y la
@@ -110,7 +110,7 @@ En el PC, con el servidor nuevo:
 ## 8. En la web real (RF-011, D14)
 
 Antes de desplegar el código, la revisión contra la web real, como «antes» de producción:
-`node scripts/revision-juegos.js --base https://macroreborn.com --sonda --salida <carpeta>/web-antes`. No
+`node scripts/revision-juegos.js --base https://macroreborn.com --sonda --pulsar --salida <carpeta>/web-antes`. No
 entra con ninguna cuenta.
 
 Después de cada paso del despliegue, cada uno con el OK de Luis:

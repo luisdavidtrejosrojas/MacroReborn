@@ -109,6 +109,7 @@ pasar. Si la mudanza falla o tarda más de 60 segundos, no se pone, y se reinten
 ## Informe de la revisión de juegos
 
 Lo que deja `scripts/revision-juegos.js` de cada juego: `id`, `nombre`, `tipo`, `motor`, si cargó (el
-elemento más grande que pinta, en píxeles), los errores de JavaScript del marco, la captura y, con
-`--sonda`, si desde dentro del juego se lee la clave de prueba de la web y si se llega a la página que
-lo contiene. Dos informes, el de antes y el de después, se comparan juego a juego.
+elemento más grande que pinta, en píxeles), los errores de JavaScript del marco, la captura, con
+`--pulsar` los botones que pulsó para empezar y, con `--sonda`, si desde dentro del juego se lee la
+clave de prueba de la web y si se llega a la página que lo contiene. Dos informes, el de antes y el de
+después, se comparan juego a juego.

@@ -53,7 +53,7 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
   juegos.macroreborn.com`, nada. Crear la sección «Comprobación» de `specs/008-aislar-juegos/spec.md` y
   anotar la fecha y el resultado, sin la IP (regla XXV). No cambia nada visible: nada usa todavía la
   dirección.
-- [ ] T002 [P] Crear `scripts/revision-juegos.js` (research D12, data-model «Informe de la revisión de
+- [X] T002 [P] Crear `scripts/revision-juegos.js` (research D12, data-model «Informe de la revisión de
   juegos»), con su comentario de cabecera como el de `scripts/revision-avatares.js`.
   - **El navegador**: abre Edge sin ventana (`--headless=new`, con un perfil temporal nuevo y un puerto
     de depuración libre; `--navegador <ruta>` para usar otro). Lo maneja por su protocolo de depuración,
@@ -71,6 +71,9 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
     - una captura del marco.
   - **Con `--sonda`**: antes de cada juego deja `localStorage["mr_sonda"] = "1"` en la web. Desde un
     mundo aislado del marco del juego, mira si lee esa clave y si llega a `parent.document`.
+  - **Con `--pulsar`**: pulsa el botón de empezar del juego («Play», «Start Game», «Jugar»), con un clic
+    de ratón de verdad y hasta dos veces, antes de medir (research D12). El sonido puede arrancar sin
+    esperar un toque.
   - **Con `--movil`**: 390×844 con pantalla táctil; sin él, 1366×800.
   - **Lo que deja**: en `--salida`, un `informe.json` y un `index.html` con las capturas. Con `--comparar
     <otro informe.json>`, las dos capturas de cada juego lado a lado, y marcado como «roto» lo que
@@ -79,7 +82,7 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
     Al terminar cierra Edge. No la corre `npm test`.
 - [ ] T003 El «antes» en el PC (quickstart 2), con el código todavía como `main`: `npm run db:local`
   (antes, mirar el 3001 con `netstat -ano`; si está ocupado, `PORT=3101`), y dos revisiones, en PC y en
-  móvil (RF-004): `node scripts/revision-juegos.js --sonda --salida <scratchpad>/revision-008/antes` y lo
+  móvil (RF-004): `node scripts/revision-juegos.js --sonda --pulsar --salida <scratchpad>/revision-008/antes` y lo
   mismo con `--movil --salida <scratchpad>/revision-008/antes-movil`. Anotar en la «Comprobación» de
   `specs/008-aislar-juegos/spec.md` cuántos de los 112 cargan en cada una, y lo de la sonda: hoy, en los
   107 de terceros, se lee la clave de la web y se llega a la página. Los informes y las capturas se
@@ -336,7 +339,7 @@ Snake sigue igual.
 **Prueba independiente**: abrir cada juego antes y después, y comparar.
 
 - [ ] T022 [US2] La revisión de «después» (quickstart 4 y 5), con el servidor local nuevo, en PC y en
-  móvil: `node scripts/revision-juegos.js --sonda --comparar
+  móvil: `node scripts/revision-juegos.js --sonda --pulsar --comparar
   <scratchpad>/revision-008/antes/informe.json --salida <scratchpad>/revision-008/despues`, y lo mismo
   con `--movil`, comparando con `antes-movil` y saliendo en `despues-movil`. Tiene que salir, en las dos:
   0 de 107 leen la clave de la web, 0 llegan a la página, y 0 juegos que cargaban y ya no. Los 4 de
@@ -425,7 +428,7 @@ auditoría lleva la nota del punto 1, que se cierra al desplegar (T038). Lo de p
   humo con 24.21.0 y 22.23.3, como en el apartado 1 de `specs/008-aislar-juegos/quickstart.md`; si
   pasan, `git push origin main`.
 - [ ] T032 La revisión de «antes» en la web real, antes de desplegar (quickstart 8): `node
-  scripts/revision-juegos.js --base https://macroreborn.com --sonda --salida
+  scripts/revision-juegos.js --base https://macroreborn.com --sonda --pulsar --salida
   <scratchpad>/revision-008/web-antes`, sin entrar con ninguna cuenta. Solo navega, como una visita, y no
   toca el servidor. Crear la sección «Despliegue» de `specs/008-aislar-juegos/spec.md` y anotarlo.
 - [ ] T033 (Servidor) Ampliar el certificado (research D14): `sudo certbot certonly --nginx --cert-name
@@ -451,7 +454,7 @@ auditoría lleva la nota del punto 1, que se cierra al desplegar (T038). Lo de p
   - en la dirección de los juegos, la cabecera `frame-ancestors` y el puente dentro del envoltorio.
 
   Anotar en el «Despliegue» de `specs/008-aislar-juegos/spec.md`.
-- [ ] T036 La revisión de «después» en la web real (quickstart 8), con `--sonda` y `--comparar
+- [ ] T036 La revisión de «después» en la web real (quickstart 8), con `--sonda --pulsar` y `--comparar
   <scratchpad>/revision-008/web-antes/informe.json`: 0 de 107 leen la clave, 0 llegan a la página, 0
   rotos. Y el servicio, sin errores en su registro, sin respuestas 5xx en nginx y con la memoria de
   siempre. Anotar en el «Despliegue» de `specs/008-aislar-juegos/spec.md`.

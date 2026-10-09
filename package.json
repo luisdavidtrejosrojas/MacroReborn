@@ -13,7 +13,8 @@
     "db:traer": "node scripts/traer-base.js",
     "db:real": "node scripts/servidor-local.js --real",
     "revision:avatares": "node scripts/revision-avatares.js",
-    "revision:previsualizaciones": "node scripts/revision-previsualizaciones.js"
+    "revision:previsualizaciones": "node scripts/revision-previsualizaciones.js",
+    "revision:juegos": "node scripts/revision-juegos.js"
   },
   "repository": {
     "type": "git",
