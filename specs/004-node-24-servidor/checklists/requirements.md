@@ -13,7 +13,7 @@
 
 ## Requisitos completos
 
-- [ ] No quedan marcas [NEEDS CLARIFICATION]
+- [x] No quedan marcas [NEEDS CLARIFICATION]
 - [x] Los requisitos se pueden comprobar y no son ambiguos
 - [x] Los criterios de éxito se pueden medir
 - [x] Los criterios de éxito no dependen de una tecnología
@@ -38,3 +38,6 @@
 - **Primera revisión (2026-10-08):** queda una marca [NEEDS CLARIFICATION], la pregunta 1 (si los
   parches de la rama 24 llegan solos o a mano), que aparece en la historia 4, en RF-009 y en D7. Todo lo
   demás pasa.
+- **Segunda revisión (2026-10-08):** Luis respondió A: los parches de la 24 se instalan solos, con las
+  actualizaciones automáticas. La respuesta está en la sección de aclaraciones; la historia 4, RF-009 y
+  D7 la recogen, con su criterio (CE-008), y ya pasa todo.

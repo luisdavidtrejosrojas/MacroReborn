@@ -44,7 +44,12 @@ rama se hace en el PC con los Node oficiales de nodejs.org, como en la 003.
 
 ## Aclaraciones
 
-Pendiente: la pregunta 1, marcada abajo.
+### Sesión 2026-10-08
+
+- P: ¿Los parches de seguridad de Node 24 se instalan solos o a mano? → R: Solos (Luis, opción A): el
+  repositorio de NodeSource entra en las actualizaciones automáticas, como los paquetes de Ubuntu, y
+  solo trae parches de la rama 24. Se mira y se apunta cuándo entra en vigor un parche: si el servidor
+  reinicia el servicio al actualizar o si espera al siguiente reinicio.
 
 ## Escenarios de uso y pruebas *(obligatorio)*
 
@@ -100,18 +105,21 @@ La documentación, `package.json` y la CI dicen lo mismo: el servidor usa Node 2
 
 ### Historia 4 - Node no vuelve a quedarse sin parches sin que nadie lo vea (Prioridad: P2)
 
-Los parches de la rama 24 llegan al servidor [NEEDS CLARIFICATION: pregunta 1 - ¿solos, con las
-actualizaciones automáticas, o a mano?], y la fecha en que se acaba la 24 queda apuntada para pasar a la
-siguiente antes.
+Los parches de la rama 24 llegan al servidor solos, con las actualizaciones automáticas que ya instalan
+cada mañana los de Ubuntu, y la fecha en que se acaba la 24 queda apuntada para pasar a la siguiente
+antes.
 
 **Por qué esta prioridad**: es lo que dejó la 20 cinco meses sin parches.
 
-**Prueba independiente**: leer VPS y la auditoría.
+**Prueba independiente**: una prueba en seco de las actualizaciones automáticas, y leer VPS y la
+auditoría.
 
 **Escenarios de aceptación**:
 
-1. **Dado** VPS, **cuando** alguien busca cómo se actualiza Node, **entonces** lo encuentra, con la
-   fecha del 30/04/2028.
+1. **Dado** un parche nuevo de la 24, **cuando** corren las actualizaciones automáticas, **entonces** se
+   instala sin que nadie haga nada, y nunca se instala otra rama.
+2. **Dado** VPS, **cuando** alguien busca cómo se actualiza Node, **entonces** lo encuentra, con cuándo
+   entra en vigor un parche y la fecha del 30/04/2028.
 
 ---
 
@@ -127,6 +135,9 @@ siguiente antes.
 - Quien tenga Node 22 en su PC puede seguir trabajando: se admite hasta su fin, el 30/04/2027.
 - El servidor no se despliega en esta spec: lo que cambia del repositorio no lo sirve el sitio, y su
   copia se pondrá al día con el próximo despliegue.
+- Un parche automático que rompiera algo: se vuelve con apt a la versión anterior de la 24, que sigue en
+  el repositorio, con los mismos pasos que la vuelta atrás. Todavía nada avisa si el sitio falla
+  (punto 71).
 
 ## Requisitos *(obligatorio)*
 
@@ -144,8 +155,8 @@ siguiente antes.
   la constitución DEBE dejar de nombrar versiones concretas (enmienda PATCH, v1.0.2).
 - **RF-008**: VPS DEBE contar cómo está instalado Node, cómo se actualiza, cómo se vuelve atrás y hasta
   cuándo tiene soporte la 24, e `infra/` DEBE tener la copia del archivo del repositorio de NodeSource.
-- **RF-009**: Los parches de la rama 24 DEBEN llegar al servidor [NEEDS CLARIFICATION: depende de la
-  pregunta 1].
+- **RF-009**: Los parches de la rama 24 DEBEN instalarse solos, con las actualizaciones automáticas del
+  servidor, y nunca otra rama.
 - **RF-010**: La auditoría DEBE tener el punto del Node sin parches, cerrado con la fecha del cambio.
 - **RF-011**: Lo que hace el sitio NO cambia: ni `api/`, ni `js/`, ni `css/`, ni las páginas, salvo un
   comentario.
@@ -168,6 +179,8 @@ siguiente antes.
   la historia y las specs).
 - **CE-007**: La vuelta atrás, si hiciera falta, devuelve Node 20.20.2 en menos de 5 minutos, sin
   descargar nada.
+- **CE-008**: Una prueba en seco de las actualizaciones automáticas cuenta con el repositorio de
+  NodeSource (hoy, no).
 
 ## Supuestos
 
@@ -209,7 +222,11 @@ un comentario de `api/_ruta-estatica.js`.
   sincronización y la plantilla igual): «las pruebas y la prueba HTTP de humo, con la versión de Node del
   servidor y la mínima que se admite». Así no hay que enmendarla en cada cambio de versión. Luis la
   aprueba al aprobar esta spec.
-- **D7. Los parches de la 24**: [NEEDS CLARIFICATION: depende de la pregunta 1].
+- **D7. Los parches de la 24, solos.** NodeSource entra en las actualizaciones automáticas con un archivo
+  propio en `/etc/apt/apt.conf.d/`, sin tocar el que trae el paquete, que admite solo ese repositorio:
+  como es el de la rama 24, nunca trae otra. Se comprueba con una prueba en seco, y se mira y se apunta
+  si el servidor reinicia el servicio al actualizar o si el parche espera al siguiente reinicio.
+  Descartado: a mano, que es lo que dejó la 20 sin parches.
 - **D8. La comprobación en el PC, con los Node oficiales de nodejs.org** (22.23.3 y 24.21.0, comprobados
   con sus sumas), mientras la CI no arranque.
 - **D9. El punto 91 de la auditoría**, en el bloque 1: el Node sin parches, cerrado con la fecha del
@@ -233,8 +250,9 @@ Un commit por tarea, subido a `origin` al cerrarla.
   `api/_ruta-estatica.js` (RF-007).
 - [ ] T004 Comprobar en el PC: `npm test`, la prueba de humo y el arranque de producción con Node 22 y
   24 oficiales (CE-005, D8).
-- [ ] T005 Con el OK de Luis, el servidor: la vuelta atrás guardada y comprobada, Node 24 instalado, el
-  servicio reiniciado y las comprobaciones de antes y después (RF-001 a RF-004, D1 a D3).
-- [ ] T006 Lo que cuenta el cambio: VPS, la copia en `infra/`, los parches de la 24 y el punto 91 de la
-  auditoría, cerrado (RF-008 a RF-010, D7, D9).
+- [ ] T005 Con el OK de Luis, el servidor: la vuelta atrás guardada y comprobada, Node 24 instalado,
+  NodeSource en las actualizaciones automáticas, el servicio reiniciado y las comprobaciones de antes y
+  después (RF-001 a RF-004, RF-009, D1 a D3, D7).
+- [ ] T006 Lo que cuenta el cambio: VPS, las copias en `infra/` y el punto 91 de la auditoría, cerrado
+  (RF-008, RF-010, D9).
 - [ ] T007 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-012).
