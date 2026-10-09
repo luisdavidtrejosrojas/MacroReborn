@@ -284,3 +284,18 @@ Con el servidor local de la rama (la web en el 3301 y los juegos en el 3302):
   juego, en su marco del 3302 y con su `sandbox`, lee la sesión vacía (`null`). Al tocar
   `parent.document`, el navegador da un error de seguridad, y lo mismo al intentar llevarse la página
   con `top.location`. La página se queda en `jugar.html`.
+
+### El XP, en el PC (T014, 09/10/2026)
+
+Con la cuenta `demo`, en Plantas vs. Zombies abierto desde su dirección (el 3302), y Edge pulsando una
+tecla dentro del juego cada 30 segundos (quickstart 6):
+
+- **Tocando** (del segundo 14 al 194): un pulso de XP por minuto, a los 67, 127 y 187 s.
+- **Sin tocar** (del 194 al 464): dos pulsos más, a los 247 y 307 s, que caen dentro de los tres minutos
+  desde el último toque (a los 164 s); después, ninguno, ni a los 367 ni a los 427.
+- **Al volver a tocar** (del 464 al 615): vuelven, a los 487, 547 y 607 s.
+- Los ocho pulsos tuvieron respuesta 200, y el XP de `demo` pasó de 120 a 200: diez por pulso.
+
+La primera pasada no valió: el servidor local llevaba encendido desde antes del puente (T012) y servía los
+juegos sin él, así que solo salieron los dos pulsos que da abrir la página. Con el servidor reiniciado,
+salió lo de arriba.

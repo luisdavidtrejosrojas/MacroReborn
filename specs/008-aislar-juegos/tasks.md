@@ -229,7 +229,7 @@ minutos, sí; sin ella, no.
 
   En el mismo commit, el comentario de cabecera del archivo y el apartado «4. Solo con alguien delante»
   de `docs/referencia/ECONOMIA.md`.
-- [ ] T014 [US3] Comprobar el XP en el PC (quickstart 6), con `demo` y en un juego de terceros:
+- [X] T014 [US3] Comprobar el XP en el PC (quickstart 6), con `demo` y en un juego de terceros:
   - tocando dentro una vez cada 30 segundos, sale un pulso por minuto a `/api/users?action=xp` y el XP
     sube;
   - sin tocar, a los tres minutos no sale ninguno;
