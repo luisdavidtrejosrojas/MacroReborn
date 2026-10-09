@@ -270,7 +270,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
   RF-002, D1).
 - [X] T002 El panel de amigos: el juego expuesto en `js/juego.js` y el texto de su aviso, con su prueba
   (RF-003, D2).
-- [ ] T003 Fuera «Abrir Bazar», con su CSS (RF-004, D3).
+- [X] T003 Fuera «Abrir Bazar», con su CSS (RF-004, D3).
 - [ ] T004 El top 20 de Macro Snake, con su prueba (RF-005, D4).
 - [ ] T005 El desempate del ranking, con su prueba y su comentario (RF-006, D5).
 - [ ] T006 Guardar el avatar, con su prueba (RF-007, D6).
