@@ -166,7 +166,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [X] T001 Con el OK de Luis en ese momento, en el servidor: la lista de `~/respaldos/`, los cuatro
   `neon-*` fuera (D1 y D2) y el inventario otra vez (RF-001 a RF-004, CE-001, CE-002).
 - [X] T002 La documentación: VPS, CUENTAS, MUDANZA-AL-VPS y CONTRASENAS-EN-CLARO (RF-005).
-- [ ] T003 La auditoría: el punto 86, cerrado con su nota (RF-005).
+- [X] T003 La auditoría: el punto 86, cerrado con su nota (RF-005).
 - [ ] T004 La entrada del historial y la unión a `main`, con `npm test` en verde con Node 22 y 24
   (RF-006, CE-003).
 
