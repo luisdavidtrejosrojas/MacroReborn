@@ -110,9 +110,14 @@ está en otros sitios:
   plan de activación y queda pendiente a propósito, tras un período de gracia. El plan entero, y cómo
   se comprobó que nadie perdió el acceso:
   [la activación](../historia/CONTRASENAS-EN-CLARO.md#plan-de-activación-en-producción).
-- **Los respaldos de antes del 16/09/2026 llevan contraseñas en claro.** Los diarios de entonces ya se
-  borraron solos, a los 14 días, pero en `~/respaldos/` del servidor, fuera de esa limpieza, siguen
-  los dos volcados de Neon del 01/09/2026, con las 21 que había ese día
-  ([MUDANZA-AL-VPS](../historia/MUDANZA-AL-VPS.md)), y su copia del PC. Una base de antes de esa fecha
-  bajada para probar tampoco se borra sola
-  ([DESARROLLO](../guias/DESARROLLO.md#probar-contra-los-datos-de-verdad)).
+- **Las contraseñas en claro de antes del 16/09/2026 que quedan fuera de la base.** En el servidor ya
+  no queda ninguna: los diarios de entonces se borraron solos a los 14 días, y los dos volcados de Neon
+  del 01/09/2026, con las 21 que había ese día, el 09/10/2026
+  ([spec 006](../../specs/006-volcados-en-claro/spec.md)). Quedan dos sitios posibles:
+  - la base de Neon, que sigue como el 01/09 si el proyecto sigue vivo
+    ([VPS, lo que falta](VPS.md#9-lo-que-falta));
+  - una base de antes de esa fecha bajada para probar, que en un portátil no se borra sola
+    ([DESARROLLO](../guias/DESARROLLO.md#probar-contra-los-datos-de-verdad)).
+
+  La copia que la mudanza dejó en el PC no está en el de ahora, formateado el 19/09/2026
+  ([MUDANZA-AL-VPS](../historia/MUDANZA-AL-VPS.md)).
