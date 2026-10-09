@@ -197,7 +197,7 @@ minutos, sí; sin ella, no.
 
 **Prueba independiente**: jugar tocando y sin tocar nada, y mirar qué minutos cuentan.
 
-- [ ] T012 [US3] Crear `html/juegos/_puente.js` (research D7; contracts/mensajes.md «Actividad»):
+- [X] T012 [US3] Crear `html/juegos/_puente.js` (research D7; contracts/mensajes.md «Actividad»):
   - en la ventana del juego escucha `keydown`, `pointerdown`, `pointermove`, `mousedown`, `mousemove`,
     `wheel` y `touchstart`, en captura y pasivos;
   - avisa a `window.parent`, con destino `"*"`, con `{ tipo: "mr-actividad" }`, «como mucho uno cada 5

@@ -19,7 +19,8 @@
 // que los dos hagan exactamente lo mismo, como api/_prendas-ruta.js:
 //
 //   - En la dirección de los juegos lo atiende TODO: solo los envoltorios
-//     de terceros y los archivos de la mudanza de las partidas; lo demás,
+//     de terceros, con el puente de la actividad dentro, y los archivos de
+//     la mudanza de las partidas; lo demás,
 //     también /api/, da 404. Sin X-Frame-Options, que impediría meter el
 //     juego en la página; en su lugar, frame-ancestors con las direcciones
 //     de la web. Y X-Robots-Tag: noindex, porque son páginas de terceros
@@ -32,6 +33,7 @@
 // Macro Snake, del equipo, se queda en la web: no carga nada de fuera y
 // necesita la sesión para guardar los récords.
 
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -39,6 +41,35 @@ const { resolverRutaEstatica } = require("./_ruta-estatica");
 
 const RAIZ = path.join(__dirname, "..");
 const CARPETA = "html/juegos";
+
+// El puente de la actividad (html/juegos/_puente.js): avisa a la página de
+// jugar de que alguien toca el juego, que es de lo que depende que el minuto
+// cuente para el XP y las monedas. Va dentro de cada envoltorio. Se lee una
+// vez al arrancar: si faltara, mejor que el servidor no arranque a que los
+// juegos dejen de contar sin que nadie lo vea.
+const PUENTE = fs.readFileSync(path.join(RAIZ, CARPETA, "_puente.js"), "utf8");
+const VERSION_PUENTE = crypto.createHash("sha256").update(PUENTE).digest("hex").slice(0, 10);
+const ETIQUETA_PUENTE = Buffer.from("<script>\n" + PUENTE.replace(/<\/script/gi, "<\\/script") + "\n</script>", "utf8");
+
+// Justo después de abrir <head>; si no hay, después de abrir <html>; si
+// tampoco, después del <!doctype> (antes, el navegador pondría la página en
+// modo quirks); y si no hay nada de eso, al principio. En línea y no con un
+// src, porque 15 envoltorios llevan <base href> a jsDelivr y un src
+// relativo iría a buscar el puente allí. Se busca sobre los bytes, leídos
+// como latin1 (un byte, un carácter), para no tocar la codificación del
+// envoltorio.
+function inyectarPuente(contenido) {
+  const bytes = Buffer.isBuffer(contenido) ? contenido : Buffer.from(String(contenido), "utf8");
+  const texto = bytes.toString("latin1");
+  for (const patron of [/<head(?:\s[^>]*)?>/i, /<html(?:\s[^>]*)?>/i, /<!doctype[^>]*>/i]) {
+    const encontrado = patron.exec(texto);
+    if (encontrado) {
+      const corte = encontrado.index + encontrado[0].length;
+      return Buffer.concat([bytes.subarray(0, corte), ETIQUETA_PUENTE, bytes.subarray(corte)]);
+    }
+  }
+  return Buffer.concat([ETIQUETA_PUENTE, bytes]);
+}
 
 const PRODUCCION = Object.freeze({
   hostJuegos: "juegos.macroreborn.com",
@@ -108,10 +139,13 @@ function servirEnLaDireccionDeJuegos(req, res, url, opciones) {
   }
 
   const archivo = path.join(RAIZ, CARPETA, nombre);
+  const conPuente = esEnvoltorioDeTerceros(nombre);
   fs.stat(archivo, (errStat, datos) => {
     if (errStat || !datos.isFile()) return noEncontrado(res, resuelta.ruta);
 
-    const etag = '"j-' + datos.size.toString(16) + "-" + Math.floor(datos.mtimeMs).toString(16) + '"';
+    // El puente va dentro: si cambia, el ETag también.
+    const etag = '"j-' + datos.size.toString(16) + "-" + Math.floor(datos.mtimeMs).toString(16) +
+      (conPuente ? "-" + VERSION_PUENTE : "") + '"';
     res.setHeader("Content-Type", TIPOS[path.extname(nombre)]);
     res.setHeader("Content-Security-Policy", "frame-ancestors " + opciones.origenesDeLaWeb.join(" "));
     res.setHeader("Cache-Control", "no-cache");
@@ -130,7 +164,7 @@ function servirEnLaDireccionDeJuegos(req, res, url, opciones) {
         return res.end("Error interno del servidor");
       }
       res.writeHead(200);
-      res.end(req.method === "HEAD" ? undefined : contenido);
+      res.end(req.method === "HEAD" ? undefined : (conPuente ? inyectarPuente(contenido) : contenido));
     });
   });
 }
@@ -174,5 +208,6 @@ module.exports = {
   esPeticionDeJuegos,
   esEnvoltorioDeTerceros,
   nombreEnLaCarpeta,
+  inyectarPuente,
   atender
 };

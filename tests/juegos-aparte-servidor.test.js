@@ -140,6 +140,26 @@ test("en la web, Macro Snake sigue, y lo de la dirección de los juegos no sale"
   }
 });
 
+// La etiqueta que mete el servidor: la que precede a un envoltorio vacío.
+const ETIQUETA = juegosAparte.inyectarPuente(Buffer.alloc(0)).toString("utf8");
+
+test("el puente va justo después de abrir <head>, o <html>, o el doctype, y nunca antes", () => {
+  const con = (html) => juegosAparte.inyectarPuente(Buffer.from(html, "utf8")).toString("utf8");
+  assert.ok(ETIQUETA.startsWith("<script>") && ETIQUETA.includes("mr-actividad") && ETIQUETA.endsWith("</script>"));
+  assert.equal(con("<!doctype html><html><head><title>x</title></head>"),
+    "<!doctype html><html><head>" + ETIQUETA + "<title>x</title></head>");
+  assert.equal(con('<!DOCTYPE html><HTML lang="es"><HEAD data-x="1"><base href="https://cdn.jsdelivr.net/">'),
+    '<!DOCTYPE html><HTML lang="es"><HEAD data-x="1">' + ETIQUETA + '<base href="https://cdn.jsdelivr.net/">');
+  assert.equal(con("<!doctype html><html><header>x</header>"), "<!doctype html><html>" + ETIQUETA + "<header>x</header>",
+    "<header> no es <head>");
+  assert.equal(con("<!doctype html><body>x</body>"), "<!doctype html>" + ETIQUETA + "<body>x</body>");
+  assert.equal(con("<p>x</p>"), ETIQUETA + "<p>x</p>");
+  // Los bytes del envoltorio no se tocan, sea cual sea su codificación.
+  const latin1 = Buffer.from([0x3c, 0x68, 0x65, 0x61, 0x64, 0x3e, 0xe9, 0xf1]);
+  const resultado = juegosAparte.inyectarPuente(latin1);
+  assert.deepStrictEqual(Buffer.concat([resultado.subarray(0, 6), resultado.subarray(6 + Buffer.byteLength(ETIQUETA))]), latin1);
+});
+
 test("cada envoltorio de terceros sale en la dirección de los juegos y redirige en la web (RF-010)", async () => {
   assert.ok(ENVOLTORIOS.length >= 107, "solo hay " + ENVOLTORIOS.length + " envoltorios");
   for (const nombre of ENVOLTORIOS) {
@@ -147,6 +167,14 @@ test("cada envoltorio de terceros sale en la dirección de los juegos y redirige
     const aparte = await pedir(ruta, DE_JUEGOS);
     assert.equal(aparte.codigo, 200, nombre + " en la dirección de los juegos");
     assert.match(aparte.cabeceras["content-security-policy"] || "", /^frame-ancestors /, nombre);
+    // Con el puente dentro, una sola vez, y el resto del archivo tal cual.
+    const original = fs.readFileSync(path.join(JUEGOS, nombre));
+    const etiqueta = Buffer.from(ETIQUETA, "utf8");
+    const donde = aparte.cuerpo.indexOf(etiqueta);
+    assert.ok(donde >= 0, nombre + " sale sin el puente");
+    assert.equal(aparte.cuerpo.indexOf(etiqueta, donde + 1), -1, nombre + " lleva el puente dos veces");
+    const sinPuente = Buffer.concat([aparte.cuerpo.subarray(0, donde), aparte.cuerpo.subarray(donde + etiqueta.length)]);
+    assert.ok(sinPuente.equals(original), nombre + ": el resto del archivo cambió");
     const enLaWeb = await pedir(ruta, WEB);
     assert.equal(enLaWeb.codigo, 302, nombre + " en la web");
     assert.equal(enLaWeb.cabeceras.location, PRODUCCION.origenJuegos + ruta);
