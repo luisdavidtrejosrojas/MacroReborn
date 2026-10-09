@@ -158,10 +158,23 @@ const {
 const { resolverRutaEstatica } = require("./api/_ruta-estatica");
 const avatarCompuesto = require("./api/_avatar-compuesto");
 const previsualizaciones = require("./api/_previsualizaciones");
+const juegosAparte = require("./api/_juegos-aparte");
 
 async function main() {
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, "http://localhost");
+
+    // ----- Los juegos, en su propia dirección -----
+    // juegos.macroreborn.com llega a este mismo proceso: allí solo salen
+    // los envoltorios de los juegos de terceros, y en la web la dirección
+    // vieja de uno redirige allí. Va antes que todo lo demás para que en la
+    // dirección de los juegos no responda nada más, ni la API. El porqué,
+    // en api/_juegos-aparte.js.
+    if (juegosAparte.atender(req, res, url, {
+      esDeJuegos: juegosAparte.esPeticionDeJuegos(req),
+      origenJuegos: juegosAparte.PRODUCCION.origenJuegos,
+      origenesDeLaWeb: juegosAparte.PRODUCCION.origenesDeLaWeb
+    })) return;
 
     // ----- La URL canónica de las prendas -----
     traducirRutaCanonica(url);

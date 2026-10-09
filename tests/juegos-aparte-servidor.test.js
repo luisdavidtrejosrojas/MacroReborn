@@ -153,6 +153,18 @@ test("cada envoltorio de terceros sale en la dirección de los juegos y redirige
   }
 });
 
+test("server.js lo usa antes que todo lo demás, también antes de la API", () => {
+  const codigo = fs.readFileSync(path.join(RAIZ, "server.js"), "utf8");
+  assert.match(codigo, /require\("\.\/api\/_juegos-aparte"\)/);
+  const llamada = codigo.indexOf("juegosAparte.atender(");
+  assert.ok(llamada > 0, "server.js no llama a juegosAparte.atender");
+  assert.ok(codigo.includes("esDeJuegos: juegosAparte.esPeticionDeJuegos(req)"));
+  for (const despues of ["traducirRutaCanonica(url);", "avatarCompuesto.atender(", 'url.pathname.startsWith("/api/")', "resolverRutaEstatica(url.pathname)"]) {
+    const i = codigo.indexOf(despues);
+    assert.ok(i > llamada, despues + " tiene que ir después de juegosAparte.atender");
+  }
+});
+
 test("la dirección de los juegos se reconoce por el nombre, sin el puerto ni las mayúsculas", () => {
   const es = (host) => juegosAparte.esPeticionDeJuegos({ headers: host === undefined ? {} : { host } });
   assert.equal(es("juegos.macroreborn.com"), true);

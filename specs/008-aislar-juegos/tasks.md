@@ -116,7 +116,7 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
     sale en la dirección de los juegos y redirige en la web (RF-010).
   - **En el mismo commit** (regla XIX), una fila en la tabla de `docs/referencia/SEO.md`: la dirección
     de los juegos, con `noindex` por la cabecera, y por qué (research D3).
-- [ ] T005 `server.js`: llamar a `atender` de `api/_juegos-aparte.js` justo después de crear `url` y
+- [X] T005 `server.js`: llamar a `atender` de `api/_juegos-aparte.js` justo después de crear `url` y
   antes de todo lo demás (prendas, avatares, avisos, API y estáticos), con `esPeticionDeJuegos(req)` y
   la configuración de producción. Con una prueba en `tests/juegos-aparte-servidor.test.js` que mira en
   el código de `server.js` que lo hace antes de `/api/`.
