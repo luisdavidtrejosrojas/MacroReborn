@@ -2,7 +2,7 @@
 
 **Rama**: `004-node-24-servidor`
 **Creada**: 2026-10-08
-**Estado**: Borrador
+**Estado**: Aprobada por Luis el 08/10/2026, con la enmienda v1.0.2 de la constitución
 **Tipo**: spec corta (regla XIX): especificación, plan y tareas en esta página, aprobados una vez.
 **Pedido**: Luis, 08/10/2026: el camino que eligió al retomar el proyecto («la spec 003 ahora, y
 después la 004 y la 005») y el «A» para lanzar esta.
