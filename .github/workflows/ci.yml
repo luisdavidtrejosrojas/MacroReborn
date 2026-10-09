@@ -12,6 +12,14 @@ on:
   push:
   pull_request:
 
+# Una subida nueva a una rama cancela la ejecución anterior de esa misma
+# rama: se sube tras cada tarea, y solo importa la última. El repositorio
+# es privado y Actions tiene un cupo de minutos al mes; con esto, octubre
+# de 2026 habría gastado unos 940 en vez de 2.459.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest

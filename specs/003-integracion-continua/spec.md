@@ -244,7 +244,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
   contar (RF-001 a RF-005, D1, D2).
 - [X] T002 La CI: `fail-fast` apagado y la prueba de humo con Node 20 y 22 (RF-006, RF-007, D3, D4).
 - [X] T003 La documentación: CLAUDE.md, SUMARSE, DESARROLLO y ARQUITECTURA (RF-009).
-- [ ] T004 La CI gasta menos: una subida nueva cancela la ejecución anterior de la misma rama, con su
+- [X] T004 La CI gasta menos: una subida nueva cancela la ejecución anterior de la misma rama, con su
   documentación (RF-011, D6).
 - [ ] T005 Comprobar: `npm test`, la prueba de humo en local, la regla del minuto apagada a mano, Node
   20 y 22 en el PC y la CI de la rama, si arranca (CE-001 a CE-008, D7).
