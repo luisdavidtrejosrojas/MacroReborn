@@ -94,12 +94,14 @@ npm run test:smoke
 ```
 
 El script busca un puerto libre, arranca `scripts/servidor-local.js` con una
-PGlite efímera, comprueba que el sitio responde, hace login con `demo` /
-`demo1234`, envía dos pulsos de XP y verifica que el primero otorga entre 10 y
-30 monedas y el segundo devuelve el no-op de diez minutos. Esa comprobación es
-de antes de la economía del 04/10/2026, que da las monedas de jugar en el
-minuto 10, 20, 30… del día: al 05/10/2026 falla ahí, y arreglarla es cosa de
-su propia especificación. Después abre una
+PGlite efímera, comprueba que el sitio responde y hace login con `demo` /
+`demo1234`. Después manda dos pulsos de XP seguidos. El primero se cuenta y
+paga lo que dice la regla de las monedas: la racha del primer día, nada por
+jugar en el primer minuto y el premio del nivel solo si se sube. La prueba lo
+calcula con las funciones de `api/_monedas.js`, sin copiar sus números, y
+comprueba que el saldo (`/api/content?action=mis-monedas`) sube eso,
+exactamente. El segundo no se cuenta, porque un minuto solo cuenta si pasaron
+55 segundos desde el anterior, y el saldo no cambia. Después abre una
 conexión de avisos en vivo, dispara un latido y comprueba que el aviso llega
 por esa línea ([AVISOS](../referencia/AVISOS.md)): es lo único que ejercita la cadena entera, porque
 las suites de `tests/` prueban cada pieza por separado. Siempre termina el
@@ -122,8 +124,9 @@ Para hacerla sin tocar la base real:
    muestran `otorgado: false`, `monto: 0` y `razon: "aun-no-pasaron-10-minutos"`; en el 10, el 20,
    el 30…, entre 10 y 30 monedas. Las reglas enteras, en
    [ECONOMIA](../referencia/ECONOMIA.md#3-cómo-se-ganan).
-5. Para ver un premio de juego hay que jugar diez minutos reales (la prueba de humo y las pruebas
-   simulan el tiempo; no hace falta esperar para validar la regla automáticamente).
+5. Para ver un premio de juego hay que jugar diez minutos reales (las pruebas de
+   `tests/monedas.test.js` simulan los minutos; no hace falta esperar para validar la regla
+   automáticamente).
 
 La compra de un avatar se valida automáticamente contra el handler real en
 `tests/monedas.test.js`. Desde que el servidor local enruta `/api/content`, el

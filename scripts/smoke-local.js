@@ -4,6 +4,10 @@ const http = require("node:http");
 const net = require("node:net");
 const path = require("node:path");
 
+// La regla de las monedas, la misma que usa el servidor: la prueba compara
+// con ella en vez de copiar sus numeros.
+const { premioDelMinuto, monedasPorRacha, monedasPorNivel } = require("../api/_monedas");
+
 const RAIZ = path.join(__dirname, "..");
 const LIMITE_LOG = 20000;
 
@@ -96,6 +100,16 @@ function pedir(puerto, ruta, opciones = {}) {
     if (cuerpo) req.write(cuerpo);
     req.end();
   });
+}
+
+// El saldo de quien tiene la sesion, como lo pide la barra de arriba.
+async function pedirSaldo(puerto, token) {
+  const respuesta = await pedir(puerto, "/api/content?action=mis-monedas", {
+    headers: { authorization: `Bearer ${token}` }
+  });
+  assert.equal(respuesta.codigo, 200);
+  assert.equal(respuesta.json?.success, true, "el saldo debe poder pedirse");
+  return respuesta.json.monedas;
 }
 
 async function esperarServidor(servidor, puerto) {
@@ -198,21 +212,35 @@ async function main() {
       cuerpo: { username: "demo", cantidad: 10, gameId: "smoke-local" },
       headers: { authorization: `Bearer ${login.json.token}` }
     };
+    const saldoAntes = await pedirSaldo(puerto, login.json.token);
+
+    // El primer pulso de una cuenta que no ha jugado nunca: su primer
+    // minuto del dia y su primer dia de racha. Paga la racha, nada por
+    // jugar (eso llega en el minuto 10, el 20, el 30...) y el nivel si lo
+    // sube.
     const primero = await pedir(puerto, "/api/users?action=xp", pulso);
     assert.equal(primero.codigo, 200);
     assert.equal(primero.json?.success, true, "el primer pulso de XP debe funcionar");
-    assert.equal(primero.json?.monedas?.otorgado, true, "el primer pulso debe otorgar monedas");
-    assert.equal(Number.isInteger(primero.json?.monedas?.monto), true);
-    assert.ok(primero.json.monedas.monto >= 10 && primero.json.monedas.monto <= 30);
-    assert.equal(typeof primero.json?.monedas?.saldoNuevo, "number");
+    const monedas = primero.json?.monedas;
+    const esperado = {
+      jugar: premioDelMinuto(1),
+      racha: monedasPorRacha(1),
+      nivel: primero.json.subioNivel ? monedasPorNivel(primero.json.user?.level) : 0
+    };
+    assert.deepEqual(monedas?.desglose, esperado,
+      "el primer pulso debe pagar lo que dice la regla de las monedas");
+    assert.equal(monedas.monto, esperado.jugar + esperado.racha + esperado.nivel);
+    assert.equal(monedas.otorgado, monedas.monto > 0);
+    assert.equal(monedas.saldoNuevo, saldoAntes + monedas.monto, "el saldo debe subir lo pagado");
 
+    // Un minuto solo cuenta si pasaron 55 segundos desde el anterior
+    // (api/users.js): un segundo pulso enseguida no se cuenta ni paga.
     const segundo = await pedir(puerto, "/api/users?action=xp", pulso);
     assert.equal(segundo.codigo, 200);
-    assert.equal(segundo.json?.success, true, "el segundo pulso de XP debe seguir funcionando");
-    assert.equal(segundo.json?.monedas?.otorgado, false);
-    assert.equal(segundo.json?.monedas?.monto, 0);
-    assert.equal(segundo.json?.monedas?.razon, "aun-no-pasaron-10-minutos");
-    assert.equal(segundo.json?.monedas?.saldoNuevo, primero.json?.monedas?.saldoNuevo);
+    assert.equal(segundo.json?.success, false, "un segundo pulso enseguida no debe contarse");
+    assert.equal(segundo.json?.contado, false, "un segundo pulso enseguida no debe contarse");
+    assert.equal(await pedirSaldo(puerto, login.json.token), monedas.saldoNuevo,
+      "un pulso que no se cuenta no debe dar monedas");
 
     // ----- Avisos en vivo -----
     // La unica comprobacion que ejercita la cadena entera: el endpoint que
@@ -251,7 +279,7 @@ async function main() {
     assert.ok(sobre.datos?.last_login, "el latido debe traer la ultima conexion");
 
     console.log(`Smoke local OK en puerto efimero ${puerto}`);
-    console.log(`Login, XP y monedas verificados (primer monto: ${primero.json.monedas.monto})`);
+    console.log(`Login, XP y monedas verificados (primer pulso: ${monedas.monto}; el segundo, sin contar)`);
     console.log("Avisos en vivo verificados: la linea abre y el latido llega por ella");
   } catch (error) {
     const detalle = [salida.trim(), errores.trim()].filter(Boolean).join("\n");

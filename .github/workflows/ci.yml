@@ -1,6 +1,10 @@
 # CI — MacroReborn
 # Corre los tests automáticos en cada push y en cada pull request,
 # sobre las versiones de Node que soporta el proyecto (20 y 22).
+# Cada versión termina aunque la otra falle (fail-fast: false): con el
+# valor por defecto, un fallo en una cancelaba la otra, y la del servidor,
+# Node 20, dejó de probarse entera. Por lo mismo, la prueba de humo corre
+# con las dos.
 
 name: CI
 
@@ -8,10 +12,19 @@ on:
   push:
   pull_request:
 
+# Una subida nueva a una rama cancela la ejecución anterior de esa misma
+# rama: se sube tras cada tarea, y solo importa la última. El repositorio
+# es privado y Actions tiene un cupo de minutos al mes; con esto, octubre
+# de 2026 habría gastado unos 940 en vez de 2.459.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [20, 22]
     steps:
@@ -22,5 +35,4 @@ jobs:
       - run: npm ci
       - run: npm test
       - name: Smoke test HTTP local
-        if: matrix.node-version == 22
         run: npm run test:smoke
