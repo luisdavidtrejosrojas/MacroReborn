@@ -305,7 +305,7 @@ nada del sitio y sin pisar nada.
   Sus pruebas, en `tests/mudanza-partidas.test.js`: lo que se recoge y lo que no (las cachés, las claves
   del sitio, los límites); la ida y vuelta entera con la mudanza de la T017; que no pisa nada; y que sin
   respuesta no pone la marca.
-- [ ] T019 [US4] `js/jugar.js`: en un juego de terceros, antes de armar el marco, llamar a
+- [X] T019 [US4] `js/jugar.js`: en un juego de terceros, antes de armar el marco, llamar a
   `MRJuegosAparte.mudarPartidas()`. Mientras dura, si hay algo que pasar, el aviso de carga (`#overlayCarga
   p`) dice «Pasando tus partidas guardadas…», y después vuelve a «Cargando juego…». Si falla, abre el
   juego igual. Su prueba, en `tests/juegos-aparte-navegador.test.js`.

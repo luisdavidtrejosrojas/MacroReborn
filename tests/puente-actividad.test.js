@@ -148,7 +148,7 @@ test("al marco puenteado no se le ponen oídos, ni le toca la regla de los diez 
   w.close();
 });
 
-test("la página de jugar engancha el puente del juego de terceros que abre", () => {
+test("la página de jugar engancha el puente del juego de terceros que abre", async () => {
   const catalogo = vm.runInNewContext(leer("js", "datos-juegos.js") + "\n;juegos", {});
   const pvz = catalogo.find((j) => String(j.iframe).endsWith("/pvz.html"));
   const dom = new JSDOM(leer("jugar.html"), {
@@ -165,7 +165,12 @@ test("la página de jugar engancha el puente del juego de terceros que abre", ()
   // jugar.js deja un reloj en marcha: la página se cierra siempre, también
   // si algo falla, o el proceso de las pruebas no termina nunca.
   try {
-    const iframe = w.document.querySelector("#contenedorJuego iframe");
+    // Se abre después de pasar las partidas guardadas: un momento más tarde.
+    let iframe = null;
+    for (let i = 0; i < 200 && !iframe; i++) {
+      await new Promise((ok) => setTimeout(ok, 5));
+      iframe = w.document.querySelector("#contenedorJuego iframe");
+    }
     t += 5 * MINUTO;
     assert.equal(w.MRActividad.hayAlguien(), false);
     w.dispatchEvent(new w.MessageEvent("message",

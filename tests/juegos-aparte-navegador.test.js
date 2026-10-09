@@ -82,29 +82,49 @@ test("la lista de juegos propios es la misma en el navegador y en el servidor", 
 });
 
 // La página de jugar de verdad, con sus scripts de verdad, sin red.
-function jugar(id, base = "https://www.macroreborn.com") {
+// antes(w) corre justo antes de jugar.js.
+function paginaDeJugar(id, base = "https://www.macroreborn.com", antes) {
   const dom = new JSDOM(leer("jugar.html"), {
     url: base + "/jugar.html?id=" + id, runScripts: "outside-only", virtualConsole: new VirtualConsole()
   });
   const w = dom.window;
   w.eval(leer("js", "datos-juegos.js"));
   w.eval(FUENTE);
+  if (antes) antes(w);
   w.eval(leer("js", "jugar.js"));
-  return { w, iframe: w.document.querySelector("#contenedorJuego iframe") };
+  return w;
 }
 
-test("la página de jugar abre un juego de terceros en su dirección, con su marco", () => {
+// Los de terceros se abren después de pasar las partidas: un momento más tarde.
+async function marcoDelJuego(w) {
+  for (let i = 0; i < 200; i++) {
+    const iframe = w.document.querySelector("#contenedorJuego iframe");
+    if (iframe) return iframe;
+    await new Promise((ok) => setTimeout(ok, 5));
+  }
+  return null;
+}
+
+async function jugar(id, base) {
+  const w = paginaDeJugar(id, base);
+  return { w, iframe: await marcoDelJuego(w) };
+}
+
+test("la página de jugar abre un juego de terceros en su dirección, con su marco", async () => {
   const pvz = porArchivo("pvz.html");
-  const { w, iframe } = jugar(pvz.id);
+  const { w, iframe } = await jugar(pvz.id);
   try {
     assert.equal(iframe.getAttribute("src"), "https://juegos.macroreborn.com/html/juegos/pvz.html");
     assert.equal(iframe.getAttribute("sandbox"), w.MRJuegosAparte.SANDBOX);
     assert.equal(iframe.getAttribute("allow"), "fullscreen; gamepad; autoplay");
     assert.ok(iframe.hasAttribute("allowfullscreen"));
+    // Sin nada que pasar, la mudanza se apunta como hecha sin avisar a nadie.
+    assert.ok(w.localStorage.getItem("mrPartidasMudadas"));
+    assert.equal(w.document.querySelector("#overlayCarga p").textContent, "Cargando juego…");
   } finally {
     w.close();
   }
-  const enElPc = jugar(pvz.id, "http://localhost:3001");
+  const enElPc = await jugar(pvz.id, "http://localhost:3001");
   try {
     assert.equal(enElPc.iframe.getAttribute("src"), "http://localhost:3002/html/juegos/pvz.html");
   } finally {
@@ -112,8 +132,57 @@ test("la página de jugar abre un juego de terceros en su dirección, con su mar
   }
 });
 
-test("la página de jugar abre Macro Snake en la web, sin sandbox, y los de otras webs en la suya, con él", () => {
-  const snake = jugar(porArchivo("macro-snake.html").id);
+test("antes de abrir un juego de terceros pasa las partidas, con su aviso, y lo abre aunque falle", async () => {
+  const pvz = porArchivo("pvz.html");
+  const finales = {
+    "no contesta": (ok) => ok({ hecho: false, motivo: "la dirección de los juegos no contestó a tiempo" }),
+    "se rompe": (ok, mal) => mal(new Error("roto")),
+    "no está": null
+  };
+  for (const [caso, final] of Object.entries(finales)) {
+    let seguir = () => {};
+    const w = paginaDeJugar(pvz.id, undefined, (w) => {
+      w.console.warn = () => {};
+      w.MRJuegosAparte.mudarPartidas = final === null ? undefined : (opciones) => {
+        opciones.alEmpezar();
+        return new w.Promise((ok, mal) => { seguir = () => final(ok, mal); });
+      };
+    });
+    try {
+      const aviso = w.document.querySelector("#overlayCarga p");
+      if (final !== null) {
+        await new Promise((ok) => setTimeout(ok, 20));
+        assert.equal(aviso.textContent, "Pasando tus partidas guardadas…", caso);
+        assert.equal(w.document.querySelector("#contenedorJuego iframe"), null, caso + ": el juego espera a que pasen");
+      }
+      seguir();
+      const iframe = await marcoDelJuego(w);
+      assert.ok(iframe, caso + ": el juego se abre igual");
+      assert.equal(iframe.getAttribute("src"), "https://juegos.macroreborn.com/html/juegos/pvz.html", caso);
+      assert.equal(aviso.textContent, "Cargando juego…", caso);
+    } finally {
+      w.close();
+    }
+  }
+});
+
+test("Macro Snake y los de otras webs no pasan partidas: se abren al momento", () => {
+  for (const juego of [porArchivo("macro-snake.html"), CATALOGO.find((j) => /^https?:\/\//.test(j.iframe))]) {
+    let llamadas = 0;
+    const w = paginaDeJugar(juego.id, undefined, (w) => {
+      w.MRJuegosAparte.mudarPartidas = async () => { llamadas++; };
+    });
+    try {
+      assert.ok(w.document.querySelector("#contenedorJuego iframe"), juego.nombre);
+      assert.equal(llamadas, 0, juego.nombre);
+    } finally {
+      w.close();
+    }
+  }
+});
+
+test("la página de jugar abre Macro Snake en la web, sin sandbox, y los de otras webs en la suya, con él", async () => {
+  const snake = await jugar(porArchivo("macro-snake.html").id);
   try {
     assert.equal(snake.iframe.getAttribute("src"), "./html/juegos/macro-snake.html");
     assert.equal(snake.iframe.hasAttribute("sandbox"), false);
@@ -122,7 +191,7 @@ test("la página de jugar abre Macro Snake en la web, sin sandbox, y los de otra
     snake.w.close();
   }
   const deOtraWeb = CATALOGO.find((j) => /^https?:\/\//.test(j.iframe));
-  const otra = jugar(deOtraWeb.id);
+  const otra = await jugar(deOtraWeb.id);
   try {
     assert.equal(otra.iframe.getAttribute("src"), deOtraWeb.iframe);
     assert.ok(otra.iframe.hasAttribute("sandbox"));

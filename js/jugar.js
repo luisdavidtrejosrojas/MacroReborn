@@ -57,13 +57,13 @@ try {
 // que la web, con un marco que no los deja tocar la página: así su código
 // no puede leer la sesión (js/motor/juegos-aparte.js,
 // specs/008-aislar-juegos). Macro Snake, del equipo, se abre como siempre.
+//
+// La primera vez, antes de abrir uno de terceros, lo que guardaron los
+// juegos en la web (sus partidas, sus ajustes) pasa a su dirección: si el
+// juego cargara antes, podría empezar de cero y la partida vieja ya no
+// entraría, porque la mudanza no pisa nada. Si falla, el juego se abre igual.
 
-if (juego.iframe) {
-
-    const aparte = window.MRJuegosAparte;
-    if (!aparte) {
-        console.warn("MacroReborn: no cargó js/motor/juegos-aparte.js; el juego se abre por su dirección vieja, que el servidor redirige a la de los juegos.");
-    }
+function abrirJuego(aparte, deTerceros) {
 
     // El sandbox y el allow, antes que la dirección: se aplican al cargar.
     const iframe = document.createElement("iframe");
@@ -84,7 +84,6 @@ if (juego.iframe) {
     // (js/motor/actividad-jugador.js). Los de terceros, en su propia
     // dirección, avisan ellos con el puente: solo se cree a esa dirección.
     if (window.MRActividad) {
-        const deTerceros = aparte && aparte.tipo(juego) === "terceros";
         window.MRActividad.vigilarJuego(iframe, deTerceros ? { origen: aparte.origen() } : undefined);
     }
 
@@ -104,6 +103,32 @@ if (juego.iframe) {
             overlay.classList.add("oculto");
         }
     } catch (e) {}
+
+}
+
+if (juego.iframe) {
+
+    const aparte = window.MRJuegosAparte;
+    if (!aparte) {
+        console.warn("MacroReborn: no cargó js/motor/juegos-aparte.js; el juego se abre por su dirección vieja, que el servidor redirige a la de los juegos.");
+    }
+    const deTerceros = !!aparte && aparte.tipo(juego) === "terceros";
+
+    if (deTerceros) {
+        const aviso = document.querySelector("#overlayCarga p");
+        const textoDeCarga = aviso ? aviso.textContent : "";
+        Promise.resolve()
+            .then(() => aparte.mudarPartidas({
+                alEmpezar: () => { if (aviso) aviso.textContent = "Pasando tus partidas guardadas…"; }
+            }))
+            .catch((error) => console.warn("MacroReborn: no se pudieron pasar las partidas guardadas.", error))
+            .then(() => {
+                if (aviso) aviso.textContent = textoDeCarga;
+                abrirJuego(aparte, deTerceros);
+            });
+    } else {
+        abrirJuego(aparte, deTerceros);
+    }
 
 }
 else {
