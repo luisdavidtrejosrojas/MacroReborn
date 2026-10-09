@@ -250,7 +250,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
   `api/_ruta-estatica.js` (RF-007).
 - [X] T004 Comprobar en el PC: `npm test`, la prueba de humo y el arranque de producción con Node 22 y
   24 oficiales (CE-005, D8).
-- [ ] T005 Con el OK de Luis, el servidor: la vuelta atrás guardada y comprobada, Node 24 instalado,
+- [X] T005 Con el OK de Luis, el servidor: la vuelta atrás guardada y comprobada, Node 24 instalado,
   NodeSource en las actualizaciones automáticas, el servicio reiniciado y las comprobaciones de antes y
   después (RF-001 a RF-004, RF-009, D1 a D3, D7).
 - [ ] T006 Lo que cuenta el cambio: VPS, las copias en `infra/` y el punto 91 de la auditoría, cerrado
@@ -267,3 +267,23 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - El arranque de producción (`cluster.js` con `server.js`, contra una base que no existe) da lo mismo
   con las dos que con Node 20.20.2: dos procesos, 200 en las páginas, 404 en `/.env`, `/.git/config` y
   `/server.js`, 400 en la URI mal formada, y 500 en la API sin tumbar el proceso.
+
+**En el servidor**, con el OK de Luis, entre las 03:29 y las 03:46 UTC del 09/10 (22:29 a 22:46 del
+08/10 en su hora), con 4 personas conectadas:
+
+- **La vuelta atrás, antes de tocar nada** (CE-007): en `~/vuelta-atras-node/`, el paquete
+  `nodejs_20.20.2-1nodesource1_arm64.deb`, comprobado (nombre, versión, arquitectura y suma), y la copia
+  de `nodesource.sources` con `node_20.x`. NodeSource tenía la rama 24 para arm64, hasta la 24.21.0.
+- **El cambio** (CE-001): `node_24.x` en `nodesource.sources` e `apt-get install nodejs`: Node 24.21.0
+  y npm 11.19.0. `server.js` y `cluster.js` pasan la comprobación de sintaxis. `needrestart`, en modo
+  lista, señaló `macroreborn.service` como pendiente de reinicio; se reinició a mano, una vez, a las
+  03:30:05 (CE-003).
+- **La web real, antes y después** (CE-002): idéntica. 200 en `/`, Comunidad, Explorar y
+  `/js/core.js`; 404 en `/.env`, `/.git/config` y `/server.js`; 400 en la URI mal formada; 200 en la API
+  pública; y la línea de avisos abre (`text/event-stream`).
+- **A los 16 minutos** (CE-004): el servicio sigue activo, sin reinicios, con 0 avisos ni errores en su
+  registro y 116 MB de memoria (173 antes del cambio, tras días encendido).
+- **Los parches, solos** (CE-008): `/etc/apt/apt.conf.d/51macroreborn-nodesource` admite
+  `site=deb.nodesource.com,archive=nodistro`, y la prueba en seco de las actualizaciones automáticas ya
+  lo cuenta entre sus orígenes. `needrestart`, cuando lo llaman ellas, solo avisa (lo dice su
+  `needrestart.conf`): un parche instalado así entra en vigor en el siguiente reinicio del servicio.
