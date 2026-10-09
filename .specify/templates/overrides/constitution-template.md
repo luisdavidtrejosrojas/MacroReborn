@@ -189,9 +189,11 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
   de `datos-locales/`.
 - Todo cambio del servidor lleva su prueba. Las pruebas que cargan la API aíslan antes sus carpetas de
   datos con `tests/_aislar-datos.js`.
-- Para unir una rama a `main`, la integración continua (`.github/workflows/ci.yml`: las pruebas y la
-  prueba HTTP de humo, con la versión de Node del servidor y la mínima que se admite) DEBE estar en
-  verde. Si ya estaba en rojo por otra causa, se dice y esa causa tiene su propia especificación.
+- Para unir una rama a `main`, `npm test` y la prueba HTTP de humo DEBEN estar en verde con la versión
+  de Node del servidor y con la mínima que se admite. Las corre la integración continua
+  (`.github/workflows/ci.yml`) cuando está encendida; mientras esté apagada, se corren en el PC con esas
+  dos versiones, y la especificación lo anota en su comprobación. Si ya estaban en rojo por otra causa,
+  se dice y esa causa tiene su propia especificación.
 
 ### XXIII. El servidor decide
 
@@ -272,7 +274,7 @@ Cada paso se anuncia antes, se resume después y ninguno se encadena con el sigu
 6. `/speckit-tasks`: tareas pequeñas, cada una con su commit.
 7. `/speckit-analyze`: comprobar que especificación, plan y tareas sean coherentes.
 8. `/speckit-implement`: solo con la aprobación de Luis. Una tarea, un commit, un push.
-9. Unir la rama a `main` cuando todo está verificado y la integración continua está en verde.
+9. Unir la rama a `main` cuando todo está verificado y las pruebas están en verde (regla XXII).
 10. Desplegar solo si Luis lo pide (regla XXI).
 
 ## Gobierno

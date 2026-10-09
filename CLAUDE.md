@@ -13,7 +13,7 @@ documento que la cuenta entera.
 
 - Todo cambio pasa por Spec Kit (regla XIX). Los pequeños, como «spec corta» de una página.
 - Una rama por especificación (`NNN-nombre`, la crea `/speckit-specify`), que se une a `main` en local,
-  sin pull request, cuando está verificada y la integración continua está en verde.
+  sin pull request, cuando está verificada y las pruebas están en verde (regla XXII).
 - Como última tarea de cada especificación, antes de unirla a `main`, se añade su entrada a
   `docs/historia/HISTORIAL.md` con la fecha de esa unión: el día, el área, quién y el enlace a su
   `spec.md`. Cómo se escribe, en `docs/guias/SUMARSE.md#3-commits-y-ramas`.
@@ -47,10 +47,13 @@ documento que la cuenta entera.
 ## Probar
 
 - `npm test`: unas 1.300 pruebas sobre PGlite, en cerca de un minuto. Nunca tocan producción.
-- `npm run test:smoke`: levanta un servidor efímero en un puerto libre y lo recorre por HTTP. La
-  integración continua corre las dos en cada push, con Node 24 y 22. Si sus trabajos no arrancan («The
-  job was not started because…»), es el cupo de minutos de Actions de la cuenta valenmgg, dueña del
-  repositorio, no el código: mientras tanto se prueba en local con los Node oficiales de esas versiones.
+- `npm run test:smoke`: levanta un servidor efímero en un puerto libre y lo recorre por HTTP.
+- La integración continua de GitHub está apagada desde el 09/10/2026 (spec 007), para no gastar dinero:
+  los minutos de Actions se cobran a la cuenta valenmgg, dueña del repositorio. No se vuelve a encender
+  sin hablarlo. Antes de unir a `main`, las dos pruebas se corren en el PC con Node 24 y 22, y la spec lo
+  anota (regla XXII). Los Node oficiales están en `D:\node-oficial\`, comprobados con su
+  `SHASUMS256.txt`. Desde Git Bash, `/d/node-oficial/v22.23.3/node-v22.23.3-win-x64/node.exe --test` es
+  `npm test` con la 22, y con `scripts/smoke-local.js` en vez de `--test`, la prueba de humo.
 - `npm run db:local`: el sitio en http://localhost:3001. Antes de arrancarlo, mirar si Luis ya tiene uno
   en el 3001 (`netstat -ano`); si lo hay, otro puerto con `PORT`. Nunca matar un proceso sin mirar su
   línea de comandos.
