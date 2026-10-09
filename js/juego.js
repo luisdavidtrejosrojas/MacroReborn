@@ -443,5 +443,8 @@ window.location.href =
         })
         .catch(() => {
             renderMetricas({});
+            // Los botones no dependen del resumen: sin él, también llevan
+            // a su juego y a su categoría.
+            prepararNavegacionFlujo();
         });
 })();

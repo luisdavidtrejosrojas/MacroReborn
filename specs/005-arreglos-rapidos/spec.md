@@ -266,7 +266,7 @@ historial, al unir.
 
 Un commit por tarea, subido a `origin` al cerrarla.
 
-- [ ] T001 Explorar y los botones de la ficha: el catálogo colgado de `window`, con su prueba (RF-001,
+- [X] T001 Explorar y los botones de la ficha: el catálogo colgado de `window`, con su prueba (RF-001,
   RF-002, D1).
 - [ ] T002 El panel de amigos: el juego expuesto en `js/juego.js` y el texto de su aviso, con su prueba
   (RF-003, D2).
