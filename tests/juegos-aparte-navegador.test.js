@@ -11,6 +11,8 @@
 //
 // Correr:  npm test
 
+require("./_aislar-datos");   // antes de api/: ver ese archivo
+
 const { test } = require("node:test");
 const assert = require("node:assert");
 const fs = require("node:fs");
