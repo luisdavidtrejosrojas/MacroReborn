@@ -2,8 +2,7 @@
 
 **Rama**: `008-aislar-juegos`
 **Creada**: 2026-10-09
-**Estado**: Spec y plan aprobados por Luis el 09/10/2026; las tareas, pendientes de su OK para
-implementar
+**Estado**: Spec, plan y tareas aprobados por Luis el 09/10/2026; en implementación
 **Tipo**: spec completa: después vienen el plan y las tareas, cada paso con el OK de Luis.
 **Pedido**: Luis, 09/10/2026: «Proteger la sesión», el siguiente paso que eligió después de la 007. Es el
 punto 1 de la auditoría, en el bloque de lo urgente desde el 18/09.
