@@ -207,6 +207,181 @@ test("dentro de un marco avisa a la página de que está lista", async () => {
   pagina.close();
 });
 
+// ---------- El lado de la página ----------
+
+const JUEGOS = "https://juegos.macroreborn.com";
+
+function ladoDeLaPagina(url = "https://www.macroreborn.com/jugar.html") {
+  const dom = new JSDOM("<!doctype html><body></body>", { url, runScripts: "outside-only" });
+  const w = dom.window;
+  w.indexedDB = new IDBFactory();
+  w.eval(APARTE);
+  return w;
+}
+
+function crearBase(fabrica, nombre, version, almacenes) {
+  return new Promise((ok, mal) => {
+    const p = fabrica.open(nombre, version);
+    p.onupgradeneeded = () => {
+      for (const a of almacenes) {
+        const store = p.result.createObjectStore(a.nombre, a.opciones || {});
+        for (const i of a.indices || []) store.createIndex(i.nombre, i.keyPath, { unique: false, multiEntry: false });
+      }
+    };
+    p.onsuccess = async () => {
+      const db = p.result;
+      for (const a of almacenes) {
+        for (const [clave, valor] of a.registros || []) {
+          const store = db.transaction(a.nombre, "readwrite").objectStore(a.nombre);
+          await pedir(store.keyPath === null ? store.put(valor, clave) : store.put(valor));
+        }
+      }
+      db.close();
+      ok();
+    };
+    p.onerror = () => mal(p.error);
+  });
+}
+
+// Lo que dejaron los juegos en el navegador cuando se abrían desde la web,
+// junto con lo del sitio.
+async function sembrarLaWeb(w) {
+  for (const [clave, valor] of [["macroSessionToken", "la-sesion"], ["usuarioActivo", '{"nombre":"ana"}'],
+    ["temaMacroReborn", "oscuro"], ["mr_sonda", "1"], ["ejs-settings", '{"volume":0.5}'], ["save1", "partida-de-flash"]]) {
+    w.localStorage.setItem(clave, valor);
+  }
+  await crearBase(w.indexedDB, "/data/saves", 21, [{ nombre: "FILE_DATA", indices: [{ nombre: "timestamp", keyPath: "timestamp" }],
+    registros: [["/data/saves/pokemon.srm", { timestamp: 5, contents: new Uint8Array([1, 2, 3]) }]] }]);
+  await crearBase(w.indexedDB, "EmulatorJS-states", 1, [{ nombre: "states", registros: [["pokemon.state", new Uint8Array([9, 9])]] }]);
+  await crearBase(w.indexedDB, "EmulatorJS-roms", 1, [{ nombre: "rom", registros: [["pokemon.gba", new Uint8Array(2000)]] }]);
+  await crearBase(w.indexedDB, "UnityCache", 1, [{ nombre: "XMLHttpRequest", registros: [["datos", new Uint8Array(2000)]] }]);
+  await crearBase(w.indexedDB, "/idbfs", 21, [{ nombre: "FILE_DATA", registros: [["/idbfs/partida.dat", { contents: new Uint8Array([4]) }]] }]);
+}
+
+test("la página recoge lo que guardaron los juegos, sin lo del sitio ni las cachés", async () => {
+  const w = ladoDeLaPagina();
+  await sembrarLaWeb(w);
+  const recogido = await w.MRJuegosAparte.recogerPartidas({ localStorage: w.localStorage, indexedDB: w.indexedDB });
+  assert.deepStrictEqual([...recogido.claves.map(([c]) => c)].sort(), ["ejs-settings", "save1"]);
+  assert.deepStrictEqual([...recogido.bases.map((b) => b.nombre)].sort(), ["/data/saves", "/idbfs", "EmulatorJS-states"]);
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(recogido.saltadas)).sort((a, b) => a.nombre.localeCompare(b.nombre)),
+    [{ nombre: "EmulatorJS-roms", motivo: "cache" }, { nombre: "UnityCache", motivo: "cache" }]);
+  const saves = recogido.bases.find((b) => b.nombre === "/data/saves");
+  assert.equal(saves.version, 21);
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(saves.almacenes[0].indices)),
+    [{ nombre: "timestamp", keyPath: "timestamp", unique: false, multiEntry: false }]);
+  assert.equal(saves.almacenes[0].registros[0][0], "/data/saves/pokemon.srm");
+  w.close();
+});
+
+test("una base que pasa del tope no va, ni lo que pasa del tope total", async () => {
+  const w = ladoDeLaPagina();
+  await crearBase(w.indexedDB, "a", 1, [{ nombre: "s", registros: [["x", new Uint8Array(600)]] }]);
+  await crearBase(w.indexedDB, "b", 1, [{ nombre: "s", registros: [["x", new Uint8Array(600)]] }]);
+  await crearBase(w.indexedDB, "c", 1, [{ nombre: "s", registros: [["x", new Uint8Array(5000)]] }]);
+  const recogido = await w.MRJuegosAparte.recogerPartidas({ localStorage: w.localStorage, indexedDB: w.indexedDB },
+    { base: 1000, total: 1000 });
+  assert.deepStrictEqual([...recogido.bases.map((b) => b.nombre)], ["a"]);
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(recogido.saltadas)),
+    [{ nombre: "b", motivo: "demasiado-grande" }, { nombre: "c", motivo: "demasiado-grande" }]);
+  w.close();
+});
+
+test("la ida y vuelta entera: lo de los juegos llega a su dirección sin pisar nada, lo del sitio no, y la marca lleva las cuentas", async () => {
+  const web = ladoDeLaPagina();
+  await sembrarLaWeb(web);
+  const juegos = ladoDeLosJuegos();
+  // Una partida más nueva, jugada ya desde la dirección de los juegos: no se pisa.
+  juegos.localStorage.setItem("save1", "partida-nueva");
+  // Lo que haría el marco invisible: el paquete viaja copiado, como con postMessage.
+  const conversar = async (paquete) => ({
+    tipo: "mr-mudanza-hecha", version: 1,
+    ...(await juegos.MRMudanza.mudar(structuredClone(paquete), { localStorage: juegos.localStorage, indexedDB: juegos.indexedDB }))
+  });
+  let empezo = false;
+  const resultado = await web.MRJuegosAparte.mudarPartidas({ ventana: web, conversar, alEmpezar: () => { empezo = true; } });
+  assert.equal(resultado.hecho, true);
+  assert.equal(empezo, true, "con algo que pasar, se avisa para el aviso de carga");
+  assert.equal(juegos.localStorage.getItem("ejs-settings"), '{"volume":0.5}');
+  assert.equal(juegos.localStorage.getItem("save1"), "partida-nueva", "lo que ya estaba no se pisa");
+  for (const delSitio of ["macroSessionToken", "usuarioActivo", "temaMacroReborn", "mr_sonda"]) {
+    assert.equal(juegos.localStorage.getItem(delSitio), null, delSitio);
+  }
+  const bases = (await juegos.indexedDB.databases()).map((b) => b.name).sort();
+  assert.deepStrictEqual(bases, ["/data/saves", "/idbfs", "EmulatorJS-states"]);
+  const srm = await leerRegistro(juegos.indexedDB, "/data/saves", "FILE_DATA", "/data/saves/pokemon.srm");
+  assert.deepStrictEqual([...srm.contents], [1, 2, 3]);
+  const marca = JSON.parse(web.localStorage.getItem("mrPartidasMudadas"));
+  assert.equal(marca.version, 1);
+  assert.equal(marca.claves, 1, "solo cuenta lo que entró");
+  assert.equal(marca.registros, 3);
+  assert.equal(marca.saltadas.length, 2);
+  assert.equal(web.localStorage.getItem("save1"), "partida-de-flash", "lo de la web no se borra");
+  web.close();
+  juegos.close();
+});
+
+test("con la marca puesta no hace nada, y sin nada que pasar pone la marca sin hablar con nadie", async () => {
+  let llamadas = 0;
+  const conversar = async () => { llamadas++; return { tipo: "mr-mudanza-hecha", version: 1, claves: { puestas: 0 }, registros: { puestos: 0 } }; };
+  const conMarca = ladoDeLaPagina();
+  conMarca.localStorage.setItem("mrPartidasMudadas", "{}");
+  conMarca.localStorage.setItem("save1", "x");
+  assert.equal((await conMarca.MRJuegosAparte.mudarPartidas({ ventana: conMarca, conversar })).yaEstaba, true);
+  const vacia = ladoDeLaPagina();
+  vacia.localStorage.setItem("macroSessionToken", "la-sesion");
+  assert.equal((await vacia.MRJuegosAparte.mudarPartidas({ ventana: vacia, conversar })).nadaQuePasar, true);
+  assert.ok(vacia.localStorage.getItem("mrPartidasMudadas"), "sin nada que pasar, la marca se pone igual");
+  assert.equal(llamadas, 0);
+  conMarca.close();
+  vacia.close();
+});
+
+test("si la mudanza falla o no contesta, no pone la marca: se probará la próxima vez", async () => {
+  for (const respuesta of [{ tipo: "mr-mudanza-fallo", version: 1, motivo: "sin sitio" }, null]) {
+    const w = ladoDeLaPagina();
+    w.localStorage.setItem("save1", "x");
+    const resultado = await w.MRJuegosAparte.mudarPartidas({ ventana: w, conversar: async () => respuesta });
+    assert.equal(resultado.hecho, false);
+    assert.equal(w.localStorage.getItem("mrPartidasMudadas"), null);
+    w.close();
+  }
+});
+
+test("la conversación por el marco: espera a que esté lista, manda solo a la dirección de los juegos y quita el marco", async () => {
+  const w = ladoDeLaPagina();
+  const paquete = { tipo: "mr-mudanza", version: 1, claves: [["save1", "x"]], bases: [], saltadas: [] };
+  const conversacion = w.MRJuegosAparte.hablarConLaMudanza(w, JUEGOS, paquete, 5000);
+  const marco = w.document.querySelector("iframe");
+  assert.equal(marco.getAttribute("src"), JUEGOS + "/html/juegos/_mudanza.html");
+  assert.equal(marco.style.display, "none");
+  const mandados = [];
+  marco.contentWindow.postMessage = (mensaje, destino) => mandados.push({ mensaje, destino });
+  const llega = (datos, origen = JUEGOS, desde = marco.contentWindow) =>
+    w.dispatchEvent(new w.MessageEvent("message", { data: datos, origin: origen, source: desde }));
+
+  llega({ tipo: "mr-mudanza-lista", version: 1 }, "https://otra.web");
+  llega({ tipo: "mr-mudanza-lista", version: 1 }, JUEGOS, null);
+  assert.equal(mandados.length, 0, "otra dirección u otra ventana no cuentan");
+  llega({ tipo: "mr-mudanza-lista", version: 1 });
+  assert.equal(mandados.length, 1);
+  assert.equal(mandados[0].destino, JUEGOS, "el paquete va solo a la dirección de los juegos");
+  assert.equal(mandados[0].mensaje, paquete);
+  llega({ tipo: "mr-mudanza-hecha", version: 1, claves: { puestas: 1, yaEstaban: 0 }, registros: { puestos: 0, yaEstaban: 0 } });
+  const respuesta = await conversacion;
+  assert.equal(respuesta.tipo, "mr-mudanza-hecha");
+  assert.equal(w.document.querySelector("iframe"), null, "el marco se quita al terminar");
+  w.close();
+});
+
+test("sin respuesta en el plazo, la conversación acaba en nada y quita el marco", async () => {
+  const w = ladoDeLaPagina();
+  const respuesta = await w.MRJuegosAparte.hablarConLaMudanza(w, JUEGOS, { tipo: "mr-mudanza", version: 1 }, 50);
+  assert.equal(respuesta, null);
+  assert.equal(w.document.querySelector("iframe"), null);
+  w.close();
+});
+
 test("la lista de lo que es del sitio es la misma aquí y en la página", () => {
   const w = ladoDeLosJuegos();
   const pagina = new JSDOM("<!doctype html>", { url: "https://www.macroreborn.com/jugar.html", runScripts: "outside-only" }).window;

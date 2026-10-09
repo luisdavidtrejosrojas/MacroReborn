@@ -284,7 +284,7 @@ nada del sitio y sin pisar nada.
   - en `tests/mudanza-partidas.test.js`, con jsdom y `fake-indexeddb`;
   - en `tests/juegos-aparte-servidor.test.js`, que los dos archivos salen en la dirección de los juegos
     sin puente, y que en la web dan 404.
-- [ ] T018 [US4] La parte de la página, en `js/motor/juegos-aparte.js` (research D8;
+- [X] T018 [US4] La parte de la página, en `js/motor/juegos-aparte.js` (research D8;
   contracts/mensajes.md).
   - **`recogerPartidas()`**:
     - el `localStorage`, sin lo del sitio;
