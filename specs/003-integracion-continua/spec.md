@@ -205,7 +205,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [X] T001 La prueba de humo con las reglas de hoy: el primer pulso y el saldo, y el segundo pulso sin
   contar (RF-001 a RF-005, D1, D2).
 - [X] T002 La CI: `fail-fast` apagado y la prueba de humo con Node 20 y 22 (RF-006, RF-007, D3, D4).
-- [ ] T003 La documentación: CLAUDE.md, SUMARSE, DESARROLLO y ARQUITECTURA (RF-009).
+- [X] T003 La documentación: CLAUDE.md, SUMARSE, DESARROLLO y ARQUITECTURA (RF-009).
 - [ ] T004 Comprobar: `npm test`, la prueba de humo en local, la regla del minuto apagada a mano y la
   CI de la rama (CE-001 a CE-006).
 - [ ] T005 La entrada del historial y la unión a `main`, con la CI en verde en `main` (RF-010).

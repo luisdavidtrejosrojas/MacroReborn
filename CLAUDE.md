@@ -47,9 +47,8 @@ documento que la cuenta entera.
 ## Probar
 
 - `npm test`: unas 1.300 pruebas sobre PGlite, en cerca de un minuto. Nunca tocan producción.
-- `npm run test:smoke`: levanta un servidor efímero en un puerto libre y lo recorre por HTTP. Al
-  05/10/2026 falla en una comprobación de monedas (ya fallaba antes de ese día); tiene que tener su
-  propia especificación.
+- `npm run test:smoke`: levanta un servidor efímero en un puerto libre y lo recorre por HTTP. La
+  integración continua corre las dos en cada push, con Node 20 y 22.
 - `npm run db:local`: el sitio en http://localhost:3001. Antes de arrancarlo, mirar si Luis ya tiene uno
   en el 3001 (`netstat -ano`); si lo hay, otro puerto con `PORT`. Nunca matar un proceso sin mirar su
   línea de comandos.

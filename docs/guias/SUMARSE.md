@@ -110,10 +110,10 @@ Si el trabajo llega de fuera, en un zip o en una rama propia, cómo se funde lo 
 - **`npm test`**: unas 1.300 pruebas sobre una base de práctica, en cerca de un minuto. Nunca tocan
   producción. Una tarea no está terminada hasta que pasan (regla XII).
 - **`npm run test:smoke`**: levanta un servidor efímero en un puerto libre y lo recorre por HTTP, de
-  punta a punta. Al 05/10/2026 falla en una comprobación de monedas, de antes de la economía nueva; la
-  arregla su propia especificación.
-- **La integración continua** (`.github/workflows/ci.yml`) corre las dos en cada push, con Node 20 y 22.
-  Mientras la prueba de humo falle, sale en rojo.
+  punta a punta: entrar, el pulso de un minuto de juego con sus monedas y los avisos en vivo.
+- **La integración continua** (`.github/workflows/ci.yml`) corre las dos en cada push, con Node 20 y 22,
+  y cada versión termina aunque la otra falle. Para unir una rama a `main` tiene que salir en verde
+  (regla XXII).
 - Lo que una prueba automática no ve, como cómo queda una página o un avatar, se mira a mano en el sitio
   local: [DESARROLLO](DESARROLLO.md).
 
