@@ -38,10 +38,24 @@ prueba en memoria, sin esas dos comprobaciones: todo lo demás pasa, los avisos 
 - Con todo en rojo, un fallo nuevo no se distingue del de siempre. Las specs 001 y 002 se unieron por
   la excepción de la regla XXII.
 
+**Y desde la tarde del 08/10, la CI no arranca.** Al subir esta rama, GitHub no empezó ningún trabajo:
+«The job was not started because recent account payments have failed or your spending limit needs to
+be increased». El repositorio es privado y de la cuenta valenmgg, que tiene 2.000 minutos gratis al mes
+para Actions; en octubre se gastaron 2.459, 1.950 de ellos el 05/10, con una subida por cada tarea de la
+spec 001. Cada subida gasta unos 19 minutos: `npm test` tarda unos 8 minutos y medio en las máquinas
+de GitHub, que tienen dos núcleos (en el PC de Luis, uno), y corre con las dos versiones. Los minutos
+vuelven a cero el 01/11.
+
 ## Aclaraciones
 
-Ninguna. Lo que había que decidir con Luis era qué hacer si detrás salía un fallo de verdad, y no
-salió.
+### Sesión 2026-10-08
+
+- P: Detrás de las dos comprobaciones viejas, ¿sale algún fallo de verdad? → R: No. Con una copia de
+  la prueba en memoria, sin esas dos comprobaciones, todo lo demás pasa.
+- P: La CI de GitHub no arranca por el cupo de minutos de la cuenta valenmgg. ¿Se une igual? → R: Sí
+  (Luis, opción A): se añade el ahorro de minutos, la comprobación en el PC de Luis con Node 20, 22 y 24
+  vale como prueba para unir, y la CI de GitHub se confirma cuando vuelva. Luis le pide a valenmgg que
+  revise la facturación.
 
 ## Escenarios de uso y pruebas *(obligatorio)*
 
@@ -60,6 +74,8 @@ se rompe de verdad.
    con las dos versiones de Node.
 2. **Dado** un cambio que rompe el pulso (por ejemplo, que vuelva a contar dos pulsos seguidos),
    **cuando** corre la prueba de humo, **entonces** falla y dice qué comprobación.
+3. **Dadas** varias subidas seguidas a la misma rama, **cuando** corre la CI, **entonces** solo
+   termina la de la última: las anteriores se cancelan y no gastan más minutos.
 
 ---
 
@@ -118,6 +134,8 @@ prueba entera, prueba de humo incluida.
 - Lo que hace un minuto contado sin premio (del 2 al 9) no lo mira la prueba de humo: obligaría a
   esperar 55 segundos, y ya lo sujeta `tests/monedas.test.js`.
 - Si la CI va lenta, la prueba ya espera hasta 30 segundos a que arranque el servidor.
+- Un commit cuya ejecución se canceló porque llegó otro detrás se queda sin resultado propio: cuenta el
+  último de la rama, que es el que se une.
 
 ## Requisitos *(obligatorio)*
 
@@ -137,6 +155,7 @@ prueba entera, prueba de humo incluida.
   fallaba DEBE decir la causa de verdad (CLAUDE.md, SUMARSE, DESARROLLO y ARQUITECTURA).
 - **RF-010**: Al unirse a `main`, el historial DEBE tener su entrada, con la fecha de la unión y el
   enlace a esta especificación.
+- **RF-011**: Una subida nueva a una rama DEBE cancelar la ejecución anterior de esa misma rama.
 
 ## Criterios de éxito *(obligatorio)*
 
@@ -151,6 +170,10 @@ prueba entera, prueba de humo incluida.
   Node 20 se cancela en 4 de las 5 últimas ejecuciones).
 - **CE-005**: `npm test` en verde.
 - **CE-006**: La rama no cambia nada de `api/`, `js/`, `css/` ni de las páginas.
+- **CE-007**: Mientras la CI de GitHub no arranque, en el PC salen en verde `npm test` y la prueba de
+  humo con las mismas versiones que la CI (Node 20 y 22, de nodejs.org) y con Node 24.
+- **CE-008**: Con el ahorro, un mes como octubre gasta menos que el cupo gratis: simulado sobre sus
+  121 ejecuciones, unos 940 minutos en vez de 2.459.
 
 ## Supuestos
 
@@ -159,11 +182,16 @@ prueba entera, prueba de humo incluida.
 - La prueba de humo con Node 20 añade a la CI unos segundos, lo que tarda en arrancar el servidor local.
 - No hace falta desplegar: no cambia nada de lo que sirve el sitio, y la copia del servidor se pondrá al
   día con el próximo despliegue.
+- El cupo de minutos es de la cuenta valenmgg: ampliarlo o esperar al 01/11 lo deciden Luis y
+  valenmgg.
 
 ## Fuera de alcance
 
 - Subir el servidor a Node 24: spec 004.
 - Cambiar las reglas del pulso o de las monedas.
+- La facturación de GitHub Actions. Y otros ahorros posibles, descartados por ahora: no correr la CI
+  cuando solo cambian documentos, que dejaría de vigilar la prueba de la documentación, y probar una
+  sola versión de Node en las ramas, que vigilaría menos.
 - Lo demás que falta alrededor de las pruebas y el despliegue: la comprobación de salud y la vuelta
   atrás del despliegue (punto 72 de la auditoría) y las pruebas de autorización, ranking y moderación
   (punto 74).
@@ -171,7 +199,7 @@ prueba entera, prueba de humo incluida.
 ## Plan
 
 **Qué cambia**: `scripts/smoke-local.js` (las comprobaciones de los dos pulsos y el saldo),
-`.github/workflows/ci.yml` (la matriz) y la documentación.
+`.github/workflows/ci.yml` (la matriz y la cancelación) y la documentación.
 
 **Decisiones**:
 
@@ -189,14 +217,24 @@ prueba entera, prueba de humo incluida.
   dejarla solo con Node 22, que no es la del servidor.
 - **D5. Si la primera CI de la rama destapa algo con Node 20,** se arregla aquí si es de las pruebas, y
   se cuenta a Luis si es del sitio.
+- **D6. Una subida nueva cancela la ejecución anterior de la misma rama** (`concurrency` por rama, con
+  `cancel-in-progress`). Se sube tras cada tarea, así que las subidas llegan en ráfagas y solo importa
+  la última. Descartado, por ahora: no correr la CI en los cambios de solo documentación y probar una
+  sola versión en las ramas (ver Fuera de alcance).
+- **D7. Mientras la CI de GitHub no arranque, la prueba para unir es la del PC,** con los Node oficiales
+  de nodejs.org de las mismas versiones que la CI (20.20.2 y 22.23.3), comprobados con sus sumas, y con
+  el Node 24 de Luis. Cuando vuelva, se confirma en GitHub y se apunta aquí. Lo decidió Luis el 08/10.
 
 **Cómo se comprueba**: `npm test`; `npm run test:smoke` en local; la misma prueba con la regla del
 minuto apagada a mano (`SEGUNDOS_ENTRE_MINUTOS` a 0 en `api/users.js`, sin commit y deshecho al
 terminar), que debe fallar en el segundo pulso; y la CI de la rama, en verde con las dos versiones y sin
-trabajos cancelados.
+trabajos cancelados. Mientras GitHub no arranque los trabajos, lo mismo en el PC con Node 20 y 22 (D7),
+y que GitHub lea bien la configuración nueva: si la rechazara, la ejecución lo diría en vez de dar el
+aviso del cupo.
 
 **Documentación**: CLAUDE.md, SUMARSE (cómo se prueba), DESARROLLO (la prueba de humo), ARQUITECTURA
-(la línea de la integración continua) y el historial, al unir.
+(la línea de la integración continua) y el historial, al unir. La cancelación, en ARQUITECTURA, SUMARSE
+y CLAUDE.md.
 
 ## Tareas
 
@@ -206,6 +244,8 @@ Un commit por tarea, subido a `origin` al cerrarla.
   contar (RF-001 a RF-005, D1, D2).
 - [X] T002 La CI: `fail-fast` apagado y la prueba de humo con Node 20 y 22 (RF-006, RF-007, D3, D4).
 - [X] T003 La documentación: CLAUDE.md, SUMARSE, DESARROLLO y ARQUITECTURA (RF-009).
-- [ ] T004 Comprobar: `npm test`, la prueba de humo en local, la regla del minuto apagada a mano y la
-  CI de la rama (CE-001 a CE-006).
-- [ ] T005 La entrada del historial y la unión a `main`, con la CI en verde en `main` (RF-010).
+- [ ] T004 La CI gasta menos: una subida nueva cancela la ejecución anterior de la misma rama, con su
+  documentación (RF-011, D6).
+- [ ] T005 Comprobar: `npm test`, la prueba de humo en local, la regla del minuto apagada a mano, Node
+  20 y 22 en el PC y la CI de la rama, si arranca (CE-001 a CE-008, D7).
+- [ ] T006 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-010).
