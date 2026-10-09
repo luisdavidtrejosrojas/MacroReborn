@@ -309,7 +309,7 @@ nada del sitio y sin pisar nada.
   `MRJuegosAparte.mudarPartidas()`. Mientras dura, si hay algo que pasar, el aviso de carga (`#overlayCarga
   p`) dice «Pasando tus partidas guardadas…», y después vuelve a «Cargando juego…». Si falla, abre el
   juego igual. Su prueba, en `tests/juegos-aparte-navegador.test.js`.
-- [ ] T020 [US4] Comprobar la mudanza en el PC (quickstart 7), con un script de un solo uso, fuera del
+- [X] T020 [US4] Comprobar la mudanza en el PC (quickstart 7), con un script de un solo uso, fuera del
   repositorio, que deja partidas de prueba de cada motor en `localhost:3001`. Tiene que salir:
   - pasan las claves y las cuatro bases, con sus registros;
   - no pasan las cachés ni nada del sitio;

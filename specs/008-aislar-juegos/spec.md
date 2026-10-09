@@ -299,3 +299,28 @@ tecla dentro del juego cada 30 segundos (quickstart 6):
 La primera pasada no valió: el servidor local llevaba encendido desde antes del puente (T012) y servía los
 juegos sin él, así que solo salieron los dos pulsos que da abrir la página. Con el servidor reiniciado,
 salió lo de arriba.
+
+### Las partidas pasan solas, en el PC (T020, 09/10/2026)
+
+Con un script de un solo uso, fuera del repositorio, en Edge y con la cuenta `demo` (quickstart 7):
+
+- **Las partidas de prueba**, dejadas en la web (el 3301) sin abrir ningún juego: dos claves de juegos
+  (`ejs-settings` y una de Flash), ocho claves del sitio, entre ellas la sesión de verdad, y seis bases
+  con la forma de cada motor: `/data/saves` y `/idbfs` (versión 21, almacén `FILE_DATA` con su índice
+  `timestamp`), `EmulatorJS-states`, `localforage` (versión 2, con un Blob), y las cachés
+  `EmulatorJS-roms` y `UnityCache`.
+- **Al abrir Plantas vs. Zombies**, el aviso de carga dijo «Pasando tus partidas guardadas…» y volvió a
+  «Cargando juego…» (capturas en PC y en móvil). En el 3302 quedaron las dos claves y las cuatro bases,
+  con su versión, sus almacenes, sus índices y los seis registros con sus tipos: fechas, binarios de
+  131.072 y 4.096 bytes, el Blob y los objetos. No pasó ninguna caché, ni ninguna clave del sitio, ni la
+  sesión. La marca de la web dice 2 claves, 6 registros y las dos cachés saltadas.
+- **Al abrir otro juego** (Mario Combat), no hubo mudanza y la marca no cambió.
+- **Sin pisar nada**: con `ejs-settings` cambiada a mano en el 3302 y la marca quitada de la web, al
+  volver a abrir el juego, esta vez en tamaño móvil, la mudanza pasó otra vez con 0 claves y 0 registros
+  puestos, y `ejs-settings` siguió como se cambió a mano.
+- **Una partida de verdad**: con `main` en el puerto 3501, Pokémon Emerald (EmulatorJS 4.2.0) guardó en
+  el navegador, con las funciones del propio emulador, un estado de 528.472 bytes y la partida del juego
+  (`/data/saves/mGBA/pokemonemerald.srm`, 131.072 bytes). En el mismo puerto, con la rama y el mismo
+  perfil de Edge, al abrir el juego desde `jugar.html` la mudanza pasó sus cuatro registros y saltó las
+  cachés del núcleo y de la ROM. Dentro del marco del juego, en el 3502, el emulador encontró la partida
+  en su disco con la misma huella SHA-256 que en la web, y cargó el estado, con los mismos bytes.
