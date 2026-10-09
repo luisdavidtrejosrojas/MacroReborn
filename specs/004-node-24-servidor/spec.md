@@ -255,7 +255,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
   después (RF-001 a RF-004, RF-009, D1 a D3, D7).
 - [X] T006 Lo que cuenta el cambio: VPS, las copias en `infra/` y el punto 91 de la auditoría, cerrado
   (RF-008, RF-010, D9).
-- [ ] T007 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-012).
+- [X] T007 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-012).
 
 ## Comprobación (08/10/2026)
 
