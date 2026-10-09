@@ -122,10 +122,11 @@ mismo quedan los que se lanzan a mano con el script, con su hora en el
 nombre, y se borran igual. Copia del script en `infra/scripts/respaldar.sh`.
 
 Fuera de esa limpieza, en `~/respaldos/`, quedan las copias guardadas a propósito, que no se borran
-nunca solas. Al 05/10/2026: las de antes de una operación delicada (`antes-de-...sql.gz`, la última
-del 04/10/2026), los volcados de Neon de la mudanza, del 01/09/2026, que llevan contraseñas en claro
-([CUENTAS](CUENTAS.md#lo-que-queda)), los originales del arte del 21/09/2026 y dos copias del
-repositorio (`.bundle`) del 15/09/2026, de antes y después de limpiar su historia.
+nunca solas. Al 09/10/2026: las de antes de una operación delicada (`antes-de-...sql.gz`, la última
+del 04/10/2026), los originales del arte del 21/09/2026 y dos copias del repositorio (`.bundle`) del
+15/09/2026, de antes y después de limpiar su historia. Ninguna lleva contraseñas en claro. Los volcados
+de Neon de la mudanza, del 01/09/2026, llevaban 21, y se borraron el 09/10/2026
+([spec 006](../../specs/006-volcados-en-claro/spec.md)).
 
 ```bash
 ~/respaldar.sh                      # lanzar uno a mano
@@ -429,7 +430,10 @@ sitio se notara lento al leer, es lo primero que mirar.
 2. **Dar de baja Neon** cuando el VPS lleve un tiempo estable. Conviene
    conservar el snapshot hasta entonces. Después se puede quitar
    `@neondatabase/serverless` de `package.json` y la rama de Neon de
-   `_db.js`.
+   `_db.js`. Hay una razón más: si el proyecto sigue vivo, su base sigue
+   como el 01/09/2026, con 21 contraseñas en claro. El paso a bcrypt del
+   16/09 solo cambió la base del VPS
+   ([spec 006](../../specs/006-volcados-en-claro/spec.md)).
 
 3. **Decidir si se vuelve a encender fail2ban**, ahora que su causa
    principal, el punto 18 de la auditoría, está arreglada (ver

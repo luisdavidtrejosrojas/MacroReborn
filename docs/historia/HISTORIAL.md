@@ -16,6 +16,12 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
 
 ## Semana del 05 al 11/10/2026
 
+- **09/10, cuentas** (Luis): la spec 006 borra del servidor los dos volcados de Neon de la mudanza, del
+  01/09, que guardaban 21 contraseñas en claro. Probablemente son las que esas cuentas usan hoy, porque
+  el paso a bcrypt del 16/09 solo cambió la base. Salen también dos archivos vacíos de al lado. En el
+  servidor ya no queda ninguna contraseña en claro, ni en la base ni en sus respaldos. Las mismas 21
+  siguen en la base de Neon si el proyecto sigue vivo; darlo de baja ya estaba pendiente. Es el punto 86
+  de la auditoría. [Spec 006](../../specs/006-volcados-en-claro/spec.md).
 - **09/10, forma de trabajar** (Luis): la spec 007 apaga en GitHub la integración continua, para no
   gastar dinero. El repositorio es privado, los minutos de Actions que pasan del cupo gratis se cobran a
   la cuenta dueña, y desde el 08/10 GitHub ni siquiera arrancaba los trabajos, por el pago. El archivo

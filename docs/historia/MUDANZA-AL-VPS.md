@@ -89,7 +89,10 @@ migraciones 013/014 convierten cada cuenta a bcrypt en su siguiente
 inicio de sesión, no todas de golpe.
 
 Los volcados originales quedaron en `~/respaldos/` del VPS y en
-`Documentos\Proyectos de código\MacroReborn - respaldos\` del PC.
+`Documentos\Proyectos de código\MacroReborn - respaldos\` del PC. Los del
+VPS se borraron el 09/10/2026, porque llevaban esas 21 contraseñas en
+claro ([spec 006](../../specs/006-volcados-en-claro/spec.md)). La copia
+del PC no está en el de ahora, formateado el 19/09/2026.
 
 ---
 

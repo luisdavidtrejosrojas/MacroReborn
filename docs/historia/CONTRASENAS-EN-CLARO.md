@@ -135,6 +135,10 @@ Lo que el backfill **no** limpia son los respaldos ya sacados: cualquier
 `.sql.gz` anterior al 16/09/2026 sigue llevando esas 17 contraseñas en
 claro. En el VPS se borran solos a los 14 días; una copia bajada a un
 portátil, no (ver `docs/guias/DESARROLLO.md#probar-contra-los-datos-de-verdad`).
+Fuera de esa limpieza quedaban los volcados de Neon de la mudanza, del
+01/09/2026, con las 21 de ese día. Se borraron el 09/10/2026
+([spec 006](../../specs/006-volcados-en-claro/spec.md)). La base de Neon,
+mientras no se dé de baja, sigue como estaba el 01/09.
 
 Si se despliega el código sin la 013, registro y login fallan (la
 columna `password_hash` no existe). Si se despliega sin la 014,
