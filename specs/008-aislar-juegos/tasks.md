@@ -325,7 +325,7 @@ nada del sitio y sin pisar nada.
 
 ## Fase 6: La página de jugar, al día
 
-- [ ] T021 En `jugar.html`, subir la versión `?v=` de `js/jugar.js` y de `js/motor/actividad-jugador.js` a
+- [X] T021 En `jugar.html`, subir la versión `?v=` de `js/jugar.js` y de `js/motor/actividad-jugador.js` a
   la fecha del cambio, junto con la de `js/motor/juegos-aparte.js` (research D13). `tests/versiones.test.js`
   y `tests/actividad-jugador.test.js`, en verde.
 
