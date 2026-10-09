@@ -325,10 +325,11 @@ solo reinicio, a las 09:25:30 UTC, y los dos procesos respondían a los 2 segund
   al 14, y «Siguiente» abre Minecraft Tower Defense. Ninguna de esas páginas da errores de JavaScript.
 - A los cuatro minutos, el servicio no tenía ningún error en su registro ni se había reiniciado, nginx
   no había dado ninguna respuesta 5xx, y la memoria estaba en 153 MB.
+- **CE-006**: Luis abrió la ficha de un juego con su cuenta, el 09/10: el panel de amigos sale y funciona
+  bien.
 
 **Lo que no se mira en la web real**:
 
-- El panel de amigos y el editor con un guardado rechazado necesitan una sesión de verdad. Una sesión
-  solo de navegador la cierra el propio sitio. Los sujetan sus pruebas y la comprobación en el navegador
-  en local, arriba.
+- El editor con un guardado rechazado necesita una sesión de verdad, y una sesión solo de navegador la
+  cierra el propio sitio. Lo sujetan su prueba y la comprobación en el navegador en local, arriba.
 - El desempate del ranking se verá el lunes 12/10, con el recálculo de las 08:00 UTC.
