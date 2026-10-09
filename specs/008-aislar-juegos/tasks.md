@@ -120,7 +120,7 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
   antes de todo lo demás (prendas, avatares, avisos, API y estáticos), con `esPeticionDeJuegos(req)` y
   la configuración de producción. Con una prueba en `tests/juegos-aparte-servidor.test.js` que mira en
   el código de `server.js` que lo hace antes de `/api/`.
-- [ ] T006 `scripts/servidor-local.js` (research D10):
+- [X] T006 `scripts/servidor-local.js` (research D10):
   - con la configuración local: `origenJuegos` `http://localhost:<PUERTO+1>`, y `origenesDeLaWeb`
     `http://localhost:<PUERTO>` y `http://127.0.0.1:<PUERTO>`;
   - un segundo servidor en `PUERTO + 1`, que lo manda todo a `atender` como dirección de los juegos;

@@ -32,10 +32,13 @@ npm run db:local    # el sitio en http://localhost:3001, con datos de mentira
 
 `npm run db:local` arranca con una base de práctica nueva y un usuario de prueba, `demo` / `demo1234`,
 que es artista y administrador ([el servidor local](DESARROLLO.md#scriptsservidor-localjs--probar-en-el-navegador)).
+Los juegos de terceros se abren desde el puerto siguiente, el 3002, que hace de su propia dirección,
+como `juegos.macroreborn.com` en la web.
 Un clon viene sin los dibujos originales de las prendas, que están fuera de git: el sitio local no los
 necesita.
 
-**Si el puerto 3001 está ocupado**, se elige otro con `PORT`:
+**Si el puerto 3001 o el 3002 están ocupados**, se elige otro con `PORT`; los juegos van en el siguiente
+(con 3101, en el 3102), que también tiene que estar libre:
 
 ```bash
 PORT=3101 npm run db:local

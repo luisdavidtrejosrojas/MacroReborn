@@ -53,6 +53,10 @@ npm run db:local
 Abre `http://localhost:3001`:
 
 - Sirve los archivos estáticos del sitio.
+- Abre también el puerto siguiente, `http://localhost:3002`, que hace de dirección de los juegos, como
+  `juegos.macroreborn.com` en la web (specs/008-aislar-juegos). Ahí solo salen los juegos de terceros, y
+  en el 3001 la dirección vieja de uno redirige allí. Es otro origen, así que el juego no ve la sesión,
+  igual que en la web. Con `PORT`, los juegos van en `PORT + 1`, que también tiene que estar libre.
 - Rutea `/api/auth`, `/api/users` y `/api/content` con los handlers
   reales contra la base de práctica, y `/api/avisos`, la línea de los
   avisos en vivo.

@@ -58,8 +58,24 @@ const previsualizaciones = require("../api/_previsualizaciones");
 const herramientaRecortes = require("./herramientas/recortes/servidor");
 const { resolverRutaEstatica } = require("../api/_ruta-estatica");
 const avisosSSE = require("../api/_avisos-sse");
+const juegosAparte = require("../api/_juegos-aparte");
 
 const PUERTO = Number(process.env.PORT) || 3001;
+
+// Los juegos de terceros, en su propia dirección, como en producción
+// (api/_juegos-aparte.js): aquí, el puerto siguiente. Un puerto distinto es
+// otro origen para el navegador, así que en local se separan de la sesión
+// igual que en la web. El navegador lo calcula igual
+// (js/motor/juegos-aparte.js): el mismo nombre, y el puerto siguiente.
+const PUERTO_JUEGOS = PUERTO + 1;
+const ORIGENES_DE_LA_WEB = [`http://localhost:${PUERTO}`, `http://127.0.0.1:${PUERTO}`];
+
+// La dirección vieja de un juego redirige al mismo nombre con el que se
+// pidió la web (localhost o 127.0.0.1), en el puerto de los juegos.
+function origenJuegosPara(req) {
+  const nombre = String(req.headers.host || "").replace(/:\d+$/, "");
+  return `http://${nombre === "127.0.0.1" ? "127.0.0.1" : "localhost"}:${PUERTO_JUEGOS}`;
+}
 const RAIZ = path.join(__dirname, "..");
 
 const TIPOS = {
@@ -135,6 +151,12 @@ async function main() {
 
   const servidor = http.createServer(async (req, res) => {
     const url = new URL(req.url, "http://localhost");
+
+    // ----- Los juegos de terceros: su dirección vieja redirige -----
+    // Lo mismo que en server.js, del mismo módulo.
+    if (juegosAparte.atender(req, res, url, {
+      esDeJuegos: false, origenJuegos: origenJuegosPara(req), origenesDeLaWeb: ORIGENES_DE_LA_WEB
+    })) return;
 
     // ----- La herramienta de recortes (solo en local) -----
     if (await herramientaRecortes.atender(req, res, url, obtenerSql())) return;
@@ -290,9 +312,26 @@ async function main() {
     });
   });
 
+  // ----- La dirección de los juegos: el puerto siguiente -----
+  // Lo atiende todo el mismo módulo que en producción: solo los juegos de
+  // terceros y la mudanza; lo demás, 404.
+  const servidorJuegos = http.createServer((req, res) => {
+    const url = new URL(req.url, "http://localhost");
+    juegosAparte.atender(req, res, url, {
+      esDeJuegos: true, origenJuegos: origenJuegosPara(req), origenesDeLaWeb: ORIGENES_DE_LA_WEB
+    });
+  });
+  servidorJuegos.on("error", (error) => {
+    console.error(`\nNo se pudo abrir el puerto ${PUERTO_JUEGOS}, el de los juegos (el siguiente al del sitio): ${error.message}`);
+    console.error("Mirá qué lo ocupa (netstat -ano), o elegí otro puerto para el sitio con PORT.\n");
+    process.exit(1);
+  });
+  servidorJuegos.listen(PUERTO_JUEGOS);
+
   servidor.listen(PUERTO, () => {
     console.log("\n==========================================");
     console.log(`  Sitio local: http://localhost:${PUERTO}`);
+    console.log(`  Los juegos:  http://localhost:${PUERTO_JUEGOS} (su propia dirección)`);
     if (MODO_REAL) {
       console.log("  Base:              COPIA DE PRODUCCION (datos-locales/pgdata)");
       console.log("  Usuarios reales, con la clave que puso npm run db:traer");

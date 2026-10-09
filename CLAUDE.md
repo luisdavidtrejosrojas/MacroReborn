@@ -54,9 +54,10 @@ documento que la cuenta entera.
   anota (regla XXII). Los Node oficiales están en `D:\node-oficial\`, comprobados con su
   `SHASUMS256.txt`. Desde Git Bash, `/d/node-oficial/v22.23.3/node-v22.23.3-win-x64/node.exe --test` es
   `npm test` con la 22, y con `scripts/smoke-local.js` en vez de `--test`, la prueba de humo.
-- `npm run db:local`: el sitio en http://localhost:3001. Antes de arrancarlo, mirar si Luis ya tiene uno
-  en el 3001 (`netstat -ano`); si lo hay, otro puerto con `PORT`. Nunca matar un proceso sin mirar su
-  línea de comandos.
+- `npm run db:local`: el sitio en http://localhost:3001, y los juegos de terceros en el 3002, que hace de
+  su propia dirección (spec 008). Antes de arrancarlo, mirar si Luis ya tiene algo en el 3001 o el 3002
+  (`netstat -ano`); si lo hay, otro puerto con `PORT`, y los juegos van en `PORT + 1`. Nunca matar un
+  proceso sin mirar su línea de comandos.
 - `npm run db:traer` y `npm run db:real`: probar con una copia de los datos reales, que queda en
   `datos-locales/` (fuera de git). Con `db:real`, nunca dos servidores a la vez: abren la misma carpeta
   PGlite y la estropean.
