@@ -274,8 +274,34 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [X] T004 El top 20 de Macro Snake, con su prueba (RF-005, D4).
 - [X] T005 El desempate del ranking, con su prueba y su comentario (RF-006, D5).
 - [X] T006 Guardar el avatar, con su prueba (RF-007, D6).
-- [ ] T007 Comprobar: `npm test` y la prueba de humo con Node 22 y 24, y Edge en PC y en móvil, con
+- [X] T007 Comprobar: `npm test` y la prueba de humo con Node 22 y 24, y Edge en PC y en móvil, con
   capturas (CE-001 a CE-008).
 - [ ] T008 La auditoría: los puntos cerrados, con sus notas, y el 92 (RF-010).
 - [ ] T009 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-012).
 - [ ] T010 Con el OK de Luis, desplegar y comprobar en la web real (RF-011).
+
+## Comprobación (08/10/2026)
+
+**Las pruebas** (CE-007): `npm test`, 1.358 en verde (19 nuevas) y ninguna en rojo, con los Node
+oficiales 24.21.0 y 22.23.3, y la prueba de humo en verde con los dos. La primera pasada completa encontró
+5 en rojo por dos cosas de esta spec, arregladas aparte: `tests/catalogo-archivos.test.js` lee el
+catálogo fuera del navegador, donde no hay `window` (`333fd43`), y `tests/sesion-huella-avatar.test.js`
+esperaba el `true` de antes de `guardarAvatar()` (`1bf3148`). Cada prueba nueva falla sin su arreglo
+(comprobado apartándolo con `git stash`).
+
+**En el navegador**, con el servidor local, Edge y la cuenta `demo`, en PC (1366×800) y en móvil
+(390×844):
+
+- **CE-001**: Explorar enseña 16 tarjetas y 12 categorías, sin ningún aviso de vacío.
+- **CE-002**: en la ficha del juego 5, «Anterior» lleva al 70 (Chess Classic), «Siguiente» al 14
+  (Minecraft Tower Defense) y el tercero a la categoría Estrategia; seguir «Siguiente» abre Minecraft
+  Tower Defense. Y en las 112 fichas, abiertas una a una con jsdom: 222 botones llevan a un juego que
+  existe, 2 se esconden (su juego es el único de su categoría) y ninguno está mal.
+- **CE-005**: con el guardado rechazado, el editor sigue abierto y la ventana dice el motivo del
+  servidor.
+- **CE-006**: con las respuestas de los amigos simuladas en el navegador (el servidor local no tiene la
+  parte social), el panel enseña a quien jugó el juego, con su nivel, y no a quien no.
+- **CE-003 y CE-004**: el top de Snake y el ranking no están en el servidor local; los sujetan sus
+  pruebas, y la consulta nueva del top se midió en producción (4,5 ms, 20 personas distintas).
+- **CE-008**: capturas de Explorar, la ficha (los botones y el panel de amigos) y el editor con el
+  rechazo, en los dos tamaños, miradas el 08/10. No entran en git.
