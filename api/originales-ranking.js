@@ -27,29 +27,35 @@ async function leaderboard(req, res) {
   const limitRaw = enteroNoNegativo(req.query?.limit || 20);
   const limit = Math.min(Math.max(limitRaw || 20, 1), 100);
 
-  // Sin las cuentas baneadas (api/_sanciones.js).
+  // La mejor partida de cada persona, y de esas, las mejores. Antes se
+  // sacaban las mejores partidas y después se quitaban las repetidas: con
+  // unas pocas personas copando las mejores, el top de 20 enseñaba cinco
+  // (punto 33 de la auditoría). Cada persona se busca por el índice que ya
+  // hay por persona y juego (user_id, game_id, score DESC, created_at): con
+  // 430.062 partidas, unos milisegundos. Sin las cuentas baneadas
+  // (api/_sanciones.js).
   const filas = await sql`
     SELECT
-      s.id,
-      s.score,
-      s.created_at,
+      mejor.id,
+      mejor.score,
+      mejor.created_at,
       u.username,
       u.level,
       u.avatar
-    FROM originales_scores s
-    JOIN users u ON u.id = s.user_id
-    WHERE s.game_id = ${juego.id} AND ${sanciones.noBaneadaSQL(sql)}
-    ORDER BY s.score DESC, s.created_at ASC, s.id ASC
+    FROM users u
+    CROSS JOIN LATERAL (
+      SELECT s.id, s.score, s.created_at
+      FROM originales_scores s
+      WHERE s.user_id = u.id AND s.game_id = ${juego.id}
+      ORDER BY s.score DESC, s.created_at ASC, s.id ASC
+      LIMIT 1
+    ) mejor
+    WHERE ${sanciones.noBaneadaSQL(sql)}
+    ORDER BY mejor.score DESC, mejor.created_at ASC, mejor.id ASC
     LIMIT ${limit};
   `;
 
-  const mejoresPorUsuario = new Map();
-  for (const fila of filas) {
-    const key = String(fila.username);
-    if (!mejoresPorUsuario.has(key)) mejoresPorUsuario.set(key, fila);
-  }
-
-  const top = [...mejoresPorUsuario.values()].map((fila, index) => ({
+  const top = filas.map((fila, index) => ({
     posicion: index + 1,
     username: fila.username,
     level: Number(fila.level || 1),
