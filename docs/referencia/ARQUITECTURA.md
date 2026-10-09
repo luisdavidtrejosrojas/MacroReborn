@@ -25,12 +25,13 @@ moderación.
 | La base de datos | PostgreSQL 16 en el propio servidor. El esquema crece con las migraciones numeradas, aunque ninguna crea la tabla `users` (punto 67 de la [auditoría](../listas/AUDITORIA.md)) | `migrations/` |
 | Producción | Un VPS de Azure: nginx delante, con el HTTPS, los límites de peticiones y una caché; systemd mantiene vivo el servicio; un respaldo cada noche y un cron los lunes | [VPS](VPS.md) |
 | Las pruebas | `npm test`, unas 1.300 al 05/10/2026, con `node:test` sobre una base de práctica (PGlite) y sin tocar producción; y la prueba de humo, que levanta un servidor y lo recorre por HTTP | `tests/`, `scripts/smoke-local.js` |
-| La integración continua | GitHub Actions en cada push: `npm test` y la prueba de humo, con Node 20 y 22; cada versión termina aunque la otra falle, y una subida nueva a la misma rama cancela la ejecución anterior | `.github/workflows/ci.yml` |
+| La integración continua | GitHub Actions en cada push: `npm test` y la prueba de humo, con Node 24 (la del servidor) y 22 (la mínima que se admite); cada versión termina aunque la otra falle, y una subida nueva a la misma rama cancela la ejecución anterior | `.github/workflows/ci.yml` |
 | Las herramientas | Lo que se corre a mano: la base de práctica, el servidor local, traer una copia de la base real, componer y revisar avatares, hornear la autoría del arte... | `scripts/` |
 | La copia de la configuración | nginx, systemd, fail2ban, los respaldos y el cron, tal como están en el servidor | `infra/` |
 | Lo que no está en git | El `.env` (solo en el servidor), la copia local de la base, los originales del arte, la memoria de Claude y la exportación de Discord | [RETOMAR](../guias/RETOMAR.md) |
 
-**Con qué está hecho.** Node 20.19 o más, y cuatro dependencias: `pg`, `bcryptjs`, `jpeg-js` y el
+**Con qué está hecho.** Node 24, la versión del servidor (se admite desde la 22.13), y cuatro
+dependencias: `pg`, `bcryptjs`, `jpeg-js` y el
 driver de Neon, que solo se usa para leer la base de antes de la mudanza. Para las pruebas, PGlite y
 jsdom. Lo demás está escrito a mano: lo que se acepta como dependencia lo dice la regla XXVI de la
 constitución.

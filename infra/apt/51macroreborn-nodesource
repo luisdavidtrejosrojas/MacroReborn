@@ -1,0 +1,6 @@
+// MacroReborn: los parches de Node (NodeSource, rama 24) se instalan solos, como
+// los de Ubuntu. El repositorio solo tiene la rama 24, asi que nunca trae otra.
+// Decidido el 08/10/2026 en specs/004-node-24-servidor. Copia en infra/apt/.
+Unattended-Upgrade::Origins-Pattern {
+        "site=deb.nodesource.com,archive=nodistro";
+};

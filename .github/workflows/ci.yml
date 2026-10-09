@@ -1,10 +1,11 @@
 # CI — MacroReborn
 # Corre los tests automáticos en cada push y en cada pull request,
-# sobre las versiones de Node que soporta el proyecto (20 y 22).
+# sobre las versiones de Node que soporta el proyecto: la 24, la del
+# servidor, y la 22, la mínima que se admite (jsdom pide la 22.13 o más).
 # Cada versión termina aunque la otra falle (fail-fast: false): con el
-# valor por defecto, un fallo en una cancelaba la otra, y la del servidor,
-# Node 20, dejó de probarse entera. Por lo mismo, la prueba de humo corre
-# con las dos.
+# valor por defecto, un fallo en una cancelaba la otra, y la del servidor
+# dejó de probarse entera. Por lo mismo, la prueba de humo corre con las
+# dos.
 
 name: CI
 
@@ -26,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22]
+        node-version: [22, 24]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

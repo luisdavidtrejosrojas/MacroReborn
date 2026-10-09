@@ -16,6 +16,12 @@ reciente arriba, y los enlaces a commits llevan a GitHub, que pide entrar con un
 
 ## Semana del 05 al 11/10/2026
 
+- **08/10, el servidor** (Luis): la spec 004 pasa el servidor de Node 20, sin parches de seguridad desde
+  el 30/04/2026, a Node 24 (la 24.21.0, con soporte hasta el 30/04/2028), de NodeSource con apt, con la
+  vuelta atrás guardada antes y un solo reinicio. Sus parches entran ahora solos con las actualizaciones
+  automáticas y se usan desde el siguiente reinicio. `package.json` pide Node 22.13 o 24, la CI prueba
+  la 22 y la 24, y la constitución pasa a la v1.0.2: la regla XXII deja de nombrar versiones. Es el
+  punto 91 de la auditoría. [Spec 004](../../specs/004-node-24-servidor/spec.md).
 - **08/10, pruebas** (Luis): la spec 003 pone al día la prueba de humo, en rojo desde el 25/09. Esperaba
   un primer pulso de 10 a 30 monedas y que un segundo pulso seguido saliera bien, de antes de la regla
   del minuto (25/09) y de la economía del 04/10; ahora comprueba las reglas de hoy con los números del

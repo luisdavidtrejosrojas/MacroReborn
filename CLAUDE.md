@@ -48,7 +48,7 @@ documento que la cuenta entera.
 
 - `npm test`: unas 1.300 pruebas sobre PGlite, en cerca de un minuto. Nunca tocan producción.
 - `npm run test:smoke`: levanta un servidor efímero en un puerto libre y lo recorre por HTTP. La
-  integración continua corre las dos en cada push, con Node 20 y 22. Si sus trabajos no arrancan («The
+  integración continua corre las dos en cada push, con Node 24 y 22. Si sus trabajos no arrancan («The
   job was not started because…»), es el cupo de minutos de Actions de la cuenta valenmgg, dueña del
   repositorio, no el código: mientras tanto se prueba en local con los Node oficiales de esas versiones.
 - `npm run db:local`: el sitio en http://localhost:3001. Antes de arrancarlo, mirar si Luis ya tiene uno

@@ -43,8 +43,9 @@ navegador -> nginx (:443 HTTPS) -> node cluster.js, dos procesos (:3000) -> post
 - **PostgreSQL 16**: base `macroreborn`, rol `macroreborn`. Solo
   escucha en `127.0.0.1`, no está expuesto a internet. El cliente `psql`
   es el 18, que se instaló para volcar la base de Neon.
-- **Node 20.20.2** corriendo `cluster.js` bajo systemd (ver
-  [el modo cluster](#modo-cluster)).
+- **Node 24** (la 24.21.0 desde el 08/10/2026), de NodeSource con apt, corriendo `cluster.js` bajo
+  systemd (ver [el modo cluster](#modo-cluster) y
+  [de dónde sale Node](#node-de-dónde-sale-y-cómo-se-actualiza)).
 - **nginx** como proxy inverso.
 - **ufw**: solo 22, 80 y 443 abiertos.
 
@@ -145,6 +146,32 @@ atrás. Conviene bajar una a otro lado de vez en cuando: un respaldo que
 solo existe en el servidor que respalda no protege de perder el servidor.
 `npm run db:traer` baja uno de paso
 ([DESARROLLO](../guias/DESARROLLO.md#probar-contra-los-datos-de-verdad)).
+
+### Node: de dónde sale y cómo se actualiza
+
+Del repositorio de NodeSource, rama 24, instalado con apt: lo configura
+`/etc/apt/sources.list.d/nodesource.sources`, con su copia en `infra/apt/`. El servicio arranca con
+`/usr/bin/node`, el de ese paquete. Hasta el 08/10/2026 era la rama 20, que se quedó sin parches de
+seguridad el 30/04/2026 sin que nadie lo viera: lo cuentan el punto 91 de la
+[auditoría](../listas/AUDITORIA.md) y la [spec 004](../../specs/004-node-24-servidor/spec.md).
+
+- **Los parches entran solos.** `/etc/apt/apt.conf.d/51macroreborn-nodesource`, con su copia en
+  `infra/apt/`, suma NodeSource a las actualizaciones automáticas, que ya instalaban cada mañana los
+  paquetes de Ubuntu. Como el repositorio es el de la rama 24, nunca trae otra.
+- **Entran en vigor al reiniciar.** Desde las actualizaciones automáticas, `needrestart` solo avisa, no
+  reinicia (lo dice su `/etc/needrestart/needrestart.conf`): el Node nuevo se usa desde el siguiente
+  reinicio del servicio, que llega con cada despliegue. Si un parche es urgente,
+  `sudo -n systemctl restart macroreborn` y las comprobaciones de
+  [DESPLEGAR](../guias/DESPLEGAR.md#4-comprobar-en-la-web-real).
+- **Si un parche rompe algo**, se vuelve a la versión anterior de la 24, que sigue en el repositorio:
+  `apt-cache policy nodejs` las enseña, `sudo -n apt-get install -y --allow-downgrades
+  nodejs=<versión>` y se reinicia el servicio.
+- **Volver a la 20**, solo como último recurso, porque no tiene parches: en `~/vuelta-atras-node/` están
+  su paquete (`nodejs_20.20.2-1nodesource1_arm64.deb`) y el `nodesource.sources` de antes. Se repone
+  ese archivo, se quita `51macroreborn-nodesource`, se instala el paquete con `--allow-downgrades` y se
+  reinicia el servicio.
+- **Hasta cuándo.** La rama 24 tiene parches hasta el **30/04/2028**. Antes hay que pasar a la
+  siguiente con soporte, con su propia especificación ([lo que falta](#9-lo-que-falta)).
 
 ## 6. El cron semanal
 
@@ -407,6 +434,10 @@ sitio se notara lento al leer, es lo primero que mirar.
 3. **Decidir si se vuelve a encender fail2ban**, ahora que su causa
    principal, el punto 18 de la auditoría, está arreglada (ver
    [fail2ban, apagado](#fail2ban-apagado)).
+
+4. **Pasar Node a la siguiente versión con soporte antes del 30/04/2028**, cuando la rama 24 se queda
+   sin parches ([Node](#node-de-dónde-sale-y-cómo-se-actualiza)). La 20 pasó cinco meses sin ellos
+   porque nadie tenía apuntada su fecha.
 
 ### Resuelto
 

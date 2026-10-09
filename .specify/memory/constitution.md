@@ -1,15 +1,12 @@
 <!--
 Informe de sincronización
-- Versión: 1.0.0 -> 1.0.1 (PATCH): aclaraciones, sin quitar ni añadir principios (research D12 de
-  specs/001-reordenar-documentacion, aprobada por Luis el 2026-10-05).
-- Reglas cambiadas: V (la identidad de autor es para los commits de Luis y de Claude; cada dev firma
-  con la suya; el correo se nombra sin pegarlo, como pide la XXV), XIX (qué es docs/ y qué es
-  specs/), XXXII (apunta a docs/guias/SUMARSE.md), y XVII y XXI (el despliegue y cómo se deshace,
-  en docs/guias/DESPLEGAR.md). Las rutas de XIII, XXVII, XXIX y XXXI cambiaron con cada mudanza de
-  la spec 001.
+- Versión: 1.0.1 -> 1.0.2 (PATCH): una aclaración, sin quitar ni añadir principios (D6 de
+  specs/004-node-24-servidor, aprobada por Luis el 2026-10-08).
+- Reglas cambiadas: XXII (la integración continua deja de nombrar versiones de Node: prueba la del
+  servidor y la mínima que se admite, que el 2026-10-08 pasan a ser la 24 y la 22).
 - Secciones añadidas o quitadas: ninguna.
-- Plantillas: la propia, .specify/templates/overrides/constitution-template.md, con los mismos
-  cambios; plan-template.md, spec-template.md y tasks-template.md, sin cambios.
+- Plantillas: la propia, .specify/templates/overrides/constitution-template.md, con el mismo cambio;
+  plan-template.md, spec-template.md y tasks-template.md, sin cambios.
 - Pendiente: nada.
 -->
 # Constitución de MacroReborn
@@ -202,9 +199,9 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
   de `datos-locales/`.
 - Todo cambio del servidor lleva su prueba. Las pruebas que cargan la API aíslan antes sus carpetas de
   datos con `tests/_aislar-datos.js`.
-- Para unir una rama a `main`, la integración continua (`.github/workflows/ci.yml`: pruebas en Node 20 y
-  22 y la prueba HTTP de humo) DEBE estar en verde. Si ya estaba en rojo por otra causa, se dice y esa
-  causa tiene su propia especificación.
+- Para unir una rama a `main`, la integración continua (`.github/workflows/ci.yml`: las pruebas y la
+  prueba HTTP de humo, con la versión de Node del servidor y la mínima que se admite) DEBE estar en
+  verde. Si ya estaba en rojo por otra causa, se dice y esa causa tiene su propia especificación.
 
 ### XXIII. El servidor decide
 
@@ -299,4 +296,4 @@ Cada paso se anuncia antes, se resume después y ninguno se encadena con el sigu
 - Las reglas propias del proyecto se pueden añadir o cambiar en cualquier momento con
   `/speckit-constitution`.
 
-**Versión**: 1.0.1 | **Ratificada**: 2026-10-05 | **Última enmienda**: 2026-10-05
+**Versión**: 1.0.2 | **Ratificada**: 2026-10-05 | **Última enmienda**: 2026-10-08
