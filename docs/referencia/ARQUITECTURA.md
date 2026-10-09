@@ -19,7 +19,7 @@ moderación.
 | Parte | Qué es | Dónde |
 |---|---|---|
 | El navegador | 30 páginas en la raíz (el 05/10/2026), con su JavaScript en `js/` y `js/motor/` y sus estilos en `css/`. HTML, CSS y JavaScript sin frameworks ni paso de compilación | la raíz, `js/`, `css/` |
-| Los juegos | El catálogo es un array de `js/datos-juegos.js` (112 juegos el 05/10/2026), y cada juego, una página de `html/juegos/` que lo embebe; lo pesado viene de CDN externos, nada de binarios en el repositorio | `js/datos-juegos.js`, `html/juegos/`, `imagenes/juegos/` |
+| Los juegos | El catálogo es un array de `js/datos-juegos.js` (112 juegos el 05/10/2026), y cada juego, una página de `html/juegos/` que lo embebe; lo pesado viene de CDN externos, nada de binarios en el repositorio. Los 107 de terceros se abren desde su propia dirección, `juegos.macroreborn.com`, otro origen, con un marco protegido: su código no ve la sesión ni puede tocar la página (specs/008-aislar-juegos). Macro Snake, del equipo, se abre desde la web | `js/datos-juegos.js`, `html/juegos/`, `imagenes/juegos/`, `api/_juegos-aparte.js`, `js/motor/juegos-aparte.js` |
 | El servidor | `server.js` sobre Node: sirve los archivos estáticos, por lista blanca, y pasa cada `/api/<nombre>` a su handler de `api/`. `cluster.js` lo arranca en un proceso por núcleo | `server.js`, `cluster.js`, `api/` |
 | Los módulos compartidos | La lógica que usan varios handlers: la conexión a la base, la sesión, las contraseñas, las monedas, los avisos, el compositor de avatares... (29 archivos el 05/10/2026) | `api/_*.js` |
 | La base de datos | PostgreSQL 16 en el propio servidor. El esquema crece con las migraciones numeradas, aunque ninguna crea la tabla `users` (punto 67 de la [auditoría](../listas/AUDITORIA.md)) | `migrations/` |

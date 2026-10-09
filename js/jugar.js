@@ -53,23 +53,36 @@ try {
 // =========================
 // CARGAR JUEGO
 // =========================
+// Los juegos de terceros se abren desde su propia dirección, otro origen
+// que la web, con un marco que no los deja tocar la página: así su código
+// no puede leer la sesión (js/motor/juegos-aparte.js,
+// specs/008-aislar-juegos). Macro Snake, del equipo, se abre como siempre.
 
 if (juego.iframe) {
 
-    contenedor.innerHTML = `
-        <iframe
-            src="${juego.iframe}"
-            width="100%"
-            height="100%"
-            frameborder="0"
-            allowfullscreen
-            loading="lazy">
-        </iframe>
-    `;
+    const aparte = window.MRJuegosAparte;
+    if (!aparte) {
+        console.warn("MacroReborn: no cargó js/motor/juegos-aparte.js; el juego se abre por su dirección vieja, que el servidor redirige a la de los juegos.");
+    }
+
+    // El sandbox y el allow, antes que la dirección: se aplican al cargar.
+    const iframe = document.createElement("iframe");
+    const marco = aparte ? aparte.marco(juego) : null;
+    if (marco) {
+        iframe.setAttribute("sandbox", marco.sandbox);
+        iframe.setAttribute("allow", marco.allow);
+    }
+    iframe.setAttribute("src", aparte ? aparte.direccion(juego) : juego.iframe);
+    iframe.setAttribute("width", "100%");
+    iframe.setAttribute("height", "100%");
+    iframe.setAttribute("frameborder", "0");
+    iframe.setAttribute("allowfullscreen", "");
+    iframe.setAttribute("loading", "lazy");
+    contenedor.replaceChildren(iframe);
 
     // Oídos dentro del juego, para saber si hay alguien jugando
     // (js/motor/actividad-jugador.js).
-    if (window.MRActividad) window.MRActividad.vigilarJuego(contenedor.querySelector("iframe"));
+    if (window.MRActividad) window.MRActividad.vigilarJuego(iframe);
 
     // ==============================
     // ESTADO DE CARGA (overlay) — puramente visual/aditivo.

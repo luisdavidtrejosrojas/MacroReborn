@@ -168,7 +168,7 @@ desde dentro no se lee la sesión, ni se llega a la página, ni se la puede move
 **Prueba independiente**: en cada juego de terceros, desde dentro, intentar leer la sesión, tocar la
 página y cambiar su dirección.
 
-- [ ] T009 [US1] `js/jugar.js`: armar el marco con `MRJuegosAparte`, con el `src` de `direccion()` y el
+- [X] T009 [US1] `js/jugar.js`: armar el marco con `MRJuegosAparte`, con el `src` de `direccion()` y el
   `sandbox` y el `allow` de `marco()`. Macro Snake, como hoy. `jugar.html` carga
   `js/motor/juegos-aparte.js`, con su `?v=`, después de `js/datos-juegos.js` y antes de `js/jugar.js`.
   Su prueba, en `tests/juegos-aparte-navegador.test.js`, sobre `jugar.html` con jsdom, como

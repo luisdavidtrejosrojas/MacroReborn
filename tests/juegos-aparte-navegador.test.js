@@ -16,7 +16,7 @@ const assert = require("node:assert");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
-const { JSDOM } = require("jsdom");
+const { JSDOM, VirtualConsole } = require("jsdom");
 
 const RAIZ = path.join(__dirname, "..");
 const leer = (...partes) => fs.readFileSync(path.join(RAIZ, ...partes), "utf8");
@@ -77,4 +77,63 @@ test("el marco: sandbox sin navegar la página, y los permisos que no se heredan
 test("la lista de juegos propios es la misma en el navegador y en el servidor", () => {
   const { PROPIOS } = require("../api/_juegos-aparte");
   assert.deepStrictEqual([...modulo().PROPIOS], [...PROPIOS]);
+});
+
+// La página de jugar de verdad, con sus scripts de verdad, sin red.
+function jugar(id, base = "https://www.macroreborn.com") {
+  const dom = new JSDOM(leer("jugar.html"), {
+    url: base + "/jugar.html?id=" + id, runScripts: "outside-only", virtualConsole: new VirtualConsole()
+  });
+  const w = dom.window;
+  w.eval(leer("js", "datos-juegos.js"));
+  w.eval(FUENTE);
+  w.eval(leer("js", "jugar.js"));
+  return { w, iframe: w.document.querySelector("#contenedorJuego iframe") };
+}
+
+test("la página de jugar abre un juego de terceros en su dirección, con su marco", () => {
+  const pvz = porArchivo("pvz.html");
+  const { w, iframe } = jugar(pvz.id);
+  try {
+    assert.equal(iframe.getAttribute("src"), "https://juegos.macroreborn.com/html/juegos/pvz.html");
+    assert.equal(iframe.getAttribute("sandbox"), w.MRJuegosAparte.SANDBOX);
+    assert.equal(iframe.getAttribute("allow"), "fullscreen; gamepad; autoplay");
+    assert.ok(iframe.hasAttribute("allowfullscreen"));
+  } finally {
+    w.close();
+  }
+  const enElPc = jugar(pvz.id, "http://localhost:3001");
+  try {
+    assert.equal(enElPc.iframe.getAttribute("src"), "http://localhost:3002/html/juegos/pvz.html");
+  } finally {
+    enElPc.w.close();
+  }
+});
+
+test("la página de jugar abre Macro Snake en la web, sin sandbox, y los de otras webs en la suya, con él", () => {
+  const snake = jugar(porArchivo("macro-snake.html").id);
+  try {
+    assert.equal(snake.iframe.getAttribute("src"), "./html/juegos/macro-snake.html");
+    assert.equal(snake.iframe.hasAttribute("sandbox"), false);
+    assert.equal(snake.iframe.hasAttribute("allow"), false);
+  } finally {
+    snake.w.close();
+  }
+  const deOtraWeb = CATALOGO.find((j) => /^https?:\/\//.test(j.iframe));
+  const otra = jugar(deOtraWeb.id);
+  try {
+    assert.equal(otra.iframe.getAttribute("src"), deOtraWeb.iframe);
+    assert.ok(otra.iframe.hasAttribute("sandbox"));
+  } finally {
+    otra.w.close();
+  }
+});
+
+test("jugar.html carga el módulo después del catálogo y antes de jugar.js", () => {
+  const html = leer("jugar.html");
+  const catalogo = html.indexOf("js/datos-juegos.js");
+  const aparte = html.indexOf("js/motor/juegos-aparte.js");
+  const jugarJs = html.indexOf("js/jugar.js");
+  assert.ok(catalogo > 0 && aparte > catalogo && jugarJs > aparte,
+    "el orden tiene que ser datos-juegos.js, juegos-aparte.js y jugar.js");
 });
