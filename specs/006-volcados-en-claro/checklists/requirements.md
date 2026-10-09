@@ -13,7 +13,7 @@
 
 ## Requisitos completos
 
-- [ ] No quedan marcas [NEEDS CLARIFICATION]
+- [x] No quedan marcas [NEEDS CLARIFICATION]
 - [x] Los requisitos se pueden comprobar y no son ambiguos
 - [x] Los criterios de éxito se pueden medir
 - [x] Los criterios de éxito no dependen de una tecnología
@@ -38,3 +38,6 @@
   las dos decisiones de Luis. D1 es qué se hace con los dos volcados, y D5 es cómo se mira Google
   Drive. Antes de escribir se comprobó cada copia, en el servidor y en el PC, solo leyendo y solo
   contando.
+- **Segunda revisión (2026-10-09):** Luis respondió que se borran los dos volcados (D1) y que Google
+  Drive no se mira (D5). Sin marcas, pasa todo. La historia de Drive, su requisito, su criterio y su
+  tarea salen de la spec.
