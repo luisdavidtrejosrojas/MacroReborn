@@ -140,7 +140,7 @@ porque es la que lo mide entero. Por eso las fases no van en el orden de las pri
   - en la web, `html/juegos/macro-snake.html` da 200.
 
   Con su sección de `docs/guias/DESARROLLO.md` al día.
-- [ ] T008 Crear `js/motor/juegos-aparte.js` (research D1, D2, D6 y D10; data-model «Juego», «Dirección
+- [X] T008 Crear `js/motor/juegos-aparte.js` (research D1, D2, D6 y D10; data-model «Juego», «Dirección
   de los juegos» y «Marco del juego»; contracts/marco-del-juego.md). Va después de la T004, porque su
   prueba compara la lista de propios con la del servidor. Deja `window.MRJuegosAparte` con:
   - `origen(location)`: «en `macroreborn.com` o `www.macroreborn.com`, los juegos están en
