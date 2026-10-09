@@ -277,7 +277,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [X] T007 Comprobar: `npm test` y la prueba de humo con Node 22 y 24, y Edge en PC y en móvil, con
   capturas (CE-001 a CE-008).
 - [X] T008 La auditoría: los puntos cerrados, con sus notas, y el 92 (RF-010).
-- [ ] T009 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-012).
+- [X] T009 La entrada del historial y la unión a `main`, con `npm test` en verde en `main` (RF-012).
 - [ ] T010 Con el OK de Luis, desplegar y comprobar en la web real (RF-011).
 
 ## Comprobación (08/10/2026)
