@@ -163,9 +163,22 @@ CONTRASENAS-EN-CLARO, el punto 86 de la auditoría, cerrado con su nota, y el hi
 
 Un commit por tarea, subido a `origin` al cerrarla.
 
-- [ ] T001 Con el OK de Luis en ese momento, en el servidor: la lista de `~/respaldos/`, los cuatro
+- [X] T001 Con el OK de Luis en ese momento, en el servidor: la lista de `~/respaldos/`, los cuatro
   `neon-*` fuera (D1 y D2) y el inventario otra vez (RF-001 a RF-004, CE-001, CE-002).
 - [ ] T002 La documentación: VPS, CUENTAS, MUDANZA-AL-VPS y CONTRASENAS-EN-CLARO (RF-005).
 - [ ] T003 La auditoría: el punto 86, cerrado con su nota (RF-005).
 - [ ] T004 La entrada del historial y la unión a `main`, con `npm test` en verde con Node 22 y 24
   (RF-006, CE-003).
+
+## Comprobación (09/10/2026)
+
+**El borrado** (T001), con el OK de Luis en ese momento, a las 10:12 UTC: los cuatro `neon-*` de
+`~/respaldos/`, cada uno por su nombre, con `rm`.
+
+- **CE-001**: después, en el servidor no queda ninguna contraseña en claro. La base tiene 0, y también 0
+  los 44 archivos `.sql` y `.sql.gz` de la carpeta personal y de `/tmp`: los tres de «antes de», los 23
+  diarios y las 18 migraciones de una copia vieja del repositorio en `~/trabajo/MacroReborn`. Esa copia
+  es del 16/09, no tiene volcados ni `.env`, y no la usa ningún proceso.
+- **CE-002**: fuera de `diarios/` quedan ocho archivos, los mismos de la lista de antes, con su tamaño y
+  su fecha. Son los tres respaldos de «antes de» y la lista de uno de ellos, el registro, el arte del
+  21/09 y las dos copias del repositorio.
