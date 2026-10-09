@@ -1,9 +1,10 @@
 <!--
 Informe de sincronización
-- Versión: 1.0.1 -> 1.0.2 (PATCH): una aclaración, sin quitar ni añadir principios (D6 de
-  specs/004-node-24-servidor, aprobada por Luis el 2026-10-08).
-- Reglas cambiadas: XXII (la integración continua deja de nombrar versiones de Node: prueba la del
-  servidor y la mínima que se admite, que el 2026-10-08 pasan a ser la 24 y la 22).
+- Versión: 1.0.2 -> 1.0.3 (PATCH): una aclaración, sin quitar ni añadir principios (D3 de
+  specs/007-apagar-ci, aprobada por Luis el 2026-10-09).
+- Reglas cambiadas: XXII (para unir a main, las pruebas y la prueba de humo en verde con las dos
+  versiones de Node; las corre la integración continua si está encendida y, si no, el PC, y la
+  especificación lo anota: GitHub Actions se apagó el 2026-10-09) y el paso 9 del flujo de trabajo.
 - Secciones añadidas o quitadas: ninguna.
 - Plantillas: la propia, .specify/templates/overrides/constitution-template.md, con el mismo cambio;
   plan-template.md, spec-template.md y tasks-template.md, sin cambios.
@@ -199,9 +200,11 @@ Por qué: es la única copia de las cuentas, el progreso y las monedas de la com
   de `datos-locales/`.
 - Todo cambio del servidor lleva su prueba. Las pruebas que cargan la API aíslan antes sus carpetas de
   datos con `tests/_aislar-datos.js`.
-- Para unir una rama a `main`, la integración continua (`.github/workflows/ci.yml`: las pruebas y la
-  prueba HTTP de humo, con la versión de Node del servidor y la mínima que se admite) DEBE estar en
-  verde. Si ya estaba en rojo por otra causa, se dice y esa causa tiene su propia especificación.
+- Para unir una rama a `main`, `npm test` y la prueba HTTP de humo DEBEN estar en verde con la versión
+  de Node del servidor y con la mínima que se admite. Las corre la integración continua
+  (`.github/workflows/ci.yml`) cuando está encendida; mientras esté apagada, se corren en el PC con esas
+  dos versiones, y la especificación lo anota en su comprobación. Si ya estaban en rojo por otra causa,
+  se dice y esa causa tiene su propia especificación.
 
 ### XXIII. El servidor decide
 
@@ -282,7 +285,7 @@ Cada paso se anuncia antes, se resume después y ninguno se encadena con el sigu
 6. `/speckit-tasks`: tareas pequeñas, cada una con su commit.
 7. `/speckit-analyze`: comprobar que especificación, plan y tareas sean coherentes.
 8. `/speckit-implement`: solo con la aprobación de Luis. Una tarea, un commit, un push.
-9. Unir la rama a `main` cuando todo está verificado y la integración continua está en verde.
+9. Unir la rama a `main` cuando todo está verificado y las pruebas están en verde (regla XXII).
 10. Desplegar solo si Luis lo pide (regla XXI).
 
 ## Gobierno
@@ -296,4 +299,4 @@ Cada paso se anuncia antes, se resume después y ninguno se encadena con el sigu
 - Las reglas propias del proyecto se pueden añadir o cambiar en cualquier momento con
   `/speckit-constitution`.
 
-**Versión**: 1.0.2 | **Ratificada**: 2026-10-05 | **Última enmienda**: 2026-10-08
+**Versión**: 1.0.3 | **Ratificada**: 2026-10-05 | **Última enmienda**: 2026-10-09
