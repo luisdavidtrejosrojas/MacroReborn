@@ -259,7 +259,10 @@ que la CI, 20.20.2 (la del servidor) y 22.23.3, comprobados con sus sumas SHA-25
   cupo de minutos. Lo que sí se ve: con la configuración nueva, GitHub crea los dos trabajos, el de
   Node 20 y el de Node 22, y solo los para por el cupo (la ejecución de `2bc7704`). Si no leyera bien el
   archivo, diría «Invalid workflow file». Se confirma cuando vuelva, el 01/11 o antes si valenmgg
-  amplía el cupo.
+  amplía el cupo. **Nota del 09/10/2026:** no se confirmará en GitHub, porque ese día se apagó la CI
+  ([spec 007](../007-apagar-ci/spec.md)). En lugar de CE-001 están las pruebas y la prueba de humo en el
+  PC con las dos versiones, como pide la regla XXII desde la v1.0.3. CE-004, que mide cómo terminan los
+  trabajos de GitHub, se queda sin medir.
 - **CE-002**: la prueba de humo llega al final con las tres versiones: sus 23 comprobaciones se
   ejecutan (antes, 8). Paga 5 monedas en el primer pulso, todas de racha, y el segundo no se cuenta.
 - **CE-003**: con la regla del minuto apagada a mano (`SEGUNDOS_ENTRE_MINUTOS` a 0), falla con «un

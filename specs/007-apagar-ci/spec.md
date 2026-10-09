@@ -183,6 +183,6 @@ Un commit por tarea, subido a `origin` al cerrarla.
 - [X] T002 Los Node oficiales 24 y 22, a `D:\node-oficial\`, comprobados otra vez con su `SHASUMS256.txt`
   (RF-004, D4).
 - [X] T003 La constitución v1.0.3: la regla XXII y el paso 9, también en su plantilla (RF-003, CE-002).
-- [ ] T004 La documentación: CLAUDE.md, SUMARSE, ARQUITECTURA y la nota de la spec 003 (RF-005, CE-004).
+- [X] T004 La documentación: CLAUDE.md, SUMARSE, ARQUITECTURA y la nota de la spec 003 (RF-005, CE-004).
 - [ ] T005 La entrada del historial y la unión a `main`, con `npm test` y la prueba de humo en verde en el
   PC con Node 24 y 22 (RF-006, CE-003).
