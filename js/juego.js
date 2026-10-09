@@ -33,6 +33,12 @@ const juego = juegos.find(
 j => j.id === idJuego
 );
 
+// El juego de la ficha, para lo que se pinta encima de ella: el panel
+// "Tus amigos jugaron este juego" de portal-growth.js lo busca aquí. Solo
+// lo definía una copia vieja de este archivo en la raíz, que no carga
+// ninguna página, y el panel no salía nunca (punto 28 de la auditoría).
+window.macroRebornJuegoActual = juego || null;
+
 
 
 

@@ -118,7 +118,7 @@
       const jugado=comprobaciones.filter(Boolean);
       host.innerHTML=jugado.length
         ? `<div class="mr-social-title">👥 Tus amigos jugaron este juego</div><div class="mr-social-friends">${jugado.map(a=>`<a href="usuario.html?usuario=${encodeURIComponent(a.username)}" class="mr-social-friend"><span class="mr-social-avatar">${String(a.username).slice(0,1).toUpperCase()}</span><span>@${esc(a.username)}</span><small>Nivel ${Number(a.level)||1}</small></a>`).join("")}</div>`
-        : '<p class="mr-social-empty">Ninguno de tus amigos aparece entre los últimos jugadores de este título.</p>';
+        : '<p class="mr-social-empty">Ninguno de tus amigos lo tiene entre sus últimos juegos.</p>';
     }catch(_){ host.innerHTML=""; }
   }
 

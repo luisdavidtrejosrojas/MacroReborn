@@ -268,7 +268,7 @@ Un commit por tarea, subido a `origin` al cerrarla.
 
 - [X] T001 Explorar y los botones de la ficha: el catálogo colgado de `window`, con su prueba (RF-001,
   RF-002, D1).
-- [ ] T002 El panel de amigos: el juego expuesto en `js/juego.js` y el texto de su aviso, con su prueba
+- [X] T002 El panel de amigos: el juego expuesto en `js/juego.js` y el texto de su aviso, con su prueba
   (RF-003, D2).
 - [ ] T003 Fuera «Abrir Bazar», con su CSS (RF-004, D3).
 - [ ] T004 El top 20 de Macro Snake, con su prueba (RF-005, D4).
