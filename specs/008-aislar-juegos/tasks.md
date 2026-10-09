@@ -178,7 +178,7 @@ página y cambiar su dirección.
 - [X] T010 [US1] Una prueba en `tests/juegos-aparte-navegador.test.js` de que Macro Snake no carga nada
   de otras webs: ningún `src`, `href` ni `fetch` con `http://`, `https://` o `//` en
   `html/juegos/macro-snake.html`, `.js` y `.css` (research D2).
-- [ ] T011 [US1] Comprobar en el PC (quickstart 3 y 4):
+- [X] T011 [US1] Comprobar en el PC (quickstart 3 y 4):
   - la tabla de `curl` del apartado 3;
   - en Edge, con `demo`, en tres juegos de terceros de motores distintos: el marco no lee la sesión, no
     llega a la página, y `top.location = ...` no la mueve.

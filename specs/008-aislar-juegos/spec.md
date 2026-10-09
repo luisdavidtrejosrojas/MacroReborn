@@ -271,3 +271,16 @@ Luis añadió en IONOS (Domains & SSL, macroreborn.com, DNS, Add record) un regi
 solo leyendo: el servidor de nombres de IONOS y dos resolutores públicos devuelven para
 `juegos.macroreborn.com` la misma IP que para la web, que es la del propio servidor, y ningún AAAA. Nada
 usa todavía esa dirección.
+
+### Jugar sin arriesgar la cuenta, en el PC (T011, 09/10/2026)
+
+Con el servidor local de la rama (la web en el 3301 y los juegos en el 3302):
+
+- **Las rutas** (quickstart 3): en la web, `html/juegos/pvz.html` da 302 al 3302, que lo sirve con 200,
+  `frame-ancestors` de las dos direcciones locales y `noindex`, sin `X-Frame-Options`. En el 3302,
+  `/api/users` y la ruta con `..%2f` dan 404. Macro Snake sigue en el 3301.
+- **Desde dentro de tres juegos de terceros** (quickstart 4), con la sesión de `demo` abierta en la web:
+  Plantas vs. Zombies (Flash), Pokémon Emerald (emulador) y Baldi's Basics (Unity). El código del propio
+  juego, en su marco del 3302 y con su `sandbox`, lee la sesión vacía (`null`). Al tocar
+  `parent.document`, el navegador da un error de seguridad, y lo mismo al intentar llevarse la página
+  con `top.location`. La página se queda en `jugar.html`.
