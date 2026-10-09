@@ -1248,7 +1248,9 @@ const juegos = [
 // buscan como window.juegos, y un const de primer nivel no cuelga de
 // window. Sin esto, Explorar salía vacía y los botones Anterior, Más de
 // esta categoría y Siguiente de cada juego llevaban a "#" (spec 005).
-window.juegos = juegos;
+// Fuera del navegador no hay window: las pruebas también leen este archivo
+// (tests/catalogo-archivos.test.js).
+if (typeof window !== "undefined") window.juegos = juegos;
 
 
 // ==============================
