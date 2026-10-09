@@ -149,6 +149,12 @@ cambio, reutilizar lo que ya existe en `api/_*.js` y qué dependencias se acepta
 XI y XXVI). Por qué `api/_png.js` y `api/_lienzo.js` están escritos a mano lo cuenta
 [ARTE](../referencia/ARTE.md).
 
+Una más, propia de este proyecto: **una clave nueva del sitio en el `localStorage`** va en la lista de
+lo que guarda el sitio, en `js/motor/juegos-aparte.js`. Esa lista dice qué no pasa nunca a la dirección
+de los juegos cuando se mudan las partidas, y la sesión está en ella (specs/008-aislar-juegos).
+`tests/juegos-aparte-navegador.test.js` recorre el código del sitio y falla si una clave no está
+cubierta.
+
 ---
 
 ## Probar contra los datos de verdad

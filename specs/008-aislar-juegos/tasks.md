@@ -248,7 +248,7 @@ nada del sitio y sin pisar nada.
 
 **Prueba independiente**: guardar partida en un juego de cada motor antes del cambio, y abrirla después.
 
-- [ ] T015 [US4] Las claves del sitio, en `js/motor/juegos-aparte.js` (research D9, data-model «Claves
+- [X] T015 [US4] Las claves del sitio, en `js/motor/juegos-aparte.js` (research D9, data-model «Claves
   del sitio»), con `esDelSitio(clave)`:
   - fijas: «`macroSessionToken`, `usuarioActivo`, `presenciaMacro`, `macroRebornRecomendacionesBase`,
     `macroRebornRetoDiario`, `mr_originals_played`, `temaMacroReborn`, `paletaMacroReborn`,

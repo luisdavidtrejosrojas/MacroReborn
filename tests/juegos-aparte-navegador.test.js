@@ -129,6 +129,96 @@ test("la página de jugar abre Macro Snake en la web, sin sandbox, y los de otra
   }
 });
 
+// ---------- Lo que guarda el sitio, que no pasa nunca en la mudanza ----------
+
+// Lo que no es código del sitio, o no corre en la web.
+const FUERA_DEL_SITIO = new Set(["node_modules", "tests", "scripts", "specs", "docs", "memoria-claude",
+  "datos-locales", "sugerencias-discord", "infra", "migrations", "api", "respaldos", ".git", ".github",
+  ".specify", ".claude", "revision-avatares", "revision-previsualizaciones", "revision-juegos", "revision-lienzo"]);
+
+function codigoDelSitio(dir = RAIZ, rel = "", salida = []) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const ruta = rel ? rel + "/" + e.name : e.name;
+    if (e.isDirectory()) {
+      if (!FUERA_DEL_SITIO.has(e.name) && ruta !== "html/juegos") codigoDelSitio(path.join(dir, e.name), ruta, salida);
+    } else if (/\.(js|html)$/.test(e.name)) {
+      salida.push(ruta);
+    }
+  }
+  return salida;
+}
+
+// Las claves que el sitio calcula en vez de escribirlas tal cual: en qué
+// archivo, con qué expresión y qué valen. Una nueva hace fallar la prueba
+// hasta que alguien mira qué vale, la añade aquí y, si hace falta, a la
+// lista de js/motor/juegos-aparte.js.
+const CALCULADAS = {
+  "js/chat.js": { "_claveAntispamChat()": "chatAntispam_<nombre>" },
+  "js/core.js": { "clave": "la que llega a guardarJSON (abajo)", "CLAVE_USUARIO": "usuarioActivo", "CLAVE_PASE": "macroSessionToken" },
+  "js/motor/estadisticas.js": { "clave": "estadisticas_<nombre>", '"estadisticas_" + usuario.nombre': "estadisticas_<nombre>" },
+  "js/retos-diarios.js": { "KEY": "macroRebornRetoDiario" },
+  "js/session.js": { "KEY_USER": "usuarioActivo", "KEY_TOKEN": "macroSessionToken" },
+  "js/tema.js": { "CLAVE_TEMA": "temaMacroReborn", "CLAVE_PALETA": "paletaMacroReborn" }
+};
+
+test("ninguna clave que guarda el sitio en el navegador se queda fuera de la lista del sitio", () => {
+  const M = modulo();
+  const literales = [];
+  const sueltas = [];
+  for (const archivo of codigoDelSitio()) {
+    const texto = leer(...archivo.split("/"));
+    // El argumento: una llamada sin argumentos, como _claveAntispamChat(), o
+    // lo que haya hasta la coma o el paréntesis.
+    for (const m of texto.matchAll(/localStorage\s*\.\s*(?:getItem|setItem|removeItem)\s*\(\s*([A-Za-z_$][\w$.]*\(\)|[^,)]+)/g)) {
+      const arg = m[1].trim();
+      const literal = /^(['"`])([^'"`$]*)\1$/.exec(arg);
+      if (literal) literales.push([archivo, literal[2]]);
+      else if (!(CALCULADAS[archivo] && arg in CALCULADAS[archivo])) sueltas.push(archivo + ": " + arg);
+    }
+    // guardarJSON(clave, ...) de js/core.js también escribe en localStorage.
+    for (const m of texto.matchAll(/(?<!function\s)guardarJSON\(\s*([A-Za-z_$][\w$.]*\(\)|[^,)]+)/g)) {
+      const arg = m[1].trim();
+      const literal = /^(['"`])([^'"`$]*)\1$/.exec(arg);
+      if (literal) literales.push([archivo, literal[2]]);
+      else if (!(CALCULADAS[archivo] && arg in CALCULADAS[archivo]) && !(arg === "KEY_USER" && archivo === "js/session.js")) {
+        sueltas.push(archivo + ": guardarJSON(" + arg);
+      }
+    }
+    assert.ok(!/localStorage\s*\[/.test(texto), archivo + " usa localStorage[...]: que lo cubra esta prueba");
+  }
+  assert.deepStrictEqual(sueltas, [], "claves calculadas que la prueba no conoce: mirar qué valen y añadirlas a CALCULADAS");
+  const fuera = literales.filter(([, clave]) => !M.esDelSitio(clave)).map(([a, c]) => a + ": " + c);
+  assert.deepStrictEqual(fuera, [], "claves del sitio que no están en la lista de js/motor/juegos-aparte.js");
+  assert.ok(literales.length >= 8, "solo encontró " + literales.length + " claves escritas tal cual");
+});
+
+test("las claves calculadas valen lo que dice la prueba, y están en la lista", () => {
+  const M = modulo();
+  for (const [archivo, expresiones] of Object.entries(CALCULADAS)) {
+    const texto = leer(...archivo.split("/"));
+    for (const [expresion, valor] of Object.entries(expresiones)) {
+      if (/^[A-Z_]+$/.test(expresion)) {
+        const declarada = new RegExp("\\b" + expresion + "\\s*=\\s*[\"']([^\"']+)[\"']").exec(texto);
+        assert.ok(declarada, archivo + ": no encuentro el valor de " + expresion);
+        assert.equal(declarada[1], valor, archivo + ": " + expresion);
+      }
+      if (!valor.includes(" ")) assert.ok(M.esDelSitio(valor.replace("<nombre>", "alguien")), valor);
+    }
+  }
+  assert.match(leer("js", "chat.js"), /return\s+"chatAntispam_"\s*\+/);
+  assert.match(leer("js", "motor", "estadisticas.js"), /"estadisticas_"\s*\+\s*usuario\.nombre/);
+});
+
+test("la sesión y el usuario son del sitio; lo que guardan los juegos, no", () => {
+  const M = modulo();
+  for (const clave of ["macroSessionToken", "usuarioActivo", "mrPartidasMudadas", "mr_sonda", "estadisticas_ana"]) {
+    assert.equal(M.esDelSitio(clave), true, clave);
+  }
+  for (const clave of ["ejs-settings", "ejs-gba-settings", "/data/saves", "save1", "RufflePlayer"]) {
+    assert.equal(M.esDelSitio(clave), false, clave);
+  }
+});
+
 test("Macro Snake no carga nada de otras webs: se queda en la web, con la sesión", () => {
   // Si cargara código de fuera, ese código correría en la web, que es
   // justo lo que esta spec saca de allí (research D2).

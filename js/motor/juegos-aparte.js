@@ -44,6 +44,24 @@
   // Un marco de otro origen no hereda de la página los mandos ni el sonido.
   const ALLOW = "fullscreen; gamepad; autoplay";
 
+  // Lo que guarda el propio sitio en el localStorage de la web. Nunca pasa a
+  // la dirección de los juegos cuando se mudan las partidas (research D9):
+  // la sesión, el usuario y lo demás se quedan en la web. Una prueba recorre
+  // el código del sitio y avisa si aparece una clave que esta lista no cubre;
+  // la misma lista está en html/juegos/_mudanza.js.
+  const CLAVES_DEL_SITIO = [
+    "macroSessionToken", "usuarioActivo", "presenciaMacro", "macroRebornRecomendacionesBase",
+    "macroRebornRetoDiario", "mr_originals_played", "temaMacroReborn", "paletaMacroReborn",
+    "macro:last-achievement-unlocked", "macro:last-activity-recorded", "macro:last-game-played",
+    "mrPartidasMudadas"
+  ];
+  const PREFIJOS_DEL_SITIO = ["macro", "mr_", "chatAntispam_", "estadisticas_"];
+
+  function esDelSitio(clave) {
+    const texto = String(clave);
+    return CLAVES_DEL_SITIO.includes(texto) || PREFIJOS_DEL_SITIO.some((prefijo) => texto.startsWith(prefijo));
+  }
+
   function origen(ubicacion) {
     const u = ubicacion || window.location;
     if (NOMBRES_LOCALES.includes(u.hostname)) {
@@ -72,5 +90,8 @@
     return t === "terceros" || t === "otra-web" ? { sandbox: SANDBOX, allow: ALLOW } : null;
   }
 
-  window.MRJuegosAparte = { origen, tipo, direccion, marco, PROPIOS, SANDBOX, ALLOW };
+  window.MRJuegosAparte = {
+    origen, tipo, direccion, marco, esDelSitio,
+    PROPIOS, SANDBOX, ALLOW, CLAVES_DEL_SITIO, PREFIJOS_DEL_SITIO
+  };
 })();
